@@ -1,3 +1,5 @@
+name: 'mab_project'
+
 services:
   frontend:
     build: './frontend'
