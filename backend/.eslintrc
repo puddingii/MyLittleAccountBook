@@ -41,6 +41,7 @@
 					"[static-methods]",
 					"[customProperties]",
 					"constructor",
+					"[typescriptPrivateMethod]",
 					// ["getters"],
 					// ["setters"],
 					// "[methods]",
@@ -54,6 +55,9 @@
 						{ "type": "method", "kind": "get", "sort": "alphabetical" },
 						{ "type": "method", "sort": "alphabetical" },
 						{ "type": "method", "async": true, "sort": "alphabetical" }
+					],
+					"typescriptPrivateMethod": [
+						{ "type": "method", "sort": "alphabetical", "accessibility": "private" }
 					]
 				},
 				"accessorPairPositioning": "getThenSet"
@@ -94,7 +98,7 @@
 		/* General Code Rules */
 		/**********************/
 		// Enforce import order
-		// "import/prefer-default-export": "off",
+		"import/prefer-default-export": "off",
 		"import/order": "error",
 
 		"import/no-dynamic-require": "off",
