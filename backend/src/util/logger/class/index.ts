@@ -1,0 +1,35 @@
+import winston from 'winston';
+import { ILogger } from './interface';
+
+class Logger implements ILogger {
+	private logger: winston.Logger;
+
+	constructor(logger: winston.Logger) {
+		this.logger = logger;
+	}
+
+	private combineDepth(list: Array<string>) {
+		return list.map(depth => `[${depth}]`).join(' ');
+	}
+
+	error(error: unknown, depthList: Array<string>) {
+		const depthStr = this.combineDepth(depthList);
+		let message = error;
+		if (error instanceof Error) {
+			message = error.message;
+		}
+		this.logger.error(`${depthStr} ${message}`);
+	}
+
+	info(message: string, depthList: Array<string>) {
+		const depthStr = this.combineDepth(depthList);
+		this.logger.info(`${depthStr} ${message}`);
+	}
+
+	warn(message: string, depthList: Array<string>) {
+		const depthStr = this.combineDepth(depthList);
+		this.logger.warn(`${depthStr} ${message}`);
+	}
+}
+
+export default Logger;
