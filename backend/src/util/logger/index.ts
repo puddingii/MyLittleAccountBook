@@ -81,7 +81,7 @@ const getFullModeLogger = () => {
 			timestamp({
 				format: 'YYYY-MM-DD HH:mm:ss',
 			}),
-			label({ label: '응기잇', message: true }),
+			label({ label: '테스트', message: true }),
 			prettyPrint(),
 		])
 		.build();

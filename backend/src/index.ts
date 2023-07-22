@@ -1,16 +1,19 @@
 import express from 'express';
-import morgan from 'morgan';
 
-const app = express();
+import secret from './config/secret';
+import loader from './loader';
+import { logger } from './util';
 
-app.use(morgan('combined'));
+const startServer = async () => {
+	const app = express();
 
-const router = express.Router();
-router.get('/', (req, res) => {
-	res.status(200).send('hi');
-});
-app.use(router);
+	await loader({ app });
 
-app.listen(3044, () => {
-	console.log('Hello!  http://localhost:3044');
-});
+	app.listen(secret.expressPort, () =>
+		logger.info(`Connected the express server: http://localhost:${secret.expressPort}`, [
+			'Main',
+		]),
+	);
+};
+
+startServer();
