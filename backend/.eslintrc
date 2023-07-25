@@ -87,6 +87,7 @@
 				"caughtErrorsIgnorePattern": "^ignore"
 			}
 		],
+		"@typescript-eslint/no-unused-vars": "warn",
 		"no-param-reassign": "off",
 		"class-methods-use-this": "off",
 		"consistent-return": "off",

@@ -24,4 +24,6 @@ export default (app: Express) => {
 	app.use(json());
 
 	setRouter(app);
+
+	logger.info('Express server setting is done.', ['Express']);
 };
