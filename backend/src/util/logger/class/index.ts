@@ -12,12 +12,8 @@ class Logger implements ILogger {
 		return list.map(depth => `[${depth}]`).join(' ');
 	}
 
-	error(error: unknown, depthList: Array<string>) {
+	error(message: string, depthList: Array<string>) {
 		const depthStr = this.combineDepth(depthList);
-		let message = error;
-		if (error instanceof Error) {
-			message = error.message;
-		}
 		this.logger.error(`${depthStr} ${message}`);
 	}
 
