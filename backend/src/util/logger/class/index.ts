@@ -9,7 +9,7 @@ class Logger implements ILogger {
 	}
 
 	private combineDepth(list: Array<string>) {
-		return list.map(depth => `[${depth}]`).join(' ');
+		return list.map(depth => `[${depth}]`).join('');
 	}
 
 	error(message: string, depthList: Array<string>) {
