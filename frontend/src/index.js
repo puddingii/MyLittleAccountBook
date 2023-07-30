@@ -6,13 +6,13 @@ import { BrowserRouter } from 'react-router-dom';
 import 'simplebar/src/simplebar.css';
 
 // third-party
-import { Provider as ReduxProvider } from 'react-redux';
+import { QueryClient, QueryClientProvider } from 'react-query';
+import { RecoilRoot } from 'recoil';
 
 // apex-chart
 import 'assets/third-party/apex-chart.css';
 
 // project import
-import { store } from 'store';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
 
@@ -20,13 +20,26 @@ import reportWebVitals from './reportWebVitals';
 
 const container = document.getElementById('root');
 const root = createRoot(container); // createRoot(container!) if you use TypeScript
+
+const queryClient = new QueryClient({
+	defaultOptions: {
+		queries: {
+			refetchOnMount: false,
+			refetchOnReconnect: false,
+			refetchOnWindowFocus: false,
+		},
+	},
+});
+
 root.render(
 	<StrictMode>
-		<ReduxProvider store={store}>
-			<BrowserRouter basename="/free">
-				<App />
-			</BrowserRouter>
-		</ReduxProvider>
+		<RecoilRoot>
+			<QueryClientProvider client={queryClient}>
+				<BrowserRouter basename="/">
+					<App />
+				</BrowserRouter>
+			</QueryClientProvider>
+		</RecoilRoot>
 	</StrictMode>,
 );
 
