@@ -15,11 +15,16 @@ import 'assets/third-party/apex-chart.css';
 // project import
 import App from './App';
 import reportWebVitals from './reportWebVitals';
+import { getCookie } from './utils/cookie';
+import { setAxiosAuthorization } from './utils/axios';
 
 // ==============================|| MAIN - REACT DOM RENDER  ||============================== //
 
 const container = document.getElementById('root');
 const root = createRoot(container); // createRoot(container!) if you use TypeScript
+
+const token = getCookie('token');
+setAxiosAuthorization(token);
 
 const queryClient = new QueryClient({
 	defaultOptions: {
