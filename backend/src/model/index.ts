@@ -11,4 +11,6 @@ UserModel.hasMany(OAuthUserModel, {
 
 OAuthUserModel.belongsTo(UserModel, {
 	targetKey: 'nickname',
+	foreignKey: 'userNickname',
+	as: 'users',
 });
