@@ -1,6 +1,4 @@
 import { Sequelize } from 'sequelize';
-import fs from 'fs';
-import path from 'path';
 
 import { logger } from '@/util';
 import secret from '@/config/secret';
@@ -21,15 +19,9 @@ const sequelize = new Sequelize(
 
 export const syncConnection = async () => {
 	try {
-		const modelFolder = fs.readdirSync(path.resolve(__dirname, '../model'));
-		const modelList = modelFolder.filter(
-			file => file.endsWith('.js') || file.endsWith('.ts'),
-		);
-		const syncOptions = secret.nodeEnv === 'production' ? {} : { alter: true };
+		const syncOptions = secret.nodeEnv === 'production' ? {} : { force: true };
 
-		for await (const file of modelList) {
-			await import(`../model/${file}`);
-		}
+		await import(`../model`);
 		await sequelize.authenticate();
 		await sequelize.sync(syncOptions);
 		logger.info('Connection has been established successfully.', ['Mysql']);
