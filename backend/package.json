@@ -7,7 +7,7 @@
 		"start": "node build/index.js",
 		"build": "rm -rf build && tsc -p ./tsconfig.json && tscpaths -p tsconfig.json -s ./src -o ./build",
 		"test": "cross-env NODE_ENV=production mocha",
-		"dev:start": "cross-env NODE_ENV=development ts-node -r tsconfig-paths/register src/index.ts",
+		"dev:start": "cross-env NODE_ENV=development nodemon --config ./nodemon.json src/index.ts",
 		"dev:tscheck": "tsc-watch",
 		"dev:test": "cross-env NODE_ENV=development mocha",
 		"w": "node ./tsconfig-paths-bootstrap.js"
@@ -19,13 +19,15 @@
 		"cors": "^2.8.5",
 		"dotenv": "^16.3.1",
 		"express": "^4.18.2",
+		"googleapis": "^123.0.0",
 		"morgan": "^1.10.0",
 		"mysql2": "^3.5.2",
 		"passport": "^0.6.0",
 		"sequelize": "^6.32.1",
 		"tsconfig-paths": "^4.2.0",
 		"winston": "^3.10.0",
-		"winston-daily-rotate-file": "^4.7.1"
+		"winston-daily-rotate-file": "^4.7.1",
+		"zod": "^3.21.4"
 	},
 	"devDependencies": {
 		"@types/cookie-parser": "^1.4.3",

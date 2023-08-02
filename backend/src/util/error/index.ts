@@ -1,4 +1,5 @@
 import { ValidationError } from 'sequelize';
+import { ZodError } from 'zod';
 
 import { CustomError } from './class';
 import { TContext } from './class/interface';
@@ -13,7 +14,11 @@ export const convertErrorToCustomError = (
 ) => {
 	const { trace, cause, context } = options;
 
-	if (error instanceof ValidationError || error instanceof Error) {
+	if (
+		error instanceof ValidationError ||
+		error instanceof Error ||
+		error instanceof ZodError
+	) {
 		return new CustomError(error.message, {
 			cause: cause ?? error.cause,
 			traceList: [trace],
