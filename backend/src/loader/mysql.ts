@@ -1,4 +1,6 @@
 import { Sequelize } from 'sequelize';
+import fs from 'fs';
+import path from 'path';
 
 import { logger } from '@/util';
 import secret from '@/config/secret';
@@ -17,9 +19,19 @@ const sequelize = new Sequelize(
 	},
 );
 
-export const testConnection = async () => {
+export const syncConnection = async () => {
 	try {
+		const modelFolder = fs.readdirSync(path.resolve(__dirname, '../model'));
+		const modelList = modelFolder.filter(
+			file => file.endsWith('.js') || file.endsWith('.ts'),
+		);
+		const syncOptions = secret.nodeEnv === 'production' ? {} : { alter: true };
+
+		for await (const file of modelList) {
+			await import(`../model/${file}`);
+		}
 		await sequelize.authenticate();
+		await sequelize.sync(syncOptions);
 		logger.info('Connection has been established successfully.', ['Mysql']);
 	} catch (error) {
 		if (checkIsCustomError(error)) {
