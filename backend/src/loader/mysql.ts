@@ -14,7 +14,7 @@ const sequelize = new Sequelize(databaseName, username, pw, {
 	},
 });
 
-export const syncConnection = async () => {
+export const sync = async () => {
 	try {
 		const syncOptions = secret.nodeEnv === 'production' ? {} : { force: true };
 
