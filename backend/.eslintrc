@@ -39,7 +39,7 @@
 				"order": [
 					"[static-properties]",
 					"[static-methods]",
-					"[customProperties]",
+					// "[customProperties]",
 					"constructor",
 					"[typescriptPrivateMethod]",
 					// ["getters"],

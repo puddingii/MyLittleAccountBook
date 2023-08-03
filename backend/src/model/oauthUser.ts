@@ -1,4 +1,6 @@
+/* eslint-disable no-use-before-define */
 import {
+	CreationOptional,
 	DataTypes,
 	ForeignKey,
 	InferAttributes,
@@ -13,10 +15,10 @@ class OAuthUser extends Model<
 	InferAttributes<OAuthUser>,
 	InferCreationAttributes<OAuthUser>
 > {
-	declare id: number;
-	declare token?: string;
+	declare id: CreationOptional<number>;
 	declare type: string;
 	declare userNickname: ForeignKey<UserModel['nickname']>;
+	declare createdAt: CreationOptional<Date>;
 }
 
 OAuthUser.init(
@@ -30,11 +32,14 @@ OAuthUser.init(
 			type: DataTypes.STRING,
 			allowNull: false,
 		},
-		token: {
-			type: DataTypes.STRING,
-		},
+		createdAt: DataTypes.DATE,
 	},
-	{ sequelize, modelName: 'oauthusers' },
+	{
+		sequelize,
+		modelName: 'oauthusers',
+		createdAt: true,
+		updatedAt: false,
+	},
 );
 
 export default OAuthUser;
