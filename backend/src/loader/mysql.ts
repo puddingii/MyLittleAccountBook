@@ -4,18 +4,15 @@ import { logger } from '@/util';
 import secret from '@/config/secret';
 import { checkIsCustomError, convertErrorToCustomError } from '@/util/error';
 
-const sequelize = new Sequelize(
-	secret.mysqlDatabaseName,
-	secret.mysqlUsername,
-	secret.mysqlPw,
-	{
-		host: secret.mysqlHost,
-		dialect: 'mysql',
-		logging: msg => {
-			logger.info(msg, ['Mysql']);
-		},
+const { databaseName, host, pw, username } = secret.mysql;
+
+const sequelize = new Sequelize(databaseName, username, pw, {
+	host: host,
+	dialect: 'mysql',
+	logging: msg => {
+		logger.info(msg, ['Mysql']);
 	},
-);
+});
 
 export const syncConnection = async () => {
 	try {

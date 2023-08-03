@@ -9,6 +9,7 @@ import { logger } from '@/util';
 import secret from '@/config/secret';
 
 export default (app: Express) => {
+	const { corsOriginList, sessionKey } = secret.express;
 	const stream: StreamOptions = {
 		// Use the http severity
 		write: message => logger.info(message, ['Express']),
@@ -18,8 +19,8 @@ export default (app: Express) => {
 			stream,
 		}),
 	);
-	app.use(cors({ origin: secret.corsOriginList, credentials: true }));
-	app.use(cookieParser(secret.sessionKey));
+	app.use(cors({ origin: corsOriginList, credentials: true }));
+	app.use(cookieParser(sessionKey));
 	app.use(urlencoded({ extended: false }));
 	app.use(json());
 

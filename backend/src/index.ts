@@ -12,9 +12,9 @@ const startServer = async () => {
 
 		await loader({ app });
 
-		app.listen(secret.expressPort, () =>
+		app.listen(secret.express.port, () =>
 			logger.info(
-				`Connected the express server: http://localhost:${secret.expressPort}`,
+				`Connected the express server: http://localhost:${secret.express.port}`,
 				['Main'],
 			),
 		);
