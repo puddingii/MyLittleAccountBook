@@ -2,7 +2,7 @@ import { Sequelize } from 'sequelize';
 
 import { logger } from '@/util';
 import secret from '@/config/secret';
-import { checkIsCustomError, convertErrorToCustomError } from '@/util/error';
+import { convertErrorToCustomError } from '@/util/error';
 
 const { databaseName, host, pw, username } = secret.mysql;
 
@@ -23,11 +23,6 @@ export const sync = async () => {
 		await sequelize.sync(syncOptions);
 		logger.info('Connection has been established successfully.', ['Mysql']);
 	} catch (error) {
-		if (checkIsCustomError(error)) {
-			error.addTrace('Mysql');
-			throw error;
-		}
-
 		const customError = convertErrorToCustomError(error, {
 			trace: 'Mysql',
 		});
@@ -40,11 +35,6 @@ export const closeConnection = async () => {
 		await sequelize.close();
 		logger.info('Connection has been closed successfully.', ['Mysql']);
 	} catch (error) {
-		if (checkIsCustomError(error)) {
-			error.addTrace('Mysql');
-			throw error;
-		}
-
 		const customError = convertErrorToCustomError(error, { trace: 'Mysql' });
 		throw customError;
 	}

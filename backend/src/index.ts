@@ -3,8 +3,7 @@ import express from 'express';
 import secret from './config/secret';
 import loader from './loader';
 import { logger } from './util';
-import { checkIsCustomError, convertErrorToCustomError } from './util/error';
-import { ICustomError } from './util/error/class/interface';
+import { convertErrorToCustomError } from './util/error';
 
 const startServer = async () => {
 	try {
@@ -19,17 +18,8 @@ const startServer = async () => {
 			),
 		);
 	} catch (error) {
-		let customError = error;
-		if (checkIsCustomError(customError)) {
-			customError.addTrace('Root');
-		} else {
-			customError = convertErrorToCustomError(error, { trace: 'Root' });
-		}
-
-		logger.error(
-			(customError as ICustomError).message,
-			(customError as ICustomError).traceList,
-		);
+		const { message, traceList } = convertErrorToCustomError(error);
+		logger.error(message, traceList);
 	}
 };
 

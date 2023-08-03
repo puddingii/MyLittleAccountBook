@@ -4,7 +4,7 @@ import { ZodError } from 'zod';
 import { CustomError } from './class';
 import { TContext } from './class/interface';
 
-export const checkIsCustomError = (error: unknown): error is CustomError => {
+const checkIsCustomError = (error: unknown): error is CustomError => {
 	return error instanceof CustomError;
 };
 
@@ -13,6 +13,11 @@ export const convertErrorToCustomError = (
 	options: { cause?: unknown; trace: string; context?: TContext } = { trace: 'unknown' },
 ) => {
 	const { trace, cause, context } = options;
+
+	if (checkIsCustomError(error)) {
+		error.addTrace('Loader');
+		return error;
+	}
 
 	if (
 		error instanceof ValidationError ||

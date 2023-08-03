@@ -1,7 +1,7 @@
 import { createClient } from 'redis';
 
 import { logger } from '@/util';
-import { checkIsCustomError, convertErrorToCustomError } from '@/util/error';
+import { convertErrorToCustomError } from '@/util/error';
 import secret from '@/config/secret';
 
 const client = createClient({
@@ -21,11 +21,6 @@ export const connect = async () => {
 
 		logger.info('Connection has been established successfully.', ['Redis']);
 	} catch (error) {
-		if (checkIsCustomError(error)) {
-			error.addTrace('Redis');
-			throw error;
-		}
-
 		const customError = convertErrorToCustomError(error, {
 			trace: 'Redis',
 		});
@@ -38,11 +33,6 @@ export const closeConnection = async () => {
 		await client.disconnect();
 		logger.info('Connection has been closed successfully.', ['Redis']);
 	} catch (error) {
-		if (checkIsCustomError(error)) {
-			error.addTrace('Redis');
-			throw error;
-		}
-
 		const customError = convertErrorToCustomError(error, { trace: 'Redis' });
 		throw customError;
 	}
