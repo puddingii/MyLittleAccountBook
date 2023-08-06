@@ -14,6 +14,10 @@ export default {
 			query: zod.object({
 				error: zod.string().optional(),
 				code: zod.string().optional(),
+				state: zod.string().optional(),
+				authuser: zod.string().optional(),
+				scope: zod.string().optional(),
+				prompt: zod.string().optional(),
 			}),
 		}),
 	},

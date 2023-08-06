@@ -9,12 +9,15 @@ export default {
 	nodeEnv: process.env.NODE_ENV ?? '',
 	loggerMode: process.env.LOGGER_MODE ?? 'prod',
 	passwordHashRound: parseInt(process.env.PASSWORD_HASH_ROUND ?? '', 10),
+	baseUrl: process.env.BASE_URL ?? '',
+	frontUrl: process.env.FRONT_URL ?? '',
 
 	/** express key */
 	express: {
 		port: parseInt(process.env.EXPRESS_PORT ?? '', 10),
 		corsOriginList: process.env.CORS_LIST?.split(',').map(origin => new RegExp(origin)),
 		sessionKey: process.env.SESSION_KEY ?? '',
+		jwtSecureKey: process.env.JWT_SECURE_KEY ?? '',
 	},
 
 	/** DB key */
@@ -36,6 +39,9 @@ export default {
 			clientId: process.env.GOOGLE_CLIENT_ID ?? '',
 			secret: process.env.GOOGLE_CLIENT_SECRET ?? '',
 		},
-		naver: {},
+		naver: {
+			clientId: process.env.NAVER_CLIENT_ID ?? '',
+			secret: process.env.NAVER_CLIENT_SECRET ?? '',
+		},
 	},
 };
