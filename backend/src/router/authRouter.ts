@@ -1,6 +1,11 @@
 import express from 'express';
 
-import { emailLogin, googleLogin, getSocialLoginLocation } from '@/service/authService';
+import {
+	emailLogin,
+	googleLogin,
+	getSocialLoginLocation,
+	naverLogin,
+} from '@/service/authService';
 import zParser from '@/util/parser';
 import zodSchema from '@/util/parser/schema';
 import { logger } from '@/util';
@@ -10,7 +15,6 @@ import secret from '@/config/secret';
 const router = express.Router();
 
 router.get('/social/google', async (req, res) => {
-	console.log('?asdf: ', req.query);
 	try {
 		const {
 			query: { code, error, state },
@@ -30,14 +34,19 @@ router.get('/social/google', async (req, res) => {
 	}
 });
 
-router.get('/social/naver', (req, res) => {
+router.get('/social/naver', async (req, res) => {
 	try {
-		console.log(req.query);
-		// const {
-		// 	query: { code, error },
-		// } = await zParser(zodSchema.auth.googleLogin, req);
+		const {
+			query: { code, error, error_description: errorDescription, state },
+		} = await zParser(zodSchema.auth.naverLogin, req);
 
-		return res.status(200).json({ isSuccess: true });
+		if (error || !code) {
+			throw new Error(errorDescription, { cause: error });
+		}
+
+		const tokenInfo = await naverLogin(code, state);
+
+		return res.status(200).json(tokenInfo);
 	} catch (error) {
 		const { message, traceList } = convertErrorToCustomError(error, { trace: 'Router' });
 		logger.error(message, traceList);

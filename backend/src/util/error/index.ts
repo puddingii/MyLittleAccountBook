@@ -15,7 +15,7 @@ export const convertErrorToCustomError = (
 	const { trace, cause, context } = options;
 
 	if (checkIsCustomError(error)) {
-		error.addTrace('Loader');
+		error.addTrace(options.trace);
 		return error;
 	}
 

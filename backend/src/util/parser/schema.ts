@@ -14,10 +14,18 @@ export default {
 			query: zod.object({
 				error: zod.string().optional(),
 				code: zod.string().optional(),
-				state: zod.string().optional(),
+				state: zod.string(),
 				authuser: zod.string().optional(),
 				scope: zod.string().optional(),
 				prompt: zod.string().optional(),
+			}),
+		}),
+		naverLogin: zod.object({
+			query: zod.object({
+				code: zod.string().optional(),
+				state: zod.string(),
+				error: zod.string().optional(),
+				error_description: zod.string().optional(),
 			}),
 		}),
 	},

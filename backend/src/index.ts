@@ -18,7 +18,7 @@ const startServer = async () => {
 			),
 		);
 	} catch (error) {
-		const { message, traceList } = convertErrorToCustomError(error);
+		const { message, traceList } = convertErrorToCustomError(error, { trace: 'Root' });
 		logger.error(message, traceList);
 	}
 };

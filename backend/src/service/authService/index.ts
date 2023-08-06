@@ -2,7 +2,11 @@ import { google } from 'googleapis';
 import { nanoid } from 'nanoid/async';
 
 import { getClient as getGoogleClient, getUrl as getGoogleUrl } from './googleManager';
-import { getUrl as getNaverUrl } from './naverManager';
+import {
+	getTokenInfo as getNaverTokenInfo,
+	getUrl as getNaverUrl,
+	getUserInfo as getNaverUserInfo,
+} from './naverManager';
 import UserModel from '@/model/user';
 import { convertErrorToCustomError } from '@/util/error';
 import { deleteCache, getCache, setCache } from '@/util/cache';
@@ -15,6 +19,7 @@ const SOCIAL_URL_MANAGER = {
 	Naver: getNaverUrl,
 };
 
+/** Refresh Token - Access Token 의 유효성 검증 */
 const isValidatedState = async (state?: string) => {
 	if (!state) {
 		return false;
@@ -74,7 +79,7 @@ export const getSocialLoginLocation = async (type: TSocialLogin) => {
 	}
 };
 
-export const googleLogin = async (code: string, state?: string) => {
+export const googleLogin = async (code: string, state: string) => {
 	try {
 		if (!isValidatedState(state)) {
 			throw new Error('State 불일치. 재 로그인이 필요합니다.');
@@ -96,6 +101,24 @@ export const googleLogin = async (code: string, state?: string) => {
 
 		const data = { email, nickname: email.split('@')[0] };
 		const tokenInfo = createTokenAndCaching(data, 'Google');
+
+		return tokenInfo;
+	} catch (error) {
+		const customError = convertErrorToCustomError(error, { trace: 'Service' });
+		throw customError;
+	}
+};
+
+export const naverLogin = async (code: string, state: string) => {
+	try {
+		if (!isValidatedState(state)) {
+			throw new Error('State 불일치. 재 로그인이 필요합니다.');
+		}
+		const naverTokenInfo = await getNaverTokenInfo(code, state);
+		const { email, nickname } = await getNaverUserInfo(naverTokenInfo.access_token);
+
+		const data = { email, nickname };
+		const tokenInfo = createTokenAndCaching(data, 'Naver');
 
 		return tokenInfo;
 	} catch (error) {
