@@ -15,10 +15,12 @@ class OAuthUser extends Model<
 	InferAttributes<OAuthUser>,
 	InferCreationAttributes<OAuthUser>
 > {
-	declare id: CreationOptional<number>;
-	declare type: string;
-	declare userNickname: ForeignKey<UserModel['nickname']>;
 	declare createdAt: CreationOptional<Date>;
+	declare id: CreationOptional<number>;
+	/** Type 종류: Default, Google, Naver */
+	declare type: string;
+
+	declare userEmail: ForeignKey<UserModel['email']>;
 }
 
 OAuthUser.init(

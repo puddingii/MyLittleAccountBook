@@ -5,12 +5,12 @@ UserModel.hasMany(OAuthUserModel, {
 	onDelete: 'cascade',
 	hooks: true,
 	as: 'oauthusers',
-	foreignKey: { allowNull: false, name: 'userNickname' },
-	sourceKey: 'nickname',
+	foreignKey: { allowNull: false, name: 'userEmail' },
+	sourceKey: 'email',
 });
 
 OAuthUserModel.belongsTo(UserModel, {
-	targetKey: 'nickname',
-	foreignKey: 'userNickname',
+	targetKey: 'email',
+	foreignKey: 'userEmail',
 	as: 'users',
 });
