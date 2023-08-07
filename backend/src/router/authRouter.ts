@@ -11,6 +11,7 @@ import zodSchema from '@/util/parser/schema';
 import { logger } from '@/util';
 import { convertErrorToCustomError } from '@/util/error';
 import secret from '@/config/secret';
+import { findOneSocialUserInfo } from '@/repository/userRepository';
 
 const router = express.Router();
 
@@ -50,7 +51,7 @@ router.get('/social/naver', async (req, res) => {
 	} catch (error) {
 		const { message, traceList } = convertErrorToCustomError(error, { trace: 'Router' });
 		logger.error(message, traceList);
-		return res.status(403).json({ isSucceed: false });
+		return res.status(403).json({ isSucceed: false, message });
 	}
 });
 
@@ -65,18 +66,23 @@ router.get('/social', async (req, res) => {
 	} catch (error) {
 		const { message, traceList } = convertErrorToCustomError(error, { trace: 'Router' });
 		logger.error(message, traceList);
-		return res.status(404).json({ isSucceed: false });
+		return res.status(404).json({ isSucceed: false, message });
 	}
 });
 
 router.get('/email', async (req, res) => {
 	try {
-		const result = await emailLogin();
-		return res.status(200).json(result);
+		const {
+			query: { email, password },
+		} = await zParser(zodSchema.auth.emailLogin, req);
+
+		const tokenInfo = await emailLogin({ email, password });
+
+		return res.status(200).json(tokenInfo);
 	} catch (error) {
 		const { message, traceList } = convertErrorToCustomError(error, { trace: 'Router' });
 		logger.error(message, traceList);
-		return res.status(404).json({ isSucceed: false });
+		return res.status(404).json({ isSucceed: false, message });
 	}
 });
 

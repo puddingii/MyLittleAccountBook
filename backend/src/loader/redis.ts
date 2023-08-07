@@ -15,7 +15,8 @@ const client = createClient({
 export const connect = async () => {
 	try {
 		client.on('error', err => {
-			throw convertErrorToCustomError(err, { trace: 'Redis' });
+			const customError = convertErrorToCustomError(err, { trace: 'Redis' });
+			logger.error(customError.message, customError.traceList);
 		});
 		await client.connect();
 
