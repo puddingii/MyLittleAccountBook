@@ -45,12 +45,12 @@ export class UserModel extends Model<
 
 UserModel.init(
 	{
-		nickname: {
+		email: {
 			primaryKey: true,
 			type: DataTypes.STRING,
+			allowNull: false,
 		},
-		email: {
-			unique: true,
+		nickname: {
 			type: DataTypes.STRING,
 			allowNull: false,
 		},

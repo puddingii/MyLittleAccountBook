@@ -1,18 +1,22 @@
-import jwt, { SignOptions } from 'jsonwebtoken';
+import jwt from 'jsonwebtoken';
 
 import secret from '@/config/secret';
 
 const {
-	express: { jwtSecureKey },
+	express: { jwtSecureKey, jwtAccessTokenTime, jwtRefreshTokenTime },
 } = secret;
 
-export const createRefreshToken = (options?: SignOptions) => {
-	const encodedToken = jwt.sign({}, jwtSecureKey, options || { expiresIn: '14d' });
+export const createRefreshToken = () => {
+	const encodedToken = jwt.sign({}, jwtSecureKey, {
+		expiresIn: `${jwtRefreshTokenTime}s`,
+	});
 	return encodedToken;
 };
 
-export const createAccessToken = (data: object, options?: SignOptions) => {
-	const encodedToken = jwt.sign(data, jwtSecureKey, options || { expiresIn: '1h' });
+export const createAccessToken = (data: object) => {
+	const encodedToken = jwt.sign(data, jwtSecureKey, {
+		expiresIn: `${jwtAccessTokenTime}s`,
+	});
 	return encodedToken;
 };
 
@@ -39,12 +43,11 @@ export const decodeToken = (token: string) => {
 export const refreshAccessToken = (
 	options: {
 		data: { nickname: string; email: string };
-		options?: SignOptions;
 	},
 	refreshToken = '',
 	accessToken = '',
 ) => {
-	const { data: accessData, options: accessOptions } = options;
+	const { data: accessData } = options;
 	const isExpiredRefreshToken = isExpiredToken(refreshToken);
 	const isExpiredAccessToken = isExpiredToken(accessToken);
 	/** Refresh token X, Access token X */
@@ -55,7 +58,7 @@ export const refreshAccessToken = (
 
 	/** Refresh token O, Access token X */
 	if (isExpiredAccessToken) {
-		const newAccessToken = createAccessToken(accessData, accessOptions);
+		const newAccessToken = createAccessToken(accessData);
 
 		return newAccessToken;
 	}

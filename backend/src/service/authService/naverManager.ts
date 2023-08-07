@@ -1,5 +1,9 @@
 import fetch, { Headers } from 'node-fetch';
 
+/** Interfaces */
+import { INaverSocialInfo } from '@/interface/auth';
+
+/** ETC.. */
 import secret from '@/config/secret';
 import { convertErrorToCustomError } from '@/util/error';
 
@@ -7,26 +11,6 @@ const {
 	social: { naver: naverKey },
 	baseUrl,
 } = secret;
-
-type TSuccessTokenResponse = {
-	access_token: string;
-	refresh_token: string;
-	token_type: 'Bearer' | 'MAC';
-	expires_in: string;
-};
-
-type TFailTokenResponse = {
-	error: string;
-	error_description: string;
-};
-
-type TTokenInfo = TSuccessTokenResponse & TFailTokenResponse;
-
-type TUserInfo = {
-	id: string;
-	nickname: string;
-	email: string;
-};
 
 const client = {
 	id: naverKey.clientId,
@@ -70,7 +54,7 @@ export const getTokenInfo = async (code: string, state: string) => {
 			method: 'GET',
 		});
 
-		const tokenInfo = (await response.json()) as TTokenInfo;
+		const tokenInfo = (await response.json()) as INaverSocialInfo['TokenInfo'];
 		if (!response.ok || tokenInfo.error) {
 			throw new Error(
 				`(${response.status || tokenInfo.error}) ${
@@ -79,7 +63,7 @@ export const getTokenInfo = async (code: string, state: string) => {
 			);
 		}
 
-		return tokenInfo as TSuccessTokenResponse;
+		return tokenInfo as INaverSocialInfo['SuccessTokenResponse'];
 	} catch (error) {
 		const customError = convertErrorToCustomError(error, { trace: 'NaverManager' });
 		throw customError;
@@ -105,7 +89,7 @@ export const getUserInfo = async (code: string) => {
 			throw new Error(`(${response.status}) ${response.statusText}`);
 		}
 
-		return userInfo as TUserInfo;
+		return userInfo as INaverSocialInfo['UserInfo'];
 	} catch (error) {
 		const customError = convertErrorToCustomError(error, { trace: 'NaverManager' });
 		throw customError;

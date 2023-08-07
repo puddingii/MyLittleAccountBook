@@ -18,6 +18,8 @@ export default {
 		corsOriginList: process.env.CORS_LIST?.split(',').map(origin => new RegExp(origin)),
 		sessionKey: process.env.SESSION_KEY ?? '',
 		jwtSecureKey: process.env.JWT_SECURE_KEY ?? '',
+		jwtRefreshTokenTime: parseInt(process.env.JWT_REFRESH_TOKEN_TIME ?? '', 10),
+		jwtAccessTokenTime: parseInt(process.env.JWT_ACCESS_TOKEN_TIME ?? '', 10),
 	},
 
 	/** DB key */
