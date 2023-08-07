@@ -33,11 +33,8 @@ export const isExpiredToken = (token?: string): token is undefined => {
 	}
 };
 
-export const decodeToken = (token: string) => {
-	if (isExpiredToken(token)) {
-		throw new Error('만료된 토큰입니다.');
-	}
-	return jwt.decode(token);
+export const decodeToken = <T>(token: string) => {
+	return jwt.decode(token, { json: true }) as T;
 };
 
 export const refreshAccessToken = (

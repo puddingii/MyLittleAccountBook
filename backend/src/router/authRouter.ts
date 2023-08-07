@@ -11,7 +11,6 @@ import zodSchema from '@/util/parser/schema';
 import { logger } from '@/util';
 import { convertErrorToCustomError } from '@/util/error';
 import secret from '@/config/secret';
-import { findOneSocialUserInfo } from '@/repository/userRepository';
 
 const router = express.Router();
 
