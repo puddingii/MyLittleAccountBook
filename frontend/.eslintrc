@@ -68,9 +68,16 @@
 			}
 		],
 		"no-unused-vars": [
-			"error",
+			"warn",
 			{
 				"ignoreRestSiblings": false
+			}
+		],
+		"react-hooks/rules-of-hooks": "error",
+		"react-hooks/exhaustive-deps": [
+			"warn",
+			{
+				"additionalHooks": "useRecoilCallback"
 			}
 		]
 	}
