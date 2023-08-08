@@ -1,19 +1,19 @@
 import { TContext, ICustomError } from './interface';
 
 export class CustomError extends Error implements ICustomError {
-	public readonly context?: TContext;
+	public readonly code?: TContext;
 	public readonly traceList: Array<string>;
 
 	constructor(
 		message: string,
-		options: { cause?: unknown; context?: TContext; traceList?: Array<string> } = {},
+		options: { cause?: unknown; code?: TContext; traceList?: Array<string> } = {},
 	) {
-		const { cause, context, traceList } = options;
+		const { cause, code, traceList } = options;
 
 		super(message, { cause });
 		this.name = this.constructor.name;
 
-		this.context = context;
+		this.code = code;
 		this.traceList = traceList ?? [];
 	}
 

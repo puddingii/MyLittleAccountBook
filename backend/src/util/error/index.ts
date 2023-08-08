@@ -10,9 +10,9 @@ const checkIsCustomError = (error: unknown): error is CustomError => {
 
 export const convertErrorToCustomError = (
 	error: unknown,
-	options: { cause?: unknown; trace: string; context?: TContext } = { trace: 'unknown' },
+	options: { cause?: unknown; trace: string; code?: TContext } = { trace: 'unknown' },
 ) => {
-	const { trace, cause, context } = options;
+	const { trace, cause, code } = options;
 
 	if (checkIsCustomError(error)) {
 		error.addTrace(options.trace);
@@ -27,17 +27,17 @@ export const convertErrorToCustomError = (
 		return new CustomError(error.message, {
 			cause: cause ?? error.cause,
 			traceList: [trace],
-			context,
+			code,
 		});
 	}
 
 	if (typeof error === 'string') {
 		return new CustomError(error, {
 			traceList: [trace],
-			context,
+			code,
 			cause,
 		});
 	}
 
-	return new CustomError('Unknown Error', { traceList: [trace], context, cause });
+	return new CustomError('Unknown Error', { traceList: [trace], code, cause });
 };
