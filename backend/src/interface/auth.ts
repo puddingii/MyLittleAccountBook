@@ -1,5 +1,7 @@
 export type TSocialType = 'Google' | 'Naver';
 
+export type TDecodedAccessTokenInfo = { nickname: string; email: string };
+
 export interface INaverSocialInfo {
 	SuccessTokenResponse: {
 		access_token: string;

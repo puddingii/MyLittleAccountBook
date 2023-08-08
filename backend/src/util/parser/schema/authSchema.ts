@@ -34,9 +34,18 @@ const naverLogin = zod.object({
 });
 
 const emailLogin = zod.object({
-	query: zod.object({
+	body: zod.object({
 		email: zod.string({ required_error: '이메일 정보가 누락되었습니다.' }),
 		password: zod.string({ required_error: '패스워드 정보가 누락되었습니다.' }),
+	}),
+});
+
+const refresh = zod.object({
+	headers: zod.object({
+		authorization: zod.string({ required_error: 'Access token is expired.' }),
+	}),
+	cookies: zod.object({
+		refresh: zod.string({ required_error: 'Refresh token is expired.' }),
 	}),
 });
 
@@ -44,5 +53,6 @@ export type TSocialQuery = zod.infer<typeof socialLogin>;
 export type TGoogleQuery = zod.infer<typeof googleLogin>;
 export type TNaverQuery = zod.infer<typeof naverLogin>;
 export type TEmailQuery = zod.infer<typeof emailLogin>;
+export type TRefreshQuery = zod.infer<typeof refresh>;
 
-export default { socialLogin, emailLogin, googleLogin, naverLogin };
+export default { socialLogin, emailLogin, googleLogin, naverLogin, refresh };

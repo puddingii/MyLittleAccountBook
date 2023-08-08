@@ -16,10 +16,15 @@ import {
 } from '@/repository/userRepository';
 import { convertErrorToCustomError } from '@/util/error';
 import { deleteCache, getCache, setCache } from '@/util/cache';
-import { createAccessToken, createRefreshToken } from '@/util/jwt';
+import {
+	createAccessToken,
+	createRefreshToken,
+	decodeToken,
+	isExpiredToken,
+} from '@/util/jwt';
 import secret from '@/config/secret';
 
-import { TSocialType } from '@/interface/auth';
+import { TDecodedAccessTokenInfo, TSocialType } from '@/interface/auth';
 
 const SOCIAL_URL_MANAGER = {
 	Google: getGoogleUrl,
@@ -192,4 +197,25 @@ export const naverLogin = async (code: string, state: string) => {
 		const customError = convertErrorToCustomError(error, { trace: 'Service' });
 		throw customError;
 	}
+};
+
+export const refreshToken = async (refreshToken: string, accessToken: string) => {
+	const isExpiredRefreshToken = isExpiredToken(refreshToken);
+	const isExpiredAccessToken = isExpiredToken(accessToken);
+	/** Refresh token X, Access token X */
+	if (isExpiredAccessToken && isExpiredRefreshToken) {
+		throw new Error('로그인이 필요합니다.');
+	}
+
+	const decodedData = decodeToken<TDecodedAccessTokenInfo>(accessToken);
+	/** Refresh token X, Access token O */
+	if (isExpiredRefreshToken) {
+		await deleteCache(decodedData.email);
+		throw new Error('로그인이 필요합니다.');
+	}
+
+	/** Refresh token O, Access token X */
+	const newAccessToken = createAccessToken(decodedData);
+
+	return newAccessToken;
 };

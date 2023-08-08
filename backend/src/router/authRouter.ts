@@ -5,6 +5,7 @@ import {
 	googleLogin,
 	getSocialLoginLocation,
 	naverLogin,
+	refreshToken,
 } from '@/service/authService';
 import zParser from '@/util/parser';
 import zodSchema from '@/util/parser/schema';
@@ -61,18 +62,19 @@ router.get('/social', async (req, res) => {
 		} = await zParser(zodSchema.auth.socialLogin, req);
 		const location = await getSocialLoginLocation(type);
 
-		return res.status(301).redirect(location);
+		return res.status(302).redirect(location);
 	} catch (error) {
 		const { message, traceList } = convertErrorToCustomError(error, { trace: 'Router' });
 		logger.error(message, traceList);
-		return res.status(404).json({ isSucceed: false, message });
+		return res.status(403).json({ isSucceed: false, message });
 	}
 });
 
-router.get('/email', async (req, res) => {
+router.post('/email', async (req, res) => {
 	try {
+		console.log(req.body);
 		const {
-			query: { email, password },
+			body: { email, password },
 		} = await zParser(zodSchema.auth.emailLogin, req);
 
 		const tokenInfo = await emailLogin({ email, password });
@@ -81,7 +83,25 @@ router.get('/email', async (req, res) => {
 	} catch (error) {
 		const { message, traceList } = convertErrorToCustomError(error, { trace: 'Router' });
 		logger.error(message, traceList);
-		return res.status(404).json({ isSucceed: false, message });
+		return res.status(403).json({ isSucceed: false, message });
+	}
+});
+
+router.get('/refresh', async (req, res) => {
+	try {
+		const {
+			cookies: { refresh },
+			headers: { authorization },
+		} = await zParser(zodSchema.auth.refresh, req);
+
+		const accessToken = authorization.split(' ')[1];
+		const newAccessToken = await refreshToken(refresh, accessToken);
+
+		return res.status(200).json(newAccessToken);
+	} catch (error) {
+		const { message, traceList } = convertErrorToCustomError(error, { trace: 'Router' });
+		logger.error(message, traceList);
+		return res.status(403).json({ isSucceed: false, message });
 	}
 });
 
