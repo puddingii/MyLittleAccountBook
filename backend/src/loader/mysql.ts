@@ -3,6 +3,7 @@ import { Sequelize } from 'sequelize';
 import { logger } from '@/util';
 import secret from '@/config/secret';
 import { convertErrorToCustomError } from '@/util/error';
+import { createEmailUser } from '@/repository/userRepository';
 
 const { databaseName, host, pw, username } = secret.mysql;
 
@@ -22,6 +23,21 @@ export const sync = async () => {
 		await sequelize.authenticate();
 		await sequelize.sync(syncOptions);
 		logger.info('Connection has been established successfully.', ['Mysql']);
+	} catch (error) {
+		const customError = convertErrorToCustomError(error, {
+			trace: 'Mysql',
+		});
+		throw customError;
+	}
+};
+
+export const createTestAccount = async () => {
+	try {
+		await createEmailUser({
+			email: 'test',
+			password: 'test123!@TEST',
+			nickname: 'testUser',
+		});
 	} catch (error) {
 		const customError = convertErrorToCustomError(error, {
 			trace: 'Mysql',

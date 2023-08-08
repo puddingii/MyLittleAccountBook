@@ -19,6 +19,9 @@ export const connect = async () => {
 			logger.error(customError.message, customError.traceList);
 		});
 		await client.connect();
+		if (secret.nodeEnv === 'development') {
+			await client.flushAll();
+		}
 
 		logger.info('Connection has been established successfully.', ['Redis']);
 	} catch (error) {

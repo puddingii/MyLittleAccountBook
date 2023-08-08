@@ -19,11 +19,16 @@ export const convertErrorToCustomError = (
 		return error;
 	}
 
-	if (
-		error instanceof ValidationError ||
-		error instanceof Error ||
-		error instanceof ZodError
-	) {
+	if (error instanceof ZodError) {
+		const message = error.issues.reduce((acc, issue) => `${acc} ${issue.message}`, '');
+		return new CustomError(message, {
+			cause: cause ?? error,
+			traceList: [trace],
+			code,
+		});
+	}
+
+	if (error instanceof ValidationError || error instanceof Error) {
 		return new CustomError(error.message, {
 			cause: cause ?? error.cause,
 			traceList: [trace],

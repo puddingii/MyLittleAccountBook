@@ -72,7 +72,6 @@ router.get('/social', async (req, res) => {
 
 router.post('/email', async (req, res) => {
 	try {
-		console.log(req.body);
 		const {
 			body: { email, password },
 		} = await zParser(zodSchema.auth.emailLogin, req);
@@ -97,7 +96,7 @@ router.get('/refresh', async (req, res) => {
 		const accessToken = authorization.split(' ')[1];
 		const newAccessToken = await refreshToken(refresh, accessToken);
 
-		return res.status(200).json(newAccessToken);
+		return res.status(200).json({ accessToken: newAccessToken });
 	} catch (error) {
 		const { message, traceList } = convertErrorToCustomError(error, { trace: 'Router' });
 		logger.error(message, traceList);

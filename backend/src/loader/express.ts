@@ -1,8 +1,8 @@
-import { Express, urlencoded, json } from 'express';
+import { Express, urlencoded, json, static as expressStatic } from 'express';
 import morgan, { StreamOptions } from 'morgan';
 import cors from 'cors';
-// import passport from 'passport';
 import cookieParser from 'cookie-parser';
+import path from 'path';
 
 import setRouter from '@/router';
 import { logger } from '@/util';
@@ -23,6 +23,9 @@ export default (app: Express) => {
 	app.use(cookieParser(sessionKey));
 	app.use(urlencoded({ extended: false }));
 	app.use(json());
+	if (secret.nodeEnv === 'development') {
+		app.use('/static', expressStatic(path.join(__dirname, '../../public')));
+	}
 
 	setRouter(app);
 
