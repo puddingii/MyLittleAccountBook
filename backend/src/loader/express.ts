@@ -1,14 +1,14 @@
-import { Express, urlencoded, json, static as expressStatic } from 'express';
+import { Express, urlencoded, json } from 'express';
 import morgan, { StreamOptions } from 'morgan';
 import cors from 'cors';
 import cookieParser from 'cookie-parser';
-import path from 'path';
+import swagger from 'swagger-ui-express';
 
 import setRouter from '@/router';
 import { logger } from '@/util';
 import secret from '@/config/secret';
 
-export default (app: Express) => {
+export default async (app: Express) => {
 	const { corsOriginList, sessionKey } = secret.express;
 	const stream: StreamOptions = {
 		// Use the http severity
@@ -24,7 +24,8 @@ export default (app: Express) => {
 	app.use(urlencoded({ extended: false }));
 	app.use(json());
 	if (secret.nodeEnv === 'development') {
-		app.use('/static', expressStatic(path.join(__dirname, '../../public')));
+		const docs = await import('@/json/swagger.json');
+		app.use('/dev/api/docs', swagger.serve, swagger.setup(docs));
 	}
 
 	setRouter(app);
