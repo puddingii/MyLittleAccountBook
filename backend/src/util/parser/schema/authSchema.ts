@@ -40,12 +40,30 @@ const emailLogin = zod.object({
 	}),
 });
 
-const refresh = zod.object({
-	headers: zod.object({
-		authorization: zod.string({ required_error: 'Access token is expired.' }),
+const join = zod.object({
+	body: zod.object({
+		email: zod
+			.string({ required_error: '이메일 정보가 누락되었습니다.' })
+			.trim()
+			.max(255, '입력할 수 있는 길이를 넘었습니다.'),
+		password: zod
+			.string({ required_error: '패스워드 정보가 누락되었습니다.' })
+			.regex(
+				/^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&].{7,}$/,
+				'최소 8자 이상, 각각 최소 하나의 대/소문자, 숫자, 특수 문자가 포함되어야 합니다.',
+			)
+			.trim()
+			.max(255, '입력할 수 있는 길이를 넘었습니다.'),
+		nickname: zod
+			.string({ required_error: '닉네임 정보가 누락되었습니다.' })
+			.max(255, '입력할 수 있는 길이를 넘었습니다.'),
 	}),
-	cookies: zod.object({
+});
+
+const tokenInfo = zod.object({
+	headers: zod.object({
 		refresh: zod.string({ required_error: 'Refresh token is expired.' }),
+		authorization: zod.string({ required_error: 'Access token is expired.' }),
 	}),
 });
 
@@ -53,6 +71,7 @@ export type TSocialQuery = zod.infer<typeof socialLogin>;
 export type TGoogleQuery = zod.infer<typeof googleLogin>;
 export type TNaverQuery = zod.infer<typeof naverLogin>;
 export type TEmailQuery = zod.infer<typeof emailLogin>;
-export type TRefreshQuery = zod.infer<typeof refresh>;
+export type TTokenQuery = zod.infer<typeof tokenInfo>;
+export type TJoinQuery = zod.infer<typeof join>;
 
-export default { socialLogin, emailLogin, googleLogin, naverLogin, refresh };
+export default { socialLogin, emailLogin, googleLogin, naverLogin, tokenInfo, join };

@@ -6,6 +6,7 @@ import { INaverSocialInfo } from '@/interface/auth';
 /** ETC.. */
 import secret from '@/config/secret';
 import { convertErrorToCustomError } from '@/util/error';
+import { CustomError } from '@/util/error/class';
 
 const {
 	social: { naver: naverKey },
@@ -56,10 +57,9 @@ export const getTokenInfo = async (code: string, state: string) => {
 
 		const tokenInfo = (await response.json()) as INaverSocialInfo['TokenInfo'];
 		if (!response.ok || tokenInfo.error) {
-			throw new Error(
-				`(${response.status || tokenInfo.error}) ${
-					response.statusText || tokenInfo.error_description
-				}`,
+			throw new CustomError(
+				`(${tokenInfo.error}) ${response.statusText || tokenInfo.error_description}`,
+				{ code: response.status },
 			);
 		}
 
@@ -86,7 +86,7 @@ export const getUserInfo = async (code: string) => {
 
 		const userInfo = await response.json();
 		if (!response.ok) {
-			throw new Error(`(${response.status}) ${response.statusText}`);
+			throw new CustomError(response.statusText, { code: response.status });
 		}
 
 		return userInfo as INaverSocialInfo['UserInfo'];

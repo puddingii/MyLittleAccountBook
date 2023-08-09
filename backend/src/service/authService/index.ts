@@ -65,7 +65,7 @@ export const emailJoin = async (userInfo: {
 			throw new Error('해당 이메일로 생성된 계정이 있습니다.');
 		}
 	} catch (error) {
-		const customError = convertErrorToCustomError(error, { trace: 'Service' });
+		const customError = convertErrorToCustomError(error, { trace: 'Service', code: 400 });
 		throw customError;
 	}
 };
@@ -98,7 +98,7 @@ export const emailLogin = async (userInfo: { email: string; password: string }) 
 
 		return { refreshToken, accessToken };
 	} catch (error) {
-		const customError = convertErrorToCustomError(error, { trace: 'Service' });
+		const customError = convertErrorToCustomError(error, { trace: 'Service', code: 400 });
 		throw customError;
 	}
 };
@@ -110,7 +110,7 @@ export const getSocialLoginLocation = async (type: TSocialType) => {
 
 		return SOCIAL_URL_MANAGER[type](randomState);
 	} catch (error) {
-		const customError = convertErrorToCustomError(error, { trace: 'Service' });
+		const customError = convertErrorToCustomError(error, { trace: 'Service', code: 400 });
 		throw customError;
 	}
 };
@@ -144,7 +144,7 @@ const socialLogin = async (
 
 		return { refreshToken, accessToken };
 	} catch (error) {
-		const customError = convertErrorToCustomError(error, { trace: 'Service' });
+		const customError = convertErrorToCustomError(error, { trace: 'Service', code: 400 });
 		throw customError;
 	}
 };
@@ -175,7 +175,7 @@ export const googleLogin = async (code: string, state: string) => {
 
 		return tokenInfo;
 	} catch (error) {
-		const customError = convertErrorToCustomError(error, { trace: 'Service' });
+		const customError = convertErrorToCustomError(error, { trace: 'Service', code: 403 });
 		throw customError;
 	}
 };
@@ -194,28 +194,36 @@ export const naverLogin = async (code: string, state: string) => {
 
 		return tokenInfo;
 	} catch (error) {
-		const customError = convertErrorToCustomError(error, { trace: 'Service' });
+		const customError = convertErrorToCustomError(error, { trace: 'Service', code: 403 });
 		throw customError;
 	}
 };
 
 export const refreshToken = async (refreshToken: string, accessToken: string) => {
-	const isExpiredRefreshToken = isExpiredToken(refreshToken);
-	const isExpiredAccessToken = isExpiredToken(accessToken);
-	/** Refresh token X, Access token X */
-	if (isExpiredAccessToken && isExpiredRefreshToken) {
-		throw new Error('로그인이 필요합니다.');
+	try {
+		const isExpiredRefreshToken = isExpiredToken(refreshToken);
+		const isExpiredAccessToken = isExpiredToken(accessToken);
+		/** Refresh token X, Access token X */
+		if (isExpiredAccessToken && isExpiredRefreshToken) {
+			throw new Error('로그인이 필요합니다.');
+		}
+
+		const decodedData = decodeToken<TDecodedAccessTokenInfo>(accessToken);
+		/** Refresh token X, Access token O */
+		if (isExpiredRefreshToken) {
+			await deleteCache(decodedData.email);
+			throw new Error('로그인이 필요합니다.');
+		}
+
+		/** Refresh token O, Access token X */
+		const newAccessToken = createAccessToken({
+			email: decodedData.email,
+			nickname: decodedData.nickname,
+		});
+
+		return newAccessToken;
+	} catch (error) {
+		const customError = convertErrorToCustomError(error, { trace: 'Service', code: 401 });
+		throw customError;
 	}
-
-	const decodedData = decodeToken<TDecodedAccessTokenInfo>(accessToken);
-	/** Refresh token X, Access token O */
-	if (isExpiredRefreshToken) {
-		await deleteCache(decodedData.email);
-		throw new Error('로그인이 필요합니다.');
-	}
-
-	/** Refresh token O, Access token X */
-	const newAccessToken = createAccessToken(decodedData);
-
-	return newAccessToken;
 };
