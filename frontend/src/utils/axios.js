@@ -1,9 +1,19 @@
 import axios from 'axios';
 
-export const setAxiosAuthorization = data => {
-	if (data) {
-		axios.defaults.headers.common['Authorization'] = data;
-	} else if (!data && axios.defaults.headers.common['Authorization']) {
-		delete axios.defaults.headers.common['Authorization'];
+/**
+ * @param {{[key: string]: string}} tokenInfo
+ */
+export const setAxiosToken = tokenInfo => {
+	Object.keys(tokenInfo).forEach(key => {
+		axios.defaults.headers.common[key] = tokenInfo[key];
+	});
+};
+
+/**
+ * @param {'Authorization' | 'refresh'} name Access Token 및 Refresh Token
+ */
+export const deleteAxiosHeaders = name => {
+	if (axios.defaults.headers.common[name]) {
+		delete axios.defaults.headers.common[name];
 	}
 };

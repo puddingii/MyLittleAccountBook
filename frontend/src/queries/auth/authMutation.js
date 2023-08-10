@@ -1,28 +1,33 @@
 import axios from 'axios';
 import { useMutation, useQueryClient } from 'react-query';
 import { useSetRecoilState } from 'recoil';
-import jwt_decode from 'jwt-decode';
+import jwtDecode from 'jwt-decode';
 
 import { QUERY_KEY } from './index';
-import { userState } from 'recoil/user';
+import userState from 'recoil/user';
+import { setToken } from 'utils/auth';
 
-const loginFetcher = userInfo =>
-	axios.post(QUERY_KEY.login, userInfo, {
+/**
+ * @param {{ email: string; password: string; }} userInfo
+ */
+const emailLoginFetcher = userInfo =>
+	axios.post(QUERY_KEY.emailLogin, userInfo, {
 		withCredentials: true,
 	});
 
-export const useUserLoginMutation = () => {
+export const useEmailLoginMutation = () => {
 	const queryClient = useQueryClient();
 	const setUserState = useSetRecoilState(userState);
 
-	return useMutation(loginFetcher, {
+	return useMutation(emailLoginFetcher, {
 		onSuccess: ({ data }) => {
-			if (data?.token) {
-				setToken(data?.token);
-				const decodedData = jwt_decode(data.token);
+			if (data) {
+				setToken({ accessToken: data.accessToken, refreshToken: data.refreshToken });
+				const decodedData = jwtDecode(data.accessToken);
 				setUserState(oldState => ({
 					...oldState,
-					nickname: decodedData?.nickname,
+					email: decodedData.email,
+					nickname: decodedData.nickname,
 					isLogin: true,
 				}));
 			}
@@ -31,6 +36,38 @@ export const useUserLoginMutation = () => {
 	});
 };
 
+/**
+ * @param {'Google' | 'Naver'} type
+ */
+const socialLoginFetcher = type =>
+	axios.post(QUERY_KEY.emailLogin, type, {
+		withCredentials: true,
+	});
+
+export const useSocialLoginMutation = () => {
+	const queryClient = useQueryClient();
+	const setUserState = useSetRecoilState(userState);
+
+	return useMutation(socialLoginFetcher, {
+		onSuccess: ({ data }) => {
+			if (data) {
+				setToken({ accessToken: data.accessToken, refreshToken: data.refreshToken });
+				const decodedData = jwtDecode(data.accessToken);
+				setUserState(oldState => ({
+					...oldState,
+					email: decodedData.email,
+					nickname: decodedData.nickname,
+					isLogin: true,
+				}));
+			}
+			queryClient.invalidateQueries(QUERY_KEY.login);
+		},
+	});
+};
+
+/**
+ * @param {{ email: string; password: string; nickname: string; }} userInfo
+ */
 const joinFetcher = userInfo =>
 	axios.post(QUERY_KEY.join, userInfo, {
 		withCredentials: true,

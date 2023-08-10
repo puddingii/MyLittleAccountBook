@@ -3,14 +3,15 @@ import { atom } from 'recoil';
 
 // initial state
 const initialState = {
+	email: '',
 	nickname: '',
 	isLogin: false,
 };
 
-const menuState = atom({
-	key: 'menuState',
+const userState = atom({
+	key: 'userState',
 	default: initialState,
-	effects: [localStorageEffect('menuState')],
+	effects: [localStorageEffect('userState')],
 });
 
-export default menuState;
+export default userState;
