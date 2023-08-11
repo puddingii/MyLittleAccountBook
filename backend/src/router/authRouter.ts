@@ -112,7 +112,7 @@ router.post('/email', async (req, res) => {
 		});
 		logger.error(message, traceList);
 
-		return res.status(code).json({ data: {}, message: '', status: 'fail' });
+		return res.status(code).json({ data: {}, message, status: 'fail' });
 	}
 });
 
@@ -125,7 +125,7 @@ router.post('/join', async (req, res) => {
 		await emailJoin({ email, password, nickname });
 
 		return res
-			.status(200)
+			.status(201)
 			.json({ data: {}, message: '', status: 'success' } as TPostJoin);
 	} catch (error) {
 		const { message, traceList, code } = convertErrorToCustomError(error, {
@@ -155,7 +155,7 @@ router.get('/refresh', async (req, res) => {
 	} catch (error) {
 		const { message, traceList, code } = convertErrorToCustomError(error, {
 			trace: 'Router',
-			code: 400,
+			code: 401,
 		});
 		logger.error(message, traceList);
 

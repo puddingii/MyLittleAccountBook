@@ -48,7 +48,7 @@
 								"properties": {
 									"email": {
 										"type": "string",
-										"example": "test"
+										"example": "test@naver.com"
 									},
 									"password": {
 										"type": "string",

@@ -34,7 +34,7 @@ export const sync = async () => {
 export const createTestAccount = async () => {
 	try {
 		await createEmailUser({
-			email: 'test',
+			email: 'test@naver.com',
 			password: 'test123!@TEST',
 			nickname: 'testUser',
 		});
