@@ -63,7 +63,9 @@ const join = zod.object({
 const tokenInfo = zod.object({
 	headers: zod.object({
 		refresh: zod.string({ required_error: 'Refresh token is expired.' }),
-		authorization: zod.string({ required_error: 'Access token is expired.' }),
+		authorization: zod
+			.string({ required_error: 'Access token is expired.' })
+			.refine(data => data.split(' ')[0] === 'Bearer', 'Token type error'),
 	}),
 });
 

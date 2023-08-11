@@ -4,7 +4,7 @@ import secret from '@/config/secret';
 
 const {
 	social: { google: googleKey },
-	baseUrl,
+	frontUrl,
 } = secret;
 
 const config = {
@@ -20,7 +20,7 @@ export const getClient = () => {
 	return new google.auth.OAuth2(
 		googleKey.clientId,
 		googleKey.secret,
-		`${baseUrl}/auth/social/google`,
+		`${frontUrl}/auth/social?type=google`,
 	);
 };
 

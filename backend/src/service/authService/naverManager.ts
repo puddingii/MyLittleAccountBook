@@ -10,13 +10,13 @@ import { CustomError } from '@/util/error/class';
 
 const {
 	social: { naver: naverKey },
-	baseUrl,
+	frontUrl,
 } = secret;
 
 const client = {
 	id: naverKey.clientId,
 	secret: naverKey.secret,
-	redirectUri: `${baseUrl}/auth/social/naver`,
+	redirectUri: `${frontUrl}/auth/social?type=naver`,
 };
 
 const config = {

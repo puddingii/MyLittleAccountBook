@@ -7,18 +7,22 @@ import {
 	naverLogin,
 	refreshToken,
 	emailJoin,
+	deleteToken,
 } from '@/service/authService';
 import zParser from '@/util/parser';
 import zodSchema from '@/util/parser/schema';
 import { logger } from '@/util';
 import { convertErrorToCustomError } from '@/util/error';
+import secret from '@/config/secret';
 
 import {
-	TGetRefresh,
+	TGetToken,
 	TGetSocialGoogle,
 	TGetSocialNaver,
 	TPostEmail,
 	TPostJoin,
+	TDeleteToken,
+	TGetSocial,
 } from '@/interface/api/authResponse';
 
 const router = express.Router();
@@ -45,7 +49,10 @@ router.get('/social/google', async (req, res) => {
 		});
 		logger.error(message, traceList);
 
-		return res.status(code).json({ data: {}, message, status: 'fail' });
+		return res
+			.status(code)
+			.json({ data: {}, message, status: 'fail' })
+			.redirect(`${secret.frontUrl}/auth/social`);
 	}
 });
 
@@ -82,7 +89,9 @@ router.get('/social', async (req, res) => {
 		} = await zParser(zodSchema.auth.socialLogin, req);
 		const location = await getSocialLoginLocation(type);
 
-		return res.status(302).redirect(location);
+		return res
+			.status(200)
+			.json({ data: { location }, message: '', status: 'success' } as TGetSocial);
 	} catch (error) {
 		const { message, traceList, code } = convertErrorToCustomError(error, {
 			trace: 'Router',
@@ -138,7 +147,7 @@ router.post('/join', async (req, res) => {
 	}
 });
 
-router.get('/refresh', async (req, res) => {
+router.get('/token', async (req, res) => {
 	try {
 		const {
 			headers: { authorization, refresh },
@@ -151,11 +160,40 @@ router.get('/refresh', async (req, res) => {
 			data: { accessToken: newAccessToken },
 			message: '',
 			status: 'success',
-		} as TGetRefresh);
+		} as TGetToken);
 	} catch (error) {
 		const { message, traceList, code } = convertErrorToCustomError(error, {
 			trace: 'Router',
 			code: 401,
+		});
+		logger.error(message, traceList);
+
+		return res.status(code).json({
+			data: {},
+			message: '',
+			status: 'fail',
+		});
+	}
+});
+
+router.delete('/token', async (req, res) => {
+	try {
+		const {
+			headers: { authorization, refresh },
+		} = await zParser(zodSchema.auth.tokenInfo, req);
+
+		const accessToken = authorization.split(' ')[1];
+		await deleteToken(refresh, accessToken);
+
+		return res.status(200).json({
+			data: {},
+			message: '',
+			status: 'success',
+		} as TDeleteToken);
+	} catch (error) {
+		const { message, traceList, code } = convertErrorToCustomError(error, {
+			trace: 'Router',
+			code: 400,
 		});
 		logger.error(message, traceList);
 

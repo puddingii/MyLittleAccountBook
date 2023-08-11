@@ -7,6 +7,8 @@ type TTokenLoginResult = {
 
 export type TGetSocialGoogle = TResponseType<TTokenLoginResult>;
 export type TGetSocialNaver = TResponseType<TTokenLoginResult>;
+export type TGetSocial = TResponseType<{ location: string }>;
 export type TPostEmail = TResponseType<TTokenLoginResult>;
-export type TGetRefresh = TResponseType<Omit<TTokenLoginResult, 'refreshToken'>>;
+export type TGetToken = TResponseType<Omit<TTokenLoginResult, 'refreshToken'>>;
+export type TDeleteToken = TResponseType<{}>;
 export type TPostJoin = TResponseType<{}>;

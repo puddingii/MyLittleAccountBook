@@ -227,3 +227,16 @@ export const refreshToken = async (refreshToken: string, accessToken: string) =>
 		throw customError;
 	}
 };
+
+export const deleteToken = async (refreshToken: string, accessToken: string) => {
+	try {
+		const decodedData = decodeToken<TDecodedAccessTokenInfo>(accessToken);
+		const cachedRefreshToken = await getCache(decodedData.email);
+		if (refreshToken === cachedRefreshToken) {
+			await deleteCache(decodedData.email);
+		}
+	} catch (error) {
+		const customError = convertErrorToCustomError(error, { trace: 'Service', code: 400 });
+		throw customError;
+	}
+};
