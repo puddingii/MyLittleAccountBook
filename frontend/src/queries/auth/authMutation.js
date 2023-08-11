@@ -1,20 +1,22 @@
 import axios from 'axios';
 import { useMutation, useQueryClient } from 'react-query';
+import { useNavigate } from 'react-router';
 import { useSetRecoilState } from 'recoil';
 import jwtDecode from 'jwt-decode';
 
 import { QUERY_KEY } from './index';
 import userState from 'recoil/user';
-import { setToken } from 'utils/auth';
-import { useNavigate } from 'react-router';
+import { deleteToken, setToken } from 'utils/auth';
 
 /**
  * @param {{ email: string; password: string; }} userInfo
  */
 const emailLoginFetcher = userInfo =>
-	axios.post(QUERY_KEY.emailLogin, userInfo, {
-		withCredentials: true,
-	});
+	axios
+		.post(QUERY_KEY.emailLogin, userInfo, {
+			withCredentials: true,
+		})
+		.then(({ data }) => data);
 
 export const useEmailLoginMutation = () => {
 	const queryClient = useQueryClient();
@@ -22,7 +24,7 @@ export const useEmailLoginMutation = () => {
 	const navigate = useNavigate();
 
 	return useMutation(emailLoginFetcher, {
-		onSuccess: ({ data: response }) => {
+		onSuccess: response => {
 			const { data, status } = response;
 			if (status === 'success') {
 				setToken({ accessToken: data.accessToken, refreshToken: data.refreshToken });
@@ -43,28 +45,19 @@ export const useEmailLoginMutation = () => {
 /**
  * @param {'Google' | 'Naver'} type
  */
-const socialLoginFetcher = type =>
-	axios.post(QUERY_KEY.emailLogin, type, {
-		withCredentials: true,
-	});
+const getSocialLocationFetcher = type =>
+	axios.get(`${QUERY_KEY.socialLogin}?type=${type}`, { withCredentials: true }).then(({ data }) => data);
 
-export const useSocialLoginMutation = () => {
+export const useGetSocialLocationMutate = () => {
 	const queryClient = useQueryClient();
-	const setUserState = useSetRecoilState(userState);
 
-	return useMutation(socialLoginFetcher, {
-		onSuccess: ({ data }) => {
-			if (data) {
-				setToken({ accessToken: data.accessToken, refreshToken: data.refreshToken });
-				const decodedData = jwtDecode(data.accessToken);
-				setUserState(oldState => ({
-					...oldState,
-					email: decodedData.email,
-					nickname: decodedData.nickname,
-					isLogin: true,
-				}));
+	return useMutation(getSocialLocationFetcher, {
+		onSuccess: response => {
+			const { data, status } = response;
+			if (status === 'success') {
+				window.location.href = data.location;
 			}
-			queryClient.invalidateQueries(QUERY_KEY.login);
+			queryClient.invalidateQueries(QUERY_KEY.socialLogin);
 		},
 	});
 };
@@ -73,17 +66,46 @@ export const useSocialLoginMutation = () => {
  * @param {{ email: string; password: string; nickname: string; }} userInfo
  */
 const joinFetcher = userInfo =>
-	axios.post(QUERY_KEY.join, userInfo, {
-		withCredentials: true,
-	});
+	axios
+		.post(QUERY_KEY.join, userInfo, {
+			withCredentials: true,
+		})
+		.then(({ data }) => data);
 
 export const useJoinMutation = () => {
 	const queryClient = useQueryClient();
+	const navigate = useNavigate();
 
 	return useMutation(joinFetcher, {
+		onSuccess: response => {
+			const { status } = response;
+			if (status === 'success') {
+				navigate('/login');
+				queryClient.invalidateQueries(QUERY_KEY.join);
+			}
+		},
+	});
+};
+
+const logoutFetcher = () =>
+	axios
+		.delete(QUERY_KEY.token, {
+			withCredentials: true,
+		})
+		.then(({ data }) => data);
+
+export const useLogoutMutation = () => {
+	const queryClient = useQueryClient();
+	const setUserInfo = useSetRecoilState(userState);
+	const navigate = useNavigate();
+
+	return useMutation(logoutFetcher, {
 		onSuccess: () => {
-			window.location.href = '/login';
-			queryClient.invalidateQueries(QUERY_KEY.join);
+			deleteToken('Authorization');
+			deleteToken('refresh');
+			setUserInfo(() => ({ email: '', isLogin: false, nickname: '' }));
+			navigate('/login');
+			queryClient.invalidateQueries(QUERY_KEY.token);
 		},
 	});
 };

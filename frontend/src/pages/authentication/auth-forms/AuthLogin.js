@@ -17,6 +17,7 @@ import {
 	Stack,
 	Typography,
 	Alert,
+	Breadcrumbs,
 } from '@mui/material';
 
 // third party
@@ -34,14 +35,8 @@ import { useEmailLoginMutation } from 'queries/auth/authMutation';
 // ============================|| FIREBASE - LOGIN ||============================ //
 
 const AuthLogin = () => {
-	const [checked, setChecked] = React.useState(false);
 	const [showPassword, setShowPassword] = React.useState(false);
-	const {
-		mutate: emailMutate,
-		error: emailMutateError,
-		isError,
-	} = useEmailLoginMutation();
-	const loginErrorMessage = emailMutateError?.response?.data?.message;
+	const { mutate: emailMutate } = useEmailLoginMutation();
 
 	const handleClickShowPassword = () => {
 		setShowPassword(!showPassword);
@@ -52,49 +47,36 @@ const AuthLogin = () => {
 	};
 
 	const handleSubmit = async (values, { setErrors, setStatus, setSubmitting }) => {
-		try {
-			emailMutate(values);
-			setStatus({ success: false });
-			setSubmitting(false);
-		} catch (err) {
-			setStatus({ success: false });
-			setErrors({ submit: err.message });
-			setSubmitting(false);
-		}
+		emailMutate(values, {
+			onSuccess: () => {
+				setStatus({ success: false });
+				setSubmitting(false);
+			},
+			onError: error => {
+				setStatus({ success: false });
+				setErrors({ submit: error?.response?.data?.message });
+				setSubmitting(false);
+			},
+		});
 	};
 
 	return (
 		<>
-			{isError ? (
-				<Alert onClose={() => {}} severity="error">
-					{loginErrorMessage}
-				</Alert>
-			) : (
-				<></>
-			)}
-
 			<Formik
 				initialValues={{
-					email: 'info@codedthemes.com',
-					password: '123456',
+					email: '',
+					password: '',
+					submit: null,
 				}}
 				validationSchema={loginSchema}
 				onSubmit={handleSubmit}
 			>
-				{({
-					errors,
-					handleBlur,
-					handleChange,
-					handleSubmit,
-					isSubmitting,
-					touched,
-					values,
-				}) => (
+				{({ errors, handleBlur, handleChange, handleSubmit, isSubmitting, touched, values }) => (
 					<form noValidate onSubmit={handleSubmit}>
 						<Grid container spacing={3}>
 							<Grid item xs={12}>
 								<Stack spacing={1}>
-									<InputLabel htmlFor="email-login">Email Address</InputLabel>
+									<InputLabel htmlFor="email-login">이메일</InputLabel>
 									<OutlinedInput
 										id="email-login"
 										type="email"
@@ -115,7 +97,7 @@ const AuthLogin = () => {
 							</Grid>
 							<Grid item xs={12}>
 								<Stack spacing={1}>
-									<InputLabel htmlFor="password-login">Password</InputLabel>
+									<InputLabel htmlFor="password-login">비밀번호</InputLabel>
 									<OutlinedInput
 										fullWidth
 										error={Boolean(touched.password && errors.password)}
@@ -148,30 +130,6 @@ const AuthLogin = () => {
 								</Stack>
 							</Grid>
 
-							<Grid item xs={12} sx={{ mt: -1 }}>
-								<Stack
-									direction="row"
-									justifyContent="space-between"
-									alignItems="center"
-									spacing={2}
-								>
-									<FormControlLabel
-										control={
-											<Checkbox
-												checked={checked}
-												onChange={event => setChecked(event.target.checked)}
-												name="checked"
-												color="primary"
-												size="small"
-											/>
-										}
-										label={<Typography variant="h6">Keep me sign in</Typography>}
-									/>
-									<Link variant="h6" component={RouterLink} to="" color="text.primary">
-										Forgot Password?
-									</Link>
-								</Stack>
-							</Grid>
 							{errors.submit && (
 								<Grid item xs={12}>
 									<FormHelperText error>{errors.submit}</FormHelperText>
@@ -188,9 +146,19 @@ const AuthLogin = () => {
 										variant="contained"
 										color="primary"
 									>
-										Login
+										로그인
 									</Button>
 								</AnimateButton>
+							</Grid>
+							<Grid item xs={12} sx={{ mt: -1 }}>
+								<Stack direction="row" justifyContent="space-evenly" alignItems="center" spacing={2}>
+									<Link variant="h6" component={RouterLink} to="" color="text.primary">
+										아이디 찾기
+									</Link>
+									<Link variant="h6" component={RouterLink} to="" color="text.primary">
+										비밀번호 찾기
+									</Link>
+								</Stack>
 							</Grid>
 							<Grid item xs={12}>
 								<Divider>
