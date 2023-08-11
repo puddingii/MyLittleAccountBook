@@ -13,7 +13,7 @@ export const setToken = tokenInfo => {
 	const headerInfo = {};
 
 	if (accessToken) {
-		headerInfo['Authorization'] = accessToken;
+		headerInfo['Authorization'] = `Bearer ${accessToken}`;
 	}
 	if (refreshToken) {
 		headerInfo['refresh'] = refreshToken;

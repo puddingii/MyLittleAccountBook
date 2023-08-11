@@ -6,6 +6,7 @@ import jwtDecode from 'jwt-decode';
 import { QUERY_KEY } from './index';
 import userState from 'recoil/user';
 import { setToken } from 'utils/auth';
+import { useNavigate } from 'react-router';
 
 /**
  * @param {{ email: string; password: string; }} userInfo
@@ -18,10 +19,12 @@ const emailLoginFetcher = userInfo =>
 export const useEmailLoginMutation = () => {
 	const queryClient = useQueryClient();
 	const setUserState = useSetRecoilState(userState);
+	const navigate = useNavigate();
 
 	return useMutation(emailLoginFetcher, {
-		onSuccess: ({ data }) => {
-			if (data) {
+		onSuccess: ({ data: response }) => {
+			const { data, status } = response;
+			if (status === 'success') {
 				setToken({ accessToken: data.accessToken, refreshToken: data.refreshToken });
 				const decodedData = jwtDecode(data.accessToken);
 				setUserState(oldState => ({
@@ -30,6 +33,7 @@ export const useEmailLoginMutation = () => {
 					nickname: decodedData.nickname,
 					isLogin: true,
 				}));
+				navigate('/dashboard/default');
 			}
 			queryClient.invalidateQueries(QUERY_KEY.login);
 		},

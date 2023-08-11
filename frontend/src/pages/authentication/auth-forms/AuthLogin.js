@@ -16,6 +16,7 @@ import {
 	OutlinedInput,
 	Stack,
 	Typography,
+	Alert,
 } from '@mui/material';
 
 // third party
@@ -28,13 +29,20 @@ import AnimateButton from 'components/@extended/AnimateButton';
 
 // assets
 import { EyeOutlined, EyeInvisibleOutlined } from '@ant-design/icons';
+import { useEmailLoginMutation } from 'queries/auth/authMutation';
 
 // ============================|| FIREBASE - LOGIN ||============================ //
 
 const AuthLogin = () => {
 	const [checked, setChecked] = React.useState(false);
-
 	const [showPassword, setShowPassword] = React.useState(false);
+	const {
+		mutate: emailMutate,
+		error: emailMutateError,
+		isError,
+	} = useEmailLoginMutation();
+	const loginErrorMessage = emailMutateError?.response?.data?.message;
+
 	const handleClickShowPassword = () => {
 		setShowPassword(!showPassword);
 	};
@@ -45,6 +53,7 @@ const AuthLogin = () => {
 
 	const handleSubmit = async (values, { setErrors, setStatus, setSubmitting }) => {
 		try {
+			emailMutate(values);
 			setStatus({ success: false });
 			setSubmitting(false);
 		} catch (err) {
@@ -56,11 +65,18 @@ const AuthLogin = () => {
 
 	return (
 		<>
+			{isError ? (
+				<Alert onClose={() => {}} severity="error">
+					{loginErrorMessage}
+				</Alert>
+			) : (
+				<></>
+			)}
+
 			<Formik
 				initialValues={{
 					email: 'info@codedthemes.com',
 					password: '123456',
-					submit: null,
 				}}
 				validationSchema={loginSchema}
 				onSubmit={handleSubmit}
