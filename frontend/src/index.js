@@ -25,7 +25,8 @@ const root = createRoot(container); // createRoot(container!) if you use TypeScr
 
 /** Refresh Token */
 const token = getCookie('token');
-setAxiosToken({ refreshToken: token });
+const accessToken = getCookie('accessToken');
+setAxiosToken({ refresh: token, Authorization: accessToken });
 
 const queryClient = new QueryClient({
 	defaultOptions: {

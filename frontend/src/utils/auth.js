@@ -14,6 +14,7 @@ export const setToken = tokenInfo => {
 
 	if (accessToken) {
 		headerInfo['Authorization'] = `Bearer ${accessToken}`;
+		setCookie('accessToken', `Bearer ${accessToken}`);
 	}
 	if (refreshToken) {
 		headerInfo['refresh'] = refreshToken;
@@ -30,5 +31,8 @@ export const deleteToken = name => {
 	deleteAxiosHeaders(name);
 	if (name === 'refresh') {
 		deleteCookie('token');
+	}
+	if (name === 'Authorization') {
+		deleteCookie('accessToken');
 	}
 };

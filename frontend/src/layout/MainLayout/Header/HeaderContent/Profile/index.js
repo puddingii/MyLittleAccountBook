@@ -26,9 +26,11 @@ import ProfileTab from './ProfileTab';
 import SettingTab from './SettingTab';
 
 // assets
-import avatar1 from 'assets/images/users/avatar-1.png';
+import avatar1 from 'assets/images/users/avatar-default.jpg';
 import { LogoutOutlined, SettingOutlined, UserOutlined } from '@ant-design/icons';
 import { useLogoutMutation } from 'queries/auth/authMutation';
+import { useRecoilValue } from 'recoil';
+import userState from 'recoil/user';
 
 // tab panel wrapper
 function TabPanel({ children, value, index, ...other }) {
@@ -63,6 +65,7 @@ function a11yProps(index) {
 const Profile = () => {
 	const theme = useTheme();
 	const { mutate: logoutMutate } = useLogoutMutation();
+	const userInfo = useRecoilValue(userState);
 
 	const handleLogout = async () => {
 		logoutMutate();
@@ -106,7 +109,7 @@ const Profile = () => {
 			>
 				<Stack direction="row" spacing={2} alignItems="center" sx={{ p: 0.5 }}>
 					<Avatar alt="profile user" src={avatar1} sx={{ width: 32, height: 32 }} />
-					<Typography variant="subtitle1">John Doe</Typography>
+					<Typography variant="subtitle1">{userInfo.nickname}</Typography>
 				</Stack>
 			</ButtonBase>
 			<Popper
@@ -149,10 +152,8 @@ const Profile = () => {
 													<Stack direction="row" spacing={1.25} alignItems="center">
 														<Avatar alt="profile user" src={avatar1} sx={{ width: 32, height: 32 }} />
 														<Stack>
-															<Typography variant="h6">John Doe</Typography>
-															<Typography variant="body2" color="textSecondary">
-																UI/UX Designer
-															</Typography>
+															<Typography variant="h6">{userInfo.nickname}</Typography>
+															<Typography variant="body2" color="textSecondary"></Typography>
 														</Stack>
 													</Stack>
 												</Grid>
