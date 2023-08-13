@@ -10,10 +10,11 @@ import {
 
 import sequelize from '@/loader/mysql';
 import UserModel from './user';
+import { TModelInfo } from '@/interface/user';
 
-class OAuthUser extends Model<
-	InferAttributes<OAuthUser>,
-	InferCreationAttributes<OAuthUser>
+export class OAuthUserModel extends Model<
+	InferAttributes<OAuthUserModel>,
+	InferCreationAttributes<OAuthUserModel>
 > {
 	declare createdAt: CreationOptional<Date>;
 	declare id: CreationOptional<number>;
@@ -23,7 +24,7 @@ class OAuthUser extends Model<
 	declare userEmail: ForeignKey<UserModel['email']>;
 }
 
-OAuthUser.init(
+OAuthUserModel.init(
 	{
 		id: {
 			type: DataTypes.INTEGER.UNSIGNED,
@@ -44,4 +45,12 @@ OAuthUser.init(
 	},
 );
 
-export default OAuthUser;
+export const associate = (model: TModelInfo) => {
+	OAuthUserModel.belongsTo(model.UserModel, {
+		targetKey: 'email',
+		foreignKey: 'userEmail',
+		as: 'users',
+	});
+};
+
+export default OAuthUserModel;

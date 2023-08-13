@@ -21,6 +21,8 @@ import {
 import sequelize from '@/loader/mysql';
 import OAuthUser from './oauthUser';
 
+import { TModelInfo } from '@/interface/user';
+
 export class UserModel extends Model<
 	InferAttributes<UserModel>,
 	InferCreationAttributes<UserModel>
@@ -63,5 +65,15 @@ UserModel.init(
 	},
 	{ sequelize, modelName: 'users' },
 );
+
+export const associate = (model: TModelInfo) => {
+	UserModel.hasMany(model.OAuthUserModel, {
+		onDelete: 'cascade',
+		hooks: true,
+		as: 'oauthusers',
+		foreignKey: { allowNull: false, name: 'userEmail' },
+		sourceKey: 'email',
+	});
+};
 
 export default UserModel;
