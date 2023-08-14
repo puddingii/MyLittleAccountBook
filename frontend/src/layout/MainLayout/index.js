@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Outlet } from 'react-router-dom';
+import { Outlet, useParams } from 'react-router-dom';
 import { useRecoilState } from 'recoil';
 
 // material-ui
@@ -20,6 +20,14 @@ import menuState from 'recoil/menu';
 const MainLayout = () => {
 	const theme = useTheme();
 	const matchDownLG = useMediaQuery(theme.breakpoints.down('lg'));
+	const { id } = useParams();
+	navigation.items.forEach(item => {
+		item.children.forEach(childInfo => {
+			if (childInfo.url) {
+				childInfo.url = childInfo.url.replace(':id', id);
+			}
+		});
+	});
 
 	const [{ drawerOpen }, setMenuState] = useRecoilState(menuState);
 

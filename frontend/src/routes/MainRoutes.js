@@ -4,6 +4,7 @@ import { lazy } from 'react';
 import Loadable from 'components/Loadable';
 import MainLayout from 'layout/MainLayout';
 import GuestGuard from 'utils/GuestGuard';
+import IncomeAndSpendingManageBoard from 'pages/incomeAndSpending';
 
 // render - dashboard
 const DashboardDefault = Loadable(lazy(() => import('pages/dashboard')));
@@ -28,15 +29,15 @@ const MainRoutes = {
 	),
 	children: [
 		{
-			path: '/',
+			path: 'group/:id',
 			element: <DashboardDefault />,
 		},
 		{
-			path: 'color',
+			path: 'group/:id/color',
 			element: <Color />,
 		},
 		{
-			path: 'dashboard',
+			path: 'group/:id/dashboard',
 			children: [
 				{
 					path: 'default',
@@ -45,19 +46,23 @@ const MainRoutes = {
 			],
 		},
 		{
-			path: 'sample-page',
+			path: 'group/:id/income-spending',
+			element: <IncomeAndSpendingManageBoard />,
+		},
+		{
+			path: 'group/:id/sample-page',
 			element: <SamplePage />,
 		},
 		{
-			path: 'shadow',
+			path: 'group/:id/shadow',
 			element: <Shadow />,
 		},
 		{
-			path: 'typography',
+			path: 'group/:id/typography',
 			element: <Typography />,
 		},
 		{
-			path: 'icons/ant',
+			path: 'group/:id/icons/ant',
 			element: <AntIcons />,
 		},
 	],
