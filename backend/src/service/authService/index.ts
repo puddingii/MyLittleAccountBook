@@ -92,7 +92,7 @@ export const emailLogin = async (userInfo: { email: string; password: string }) 
 		}
 
 		const refreshToken = createRefreshToken();
-		const accessToken = createAccessToken(userInfo);
+		const accessToken = createAccessToken({ nickname: user.nickname, email });
 
 		await setCache(userInfo.email, refreshToken, secret.express.jwtRefreshTokenTime);
 

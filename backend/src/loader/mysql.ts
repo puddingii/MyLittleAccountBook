@@ -54,48 +54,48 @@ export const sync = async () => {
 export const createTestAccount = async () => {
 	try {
 		const { createEmailUser } = await import('../repository/userRepository');
-		const { tcreateCategory } = await import('../repository/categoryRepository');
+		const { createCategory } = await import('../repository/categoryRepository');
 		await createEmailUser({
 			email: 'test@naver.com',
 			password: 'test123!@TEST',
 			nickname: 'testUser',
 		});
-		await tcreateCategory({
+		await createCategory({
 			name: '음식',
 		});
-		await tcreateCategory({
+		await createCategory({
 			name: '일식',
 			parentId: 1,
 		});
-		await tcreateCategory({
+		await createCategory({
 			name: '초밥',
 			parentId: 2,
 		});
-		await tcreateCategory({
+		await createCategory({
 			name: '오니기리',
 			parentId: 2,
 		});
-		await tcreateCategory({
+		await createCategory({
 			name: '중식',
 			parentId: 1,
 		});
-		await tcreateCategory({
+		await createCategory({
 			name: '짜장면',
 			parentId: 5,
 		});
-		await tcreateCategory({
+		await createCategory({
 			name: '한식',
 			parentId: 1,
 		});
-		await tcreateCategory({
+		await createCategory({
 			name: '비빔밥',
 			parentId: 7,
 		});
-		await tcreateCategory({
+		await createCategory({
 			name: '육회비빔밥',
 			parentId: 8,
 		});
-		await tcreateCategory({
+		await createCategory({
 			name: '냉면',
 			parentId: 7,
 		});
