@@ -21,16 +21,14 @@ import {
 
 import sequelize from '@/loader/mysql';
 import AccountBookModel from './accountBook';
+import UserModel from './user';
 
 import { TModelInfo } from '@/interface/user';
 import GroupAccountBookModel from './groupAccountBook';
 
-/**
- * 카테고리
- */
-class CategoryModel extends Model<
-	InferAttributes<CategoryModel>,
-	InferCreationAttributes<CategoryModel>
+export class GroupModel extends Model<
+	InferAttributes<GroupModel>,
+	InferCreationAttributes<GroupModel>
 > {
 	declare accountBookId: ForeignKey<AccountBookModel['id']>;
 	declare addGroupaccountbook: HasManyAddAssociationMixin<GroupAccountBookModel, number>;
@@ -39,9 +37,10 @@ class CategoryModel extends Model<
 		number
 	>;
 	declare countGroupaccountbooks: HasManyCountAssociationsMixin;
+	declare createdAt: CreationOptional<Date>;
 	declare createGroupaccountbook: HasManyCreateAssociationMixin<
 		GroupAccountBookModel,
-		'categoryId'
+		'groupId'
 	>;
 	declare getGroupaccountbooks: HasManyGetAssociationsMixin<GroupAccountBookModel>;
 	declare groupaccountbooks?: NonAttribute<GroupAccountBookModel[]>;
@@ -51,8 +50,6 @@ class CategoryModel extends Model<
 		number
 	>;
 	declare id: CreationOptional<number>;
-	declare name: string;
-	declare parentId?: number;
 	declare removeGroupaccountbook: HasManyRemoveAssociationMixin<
 		GroupAccountBookModel,
 		number
@@ -65,44 +62,44 @@ class CategoryModel extends Model<
 		GroupAccountBookModel,
 		number
 	>;
+	declare userEmail: ForeignKey<UserModel['email']>;
 }
 
-CategoryModel.init(
+GroupModel.init(
 	{
 		id: {
 			type: DataTypes.INTEGER.UNSIGNED,
 			autoIncrement: true,
 			primaryKey: true,
 		},
-		parentId: {
-			type: DataTypes.INTEGER.UNSIGNED,
-		},
-		name: {
-			type: DataTypes.STRING,
-			allowNull: false,
-		},
+		createdAt: DataTypes.DATE,
 	},
 	{
 		sequelize,
-		modelName: 'categorys',
-		createdAt: false,
+		modelName: 'groups',
+		createdAt: true,
 		updatedAt: false,
 	},
 );
 
 export const associate = (model: TModelInfo) => {
-	CategoryModel.belongsTo(model.AccountBookModel, {
+	GroupModel.belongsTo(model.UserModel, {
+		targetKey: 'email',
+		foreignKey: 'userEmail',
+		as: 'users',
+	});
+	GroupModel.belongsTo(model.AccountBookModel, {
 		targetKey: 'id',
 		foreignKey: 'accountBookId',
 		as: 'accountbooks',
 	});
-	CategoryModel.hasMany(model.GroupAccountBookModel, {
+	GroupModel.hasMany(model.GroupAccountBookModel, {
 		onDelete: 'cascade',
 		hooks: true,
 		as: 'groupaccountbooks',
-		foreignKey: { allowNull: false, name: 'categoryId' },
+		foreignKey: { allowNull: false, name: 'groupId' },
 		sourceKey: 'id',
 	});
 };
 
-export default CategoryModel;
+export default GroupModel;
