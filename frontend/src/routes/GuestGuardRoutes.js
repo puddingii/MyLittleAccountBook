@@ -20,7 +20,7 @@ const AntIcons = Loadable(lazy(() => import('pages/components-overview/AntIcons'
 
 // ==============================|| MAIN ROUTING ||============================== //
 
-const MainRoutes = {
+const GuestGuardRoutes = {
 	path: '/',
 	element: (
 		<GuestGuard>
@@ -68,4 +68,4 @@ const MainRoutes = {
 	],
 };
 
-export default MainRoutes;
+export default GuestGuardRoutes;

@@ -1,12 +1,16 @@
 import { useRoutes } from 'react-router-dom';
 
 // project import
-import GuestRoutes from './GuestRoutes';
-import MainRoutes from './MainRoutes';
-import MinimalMainRoutes from './MinimalMainRoutes';
+import OnlyGuestMinimalRoutes from './OnlyGuestMinimalRoutes';
+import OnlyGuestRoutes from './OnlyGuestRoutes';
+import GuestGuardRoutes from './GuestGuardRoutes';
+import GuestGuardMinimalRoutes from './GuestGuardMinimalRoutes';
+import MinimalRoutes from './MinimalRoutes';
 
 // ==============================|| ROUTING RENDER ||============================== //
 
 export default function ThemeRoutes() {
-	return useRoutes([MainRoutes, MinimalMainRoutes, GuestRoutes]);
+	return useRoutes([GuestGuardRoutes, GuestGuardMinimalRoutes, OnlyGuestMinimalRoutes, OnlyGuestRoutes, MinimalRoutes]);
 }
+
+console.log(ThemeRoutes);

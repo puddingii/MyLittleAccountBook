@@ -1,7 +1,3 @@
-import { lazy } from 'react';
-
-// project import
-import Loadable from 'components/Loadable';
 import MinimalLayout from 'layout/MinimalLayout';
 import GuestGuard from 'utils/GuestGuard';
 
@@ -9,7 +5,7 @@ import GuestGuard from 'utils/GuestGuard';
 
 // ==============================|| MAIN ROUTING ||============================== //
 
-const MinimalMainRoutes = {
+const GuestGuardMinimalRoutes = {
 	path: '/',
 	element: (
 		<GuestGuard>
@@ -19,4 +15,4 @@ const MinimalMainRoutes = {
 	children: [],
 };
 
-export default MinimalMainRoutes;
+export default GuestGuardMinimalRoutes;

@@ -12,7 +12,7 @@ const OnlyGuest = ({ children }) => {
 		const access = axios.defaults.headers.common.Authorization;
 
 		if (token && access) {
-			navigate('/dashboard/default');
+			navigate(-1);
 		}
 	}, []);
 
