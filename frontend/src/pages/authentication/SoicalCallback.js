@@ -1,13 +1,22 @@
 import { useLocation } from 'react-router-dom';
 
 // project import
-import { useSocialLoginQuery } from 'queries/auth/authQuery';
+import { useSocialLoginMutation } from 'queries/auth/authMutation';
+import { useEffect } from 'react';
 
 const SocialCallback = () => {
 	const loc = useLocation();
 	const params = new URLSearchParams(loc.search.slice(1));
 	const type = params.get('type');
-	useSocialLoginQuery(type, loc.search);
+	const paramInfo = {};
+	for (const [key, value] of params.entries()) {
+		paramInfo[key] = value;
+	}
+	const { mutate } = useSocialLoginMutation(type);
+
+	useEffect(() => {
+		mutate(paramInfo);
+	}, []);
 	return <></>;
 };
 

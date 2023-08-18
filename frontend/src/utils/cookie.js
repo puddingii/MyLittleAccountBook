@@ -8,7 +8,7 @@ const cookie = new Cookies();
  * @param {string | object} value
  */
 export const setCookie = (name, value) => {
-	return cookie.set(name, value);
+	return cookie.set(name, value, { path: '/' });
 };
 
 /**

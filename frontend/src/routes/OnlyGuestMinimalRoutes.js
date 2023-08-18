@@ -3,7 +3,6 @@ import { lazy } from 'react';
 // project import
 import Loadable from 'components/Loadable';
 import MinimalLayout from 'layout/MinimalLayout';
-import SocialCallback from 'pages/authentication/SoicalCallback';
 import OnlyGuest from 'utils/OnlyGuest';
 
 // render - login
@@ -27,10 +26,6 @@ const LoginRoutes = {
 		{
 			path: 'register',
 			element: <AuthRegister />,
-		},
-		{
-			path: 'auth/social',
-			element: <SocialCallback />,
 		},
 	],
 };

@@ -35,9 +35,51 @@ export const useEmailLoginMutation = () => {
 					nickname: decodedData.nickname,
 					isLogin: true,
 				}));
-				navigate('/dashboard/default');
+				navigate(`/group/${data.accountBookId}/dashboard/default`);
 			}
 			queryClient.invalidateQueries(QUERY_KEY.login);
+		},
+	});
+};
+
+const socialLoginFetcher = socialInfo =>
+	axios
+		.post(`${QUERY_KEY.socialLogin}/${socialInfo.type}`, socialInfo, {
+			withCredentials: true,
+		})
+		.then(({ data }) => data);
+
+export const useSocialLoginMutation = type => {
+	const queryClient = useQueryClient();
+	const setUserState = useSetRecoilState(userState);
+	const navigate = useNavigate();
+
+	return useMutation(socialLoginFetcher, {
+		onSuccess: response => {
+			const { data, status } = response;
+			if (status === 'success') {
+				setToken({ accessToken: data.accessToken, refreshToken: data.refreshToken });
+				const decodedData = jwtDecode(data.accessToken);
+				setUserState(oldState => ({
+					...oldState,
+					email: decodedData.email,
+					nickname: decodedData.nickname,
+					isLogin: true,
+				}));
+				navigate(`/group/${data.accountBookId}/dashboard/default`);
+			} else {
+				deleteToken('Authorization');
+				deleteToken('refresh');
+				setUserState(() => ({ email: '', isLogin: false, nickname: '' }));
+				navigate('/login');
+			}
+			queryClient.invalidateQueries(`${QUERY_KEY.socialLogin}/${type}`);
+		},
+		onError: () => {
+			deleteToken('Authorization');
+			deleteToken('refresh');
+			setUserState(() => ({ email: '', isLogin: false, nickname: '' }));
+			navigate('/login');
 		},
 	});
 };
