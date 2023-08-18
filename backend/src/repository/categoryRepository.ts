@@ -33,6 +33,7 @@ export const getCategoryList = async () => {
 export const createCategory = async (categoryInfo: {
 	parentId?: number;
 	name: string;
+	accountBookId: number;
 }) => {
 	try {
 		if (!categoryInfo.parentId) {
@@ -42,8 +43,9 @@ export const createCategory = async (categoryInfo: {
 		const transaction = await sequelize.transaction({ autocommit: false });
 		try {
 			const isExistParent = await CategoryModel.findOne({
-				where: { id: categoryInfo.parentId },
-				lock: transaction.LOCK.SHARE,
+				where: { id: categoryInfo.parentId, accountBookId: categoryInfo.accountBookId },
+				lock: true,
+				skipLocked: true,
 			});
 			if (!isExistParent) {
 				throw new Error('parentId에 해당하는 상위 노드가 존재하지 않습니다.');

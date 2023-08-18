@@ -60,10 +60,9 @@ export const emailJoin = async (userInfo: {
 	nickname: string;
 }) => {
 	try {
-		const [, created] = await createEmailUser(userInfo);
-		if (!created) {
-			throw new Error('해당 이메일로 생성된 계정이 있습니다.');
-		}
+		const { accountBookId } = await createEmailUser(userInfo);
+
+		return { accountBookId };
 	} catch (error) {
 		const customError = convertErrorToCustomError(error, { trace: 'Service', code: 400 });
 		throw customError;
@@ -96,7 +95,11 @@ export const emailLogin = async (userInfo: { email: string; password: string }) 
 
 		await setCache(userInfo.email, refreshToken, secret.express.jwtRefreshTokenTime);
 
-		return { refreshToken, accessToken };
+		return {
+			refreshToken,
+			accessToken,
+			accountBookId: (user.groups ?? [])[0].accountBookId,
+		};
 	} catch (error) {
 		const customError = convertErrorToCustomError(error, { trace: 'Service', code: 400 });
 		throw customError;
@@ -133,8 +136,13 @@ const socialLogin = async (
 		if (user && !user.oauthusers) {
 			throw new Error('소셜 로그인 계정이 아닙니다.');
 		}
-		if (user === null) {
-			await createSocialUser(userInfo, type);
+
+		let accountBookId;
+		if (user) {
+			accountBookId = (user.groups ?? [])[0].accountBookId;
+		} else {
+			const { accountBookId: newAccountBookId } = await createSocialUser(userInfo, type);
+			accountBookId = newAccountBookId;
 		}
 
 		const refreshToken = createRefreshToken();
@@ -142,7 +150,7 @@ const socialLogin = async (
 
 		await setCache(userInfo.email, refreshToken, secret.express.jwtRefreshTokenTime);
 
-		return { refreshToken, accessToken };
+		return { refreshToken, accessToken, accountBookId };
 	} catch (error) {
 		const customError = convertErrorToCustomError(error, { trace: 'Service', code: 400 });
 		throw customError;
@@ -171,7 +179,7 @@ export const googleLogin = async (code: string, state: string) => {
 		}
 
 		const data = { email, nickname: email.split('@')[0] };
-		const tokenInfo = socialLogin(data, 'Google');
+		const tokenInfo = await socialLogin(data, 'Google');
 
 		return tokenInfo;
 	} catch (error) {
@@ -190,7 +198,7 @@ export const naverLogin = async (code: string, state: string) => {
 		const { email, nickname } = await getNaverUserInfo(naverTokenInfo.access_token);
 
 		const data = { email, nickname };
-		const tokenInfo = socialLogin(data, 'Naver');
+		const tokenInfo = await socialLogin(data, 'Naver');
 
 		return tokenInfo;
 	} catch (error) {

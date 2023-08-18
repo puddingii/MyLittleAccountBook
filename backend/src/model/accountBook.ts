@@ -22,7 +22,7 @@ import sequelize from '@/loader/mysql';
 import GroupModel from './group';
 import CategoryModel from './category';
 
-import { TModelInfo } from '@/interface/user';
+import { TModelInfo } from '@/interface/model';
 
 /**
  * 가계부 설명
@@ -87,14 +87,14 @@ AccountBookModel.init(
 );
 
 export const associate = (model: TModelInfo) => {
-	AccountBookModel.hasMany(model.GroupModel, {
+	AccountBookModel.hasMany(model.groups, {
 		onDelete: 'cascade',
 		hooks: true,
 		as: 'groups',
 		foreignKey: { allowNull: false, name: 'accountBookId' },
 		sourceKey: 'id',
 	});
-	AccountBookModel.hasMany(model.CategoryModel, {
+	AccountBookModel.hasMany(model.categorys, {
 		onDelete: 'cascade',
 		hooks: true,
 		as: 'categorys',

@@ -22,7 +22,7 @@ import {
 import sequelize from '@/loader/mysql';
 import AccountBookModel from './accountBook';
 
-import { TModelInfo } from '@/interface/user';
+import { TModelInfo } from '@/interface/model';
 import GroupAccountBookModel from './groupAccountBook';
 
 /**
@@ -91,12 +91,12 @@ CategoryModel.init(
 );
 
 export const associate = (model: TModelInfo) => {
-	CategoryModel.belongsTo(model.AccountBookModel, {
+	CategoryModel.belongsTo(model.accountbooks, {
 		targetKey: 'id',
 		foreignKey: 'accountBookId',
 		as: 'accountbooks',
 	});
-	CategoryModel.hasMany(model.GroupAccountBookModel, {
+	CategoryModel.hasMany(model.groupaccountbooks, {
 		onDelete: 'cascade',
 		hooks: true,
 		as: 'groupaccountbooks',

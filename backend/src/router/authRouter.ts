@@ -13,7 +13,6 @@ import zParser from '@/util/parser';
 import zodSchema from '@/util/parser/schema';
 import { logger } from '@/util';
 import { convertErrorToCustomError } from '@/util/error';
-import secret from '@/config/secret';
 
 import {
 	TGetToken,
@@ -27,10 +26,10 @@ import {
 
 const router = express.Router();
 
-router.get('/social/google', async (req, res) => {
+router.post('/social/google', async (req, res) => {
 	try {
 		const {
-			query: { code, error, state },
+			body: { code, error, state },
 		} = await zParser(zodSchema.auth.googleLogin, req);
 
 		if ((error && !code) || !code) {
@@ -49,17 +48,14 @@ router.get('/social/google', async (req, res) => {
 		});
 		logger.error(message, traceList);
 
-		return res
-			.status(code)
-			.json({ data: {}, message, status: 'fail' })
-			.redirect(`${secret.frontUrl}/auth/social`);
+		return res.status(code).json({ data: {}, message, status: 'fail' });
 	}
 });
 
-router.get('/social/naver', async (req, res) => {
+router.post('/social/naver', async (req, res) => {
 	try {
 		const {
-			query: { code, error, error_description: errorDescription, state },
+			body: { code, error, error_description: errorDescription, state },
 		} = await zParser(zodSchema.auth.naverLogin, req);
 
 		if (error || !code) {

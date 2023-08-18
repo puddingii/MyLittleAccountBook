@@ -23,13 +23,14 @@ import sequelize from '@/loader/mysql';
 import AccountBookModel from './accountBook';
 import UserModel from './user';
 
-import { TModelInfo } from '@/interface/user';
+import { TModelInfo } from '@/interface/model';
 import GroupAccountBookModel from './groupAccountBook';
 
 export class GroupModel extends Model<
 	InferAttributes<GroupModel>,
 	InferCreationAttributes<GroupModel>
 > {
+	declare accessHistory: Date;
 	declare accountBookId: ForeignKey<AccountBookModel['id']>;
 	declare addGroupaccountbook: HasManyAddAssociationMixin<GroupAccountBookModel, number>;
 	declare addGroupaccountbooks: HasManyAddAssociationsMixin<
@@ -63,6 +64,8 @@ export class GroupModel extends Model<
 		number
 	>;
 	declare userEmail: ForeignKey<UserModel['email']>;
+	/** owner, admin, writer, observer */
+	declare userType: 'admin' | 'owner' | 'writer' | 'observer';
 }
 
 GroupModel.init(
@@ -71,6 +74,14 @@ GroupModel.init(
 			type: DataTypes.INTEGER.UNSIGNED,
 			autoIncrement: true,
 			primaryKey: true,
+		},
+		userType: {
+			type: DataTypes.STRING,
+			allowNull: false,
+		},
+		accessHistory: {
+			type: DataTypes.DATE,
+			allowNull: false,
 		},
 		createdAt: DataTypes.DATE,
 	},
@@ -83,17 +94,17 @@ GroupModel.init(
 );
 
 export const associate = (model: TModelInfo) => {
-	GroupModel.belongsTo(model.UserModel, {
+	GroupModel.belongsTo(model.users, {
 		targetKey: 'email',
 		foreignKey: 'userEmail',
 		as: 'users',
 	});
-	GroupModel.belongsTo(model.AccountBookModel, {
+	GroupModel.belongsTo(model.accountbooks, {
 		targetKey: 'id',
 		foreignKey: 'accountBookId',
 		as: 'accountbooks',
 	});
-	GroupModel.hasMany(model.GroupAccountBookModel, {
+	GroupModel.hasMany(model.groupaccountbooks, {
 		onDelete: 'cascade',
 		hooks: true,
 		as: 'groupaccountbooks',

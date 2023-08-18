@@ -10,7 +10,7 @@ import {
 
 import sequelize from '@/loader/mysql';
 import UserModel from './user';
-import { TModelInfo } from '@/interface/user';
+import { TModelInfo } from '@/interface/model';
 
 export class OAuthUserModel extends Model<
 	InferAttributes<OAuthUserModel>,
@@ -46,7 +46,7 @@ OAuthUserModel.init(
 );
 
 export const associate = (model: TModelInfo) => {
-	OAuthUserModel.belongsTo(model.UserModel, {
+	OAuthUserModel.belongsTo(model.users, {
 		targetKey: 'email',
 		foreignKey: 'userEmail',
 		as: 'users',

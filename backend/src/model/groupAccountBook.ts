@@ -11,7 +11,7 @@ import {
 import sequelize from '@/loader/mysql';
 import CategoryModel from './category';
 
-import { TModelInfo } from '@/interface/user';
+import { TModelInfo } from '@/interface/model';
 import GroupModel from './group';
 
 export class GroupAccountBookModel extends Model<
@@ -55,12 +55,12 @@ GroupAccountBookModel.init(
 );
 
 export const associate = (model: TModelInfo) => {
-	GroupAccountBookModel.belongsTo(model.GroupModel, {
+	GroupAccountBookModel.belongsTo(model.groups, {
 		targetKey: 'id',
 		foreignKey: 'groupId',
 		as: 'groups',
 	});
-	GroupAccountBookModel.belongsTo(model.CategoryModel, {
+	GroupAccountBookModel.belongsTo(model.categorys, {
 		targetKey: 'id',
 		foreignKey: 'categoryId',
 		as: 'categorys',

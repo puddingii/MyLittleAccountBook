@@ -10,7 +10,7 @@ const socialLogin = zod.object({
 });
 
 const googleLogin = zod.object({
-	query: zod.object({
+	body: zod.object({
 		error: zod.string().optional(),
 		code: zod.string().optional(),
 		state: zod.string({
@@ -23,7 +23,7 @@ const googleLogin = zod.object({
 });
 
 const naverLogin = zod.object({
-	query: zod.object({
+	body: zod.object({
 		code: zod.string().optional(),
 		state: zod.string({
 			required_error: '소셜 로그인에 필요한 정보가 누락되었습니다. 다시 로그인 해주세요.',
