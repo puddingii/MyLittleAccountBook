@@ -5,12 +5,15 @@ import { convertErrorToCustomError } from '@/util/error';
 import CategoryModel from '@/model/category';
 import sequelize from '@/loader/mysql';
 
-import { TCategoryInfoList } from '@/interface/model/categoryRepository';
+import { TCategoryInfo } from '@/interface/model/categoryRepository';
 
 /** 유저 찾기(소셜 정보 추가) */
-export const getCategoryList = async (accountBookId: number, depth = 2) => {
+export const getCategoryList = async (
+	accountBookId: number,
+	depth: { start: number; end: number },
+) => {
 	try {
-		const result = await sequelize.query<TCategoryInfoList>(
+		const result = await sequelize.query<TCategoryInfo>(
 			`WITH RECURSIVE category_list AS (
 				SELECT *, CAST(name AS CHAR(100)) AS categoryNamePath, CAST(id AS CHAR(100)) AS categoryIdPath, 1 as depth
 				FROM categorys
@@ -21,7 +24,7 @@ export const getCategoryList = async (accountBookId: number, depth = 2) => {
 				INNER JOIN categorys c
 				ON c.parentId=cl.id
 				)
-			SELECT * FROM category_list WHERE depth = ${depth} ORDER BY depth ASC;`,
+			SELECT * FROM category_list WHERE depth BETWEEN ${depth.start} AND ${depth.end} ORDER BY depth ASC;`,
 			{ type: QueryTypes.SELECT },
 		);
 

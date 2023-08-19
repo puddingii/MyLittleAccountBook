@@ -1,4 +1,4 @@
-export type TCategoryInfoList = {
+export type TCategoryInfo = {
 	id: number;
 	parentId?: number;
 	name: string;
