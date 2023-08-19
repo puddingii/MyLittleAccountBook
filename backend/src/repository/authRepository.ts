@@ -16,8 +16,10 @@ import { convertErrorToCustomError } from '@/util/error';
 import secret from '@/config/secret';
 import AccountBookModel from '@/model/accountBook';
 import GroupModel from '@/model/group';
+import defaultCategory from '@/json/defaultCategory.json';
+import CategoryModel from '@/model/category';
 
-/** 새로운 계정에 대한 새로운 가계부 및 그룹 생성 */
+/** 새로운 계정에 대한 새로운 가계부, 그룹, 카테고리 생성 */
 const createAccountBookAndGroup = async (
 	newUser: UserModel,
 	transaction?: Transaction,
@@ -37,6 +39,29 @@ const createAccountBookAndGroup = async (
 		},
 		{ transaction },
 	);
+
+	const categoryList = defaultCategory.rootCategory.map(category => ({
+		name: category.name,
+		accountBookId: newAccountBook.id,
+	}));
+
+	const list = await CategoryModel.bulkCreate(categoryList, {
+		fields: ['name', 'accountBookId'],
+		validate: true,
+		transaction,
+	});
+
+	/** 메인 카테고리 각각의 기타 탭 생성 */
+	const parentList = list.map(parent => ({
+		name: '기타',
+		parentId: parent.id,
+		accountBookId: newAccountBook.id,
+	}));
+	await CategoryModel.bulkCreate(parentList, {
+		fields: ['name', 'accountBookId', 'parentId'],
+		validate: true,
+		transaction,
+	});
 
 	return { accountBook: newAccountBook, group: newGroup };
 };

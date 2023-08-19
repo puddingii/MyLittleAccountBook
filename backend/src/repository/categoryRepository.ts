@@ -1,24 +1,28 @@
+import { QueryTypes } from 'sequelize';
+
 /** ETC.. */
 import { convertErrorToCustomError } from '@/util/error';
 import CategoryModel from '@/model/category';
-
 import sequelize from '@/loader/mysql';
 
+import { TCategoryInfoList } from '@/interface/model/categoryRepository';
+
 /** 유저 찾기(소셜 정보 추가) */
-export const getCategoryList = async () => {
+export const getCategoryList = async (accountBookId: number, depth = 2) => {
 	try {
-		const result = await sequelize.query(
+		const result = await sequelize.query<TCategoryInfoList>(
 			`WITH RECURSIVE category_list AS (
-				SELECT *, CAST(id AS CHAR(100)) AS category_path, 1 as depth
-				FROM categories
-				WHERE parentId IS NULL
+				SELECT *, CAST(name AS CHAR(100)) AS categoryNamePath, CAST(id AS CHAR(100)) AS categoryIdPath, 1 as depth
+				FROM categorys
+				WHERE parentId IS NULL AND accountBookId = ${accountBookId}
 				UNION ALL
-				SELECT c.*, CONCAT(c.id, ' > ', cl.category_path) AS category_path, depth+1
+				SELECT c.*, CONCAT(cl.name, ' > ', c.name) AS categoryNamePath, CONCAT(cl.id, ' > ', c.id) AS categoryIdPath, depth+1
 				FROM category_list cl
-				INNER JOIN categories c
+				INNER JOIN categorys c
 				ON c.parentId=cl.id
 				)
-			SELECT * FROM category_list ORDER BY depth ASC;`,
+			SELECT * FROM category_list WHERE depth = ${depth} ORDER BY depth ASC;`,
+			{ type: QueryTypes.SELECT },
 		);
 
 		return result;

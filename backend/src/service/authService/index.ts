@@ -13,7 +13,7 @@ import {
 	createSocialUser,
 	findOneSocialUserInfo,
 	findOneUser,
-} from '@/repository/userRepository';
+} from '@/repository/authRepository';
 import { convertErrorToCustomError } from '@/util/error';
 import { deleteCache, getCache, setCache } from '@/util/cache';
 import {

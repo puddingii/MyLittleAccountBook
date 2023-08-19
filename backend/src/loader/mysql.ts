@@ -57,64 +57,13 @@ export const sync = async () => {
 
 export const createTestAccount = async () => {
 	try {
-		const { createEmailUser, test } = await import('../repository/userRepository');
-		const { createCategory } = await import('../repository/categoryRepository');
+		const { createEmailUser, test } = await import('../repository/authRepository');
 		await createEmailUser({
 			email: 'test@naver.com',
 			password: 'test123!@TEST',
 			nickname: 'testUser',
 		});
 		await test();
-
-		await createCategory({
-			name: '음식',
-			accountBookId: 1,
-		});
-		await createCategory({
-			name: '일식',
-			accountBookId: 1,
-			parentId: 1,
-		});
-		await createCategory({
-			name: '초밥',
-			accountBookId: 1,
-			parentId: 2,
-		});
-		await createCategory({
-			name: '오니기리',
-			accountBookId: 1,
-			parentId: 2,
-		});
-		await createCategory({
-			name: '중식',
-			accountBookId: 1,
-			parentId: 1,
-		});
-		await createCategory({
-			name: '짜장면',
-			accountBookId: 1,
-			parentId: 5,
-		});
-		await createCategory({
-			name: '한식',
-			accountBookId: 1,
-			parentId: 1,
-		});
-		await createCategory({
-			name: '비빔밥',
-			accountBookId: 1,
-			parentId: 7,
-		});
-		await createCategory({
-			name: '육회비빔밥',
-			accountBookId: 1,
-			parentId: 8,
-		});
-		await createCategory({
-			name: '냉면',
-			accountBookId: 1,
-			parentId: 7,
-		});
 	} catch (error) {
 		const customError = convertErrorToCustomError(error, {
 			trace: 'Mysql',
