@@ -6,11 +6,13 @@ import jwtDecode from 'jwt-decode';
 import { QUERY_KEY } from './index';
 import userState from 'recoil/user';
 import { deleteToken, isExpiredToken, setToken } from 'utils/auth';
+import { useNavigate } from 'react-router';
 
 const refreshAccessTokenFetcher = () => axios.get(QUERY_KEY.token, { withCredentials: true }).then(({ data }) => data);
 
 export const useRefreshAccessTokenQuery = () => {
 	const setUserState = useSetRecoilState(userState);
+	const navigate = useNavigate();
 
 	return useQuery(QUERY_KEY.token, refreshAccessTokenFetcher, {
 		refetchOnMount: true,
@@ -24,6 +26,7 @@ export const useRefreshAccessTokenQuery = () => {
 				deleteToken('Authorization');
 				deleteToken('refresh');
 				setUserState(() => ({ email: '', isLogin: false, nickname: '' }));
+				navigate('/login');
 			}
 		},
 		onSuccess: response => {
@@ -37,6 +40,7 @@ export const useRefreshAccessTokenQuery = () => {
 				deleteToken('Authorization');
 				deleteToken('refresh');
 				setUserState(() => ({ email: '', isLogin: false, nickname: '' }));
+				navigate('/login');
 			}
 		},
 	});

@@ -21,10 +21,12 @@ import {
 	MenuItem,
 	NativeSelect,
 	OutlinedInput,
+	Select,
 	Stack,
 	TextField,
 	Typography,
 } from '@mui/material';
+import { styled, lighten, darken } from '@mui/system';
 
 // project import
 import OrdersTable from '../dashboard/OrdersTable';
@@ -42,6 +44,8 @@ import { incomeAndSpendingSchema } from 'validation/incomeAndSpending';
 import Summary from './Summary';
 import WriterCard from './WriterCard';
 import axios from 'axios';
+import { useGetCategoryQuery } from 'queries/accountBook/accountBookQuery';
+import { useParams } from 'react-router';
 
 // avatar style
 const avatarSX = {
@@ -60,21 +64,20 @@ const actionSX = {
 	transform: 'none',
 };
 
-// sales report status
-const status = [
-	{
-		value: 'today',
-		label: 'Today',
-	},
-	{
-		value: 'month',
-		label: 'This Month',
-	},
-	{
-		value: 'year',
-		label: 'This Year',
-	},
-];
+const GroupHeader = styled('div')(({ theme }) => ({
+	position: 'sticky',
+	top: '-8px',
+	padding: '4px 10px',
+	color: theme.palette.primary.main,
+	backgroundColor:
+		theme.palette.mode === 'light'
+			? lighten(theme.palette.primary.light, 0.85)
+			: darken(theme.palette.primary.main, 0.8),
+}));
+
+const GroupItems = styled('ul')({
+	padding: 0,
+});
 
 // ==============================|| DASHBOARD - DEFAULT ||============================== //
 
@@ -82,6 +85,11 @@ const IncomeAndSpendingManageBoard = () => {
 	const [value, setValue] = useState('today');
 	const [slot, setSlot] = useState('week');
 	const [showPassword, setShowPassword] = useState(false);
+	const param = useParams();
+	const accountBookId = param.id;
+
+	const { data: response } = useGetCategoryQuery(accountBookId);
+	const categoryList = response?.data ?? [];
 
 	const handleClickShowPassword = () => setShowPassword(show => !show);
 
@@ -92,6 +100,7 @@ const IncomeAndSpendingManageBoard = () => {
 	/**  */
 	const handleSubmit = async (values, { setErrors, setStatus, setSubmitting }) => {
 		/** If success */
+		console.log(values);
 		setStatus({ success: false });
 		setSubmitting(false);
 		await axios.get('http://localhost:3044/user/test', { withCredentials: true });
@@ -105,22 +114,16 @@ const IncomeAndSpendingManageBoard = () => {
 	return (
 		<Grid container rowSpacing={4.5} columnSpacing={2.75}>
 			{/* row 1 */}
-			<Summary income={442236} spending={78250} />
+			<Summary income={'442236'} spending={'78250'} />
 
 			<Grid item md={8} sx={{ display: { sm: 'none', md: 'block', lg: 'none' } }} />
 
 			<Grid item xs={12} sm={12} md={12} lg={12}>
-				{/* <Grid container alignItems="center" justifyContent="space-between">
-					<Grid item>
-						<Typography variant="h5">지출/수입 수기</Typography>
-					</Grid>
-				</Grid> */}
 				<WriterCard>
 					<Formik
 						initialValues={{
-							type: 'income',
+							type: 'spending',
 							category: '',
-							subCategory: '',
 							value: 0,
 							content: '',
 							submit: null,
@@ -128,54 +131,59 @@ const IncomeAndSpendingManageBoard = () => {
 						validationSchema={incomeAndSpendingSchema}
 						onSubmit={handleSubmit}
 					>
-						{({ errors, handleBlur, handleChange, handleSubmit, isSubmitting, touched, values }) => (
+						{({ errors, handleBlur, handleChange, handleSubmit, isSubmitting, touched, values, setFieldValue }) => (
 							<form noValidate onSubmit={handleSubmit}>
 								<Grid container spacing={3}>
-									<Grid item xs={12} sm={6} md={4} lg={1}>
+									<Grid item xs={12} sm={6} md={4} lg={2}>
 										<Stack spacing={1}>
-											<InputLabel htmlFor="is-type">수입/지출</InputLabel>
-											<NativeSelect
-												defaultValue="income"
-												inputProps={{
-													name: 'type',
-													id: 'is-type',
-												}}
+											<InputLabel htmlFor="type">지출/수입</InputLabel>
+											<Select
+												id="type"
+												value={values.type}
+												name="type"
 												onBlur={handleBlur}
 												onChange={handleChange}
-												fullWidth
-												error={Boolean(touched.category && errors.category)}
+												error={Boolean(touched.type && errors.type)}
 											>
-												<option value="income">수입</option>
-												<option value="spending">지출</option>
-											</NativeSelect>
+												<MenuItem value={'spending'}>지출</MenuItem>
+												<MenuItem value={'income'}>수입</MenuItem>
+											</Select>
 											{touched.type && errors.type && (
-												<FormHelperText error id="standard-weight-helper-text-is-type">
+												<FormHelperText error id="standard-weight-helper-text-type">
 													{errors.type}
 												</FormHelperText>
 											)}
 										</Stack>
 									</Grid>
-									<Grid item xs={12} sm={6} md={4} lg={2}>
+									<Grid item xs={12} sm={6} md={4} lg={3}>
 										<Stack spacing={1}>
-											{/* <Autocomplete
-												id="grouped-demo"
-												options={options.sort((a, b) => -b.firstLetter.localeCompare(a.firstLetter))}
-												groupBy={option => option.firstLetter}
-												getOptionLabel={option => option.title}
-												sx={{ width: 300 }}
-												renderInput={params => <TextField {...params} label="With categories" />}
-											/> */}
 											<InputLabel htmlFor="category">카테고리</InputLabel>
-											<OutlinedInput
+											<Autocomplete
 												id="category"
-												type="text"
-												value={values.category}
-												name="category"
+												onInputChange={(event, newInputValue) => {
+													const idx = categoryList.findIndex(category => category.categoryNamePath === newInputValue);
+													if (idx !== -1) {
+														values.category = categoryList[idx].childId;
+														handleChange(event);
+													} else {
+														setFieldValue('category', '', true);
+													}
+												}}
 												onBlur={handleBlur}
-												onChange={handleChange}
-												placeholder="Enter email address"
-												fullWidth
-												error={Boolean(touched.category && errors.category)}
+												options={categoryList}
+												groupBy={category => category.parentName}
+												getOptionLabel={category => category.categoryNamePath}
+												isOptionEqualToValue={(options, values) => options.categoryIdPath === values.categoryIdPath}
+												renderInput={params => {
+													params.InputProps.style = { height: '41px', paddingTop: '4px' };
+													return <TextField {...params} />;
+												}}
+												renderGroup={params => (
+													<li key={params.key}>
+														<GroupHeader>{params.group}</GroupHeader>
+														<GroupItems>{params.children}</GroupItems>
+													</li>
+												)}
 											/>
 											{touched.category && errors.category && (
 												<FormHelperText error id="standard-weight-helper-text-category">
@@ -187,84 +195,41 @@ const IncomeAndSpendingManageBoard = () => {
 
 									<Grid item xs={12} sm={6} md={4} lg={2}>
 										<Stack spacing={1}>
-											<InputLabel htmlFor="email-login">이메일</InputLabel>
+											<InputLabel htmlFor="value">금액</InputLabel>
 											<OutlinedInput
-												id="email-login"
-												type="email"
-												value={values.email}
-												name="email"
+												id="value"
+												type="number"
+												value={values.value}
+												name="value"
 												onBlur={handleBlur}
 												onChange={handleChange}
-												placeholder="Enter email address"
+												placeholder="Enter value address"
 												fullWidth
-												error={Boolean(touched.email && errors.email)}
+												error={Boolean(touched.value && errors.value)}
 											/>
-											{touched.email && errors.email && (
-												<FormHelperText error id="standard-weight-helper-text-email-login">
-													{errors.email}
+											{touched.value && errors.value && (
+												<FormHelperText error id="standard-weight-helper-text-value">
+													{errors.value}
 												</FormHelperText>
 											)}
 										</Stack>
 									</Grid>
-									<Grid item xs={12} sm={6} md={4} lg={3}>
+									<Grid item xs={12} sm={6} md={4} lg={5}>
 										<Stack spacing={1}>
-											<InputLabel htmlFor="email-login">이메일</InputLabel>
+											<InputLabel htmlFor="content">상세 내용</InputLabel>
 											<OutlinedInput
-												id="email-login"
-												type="email"
-												value={values.email}
-												name="email"
+												id="content"
+												type="text"
+												value={values.content}
+												name="content"
 												onBlur={handleBlur}
 												onChange={handleChange}
-												placeholder="Enter email address"
 												fullWidth
-												error={Boolean(touched.email && errors.email)}
+												error={Boolean(touched.content && errors.content)}
 											/>
-											{touched.email && errors.email && (
-												<FormHelperText error id="standard-weight-helper-text-email-login">
-													{errors.email}
-												</FormHelperText>
-											)}
-										</Stack>
-									</Grid>
-									<Grid item xs={12} sm={6} md={4} lg={2}>
-										<Stack spacing={1}>
-											<InputLabel htmlFor="email-login">이메일</InputLabel>
-											<OutlinedInput
-												id="email-login"
-												type="email"
-												value={values.email}
-												name="email"
-												onBlur={handleBlur}
-												onChange={handleChange}
-												placeholder="Enter email address"
-												fullWidth
-												error={Boolean(touched.email && errors.email)}
-											/>
-											{touched.email && errors.email && (
-												<FormHelperText error id="standard-weight-helper-text-email-login">
-													{errors.email}
-												</FormHelperText>
-											)}
-										</Stack>
-									</Grid>
-									<Grid item xs={12} sm={6} md={4} lg={2}>
-										<Stack spacing={1}>
-											<InputLabel htmlFor="email-login">이메일</InputLabel>
-											<OutlinedInput
-												id="email-login"
-												type="email"
-												value={values.email}
-												name="email"
-												onBlur={handleBlur}
-												onChange={handleChange}
-												placeholder="Enter email address"
-												fullWidth
-												error={Boolean(touched.email && errors.email)}
-											/>
-											{touched.email && errors.email && (
-												<FormHelperText error id="standard-weight-helper-text-email-login">
-													{errors.email}
+											{touched.content && errors.content && (
+												<FormHelperText error id="standard-weight-helper-text-content">
+													{errors.content}
 												</FormHelperText>
 											)}
 										</Stack>

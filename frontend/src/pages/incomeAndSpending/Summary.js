@@ -22,15 +22,15 @@ const Summary = ({ income, spending }) => {
 				<AnalyticEcommerce title="총 수입" count={income} />
 			</Grid>
 			<Grid item xs={12} sm={4} md={4} lg={4}>
-				<AnalyticEcommerce title="합산" count={sum} isLoss={sum >= 0} />
+				<AnalyticEcommerce title="합산" count={`${sum}`} isLoss={sum >= 0} />
 			</Grid>
 		</>
 	);
 };
 
 Summary.propTypes = {
-	income: PropTypes.number,
-	spending: PropTypes.number,
+	income: PropTypes.string,
+	spending: PropTypes.string,
 };
 
 export default Summary;
