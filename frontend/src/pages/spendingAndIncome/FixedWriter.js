@@ -12,12 +12,12 @@ import {
 	Stack,
 	TextField,
 } from '@mui/material';
-import axios from 'axios';
 import PropTypes from 'prop-types';
 
 import AnimateButton from 'components/@extended/AnimateButton';
 import { fixedWriterSchema } from 'validation/spendingAndIncome';
 import { useGetCategoryQuery } from 'queries/accountBook/accountBookQuery';
+import { useCreateColumnMutation } from 'queries/accountBook/accountBookMutation';
 
 const GroupHeader = styled('div')(({ theme }) => ({
 	position: 'sticky',
@@ -36,18 +36,21 @@ const GroupItems = styled('ul')({
 
 const FixedWriter = ({ accountBookId }) => {
 	const { data: response } = useGetCategoryQuery(accountBookId);
+	const { mutate: createColumnMutate } = useCreateColumnMutation();
 	const categoryList = response?.data ?? [];
 
 	const handleSubmit = async (values, { setErrors, setStatus, setSubmitting }) => {
-		/** If success */
-		console.log(values);
-		setStatus({ success: false });
-		setSubmitting(false);
-		await axios.get('http://localhost:3044/user/test', { withCredentials: true });
-		/** If error */
-		// setStatus({ success: false });
-		// setErrors({ submit: error?.response?.data?.message });
-		// setSubmitting(false);
+		createColumnMutate(values, {
+			onSuccess: () => {
+				setStatus({ success: false });
+				setSubmitting(false);
+			},
+			onError: error => {
+				setStatus({ success: false });
+				setErrors({ submit: error?.response?.data?.message });
+				setSubmitting(false);
+			},
+		});
 	};
 
 	return (
