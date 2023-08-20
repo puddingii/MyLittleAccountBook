@@ -22,9 +22,8 @@ export class GroupAccountBookModel extends Model<
 	declare content: string;
 	declare createdAt: CreationOptional<Date>;
 	declare groupId: ForeignKey<GroupModel['id']>;
-
 	declare id: CreationOptional<number>;
-
+	declare spendingAndIncomeDate: Date;
 	declare value: number;
 }
 
@@ -43,6 +42,10 @@ GroupAccountBookModel.init(
 			type: DataTypes.STRING,
 			allowNull: false,
 			defaultValue: '',
+		},
+		spendingAndIncomeDate: {
+			type: DataTypes.DATE,
+			allowNull: false,
 		},
 		createdAt: DataTypes.DATE,
 	},
