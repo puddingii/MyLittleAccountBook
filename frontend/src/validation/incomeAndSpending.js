@@ -1,4 +1,4 @@
-import { object, string, number, mixed } from 'yup';
+import { object, string, number, mixed, date } from 'yup';
 
 const notFixedWriterSchema = object().shape({
 	writeType: string().matches(/^nf$/).required(),
@@ -9,6 +9,7 @@ const notFixedWriterSchema = object().shape({
 	category: string().min(1, '카테고리는 필수 항목입니다.').required('카테고리는 필수 항목입니다.'),
 	value: number().min(1, '1원 이상 입력할 수 있습니다.').required('금액은 필수 항목입니다.'),
 	content: string().max(100, '최대 100자를 넘길 수 없습니다.').optional(),
+	spendAndIncomeDate: date().required('날짜는 필수 항목입니다.'),
 });
 
 const fixedWriterSchema = object().shape({

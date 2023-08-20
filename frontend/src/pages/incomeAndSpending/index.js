@@ -55,7 +55,6 @@ const IncomeAndSpendingManageBoard = () => {
 	const param = useParams();
 	const accountBookId = param.id;
 
-	/** 지출/수입, 카테고리, 서브 카테고리, 금액, 내용 */
 	return (
 		<Grid container rowSpacing={4.5} columnSpacing={2.75}>
 			{/* row 1 */}

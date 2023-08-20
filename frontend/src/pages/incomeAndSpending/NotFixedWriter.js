@@ -14,6 +14,9 @@ import {
 } from '@mui/material';
 import axios from 'axios';
 import PropTypes from 'prop-types';
+import dayjs from 'dayjs';
+import { LocalizationProvider, DateTimePicker } from '@mui/x-date-pickers';
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 
 import AnimateButton from 'components/@extended/AnimateButton';
 import { notFixedWriterSchema } from 'validation/incomeAndSpending';
@@ -55,6 +58,7 @@ const NotFixedWriter = ({ accountBookId }) => {
 			initialValues={{
 				writeType: 'nf',
 				type: 'spending',
+				spendAndIncomeDate: dayjs().toDate(),
 				category: '',
 				value: 0,
 				content: '',
@@ -66,7 +70,7 @@ const NotFixedWriter = ({ accountBookId }) => {
 			{({ errors, handleBlur, handleChange, handleSubmit, isSubmitting, touched, values, setFieldValue }) => (
 				<form noValidate onSubmit={handleSubmit}>
 					<Grid container spacing={3}>
-						<Grid item xs={12} sm={6} md={4} lg={2}>
+						<Grid item xs={12} sm={6} md={4} lg={1}>
 							<Stack spacing={1}>
 								<InputLabel htmlFor="type">지출/수입</InputLabel>
 								<Select
@@ -87,7 +91,28 @@ const NotFixedWriter = ({ accountBookId }) => {
 								)}
 							</Stack>
 						</Grid>
-						<Grid item xs={12} sm={6} md={4} lg={3}>
+						<Grid item xs={12} sm={6} md={4} lg={2}>
+							<Stack spacing={1}>
+								<InputLabel htmlFor="spendAndIncomeDate">날짜</InputLabel>
+								<LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale={'ko'}>
+									<DateTimePicker
+										inputFormat="YYYY-MM-DD"
+										value={dayjs(values.spendAndIncomeDate)}
+										onChange={newDate => {
+											setFieldValue('spendAndIncomeDate', newDate.toDate(), true);
+										}}
+										views={['year', 'day']}
+										renderInput={params => <TextField {...params} />}
+									/>
+								</LocalizationProvider>
+								{touched.spendAndIncomeDate && errors.spendAndIncomeDate && (
+									<FormHelperText error id="standard-weight-helper-text-spendAndIncomeDate">
+										{errors.spendAndIncomeDate}
+									</FormHelperText>
+								)}
+							</Stack>
+						</Grid>
+						<Grid item xs={12} sm={6} md={4} lg={2}>
 							<Stack spacing={1}>
 								<InputLabel htmlFor="category">카테고리</InputLabel>
 								<Autocomplete
