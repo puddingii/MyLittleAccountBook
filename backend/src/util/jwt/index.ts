@@ -34,5 +34,5 @@ export const isExpiredToken = (token?: string): token is undefined => {
 };
 
 export const decodeToken = <T>(token: string) => {
-	return jwt.decode(token, { json: true }) as T;
+	return jwt.decode(token, { json: true }) as T | null;
 };

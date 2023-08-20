@@ -24,7 +24,7 @@ export const verifyToken = async (req: Request, res: Response, next: NextFunctio
 		}
 
 		/** Decoded access token data checking */
-		const userInfo = decodeToken<TDecodedAccessTokenInfo | null>(accessToken);
+		const userInfo = decodeToken<TDecodedAccessTokenInfo>(accessToken);
 		if (!userInfo) {
 			throw new Error('만료된 토큰입니다.');
 		}

@@ -216,7 +216,16 @@ export const refreshToken = async (refreshToken: string, accessToken: string) =>
 			throw new Error('로그인이 필요합니다.');
 		}
 
+		/** Access Token is '' */
+		if (!accessToken) {
+			throw new Error('로그인이 필요합니다.');
+		}
+
 		const decodedData = decodeToken<TDecodedAccessTokenInfo>(accessToken);
+		if (!decodedData) {
+			throw new Error('로그인이 필요합니다.');
+		}
+
 		/** Refresh token X, Access token O */
 		if (isExpiredRefreshToken) {
 			await deleteCache(decodedData.email);
@@ -224,6 +233,12 @@ export const refreshToken = async (refreshToken: string, accessToken: string) =>
 		}
 
 		/** Refresh token O, Access token X */
+		const cachedRefreshToken = await getCache(decodedData.email);
+		if (cachedRefreshToken !== refreshToken) {
+			await deleteCache(decodedData.email);
+			throw new Error('로그인이 필요합니다.');
+		}
+
 		const newAccessToken = createAccessToken({
 			email: decodedData.email,
 			nickname: decodedData.nickname,
@@ -239,6 +254,10 @@ export const refreshToken = async (refreshToken: string, accessToken: string) =>
 export const deleteToken = async (refreshToken: string, accessToken: string) => {
 	try {
 		const decodedData = decodeToken<TDecodedAccessTokenInfo>(accessToken);
+		if (!decodedData) {
+			return;
+		}
+
 		const cachedRefreshToken = await getCache(decodedData.email);
 		if (refreshToken === cachedRefreshToken) {
 			await deleteCache(decodedData.email);
