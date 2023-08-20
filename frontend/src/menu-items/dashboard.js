@@ -1,6 +1,5 @@
 // assets
 import { DashboardOutlined, EditOutlined } from '@ant-design/icons';
-import { useLocation } from 'react-router';
 
 // icons
 const icons = {
@@ -24,10 +23,10 @@ const dashboard = {
 			breadcrumbs: false,
 		},
 		{
-			id: 'incomeAndSpendingManageBoard',
+			id: 'spendingAndIncomeManageBoard',
 			title: '지출/수입 관리',
 			type: 'item',
-			url: '/group/:id/income-spending',
+			url: '/group/:id/spending-income',
 			icon: icons.EditOutlined,
 			breadcrumbs: false,
 		},

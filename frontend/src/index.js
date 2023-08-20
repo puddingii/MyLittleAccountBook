@@ -8,6 +8,7 @@ import 'simplebar/src/simplebar.css';
 // third-party
 import { QueryClient, QueryClientProvider } from 'react-query';
 import { RecoilRoot } from 'recoil';
+import 'dayjs/locale/ko';
 
 // apex-chart
 import 'assets/third-party/apex-chart.css';

@@ -50,7 +50,7 @@ const actionSX = {
 
 // ==============================|| DASHBOARD - DEFAULT ||============================== //
 
-const IncomeAndSpendingManageBoard = () => {
+const SpendingAndIncomeManageBoard = () => {
 	const [writeType, setWriteType] = useState('nf');
 	const param = useParams();
 	const accountBookId = param.id;
@@ -243,4 +243,4 @@ const IncomeAndSpendingManageBoard = () => {
 	);
 };
 
-export default IncomeAndSpendingManageBoard;
+export default SpendingAndIncomeManageBoard;

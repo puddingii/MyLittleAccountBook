@@ -4,7 +4,7 @@ import { lazy } from 'react';
 import Loadable from 'components/Loadable';
 import MainLayout from 'layout/MainLayout';
 import GuestGuard from 'utils/GuestGuard';
-import IncomeAndSpendingManageBoard from 'pages/incomeAndSpending';
+import SpendingAndIncomeManageBoard from 'pages/spendingAndIncome';
 
 // render - dashboard
 const DashboardDefault = Loadable(lazy(() => import('pages/dashboard')));
@@ -46,8 +46,8 @@ const GuestGuardRoutes = {
 			],
 		},
 		{
-			path: 'group/:id/income-spending',
-			element: <IncomeAndSpendingManageBoard />,
+			path: 'group/:id/spending-income',
+			element: <SpendingAndIncomeManageBoard />,
 		},
 		{
 			path: 'group/:id/sample-page',
