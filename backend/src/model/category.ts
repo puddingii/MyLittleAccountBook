@@ -24,6 +24,7 @@ import AccountBookModel from './accountBook';
 
 import { TModelInfo } from '@/interface/model';
 import GroupAccountBookModel from './groupAccountBook';
+import CronGroupAccountBookModel from './cronGroupAccountBook';
 
 /**
  * 카테고리
@@ -33,18 +34,42 @@ class CategoryModel extends Model<
 	InferCreationAttributes<CategoryModel>
 > {
 	declare accountBookId: ForeignKey<AccountBookModel['id']>;
+	declare addCrongroupaccountbook: HasManyAddAssociationMixin<
+		CronGroupAccountBookModel,
+		number
+	>;
+	declare addCrongroupaccountbooks: HasManyAddAssociationsMixin<
+		CronGroupAccountBookModel,
+		number
+	>;
 	declare addGroupaccountbook: HasManyAddAssociationMixin<GroupAccountBookModel, number>;
 	declare addGroupaccountbooks: HasManyAddAssociationsMixin<
 		GroupAccountBookModel,
 		number
 	>;
+	declare countCrongroupaccountbooks: HasManyCountAssociationsMixin;
 	declare countGroupaccountbooks: HasManyCountAssociationsMixin;
+	declare createCrongroupaccountbook: HasManyCreateAssociationMixin<
+		CronGroupAccountBookModel,
+		'categoryId'
+	>;
 	declare createGroupaccountbook: HasManyCreateAssociationMixin<
 		GroupAccountBookModel,
 		'categoryId'
 	>;
+	declare crongroupaccountbook?: NonAttribute<CronGroupAccountBookModel[]>;
+	declare getCrongroupaccountbooks: HasManyGetAssociationsMixin<CronGroupAccountBookModel>;
 	declare getGroupaccountbooks: HasManyGetAssociationsMixin<GroupAccountBookModel>;
 	declare groupaccountbooks?: NonAttribute<GroupAccountBookModel[]>;
+	declare hasCrongroupaccountbook: HasManyHasAssociationMixin<
+		CronGroupAccountBookModel,
+		number
+	>;
+	declare hasCrongroupaccountbooks: HasManyHasAssociationsMixin<
+		CronGroupAccountBookModel,
+		number
+	>;
+
 	declare hasGroupaccountbook: HasManyHasAssociationMixin<GroupAccountBookModel, number>;
 	declare hasGroupaccountbooks: HasManyHasAssociationsMixin<
 		GroupAccountBookModel,
@@ -53,6 +78,14 @@ class CategoryModel extends Model<
 	declare id: CreationOptional<number>;
 	declare name: string;
 	declare parentId?: number;
+	declare removeCrongroupaccountbook: HasManyRemoveAssociationMixin<
+		CronGroupAccountBookModel,
+		number
+	>;
+	declare removeCrongroupaccountbooks: HasManyRemoveAssociationsMixin<
+		CronGroupAccountBookModel,
+		number
+	>;
 	declare removeGroupaccountbook: HasManyRemoveAssociationMixin<
 		GroupAccountBookModel,
 		number
@@ -61,6 +94,11 @@ class CategoryModel extends Model<
 		GroupAccountBookModel,
 		number
 	>;
+	declare setCrongroupaccountbooks: HasManySetAssociationsMixin<
+		CronGroupAccountBookModel,
+		number
+	>;
+
 	declare setGroupaccountbooks: HasManySetAssociationsMixin<
 		GroupAccountBookModel,
 		number
@@ -100,6 +138,13 @@ export const associate = (model: TModelInfo) => {
 		onDelete: 'cascade',
 		hooks: true,
 		as: 'groupaccountbooks',
+		foreignKey: { allowNull: false, name: 'categoryId' },
+		sourceKey: 'id',
+	});
+	CategoryModel.hasMany(model.crongroupaccountbooks, {
+		onDelete: 'cascade',
+		hooks: true,
+		as: 'crongroupaccountbooks',
 		foreignKey: { allowNull: false, name: 'categoryId' },
 		sourceKey: 'id',
 	});

@@ -1,5 +1,6 @@
 import AccountBookModel from '@/model/accountBook';
 import CategoryModel from '@/model/category';
+import CronGroupAccountBookModel from '@/model/cronGroupAccountBook';
 import GroupModel from '@/model/group';
 import GroupAccountBookModel from '@/model/groupAccountBook';
 import OAuthUserModel from '@/model/oauthUser';
@@ -12,4 +13,5 @@ export type TModelInfo = {
 	accountbooks: typeof AccountBookModel;
 	groups: typeof GroupModel;
 	groupaccountbooks: typeof GroupAccountBookModel;
+	crongroupaccountbooks: typeof CronGroupAccountBookModel;
 };
