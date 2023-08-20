@@ -10,7 +10,7 @@ const GuardedRoute = ({ children }) => {
 		navigate('/login');
 	}
 
-	return isFetched && !isError && (children || null);
+	return isFetched && !isError ? children || null : <></>;
 };
 
 GuardedRoute.propTypes = {
