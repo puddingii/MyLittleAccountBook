@@ -1,5 +1,4 @@
-import { TResponseType } from '@/interface/api';
-import { TCategoryInfo } from '../model/categoryRepository';
+import { TResponseType } from '@/interface/api/response';
 
 export type TGetCategory = TResponseType<
 	Array<{

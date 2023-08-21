@@ -1,4 +1,4 @@
-import express from 'express';
+import express, { Request } from 'express';
 
 import zParser from '@/util/parser';
 import zodSchema from '@/util/parser/schema';
@@ -9,7 +9,11 @@ import { verifyToken } from '@/middleware/authentication';
 import { getCategory } from '@/service/accountBookService';
 import { COLUMN_WRITE_TYPE } from '@/util/parser/schema/accountBookSchema';
 
-import { TGetCategory } from '@/interface/api/accountBookResponse';
+import { TGetCategory } from '@/interface/api/response/accountBookResponse';
+import {
+	createNewFixedColumn,
+	createNewNotFixedColumn,
+} from '@/service/spendingIncomeService';
 
 const router = express.Router();
 
@@ -40,9 +44,19 @@ router.post('/column', verifyToken, async (req, res) => {
 		const columnInfo = await zParser(zodSchema.accountBook.postColumn, req.body);
 
 		if (columnInfo.writeType === COLUMN_WRITE_TYPE.FIXED) {
-			console.log('Fixed ');
+			const { category, ...columnData } = columnInfo;
+			await createNewFixedColumn({
+				categoryId: category,
+				userEmail: (req.user as Exclude<Request['user'], undefined>).email,
+				...columnData,
+			});
 		} else {
-			console.log('Not Fixed');
+			const { category, ...columnData } = columnInfo;
+			await createNewNotFixedColumn({
+				categoryId: category,
+				userEmail: (req.user as Exclude<Request['user'], undefined>).email,
+				...columnData,
+			});
 		}
 
 		return res

@@ -12,6 +12,7 @@ export const COLUMN_WRITE_TYPE: { FIXED: 'f'; NOTFIXED: 'nf' } = {
 };
 
 const publicColumn = zod.object({
+	accountBookId: zod.number(),
 	value: zod.number().min(1, '1원 이상 입력해야 합니다.'),
 	type: zod.enum(['income', 'spending'], {
 		required_error: '지출/수입 타입 정보가 필요합니다.',
@@ -56,6 +57,8 @@ const postColumn = zod
 	);
 
 export type TGetCategoryQuery = zod.infer<typeof getCategory>;
+export type TPostFixedColumnQuery = zod.infer<typeof fixedColumn>;
+export type TPostNotFixedColumnQuery = zod.infer<typeof notFixedColumn>;
 export type TPostColumnQuery = zod.infer<typeof postColumn>;
 
 export default { getCategory, postColumn };

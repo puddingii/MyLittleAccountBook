@@ -19,11 +19,12 @@ export class GroupAccountBookModel extends Model<
 	InferCreationAttributes<GroupAccountBookModel>
 > {
 	declare categoryId: ForeignKey<CategoryModel['id']>;
-	declare content: string;
+	declare content?: string;
 	declare createdAt: CreationOptional<Date>;
 	declare groupId: ForeignKey<GroupModel['id']>;
 	declare id: CreationOptional<number>;
 	declare spendingAndIncomeDate: Date;
+	declare type: 'income' | 'spending';
 	declare value: number;
 }
 
@@ -40,8 +41,11 @@ GroupAccountBookModel.init(
 		},
 		content: {
 			type: DataTypes.STRING,
+			allowNull: true,
+		},
+		type: {
+			type: DataTypes.STRING,
 			allowNull: false,
-			defaultValue: '',
 		},
 		spendingAndIncomeDate: {
 			type: DataTypes.DATE,

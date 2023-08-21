@@ -22,7 +22,7 @@ import {
 	TPostJoin,
 	TDeleteToken,
 	TGetSocial,
-} from '@/interface/api/authResponse';
+} from '@/interface/api/response/authResponse';
 
 const router = express.Router();
 

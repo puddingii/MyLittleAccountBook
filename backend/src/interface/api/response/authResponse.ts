@@ -1,4 +1,4 @@
-import { TResponseType } from '@/interface/api';
+import { TResponseType } from '@/interface/api/response';
 
 type TTokenLoginResult = {
 	accessToken: string;

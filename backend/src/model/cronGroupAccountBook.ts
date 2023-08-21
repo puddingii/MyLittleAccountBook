@@ -11,23 +11,25 @@ import dayjs from 'dayjs';
 
 import sequelize from '@/loader/mysql';
 import CategoryModel from './category';
+import GroupModel from './group';
 
 import { TModelInfo } from '@/interface/model';
-import GroupModel from './group';
+import { TCycleType } from '@/interface/user';
 
 export class CronGroupAccountBookModel extends Model<
 	InferAttributes<CronGroupAccountBookModel>,
 	InferCreationAttributes<CronGroupAccountBookModel>
 > {
 	declare categoryId: ForeignKey<CategoryModel['id']>;
-	declare content: string;
+	declare content?: string;
 	declare createdAt: CreationOptional<Date>;
 	declare cycleTime: number;
-	declare cycleType: 'sd' | 'd' | 'w' | 'm' | 'y';
+	declare cycleType: TCycleType;
 	declare groupId: ForeignKey<GroupModel['id']>;
 	declare id: CreationOptional<number>;
-	declare isActivated: boolean;
-	declare lastUpdatedTime: Date;
+	declare isActivated?: boolean;
+	declare needToUpdateDate: Date;
+	declare type: 'income' | 'spending';
 	declare value: number;
 }
 
@@ -47,6 +49,10 @@ CronGroupAccountBookModel.init(
 			allowNull: false,
 			defaultValue: '',
 		},
+		type: {
+			type: DataTypes.STRING,
+			allowNull: false,
+		},
 		cycleTime: {
 			type: DataTypes.INTEGER.UNSIGNED,
 			allowNull: false,
@@ -55,7 +61,7 @@ CronGroupAccountBookModel.init(
 			type: DataTypes.STRING,
 			allowNull: false,
 		},
-		lastUpdatedTime: {
+		needToUpdateDate: {
 			type: DataTypes.DATE,
 			defaultValue: dayjs().toDate(),
 		},
