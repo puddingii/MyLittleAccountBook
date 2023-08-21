@@ -1,10 +1,10 @@
 import { Express } from 'express';
 import userRouter from '@/router/userRouter';
 import authRouter from '@/router/authRouter';
-import accountBookRouter from '@/router/accountBookRouter';
+import spendingIncomeRouter from '@/router/spendingIncomeRouter';
 
 export default (app: Express) => {
 	app.use('/user', userRouter);
 	app.use('/auth', authRouter);
-	app.use('/account-book', accountBookRouter);
+	app.use('/accountbook/spending-income', spendingIncomeRouter);
 };

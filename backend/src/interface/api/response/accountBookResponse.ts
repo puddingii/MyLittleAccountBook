@@ -9,3 +9,5 @@ export type TGetCategory = TResponseType<
 		categoryIdPath: string;
 	}>
 >;
+
+export type TPostColumn = TResponseType<{}>;

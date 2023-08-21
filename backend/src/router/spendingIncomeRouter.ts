@@ -9,7 +9,7 @@ import { verifyToken } from '@/middleware/authentication';
 import { getCategory } from '@/service/accountBookService';
 import { COLUMN_WRITE_TYPE } from '@/util/parser/schema/accountBookSchema';
 
-import { TGetCategory } from '@/interface/api/response/accountBookResponse';
+import { TGetCategory, TPostColumn } from '@/interface/api/response/accountBookResponse';
 import {
 	createNewFixedColumn,
 	createNewNotFixedColumn,
@@ -61,7 +61,7 @@ router.post('/column', verifyToken, async (req, res) => {
 
 		return res
 			.status(200)
-			.json({ data: {}, message: '', status: 'success' } as TGetCategory);
+			.json({ data: {}, message: '', status: 'success' } as TPostColumn);
 	} catch (error) {
 		const { message, traceList, code } = convertErrorToCustomError(error, {
 			trace: 'Router',
