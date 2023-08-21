@@ -40,17 +40,20 @@ const FixedWriter = ({ accountBookId }) => {
 	const categoryList = response?.data ?? [];
 
 	const handleSubmit = async (values, { setErrors, setStatus, setSubmitting }) => {
-		createColumnMutate(values, {
-			onSuccess: () => {
-				setStatus({ success: false });
-				setSubmitting(false);
+		createColumnMutate(
+			{ ...values, accountBookId: parseInt(accountBookId, 10) },
+			{
+				onSuccess: () => {
+					setStatus({ success: false });
+					setSubmitting(false);
+				},
+				onError: error => {
+					setStatus({ success: false });
+					setErrors({ submit: error?.response?.data?.message });
+					setSubmitting(false);
+				},
 			},
-			onError: error => {
-				setStatus({ success: false });
-				setErrors({ submit: error?.response?.data?.message });
-				setSubmitting(false);
-			},
-		});
+		);
 	};
 
 	return (
