@@ -13,14 +13,9 @@ import {
 	TextField,
 } from '@mui/material';
 import PropTypes from 'prop-types';
-import dayjs from 'dayjs';
-import { LocalizationProvider, DateTimePicker } from '@mui/x-date-pickers';
-import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 
 import AnimateButton from 'components/@extended/AnimateButton';
-import { notFixedWriterSchema } from 'validation/spendingAndIncome';
-import { useGetCategoryQuery } from 'queries/accountBook/accountBookQuery';
-import { useCreateColumnMutation } from 'queries/accountBook/accountBookMutation';
+import { fixedWriterSchema } from 'validation/spendingAndIncome';
 
 const GroupHeader = styled('div')(({ theme }) => ({
 	position: 'sticky',
@@ -37,20 +32,34 @@ const GroupItems = styled('ul')({
 	padding: 0,
 });
 
-const NotFixedWriter = ({ accountBookId }) => {
-	const { data: response } = useGetCategoryQuery(accountBookId);
-	const { mutate: createColumnMutate } = useCreateColumnMutation();
-	const categoryList = response?.data ?? [];
+const initialValue = {
+	writeType: 'f',
+	type: 'spending',
+	category: '',
+	value: 0,
+	content: '',
+	cycleTime: 1,
+	cycleType: 'sd',
+	submit: null,
+};
+
+const FixedWriter = ({ accountBookId, categoryList, mutate, onMutateSuccess, onMutateError, customInitialValue }) => {
+	const formInitialValue = { ...initialValue, ...customInitialValue };
+
+	const categoryDefaultId = (categoryList ?? []).findIndex(category => category.childId === formInitialValue.category);
+	const defaultCategory = categoryDefaultId !== -1 ? categoryList[categoryDefaultId] : undefined;
 
 	const handleSubmit = async (values, { setErrors, setStatus, setSubmitting }) => {
-		createColumnMutate(
-			{ ...values, accountBookId: parseInt(accountBookId, 10) },
+		mutate(
+			{ ...values, accountBookId },
 			{
-				onSuccess: () => {
+				onSuccess: response => {
+					onMutateSuccess(response);
 					setStatus({ success: false });
 					setSubmitting(false);
 				},
 				onError: error => {
+					onMutateError(error);
 					setStatus({ success: false });
 					setErrors({ submit: error?.response?.data?.message });
 					setSubmitting(false);
@@ -60,23 +69,11 @@ const NotFixedWriter = ({ accountBookId }) => {
 	};
 
 	return (
-		<Formik
-			initialValues={{
-				writeType: 'nf',
-				type: 'spending',
-				spendingAndIncomeDate: dayjs().toDate(),
-				category: '',
-				value: 0,
-				content: '',
-				submit: null,
-			}}
-			validationSchema={notFixedWriterSchema}
-			onSubmit={handleSubmit}
-		>
+		<Formik initialValues={formInitialValue} validationSchema={fixedWriterSchema} onSubmit={handleSubmit}>
 			{({ errors, handleBlur, handleChange, handleSubmit, isSubmitting, touched, values, setFieldValue }) => (
 				<form noValidate onSubmit={handleSubmit}>
 					<Grid container spacing={3}>
-						<Grid item xs={12} sm={6} md={4} lg={1}>
+						<Grid item xs={12} sm={6} md={4} lg={2}>
 							<Stack spacing={1}>
 								<InputLabel htmlFor="type">지출/수입</InputLabel>
 								<Select
@@ -97,28 +94,7 @@ const NotFixedWriter = ({ accountBookId }) => {
 								)}
 							</Stack>
 						</Grid>
-						<Grid item xs={12} sm={6} md={4} lg={2}>
-							<Stack spacing={1}>
-								<InputLabel htmlFor="spendingAndIncomeDate">날짜</InputLabel>
-								<LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale={'ko'}>
-									<DateTimePicker
-										inputFormat="YYYY-MM-DD"
-										value={dayjs(values.spendingAndIncomeDate)}
-										onChange={newDate => {
-											setFieldValue('spendingAndIncomeDate', newDate.toDate(), true);
-										}}
-										views={['year', 'day']}
-										renderInput={params => <TextField {...params} />}
-									/>
-								</LocalizationProvider>
-								{touched.spendingAndIncomeDate && errors.spendingAndIncomeDate && (
-									<FormHelperText error id="standard-weight-helper-text-spendingAndIncomeDate">
-										{errors.spendingAndIncomeDate}
-									</FormHelperText>
-								)}
-							</Stack>
-						</Grid>
-						<Grid item xs={12} sm={6} md={4} lg={2}>
+						<Grid item xs={12} sm={6} md={4} lg={3}>
 							<Stack spacing={1}>
 								<InputLabel htmlFor="category">카테고리</InputLabel>
 								<Autocomplete
@@ -126,7 +102,7 @@ const NotFixedWriter = ({ accountBookId }) => {
 									onInputChange={(event, newInputValue) => {
 										const idx = categoryList.findIndex(category => category.categoryNamePath === newInputValue);
 										if (idx !== -1) {
-											setFieldValue('category', categoryList[idx].childId, true);
+											values.category = categoryList[idx].childId;
 											handleChange(event);
 										} else {
 											setFieldValue('category', '', true);
@@ -139,6 +115,9 @@ const NotFixedWriter = ({ accountBookId }) => {
 									isOptionEqualToValue={(options, values) => options.categoryIdPath === values.categoryIdPath}
 									renderInput={params => {
 										params.InputProps.style = { height: '41px', paddingTop: '4px' };
+										if (defaultCategory) {
+											params.inputProps.value = defaultCategory.categoryNamePath;
+										}
 										return <TextField {...params} />;
 									}}
 									renderGroup={params => (
@@ -166,7 +145,6 @@ const NotFixedWriter = ({ accountBookId }) => {
 									name="value"
 									onBlur={handleBlur}
 									onChange={handleChange}
-									placeholder="Enter value address"
 									fullWidth
 									error={Boolean(touched.value && errors.value)}
 								/>
@@ -193,6 +171,51 @@ const NotFixedWriter = ({ accountBookId }) => {
 								{touched.content && errors.content && (
 									<FormHelperText error id="standard-weight-helper-text-content">
 										{errors.content}
+									</FormHelperText>
+								)}
+							</Stack>
+						</Grid>
+
+						<Grid item xs={12} sm={6} md={4} lg={2}>
+							<Stack spacing={1}>
+								<InputLabel htmlFor="cycleType">주기 타입</InputLabel>
+								<Select
+									id="cycleType"
+									value={values.cycleType}
+									name="cycleType"
+									onBlur={handleBlur}
+									onChange={handleChange}
+									error={Boolean(touched.cycleType && errors.cycleType)}
+								>
+									<MenuItem value={'sd'}>특정 날마다</MenuItem>
+									<MenuItem value={'d'}>일마다</MenuItem>
+									<MenuItem value={'w'}>주마다</MenuItem>
+									<MenuItem value={'m'}>월마다</MenuItem>
+									<MenuItem value={'y'}>년마다</MenuItem>
+								</Select>
+								{touched.cycleType && errors.cycleType && (
+									<FormHelperText error id="standard-weight-helper-text-cycleType">
+										{errors.cycleType}
+									</FormHelperText>
+								)}
+							</Stack>
+						</Grid>
+						<Grid item xs={12} sm={6} md={4} lg={2}>
+							<Stack spacing={1}>
+								<InputLabel htmlFor="cycleTime">주기 날짜</InputLabel>
+								<OutlinedInput
+									id="cycleTime"
+									type="number"
+									value={values.cycleTime}
+									name="cycleTime"
+									onBlur={handleBlur}
+									onChange={handleChange}
+									fullWidth
+									error={Boolean(touched.cycleTime && errors.cycleTime)}
+								/>
+								{touched.cycleTime && errors.cycleTime && (
+									<FormHelperText error id="standard-weight-helper-text-cycleTime">
+										{errors.cycleTime}
 									</FormHelperText>
 								)}
 							</Stack>
@@ -225,8 +248,13 @@ const NotFixedWriter = ({ accountBookId }) => {
 	);
 };
 
-NotFixedWriter.propTypes = {
-	accountBookId: PropTypes.string,
+FixedWriter.propTypes = {
+	accountBookId: PropTypes.number.isRequired,
+	categoryList: PropTypes.array.isRequired,
+	mutate: PropTypes.func.isRequired,
+	onMutateSuccess: PropTypes.func.isRequired,
+	onMutateError: PropTypes.func.isRequired,
+	customInitialValue: PropTypes.object,
 };
 
-export default NotFixedWriter;
+export default FixedWriter;

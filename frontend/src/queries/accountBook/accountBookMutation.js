@@ -27,7 +27,37 @@ export const useCreateColumnMutation = () => {
 
 	return useMutation(createColumnFetcher, {
 		onSuccess: () => {
-			queryClient.invalidateQueries(QUERY_KEY.postColumnm);
+			queryClient.invalidateQueries(`${QUERY_KEY.postColumnm}create`);
+		},
+		onError: error => {
+			if (isExpiredToken(error)) {
+				deleteToken('Authorization');
+				deleteToken('refresh');
+				setUserState(() => ({ email: '', isLogin: false, nickname: '' }));
+				navigate('/login');
+			}
+		},
+	});
+};
+
+/**
+ * @param {Partial<InferType<typeof notFixedWriterSchema>> | Partial<InferType<typeof fixedWriterSchema>> } columnInfo
+ */
+const patchColumnFetcher = columnInfo =>
+	axios
+		.patch(QUERY_KEY.patchColumnm, columnInfo, {
+			withCredentials: true,
+		})
+		.then(({ data }) => data);
+
+export const usePatchColumnMutation = () => {
+	const queryClient = useQueryClient();
+	const setUserState = useSetRecoilState(userState);
+	const navigate = useNavigate();
+
+	return useMutation(patchColumnFetcher, {
+		onSuccess: () => {
+			queryClient.invalidateQueries(`${QUERY_KEY.postColumnm}patch`);
 		},
 		onError: error => {
 			if (isExpiredToken(error)) {
