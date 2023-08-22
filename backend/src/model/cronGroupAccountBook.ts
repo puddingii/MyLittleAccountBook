@@ -68,7 +68,7 @@ CronGroupAccountBookModel.init(
 		isActivated: {
 			type: DataTypes.BOOLEAN,
 			allowNull: true,
-			defaultValue: false,
+			defaultValue: true,
 		},
 		createdAt: DataTypes.DATE,
 	},
