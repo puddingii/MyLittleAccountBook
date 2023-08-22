@@ -73,4 +73,62 @@ router.post('/column', verifyToken, async (req, res) => {
 	}
 });
 
+router.patch('/column', verifyToken, async (req, res) => {
+	try {
+		const columnInfo = await zParser(zodSchema.accountBook.patchColumn, req.body);
+
+		if (columnInfo.writeType === COLUMN_WRITE_TYPE.FIXED) {
+			const { category, ...columnData } = columnInfo;
+		} else {
+			const { category, ...columnData } = columnInfo;
+		}
+
+		return res
+			.status(200)
+			.json({ data: {}, message: '', status: 'success' } as TPostColumn);
+	} catch (error) {
+		const { message, traceList, code } = convertErrorToCustomError(error, {
+			trace: 'Router',
+			code: 400,
+		});
+		logger.error(message, traceList);
+
+		return res.status(code).json({ data: {}, message, status: 'fail' });
+	}
+});
+
+router.delete('/column', verifyToken, async (req, res) => {
+	try {
+		const columnInfo = await zParser(zodSchema.accountBook.postColumn, req.body);
+
+		if (columnInfo.writeType === COLUMN_WRITE_TYPE.FIXED) {
+			const { category, ...columnData } = columnInfo;
+			await createNewFixedColumn({
+				categoryId: category,
+				userEmail: (req.user as Exclude<Request['user'], undefined>).email,
+				...columnData,
+			});
+		} else {
+			const { category, ...columnData } = columnInfo;
+			await createNewNotFixedColumn({
+				categoryId: category,
+				userEmail: (req.user as Exclude<Request['user'], undefined>).email,
+				...columnData,
+			});
+		}
+
+		return res
+			.status(200)
+			.json({ data: {}, message: '', status: 'success' } as TPostColumn);
+	} catch (error) {
+		const { message, traceList, code } = convertErrorToCustomError(error, {
+			trace: 'Router',
+			code: 400,
+		});
+		logger.error(message, traceList);
+
+		return res.status(code).json({ data: {}, message, status: 'fail' });
+	}
+});
+
 export default router;
