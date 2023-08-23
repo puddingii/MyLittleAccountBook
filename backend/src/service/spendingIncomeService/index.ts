@@ -2,7 +2,11 @@
 import dayjs from 'dayjs';
 
 /** Repository */
-import { createNewColumn as createNewNFColumn } from '@/repository/groupAccountBookRepository';
+import {
+	createNewColumn as createNewNFColumn,
+	findGAB,
+	updateColumn,
+} from '@/repository/groupAccountBookRepository';
 import { createNewColumn as createNewFColumn } from '@/repository/cronGroupAccountBookRepository';
 import { findGroup } from '@/repository/groupRepository';
 
@@ -74,6 +78,50 @@ export const createNewNotFixedColumn = async (info: {
 			groupId: group.id,
 			spendingAndIncomeDate: dayjs(spendingAndIncomeDate).toDate(),
 			...columnInfo,
+		});
+	} catch (error) {
+		const customError = convertErrorToCustomError(error, { trace: 'Service', code: 400 });
+		throw customError;
+	}
+};
+
+export const updateFixedColumn = (info: {
+	userEmail: string;
+	accountBookId: number;
+	value: number;
+	type: 'income' | 'spending';
+	categoryId: number;
+	cycleTime: number;
+	cycleType: TCycleType;
+	content?: string | undefined;
+}) => {
+	try {
+		const { accountBookId, userEmail, ...columnInfo } = info;
+	} catch (error) {
+		const customError = convertErrorToCustomError(error, { trace: 'Service', code: 400 });
+		throw customError;
+	}
+};
+
+export const updateNotFixedColumn = async (info: {
+	userEmail: string;
+	id: number;
+	value?: number;
+	type?: 'income' | 'spending';
+	categoryId?: number;
+	content?: string | undefined;
+	spendingAndIncomeDate?: string;
+}) => {
+	try {
+		const { id, userEmail, spendingAndIncomeDate, ...columnInfo } = info;
+		const gab = await findGAB({ id }, userEmail);
+		if (!gab) {
+			throw new Error('권한이 없는 사용자이거나 삭제된 내용입니다.');
+		}
+
+		await updateColumn(gab, {
+			...columnInfo,
+			spendingAndIncomeDate: dayjs(spendingAndIncomeDate).toDate(),
 		});
 	} catch (error) {
 		const customError = convertErrorToCustomError(error, { trace: 'Service', code: 400 });

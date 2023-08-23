@@ -13,6 +13,7 @@ import { TGetCategory, TPostColumn } from '@/interface/api/response/accountBookR
 import {
 	createNewFixedColumn,
 	createNewNotFixedColumn,
+	updateNotFixedColumn,
 } from '@/service/spendingIncomeService';
 
 const router = express.Router();
@@ -78,9 +79,15 @@ router.patch('/column', verifyToken, async (req, res) => {
 		const columnInfo = await zParser(zodSchema.accountBook.patchColumn, req.body);
 
 		if (columnInfo.writeType === COLUMN_WRITE_TYPE.FIXED) {
-			const { category, ...columnData } = columnInfo;
+			const { category, writeType, ...columnData } = columnInfo;
 		} else {
-			const { category, ...columnData } = columnInfo;
+			const { category, writeType, ...columnData } = columnInfo;
+			await updateNotFixedColumn({
+				id: columnInfo.gabId,
+				categoryId: category,
+				userEmail: (req.user as Exclude<Request['user'], undefined>).email,
+				...columnData,
+			});
 		}
 
 		return res
