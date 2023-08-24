@@ -15,7 +15,7 @@ const a11yProps = index => {
 	};
 };
 
-const TableManager = ({ accountBookId, manageType, categoryList }) => {
+const TableManager = ({ accountBookId, manageType, categoryList, rows }) => {
 	const [date, setDate] = useState(dayjs());
 	const [value, setValue] = useState(0);
 	const [selectedRow, setSelectedRow] = useState({});
@@ -72,13 +72,23 @@ const TableManager = ({ accountBookId, manageType, categoryList }) => {
 					</Tabs>
 				</Box>
 				{value === 0 && (
-					<SortCheckTable manageType={manageType} spendIncomeType="all" handleClickEdit={handleClickEdit} />
+					<SortCheckTable manageType={manageType} spendIncomeType="all" handleClickEdit={handleClickEdit} rows={rows} />
 				)}
 				{value === 1 && (
-					<SortCheckTable manageType={manageType} spendIncomeType="spending" handleClickEdit={handleClickEdit} />
+					<SortCheckTable
+						manageType={manageType}
+						spendIncomeType="spending"
+						handleClickEdit={handleClickEdit}
+						rows={rows}
+					/>
 				)}
 				{value === 2 && (
-					<SortCheckTable manageType={manageType} spendIncomeType="income" handleClickEdit={handleClickEdit} />
+					<SortCheckTable
+						manageType={manageType}
+						spendIncomeType="income"
+						handleClickEdit={handleClickEdit}
+						rows={rows}
+					/>
 				)}
 			</Box>
 			<Grid item />
@@ -90,6 +100,7 @@ TableManager.propTypes = {
 	manageType: PropTypes.oneOf(['nf', 'f']).isRequired,
 	accountBookId: PropTypes.number.isRequired,
 	categoryList: PropTypes.array,
+	rows: PropTypes.array,
 };
 
 export default TableManager;

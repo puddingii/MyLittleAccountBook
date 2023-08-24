@@ -36,3 +36,28 @@ export const useGetCategoryQuery = accountBookId => {
 		},
 	});
 };
+
+const getFetcher = info => {
+	const fetcher = () => axios.get(`${QUERY_KEY.get}?${info}`, { withCredentials: true }).then(({ data }) => data);
+
+	return fetcher;
+};
+
+export const useGetQuery = info => {
+	const params = new URLSearchParams(info);
+	const fetcher = getFetcher(params.toString());
+	const setUserState = useSetRecoilState(userState);
+	const navigate = useNavigate();
+
+	return useQuery(QUERY_KEY.get, fetcher, {
+		retry: false,
+		onError: error => {
+			if (isExpiredToken(error)) {
+				deleteToken('Authorization');
+				deleteToken('refresh');
+				setUserState(() => ({ email: '', isLogin: false, nickname: '' }));
+				navigate('/login');
+			}
+		},
+	});
+};

@@ -3,6 +3,7 @@ import { useState } from 'react';
 // material-ui
 import { Button, Grid, Stack, Typography } from '@mui/material';
 import { useParams } from 'react-router';
+import dayjs from 'dayjs';
 
 // project import
 import MainCard from 'components/MainCard';
@@ -10,7 +11,7 @@ import MainCard from 'components/MainCard';
 // assets
 import WriterCard from './WriterCard';
 import TableManager from './TableManager';
-import { useGetCategoryQuery } from 'queries/accountBook/accountBookQuery';
+import { useGetQuery } from 'queries/accountBook/accountBookQuery';
 
 // ==============================|| DASHBOARD - DEFAULT ||============================== //
 
@@ -20,8 +21,14 @@ const SpendingAndIncomeManageBoard = () => {
 	const param = useParams();
 	const accountBookId = parseInt(param?.id ?? -1, 10);
 
-	const { data: response } = useGetCategoryQuery(accountBookId);
-	const categoryList = response?.data ?? [];
+	const { data: getResponse } = useGetQuery({
+		accountBookId,
+		startDate: dayjs().startOf('month').toDate(),
+		endDate: dayjs().endOf('month').toDate(),
+		writeType,
+	});
+	const categoryList = getResponse?.data?.categoryList ?? [];
+	const historyList = getResponse?.data?.historyList ?? [];
 
 	return (
 		<Grid container rowSpacing={4.5} columnSpacing={2.75}>
@@ -85,7 +92,12 @@ const SpendingAndIncomeManageBoard = () => {
 					</Grid>
 				</Grid>
 				<MainCard sx={{ mt: 2 }} content={false}>
-					<TableManager manageType={manageType} accountBookId={accountBookId} categoryList={categoryList} />
+					<TableManager
+						manageType={manageType}
+						accountBookId={accountBookId}
+						categoryList={categoryList}
+						rows={historyList}
+					/>
 				</MainCard>
 			</Grid>
 		</Grid>

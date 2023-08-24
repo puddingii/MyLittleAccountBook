@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import NumberFormat from 'react-number-format';
 import { Delete, KeyboardArrowDown, KeyboardArrowUp, Edit } from '@mui/icons-material';
 import { TableBody, TableCell, TableRow, Chip, IconButton, Collapse, Button, Grid } from '@mui/material';
+import dayjs from 'dayjs';
 
 const SortCheckTableBody = ({ page, visibleRows, rowsPerPage, rowCount, type, handleClickEdit }) => {
 	const [open, setOpen] = useState(new Array(visibleRows.length).fill(false));
@@ -20,6 +21,9 @@ const SortCheckTableBody = ({ page, visibleRows, rowsPerPage, rowCount, type, ha
 		<TableBody>
 			{visibleRows.map((row, index) => {
 				const labelId = `enhanced-table-checkbox-${index}`;
+				const formatedDate = dayjs(type === 'nf' ? row.spendingAndIncomeDate : row.needToUpdateDate).format(
+					'YYYY-MM-DD',
+				);
 
 				return (
 					<Fragment key={row.gabId}>
@@ -40,7 +44,7 @@ const SortCheckTableBody = ({ page, visibleRows, rowsPerPage, rowCount, type, ha
 									size="small"
 								/>
 							</TableCell>
-							<TableCell align="left">{type === 'nf' ? row.spendingAndIncomeDate : row.needToUpdateDate}</TableCell>
+							<TableCell align="left">{formatedDate}</TableCell>
 							<TableCell align="left">{row.category}</TableCell>
 							<TableCell align="right">
 								<NumberFormat value={row.value} displayType="text" thousandSeparator="," /> 원

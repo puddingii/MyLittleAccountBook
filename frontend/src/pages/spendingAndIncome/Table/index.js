@@ -1,36 +1,9 @@
 import { useMemo, useState } from 'react';
 import { Box, Table, TableContainer, TablePagination, Paper } from '@mui/material';
-import dayjs from 'dayjs';
 import PropTypes from 'prop-types';
 
 import SortCheckTableHead from './Header';
 import SortCheckTableBody from './Body';
-
-const createData = (id, gabId, nickname, type, spendingAndIncomeDate, category, value, content) => {
-	return {
-		id,
-		gabId,
-		nickname,
-		type,
-		spendingAndIncomeDate: dayjs(spendingAndIncomeDate).format('YYYY-MM-DD'),
-		category,
-		value,
-		content,
-	};
-};
-
-const rows = Array.from({ length: 13 }, (_, idx) =>
-	createData(
-		idx,
-		idx,
-		`geckosboy${idx}`,
-		idx % 2 ? 'income' : 'spending',
-		`2022-02-${idx}`,
-		`육아 > 기타`,
-		300000 * idx,
-		'응애ㅁㄴㅇㄹㄴㄹㅁㄴㄹㅁㄹㄴㄹㄴㄹㅁㄴ',
-	),
-);
 
 const isDateValue = orderBy => {
 	return orderBy === 'spendingAndIncomeDate' || orderBy === 'cycleTime';
@@ -67,9 +40,9 @@ const stableSort = (array, comparator) => {
 	return stabilizedThis.map(el => el[0]);
 };
 
-const SortCheckTable = ({ manageType, spendIncomeType, handleClickEdit }) => {
+const SortCheckTable = ({ manageType, spendIncomeType, handleClickEdit, rows }) => {
 	const [order, setOrder] = useState('asc');
-	const [orderBy, setOrderBy] = useState('gabId');
+	const [orderBy, setOrderBy] = useState('id');
 	const [page, setPage] = useState(0);
 	const [rowsPerPage, setRowsPerPage] = useState(10);
 
@@ -97,7 +70,7 @@ const SortCheckTable = ({ manageType, spendIncomeType, handleClickEdit }) => {
 			page * rowsPerPage,
 			page * rowsPerPage + rowsPerPage,
 		);
-	}, [order, orderBy, page, rowsPerPage, spendIncomeType]);
+	}, [order, orderBy, page, rowsPerPage, rows, spendIncomeType]);
 
 	return (
 		<Box sx={{ width: '100%' }}>
@@ -137,6 +110,7 @@ SortCheckTable.propTypes = {
 	manageType: PropTypes.oneOf(['nf', 'f']).isRequired,
 	spendIncomeType: PropTypes.oneOf(['all', 'spending', 'income']).isRequired,
 	handleClickEdit: PropTypes.func.isRequired,
+	rows: PropTypes.array.isRequired,
 };
 
 export default SortCheckTable;
