@@ -54,7 +54,7 @@ const FixedWriter = ({ accountBookId, categoryList, mutate, onMutateSuccess, onM
 			{ ...values, accountBookId },
 			{
 				onSuccess: response => {
-					onMutateSuccess(response);
+					onMutateSuccess(response, values);
 					setStatus({ success: false });
 					setSubmitting(false);
 				},

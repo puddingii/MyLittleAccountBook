@@ -42,7 +42,7 @@ const stableSort = (array, comparator) => {
 
 const SortCheckTable = ({ manageType, spendIncomeType, handleClickEdit, rows }) => {
 	const [order, setOrder] = useState('asc');
-	const [orderBy, setOrderBy] = useState('id');
+	const [orderBy, setOrderBy] = useState(manageType === 'nf' ? 'spendingAndIncomeDate' : 'cycleTime');
 	const [page, setPage] = useState(0);
 	const [rowsPerPage, setRowsPerPage] = useState(10);
 

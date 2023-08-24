@@ -63,7 +63,7 @@ const NotFixedWriter = ({
 			{ ...values, accountBookId },
 			{
 				onSuccess: response => {
-					onMutateSuccess(response);
+					onMutateSuccess(response, values);
 					setStatus({ success: false });
 					setSubmitting(false);
 				},

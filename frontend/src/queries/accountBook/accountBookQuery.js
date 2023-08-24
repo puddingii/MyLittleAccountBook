@@ -43,7 +43,7 @@ const getFetcher = info => {
 	return fetcher;
 };
 
-export const useGetQuery = info => {
+export const useGetQuery = (info, { onSuccess }) => {
 	const params = new URLSearchParams(info);
 	const fetcher = getFetcher(params.toString());
 	const setUserState = useSetRecoilState(userState);
@@ -51,6 +51,9 @@ export const useGetQuery = info => {
 
 	return useQuery(QUERY_KEY.get, fetcher, {
 		retry: false,
+		onSuccess: response => {
+			onSuccess(response);
+		},
 		onError: error => {
 			if (isExpiredToken(error)) {
 				deleteToken('Authorization');

@@ -5,6 +5,8 @@ import { Delete, KeyboardArrowDown, KeyboardArrowUp, Edit } from '@mui/icons-mat
 import { TableBody, TableCell, TableRow, Chip, IconButton, Collapse, Button, Grid } from '@mui/material';
 import dayjs from 'dayjs';
 
+import { formatCycle } from 'utils';
+
 const SortCheckTableBody = ({ page, visibleRows, rowsPerPage, rowCount, type, handleClickEdit }) => {
 	const [open, setOpen] = useState(new Array(visibleRows.length).fill(false));
 	// Avoid a layout jump when reaching the last page with empty rows.
@@ -33,7 +35,7 @@ const SortCheckTableBody = ({ page, visibleRows, rowsPerPage, rowCount, type, ha
 									{open[index] ? <KeyboardArrowUp /> : <KeyboardArrowDown />}
 								</IconButton>
 							</TableCell>
-							<TableCell align="left">{row.id}</TableCell>
+							<TableCell align="left">{row.gabId}</TableCell>
 							<TableCell component="th" id={labelId} scope="row" padding="none">
 								{row.nickname}
 							</TableCell>
@@ -50,7 +52,7 @@ const SortCheckTableBody = ({ page, visibleRows, rowsPerPage, rowCount, type, ha
 								<NumberFormat value={row.value} displayType="text" thousandSeparator="," /> 원
 							</TableCell>
 							<TableCell align="left">{row.content}</TableCell>
-							{type === 'f' && <TableCell align="left">{row.cycle}</TableCell>}
+							{type === 'f' && <TableCell align="left">{formatCycle(row.cycleType, row.cycleTime)}</TableCell>}
 						</TableRow>
 						<TableRow>
 							<TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={6}>

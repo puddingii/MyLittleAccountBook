@@ -17,10 +17,14 @@ const boxStyle = {
 	p: 4,
 };
 
-const EditModal = ({ open, handleClose, manageType, accountBookId, categoryList, selectedRow }) => {
+const EditModal = ({ open, handleClose, manageType, accountBookId, categoryList, selectedRow, updateColumn }) => {
 	const { mutate: patchColumnMutate } = usePatchColumnMutation();
 
-	const onMutateSuccess = () => {};
+	const onMutateSuccess = (response, editedHistory) => {
+		const category = categoryList.find(category => category.childId === editedHistory.category);
+		const categoryName = category ? category.categoryNamePath : '';
+		updateColumn({ ...editedHistory, category: categoryName });
+	};
 	const onMutateError = () => {};
 
 	return (
@@ -70,6 +74,7 @@ EditModal.propTypes = {
 	accountBookId: PropTypes.number.isRequired,
 	open: PropTypes.bool.isRequired,
 	handleClose: PropTypes.func.isRequired,
+	updateColumn: PropTypes.func.isRequired,
 	manageType: PropTypes.oneOf(['nf', 'f']).isRequired,
 	categoryList: PropTypes.array,
 	selectedRow: PropTypes.object.isRequired,

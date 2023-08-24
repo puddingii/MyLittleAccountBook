@@ -12,10 +12,14 @@ import { useCreateColumnMutation } from 'queries/accountBook/accountBookMutation
 
 // ==============================|| AUTHENTICATION - CARD WRAPPER ||============================== //
 
-const WriterCard = ({ accountBookId, categoryList, writeType }) => {
+const WriterCard = ({ accountBookId, categoryList, writeType, addHistory }) => {
 	const { mutate: createColumnMutate } = useCreateColumnMutation();
 
-	const onMutateSuccess = () => {};
+	const onMutateSuccess = (response, addedHistory) => {
+		const category = categoryList.find(category => category.childId === addedHistory.category);
+		const categoryName = category ? category.categoryNamePath : '';
+		addHistory({ ...addedHistory, category: categoryName, gabId: response?.data?.newId });
+	};
 	const onMutateError = () => {};
 
 	return (
@@ -45,6 +49,7 @@ const WriterCard = ({ accountBookId, categoryList, writeType }) => {
 
 WriterCard.propTypes = {
 	accountBookId: PropTypes.number.isRequired,
+	addHistory: PropTypes.func.isRequired,
 	categoryList: PropTypes.array.isRequired,
 	writeType: PropTypes.oneOf(['nf', 'f']).isRequired,
 };

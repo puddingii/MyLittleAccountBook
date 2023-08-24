@@ -1,9 +1,10 @@
-import { useState } from 'react';
+import { useCallback, useState } from 'react';
+import { useParams } from 'react-router';
+import { useRecoilValue } from 'recoil';
+import dayjs from 'dayjs';
 
 // material-ui
 import { Button, Grid, Stack, Typography } from '@mui/material';
-import { useParams } from 'react-router';
-import dayjs from 'dayjs';
 
 // project import
 import MainCard from 'components/MainCard';
@@ -12,23 +13,57 @@ import MainCard from 'components/MainCard';
 import WriterCard from './WriterCard';
 import TableManager from './TableManager';
 import { useGetQuery } from 'queries/accountBook/accountBookQuery';
+import userState from 'recoil/user';
 
 // ==============================|| DASHBOARD - DEFAULT ||============================== //
 
 const SpendingAndIncomeManageBoard = () => {
 	const [writeType, setWriteType] = useState('nf');
 	const [manageType, setManageType] = useState('nf');
+	const [notFixedHistoryList, setNotFixedHistoryList] = useState([]);
+	const [fixedHistoryList, setFixedHistoryList] = useState([]);
 	const param = useParams();
+	const { nickname } = useRecoilValue(userState);
 	const accountBookId = parseInt(param?.id ?? -1, 10);
 
-	const { data: getResponse } = useGetQuery({
-		accountBookId,
-		startDate: dayjs().startOf('month').toDate(),
-		endDate: dayjs().endOf('month').toDate(),
-		writeType,
-	});
-	const categoryList = getResponse?.data?.categoryList ?? [];
-	const historyList = getResponse?.data?.historyList ?? [];
+	const { data: response } = useGetQuery(
+		{
+			accountBookId,
+			startDate: dayjs().startOf('month').toDate(),
+			endDate: dayjs().endOf('month').toDate(),
+		},
+		{
+			onSuccess: response => {
+				setFixedHistoryList(response?.data?.history.fixedList);
+				setNotFixedHistoryList(response?.data?.history.notFixedList);
+			},
+		},
+	);
+
+	const categoryList = response?.data?.categoryList ?? [];
+
+	const addHistory = useCallback(
+		history => {
+			const setFunc = writeType === 'nf' ? setNotFixedHistoryList : setFixedHistoryList;
+			setFunc(beforeList => [...beforeList, { ...history, id: beforeList.length, nickname }]);
+		},
+		[writeType, nickname, setNotFixedHistoryList, setFixedHistoryList],
+	);
+
+	const updateColumn = useCallback(
+		editedHistory => {
+			const setFunc = writeType === 'nf' ? setNotFixedHistoryList : setFixedHistoryList;
+			setFunc(beforeList => {
+				const copiedList = [...beforeList];
+				const idx = copiedList.findIndex(history => history.gabId === editedHistory.gabId);
+				if (idx !== -1) {
+					copiedList[idx] = { ...editedHistory };
+				}
+				return copiedList;
+			});
+		},
+		[writeType, setNotFixedHistoryList, setFixedHistoryList],
+	);
 
 	return (
 		<Grid container rowSpacing={4.5} columnSpacing={2.75}>
@@ -61,7 +96,12 @@ const SpendingAndIncomeManageBoard = () => {
 						</Stack>
 					</Grid>
 				</Grid>
-				<WriterCard accountBookId={accountBookId} writeType={writeType} categoryList={categoryList} />
+				<WriterCard
+					accountBookId={accountBookId}
+					writeType={writeType}
+					categoryList={categoryList}
+					addHistory={addHistory}
+				/>
 			</Grid>
 
 			<Grid item xs={12} md={12} lg={12}>
@@ -96,7 +136,8 @@ const SpendingAndIncomeManageBoard = () => {
 						manageType={manageType}
 						accountBookId={accountBookId}
 						categoryList={categoryList}
-						rows={historyList}
+						rows={manageType === 'nf' ? notFixedHistoryList : fixedHistoryList}
+						updateColumn={updateColumn}
 					/>
 				</MainCard>
 			</Grid>

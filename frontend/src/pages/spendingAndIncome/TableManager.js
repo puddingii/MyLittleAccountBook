@@ -15,7 +15,7 @@ const a11yProps = index => {
 	};
 };
 
-const TableManager = ({ accountBookId, manageType, categoryList, rows }) => {
+const TableManager = ({ accountBookId, manageType, categoryList, rows, updateColumn }) => {
 	const [date, setDate] = useState(dayjs());
 	const [value, setValue] = useState(0);
 	const [selectedRow, setSelectedRow] = useState({});
@@ -46,6 +46,7 @@ const TableManager = ({ accountBookId, manageType, categoryList, rows }) => {
 				manageType={manageType}
 				categoryList={categoryList}
 				selectedRow={selectedRow}
+				updateColumn={updateColumn}
 			/>
 			<Grid item xs={4} md={4} lg={4} />
 			<Grid item xs={4} md={4} lg={4} sx={{ paddingTop: '25px' }}>
@@ -101,6 +102,7 @@ TableManager.propTypes = {
 	accountBookId: PropTypes.number.isRequired,
 	categoryList: PropTypes.array,
 	rows: PropTypes.array,
+	updateColumn: PropTypes.func.isRequired,
 };
 
 export default TableManager;
