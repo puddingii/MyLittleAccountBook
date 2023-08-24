@@ -33,6 +33,7 @@ export class GroupModel extends Model<
 > {
 	declare accessHistory: Date;
 	declare accountBookId: ForeignKey<AccountBookModel['id']>;
+	declare accountbooks?: NonAttribute<AccountBookModel>;
 	declare addCrongroupaccountbook: HasManyAddAssociationMixin<
 		CronGroupAccountBookModel,
 		number
@@ -101,6 +102,7 @@ export class GroupModel extends Model<
 	>;
 
 	declare userEmail: ForeignKey<UserModel['email']>;
+	declare users?: NonAttribute<UserModel>;
 	/** owner, admin, writer, observer */
 	declare userType: 'admin' | 'owner' | 'writer' | 'observer';
 }

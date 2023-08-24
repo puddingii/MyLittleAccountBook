@@ -23,13 +23,19 @@ const publicColumn = {
 
 const notFixedColumn = {
 	...publicColumn,
-	writeType: zod.literal(COLUMN_WRITE_TYPE.NOTFIXED),
+	writeType: zod.literal(COLUMN_WRITE_TYPE.NOTFIXED, {
+		required_error: '고정/지출 타입정보가 필요합니다.',
+		invalid_type_error: '알 수 없는 타입입니다.',
+	}),
 	spendingAndIncomeDate: zod.string().datetime({ message: '날짜 형식이 아닙니다.' }),
 };
 
 const fixedColumn = {
 	...publicColumn,
-	writeType: zod.literal(COLUMN_WRITE_TYPE.FIXED),
+	writeType: zod.literal(COLUMN_WRITE_TYPE.FIXED, {
+		required_error: '고정/지출 타입정보가 필요합니다.',
+		invalid_type_error: '알 수 없는 타입입니다.',
+	}),
 	cycleTime: zod.number().min(0, '0 이하로 입력할 수 없습니다.'),
 	cycleType: zod.enum(['sd', 'd', 'w', 'm', 'y'], {
 		required_error: '고정주기 입력 시 필수 항목입니다.',
@@ -122,10 +128,23 @@ const patchColumn = zod
 		},
 	);
 
+const getColumnList = zod.object({
+	query: zod.object({
+		accountBookId: zod.string(),
+		startDate: zod.string(),
+		endDate: zod.string(),
+		writeType: zod.enum([COLUMN_WRITE_TYPE.FIXED, COLUMN_WRITE_TYPE.NOTFIXED], {
+			required_error: '고정/지출 타입정보가 필요합니다.',
+			invalid_type_error: '알 수 없는 타입입니다.',
+		}),
+	}),
+});
+
 export type TGetCategoryQuery = zod.infer<typeof getCategory>;
 export type TPostFixedColumnQuery = zod.infer<typeof postFixedColumn>;
 export type TPostNotFixedColumnQuery = zod.infer<typeof postNotFixedColumn>;
 export type TPostColumnQuery = zod.infer<typeof postColumn>;
 export type TPatchColumnQuery = zod.infer<typeof patchColumn>;
+export type TGetColumnListQuery = zod.infer<typeof getColumnList>;
 
-export default { getCategory, postColumn, patchColumn };
+export default { getCategory, postColumn, patchColumn, getColumnList };

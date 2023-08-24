@@ -2,6 +2,7 @@ import { Op } from 'sequelize';
 
 import GroupModel from '@/model/group';
 import GroupAccountBookModel from '@/model/groupAccountBook';
+import UserModel from '@/model/user';
 import { convertErrorToCustomError } from '@/util/error';
 
 export const findGAB = async (
@@ -40,6 +41,45 @@ export const findGAB = async (
 	} catch (error) {
 		const customError = convertErrorToCustomError(error, {
 			trace: 'Repository',
+			code: 400,
+		});
+		throw customError;
+	}
+};
+
+export const findAllNotFixedColumn = async (info: {
+	accountBookId: number;
+	startDate: Date;
+	endDate: Date;
+}) => {
+	try {
+		const { accountBookId, endDate, startDate } = info;
+		const columnList = await GroupModel.findAll({
+			where: { accountBookId },
+			include: [
+				{
+					model: GroupAccountBookModel,
+					as: 'groupaccountbooks',
+					required: true,
+					where: {
+						spendingAndIncomeDate: { [Op.between]: [startDate, endDate] },
+					},
+				},
+				{
+					model: UserModel,
+					as: 'users',
+					required: true,
+					attributes: ['nickname'],
+				},
+			],
+			subQuery: false,
+		});
+
+		return columnList;
+	} catch (error) {
+		const customError = convertErrorToCustomError(error, {
+			trace: 'Repository',
+			code: 400,
 		});
 		throw customError;
 	}
@@ -58,6 +98,7 @@ export const createNewColumn = async (columnInfo: {
 	} catch (error) {
 		const customError = convertErrorToCustomError(error, {
 			trace: 'Repository',
+			code: 400,
 		});
 		throw customError;
 	}
@@ -78,6 +119,7 @@ export const updateColumn = async (
 	} catch (error) {
 		const customError = convertErrorToCustomError(error, {
 			trace: 'Repository',
+			code: 400,
 		});
 		throw customError;
 	}

@@ -6,10 +6,14 @@ import { logger } from '@/util';
 import { convertErrorToCustomError } from '@/util/error';
 
 import { verifyToken } from '@/middleware/authentication';
-import { getCategory } from '@/service/accountBookService';
+import { getCategory, getNotFixedColumnList } from '@/service/accountBookService';
 import { COLUMN_WRITE_TYPE } from '@/util/parser/schema/accountBookSchema';
 
-import { TGetCategory, TPostColumn } from '@/interface/api/response/accountBookResponse';
+import {
+	TGet,
+	TGetCategory,
+	TPostColumn,
+} from '@/interface/api/response/accountBookResponse';
 import {
 	createNewFixedColumn,
 	createNewNotFixedColumn,
@@ -127,6 +131,45 @@ router.delete('/column', verifyToken, async (req, res) => {
 		return res
 			.status(200)
 			.json({ data: {}, message: '', status: 'success' } as TPostColumn);
+	} catch (error) {
+		const { message, traceList, code } = convertErrorToCustomError(error, {
+			trace: 'Router',
+			code: 400,
+		});
+		logger.error(message, traceList);
+
+		return res.status(code).json({ data: {}, message, status: 'fail' });
+	}
+});
+
+router.get('/', verifyToken, async (req, res) => {
+	try {
+		const {
+			query: { accountBookId, endDate, startDate, writeType },
+		} = await zParser(zodSchema.accountBook.getColumnList, req);
+
+		let historyList = [] as TGet['data']['historyList'];
+		let categoryList = [] as TGet['data']['categoryList'];
+		if (writeType === 'f') {
+			console.log('1');
+		} else {
+			const result = await getNotFixedColumnList({
+				accountBookId: parseInt(accountBookId, 10),
+				startDate,
+				endDate,
+			});
+
+			historyList = result.historyList;
+			categoryList = result.categoryList;
+		}
+
+		return res
+			.status(200)
+			.json({
+				data: { historyList, categoryList },
+				message: '',
+				status: 'success',
+			} as TGet);
 	} catch (error) {
 		const { message, traceList, code } = convertErrorToCustomError(error, {
 			trace: 'Router',
