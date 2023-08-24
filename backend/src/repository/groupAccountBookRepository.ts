@@ -94,7 +94,9 @@ export const createNewColumn = async (columnInfo: {
 	type: 'income' | 'spending';
 }) => {
 	try {
-		await GroupAccountBookModel.create(columnInfo);
+		const newColumn = await GroupAccountBookModel.create(columnInfo);
+
+		return newColumn.id;
 	} catch (error) {
 		const customError = convertErrorToCustomError(error, {
 			trace: 'Repository',

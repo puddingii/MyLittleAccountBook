@@ -23,16 +23,17 @@ router.post('/column', verifyToken, async (req, res) => {
 	try {
 		const columnInfo = await zParser(zodSchema.accountBook.postColumn, req.body);
 
+		let newId;
 		if (columnInfo.writeType === COLUMN_WRITE_TYPE.FIXED) {
 			const { category, ...columnData } = columnInfo;
-			await createNewFixedColumn({
+			newId = await createNewFixedColumn({
 				categoryId: category,
 				userEmail: (req.user as Exclude<Request['user'], undefined>).email,
 				...columnData,
 			});
 		} else {
 			const { category, ...columnData } = columnInfo;
-			await createNewNotFixedColumn({
+			newId = await createNewNotFixedColumn({
 				categoryId: category,
 				userEmail: (req.user as Exclude<Request['user'], undefined>).email,
 				...columnData,
@@ -41,7 +42,7 @@ router.post('/column', verifyToken, async (req, res) => {
 
 		return res
 			.status(200)
-			.json({ data: {}, message: '', status: 'success' } as TPostColumn);
+			.json({ data: { newId }, message: '', status: 'success' } as TPostColumn);
 	} catch (error) {
 		const { message, traceList, code } = convertErrorToCustomError(error, {
 			trace: 'Router',

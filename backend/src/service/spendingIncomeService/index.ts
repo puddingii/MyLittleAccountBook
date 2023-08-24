@@ -47,11 +47,13 @@ export const createNewFixedColumn = async (info: {
 			columnInfo.cycleTime,
 			columnInfo.cycleType,
 		);
-		await createNewFColumn({
+		const newId = await createNewFColumn({
 			groupId: group.id,
 			needToUpdateDate,
 			...columnInfo,
 		});
+
+		return newId;
 	} catch (error) {
 		const customError = convertErrorToCustomError(error, { trace: 'Service', code: 400 });
 		throw customError;
@@ -78,11 +80,13 @@ export const createNewNotFixedColumn = async (info: {
 			throw new Error('글쓰기 권한이 없는 사용자 입니다.');
 		}
 
-		await createNewNFColumn({
+		const newId = await createNewNFColumn({
 			groupId: group.id,
 			spendingAndIncomeDate: dayjs(spendingAndIncomeDate).toDate(),
 			...columnInfo,
 		});
+
+		return newId;
 	} catch (error) {
 		const customError = convertErrorToCustomError(error, { trace: 'Service', code: 400 });
 		throw customError;

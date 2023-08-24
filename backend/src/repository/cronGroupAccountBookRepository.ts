@@ -9,7 +9,9 @@ import { TColumnInfo } from '@/interface/model/cronGroupAccountBookRepository';
 
 export const createNewColumn = async (columnInfo: Omit<TColumnInfo, 'id'>) => {
 	try {
-		await CronGroupAccountBookModel.create(columnInfo);
+		const newColumn = await CronGroupAccountBookModel.create(columnInfo);
+
+		return newColumn.id;
 	} catch (error) {
 		const customError = convertErrorToCustomError(error, {
 			trace: 'Repository',
