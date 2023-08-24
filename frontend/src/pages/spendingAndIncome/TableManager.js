@@ -1,5 +1,5 @@
-import { useState } from 'react';
-import { Box, Button, Grid, Tab, Tabs, TextField } from '@mui/material';
+import { useMemo, useState } from 'react';
+import { Box, Grid, Tab, Tabs, TextField } from '@mui/material';
 import { LocalizationProvider, DateTimePicker } from '@mui/x-date-pickers';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import dayjs from 'dayjs';
@@ -15,10 +15,14 @@ const a11yProps = index => {
 	};
 };
 
-const TableManager = ({ accountBookId, manageType, categoryList, rows, updateColumn }) => {
-	const [date, setDate] = useState(dayjs());
+const FILTER_LIST = ['all', 'spending', 'income'];
+
+const TableManager = ({ accountBookId, manageType, categoryList, date, rows, updateColumn, handleDate }) => {
 	const [value, setValue] = useState(0);
 	const [selectedRow, setSelectedRow] = useState({});
+	const filterType = useMemo(() => {
+		return FILTER_LIST[value];
+	}, [value]);
 
 	const [isOpenModal, setIsOpenModal] = useState(false);
 
@@ -38,7 +42,6 @@ const TableManager = ({ accountBookId, manageType, categoryList, rows, updateCol
 
 	return (
 		<Grid container alignItems="center" justifyContent="space-between">
-			<Button onClick={() => setIsOpenModal(true)}>asdf</Button>
 			<EditModal
 				handleClose={() => setIsOpenModal(false)}
 				open={isOpenModal}
@@ -56,8 +59,9 @@ const TableManager = ({ accountBookId, manageType, categoryList, rows, updateCol
 							sx={{ marginRight: '5px' }}
 							inputFormat="YYYY년 MM월"
 							value={date}
-							onChange={setDate}
+							onChange={handleDate}
 							views={['year', 'month']}
+							openTo="month"
 							renderInput={params => <TextField {...params} />}
 						/>
 					</LocalizationProvider>
@@ -72,25 +76,12 @@ const TableManager = ({ accountBookId, manageType, categoryList, rows, updateCol
 						<Tab label="수입" {...a11yProps(2)} />
 					</Tabs>
 				</Box>
-				{value === 0 && (
-					<SortCheckTable manageType={manageType} spendIncomeType="all" handleClickEdit={handleClickEdit} rows={rows} />
-				)}
-				{value === 1 && (
-					<SortCheckTable
-						manageType={manageType}
-						spendIncomeType="spending"
-						handleClickEdit={handleClickEdit}
-						rows={rows}
-					/>
-				)}
-				{value === 2 && (
-					<SortCheckTable
-						manageType={manageType}
-						spendIncomeType="income"
-						handleClickEdit={handleClickEdit}
-						rows={rows}
-					/>
-				)}
+				<SortCheckTable
+					manageType={manageType}
+					spendIncomeType={filterType}
+					handleClickEdit={handleClickEdit}
+					rows={rows}
+				/>
 			</Box>
 			<Grid item />
 		</Grid>
@@ -103,6 +94,8 @@ TableManager.propTypes = {
 	categoryList: PropTypes.array,
 	rows: PropTypes.array,
 	updateColumn: PropTypes.func.isRequired,
+	handleDate: PropTypes.func.isRequired,
+	date: PropTypes.instanceOf(dayjs).isRequired,
 };
 
 export default TableManager;

@@ -57,8 +57,8 @@ const SortCheckTableBody = ({ page, visibleRows, rowsPerPage, rowCount, type, ha
 						<TableRow>
 							<TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={6}>
 								<Collapse in={open[index]} timeout="auto" unmountOnExit>
-									<Grid container alignItems="center" justifyContent="left" sx={{ margin: 1 }} spacing={1}>
-										<Grid item sm={2} md={2} lg={2} style={{ paddingTop: 0 }}>
+									<Grid container alignItems="center" justifyContent="left" sx={{ margin: 1 }} spacing={2}>
+										<Grid item style={{ paddingTop: 0 }}>
 											<Button
 												onClick={() => handleClickEdit(visibleRows[index])}
 												variant="outlined"
@@ -69,7 +69,7 @@ const SortCheckTableBody = ({ page, visibleRows, rowsPerPage, rowCount, type, ha
 												수정하기
 											</Button>
 										</Grid>
-										<Grid item sm={2} md={2} lg={2} style={{ paddingTop: 0 }}>
+										<Grid item style={{ paddingTop: 0 }}>
 											<Button variant="outlined" size="small" color="error" startIcon={<Delete />}>
 												삭제하기
 											</Button>

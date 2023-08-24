@@ -1,4 +1,4 @@
-import { useCallback, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { useParams } from 'react-router';
 import { useRecoilValue } from 'recoil';
 import dayjs from 'dayjs';
@@ -18,6 +18,7 @@ import userState from 'recoil/user';
 // ==============================|| DASHBOARD - DEFAULT ||============================== //
 
 const SpendingAndIncomeManageBoard = () => {
+	const [date, setDate] = useState(dayjs());
 	const [writeType, setWriteType] = useState('nf');
 	const [manageType, setManageType] = useState('nf');
 	const [notFixedHistoryList, setNotFixedHistoryList] = useState([]);
@@ -26,11 +27,11 @@ const SpendingAndIncomeManageBoard = () => {
 	const { nickname } = useRecoilValue(userState);
 	const accountBookId = parseInt(param?.id ?? -1, 10);
 
-	const { data: response } = useGetQuery(
+	const { data: response, refetch } = useGetQuery(
 		{
 			accountBookId,
-			startDate: dayjs().startOf('month').toDate(),
-			endDate: dayjs().endOf('month').toDate(),
+			startDate: date.startOf('month').toDate(),
+			endDate: date.endOf('month').toDate(),
 		},
 		{
 			onSuccess: response => {
@@ -64,6 +65,14 @@ const SpendingAndIncomeManageBoard = () => {
 		},
 		[writeType, setNotFixedHistoryList, setFixedHistoryList],
 	);
+
+	const handleDate = async date => {
+		setDate(date);
+	};
+
+	useEffect(() => {
+		refetch();
+	}, [refetch, date]);
 
 	return (
 		<Grid container rowSpacing={4.5} columnSpacing={2.75}>
@@ -138,6 +147,8 @@ const SpendingAndIncomeManageBoard = () => {
 						categoryList={categoryList}
 						rows={manageType === 'nf' ? notFixedHistoryList : fixedHistoryList}
 						updateColumn={updateColumn}
+						handleDate={handleDate}
+						date={date}
 					/>
 				</MainCard>
 			</Grid>
