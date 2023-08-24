@@ -6,43 +6,18 @@ import { logger } from '@/util';
 import { convertErrorToCustomError } from '@/util/error';
 
 import { verifyToken } from '@/middleware/authentication';
-import { getCategory, getNotFixedColumnList } from '@/service/accountBookService';
+import { getSIMDefaultInfo } from '@/service/accountBookService';
 import { COLUMN_WRITE_TYPE } from '@/util/parser/schema/accountBookSchema';
 
-import {
-	TGet,
-	TGetCategory,
-	TPostColumn,
-} from '@/interface/api/response/accountBookResponse';
+import { TGet, TPostColumn } from '@/interface/api/response/accountBookResponse';
 import {
 	createNewFixedColumn,
 	createNewNotFixedColumn,
+	updateFixedColumn,
 	updateNotFixedColumn,
 } from '@/service/spendingIncomeService';
 
 const router = express.Router();
-
-router.get('/category', verifyToken, async (req, res) => {
-	try {
-		const {
-			query: { accountBookId },
-		} = await zParser(zodSchema.accountBook.getCategory, req);
-
-		const list = await getCategory(parseInt(accountBookId, 10));
-
-		return res
-			.status(200)
-			.json({ data: list, message: '', status: 'success' } as TGetCategory);
-	} catch (error) {
-		const { message, traceList, code } = convertErrorToCustomError(error, {
-			trace: 'Router',
-			code: 400,
-		});
-		logger.error(message, traceList);
-
-		return res.status(code).json({ data: {}, message, status: 'fail' });
-	}
-});
 
 router.post('/column', verifyToken, async (req, res) => {
 	try {
@@ -83,8 +58,16 @@ router.patch('/column', verifyToken, async (req, res) => {
 		const columnInfo = await zParser(zodSchema.accountBook.patchColumn, req.body);
 
 		if (columnInfo.writeType === COLUMN_WRITE_TYPE.FIXED) {
+			// eslint-disable-next-line @typescript-eslint/no-unused-vars
 			const { category, writeType, ...columnData } = columnInfo;
+			await updateFixedColumn({
+				id: columnInfo.gabId,
+				categoryId: category,
+				userEmail: (req.user as Exclude<Request['user'], undefined>).email,
+				...columnData,
+			});
 		} else {
+			// eslint-disable-next-line @typescript-eslint/no-unused-vars
 			const { category, writeType, ...columnData } = columnInfo;
 			await updateNotFixedColumn({
 				id: columnInfo.gabId,
@@ -145,31 +128,20 @@ router.delete('/column', verifyToken, async (req, res) => {
 router.get('/', verifyToken, async (req, res) => {
 	try {
 		const {
-			query: { accountBookId, endDate, startDate, writeType },
+			query: { accountBookId, endDate, startDate },
 		} = await zParser(zodSchema.accountBook.getColumnList, req);
 
-		let historyList = [] as TGet['data']['historyList'];
-		let categoryList = [] as TGet['data']['categoryList'];
-		if (writeType === 'f') {
-			console.log('1');
-		} else {
-			const result = await getNotFixedColumnList({
-				accountBookId: parseInt(accountBookId, 10),
-				startDate,
-				endDate,
-			});
+		const result = await getSIMDefaultInfo({
+			accountBookId: parseInt(accountBookId, 10),
+			startDate,
+			endDate,
+		});
 
-			historyList = result.historyList;
-			categoryList = result.categoryList;
-		}
-
-		return res
-			.status(200)
-			.json({
-				data: { historyList, categoryList },
-				message: '',
-				status: 'success',
-			} as TGet);
+		return res.status(200).json({
+			data: result,
+			message: '',
+			status: 'success',
+		} as TGet);
 	} catch (error) {
 		const { message, traceList, code } = convertErrorToCustomError(error, {
 			trace: 'Router',

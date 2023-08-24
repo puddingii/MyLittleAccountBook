@@ -2,12 +2,12 @@ import dayjs from 'dayjs';
 
 import { getCategoryList } from '@/repository/categoryRepository';
 import { findAllNotFixedColumn } from '@/repository/groupAccountBookRepository';
+import { findAllFixedColumn } from '@/repository/cronGroupAccountBookRepository';
 import { convertErrorToCustomError } from '@/util/error';
 
-export const getCategory = async (
-	accountBookId: number,
-	depth = { start: 2, end: 2 },
-) => {
+import { TGet } from '@/interface/api/response/accountBookResponse';
+
+const getCategory = async (accountBookId: number, depth = { start: 2, end: 2 }) => {
 	try {
 		const categoryList = await getCategoryList(accountBookId, depth);
 
@@ -32,14 +32,16 @@ export const getCategory = async (
 	}
 };
 
-export const getNotFixedColumnList = async (info: {
-	accountBookId: number;
-	startDate: string;
-	endDate: string;
-}) => {
+const getNotFixedColumnList = async (
+	info: {
+		accountBookId: number;
+		startDate: string;
+		endDate: string;
+	},
+	categoryList: Awaited<ReturnType<typeof getCategory>>,
+) => {
 	try {
 		const { accountBookId, endDate, startDate } = info;
-		const categoryList = await getCategory(accountBookId, { start: 2, end: 2 });
 
 		const list = await findAllNotFixedColumn({
 			accountBookId,
@@ -67,19 +69,85 @@ export const getNotFixedColumnList = async (info: {
 				acc.push(...gabInfo);
 				return acc;
 			},
-			[] as Array<{
-				id: number;
-				gabId: number;
-				nickname: string;
-				category: string;
-				type: string;
-				spendingAndIncomeDate: Date;
-				value: number;
-				content?: string;
-			}>,
+			[] as TGet['data']['history']['notFixedList'],
 		);
 
-		return { historyList, categoryList };
+		return historyList;
+	} catch (error) {
+		const customError = convertErrorToCustomError(error, { trace: 'Service', code: 400 });
+		throw customError;
+	}
+};
+
+const getFixedColumnList = async (
+	info: {
+		accountBookId: number;
+		startDate?: string;
+		endDate?: string;
+	},
+	categoryList: Awaited<ReturnType<typeof getCategory>>,
+) => {
+	try {
+		const { accountBookId, endDate, startDate } = info;
+		const dateInfo =
+			startDate && endDate
+				? {
+						endDate: dayjs(endDate).toDate(),
+						startDate: dayjs(startDate).toDate(),
+				  }
+				: {};
+
+		const list = await findAllFixedColumn({
+			accountBookId,
+			...dateInfo,
+		});
+
+		const historyList = list.reduce(
+			(acc, column) => {
+				const nickname = column.users?.nickname ?? '';
+				const gabInfo = (column.crongroupaccountbooks ?? []).map((gab, idx) => {
+					return {
+						id: idx,
+						gabId: gab.id,
+						nickname,
+						category:
+							categoryList.find(category => category.childId === gab.categoryId)
+								?.categoryNamePath ?? '',
+						type: gab.type,
+						cycleType: gab.cycleType,
+						cycleTime: gab.cycleTime,
+						needToUpdateDate: gab.needToUpdateDate,
+						value: gab.value,
+						content: gab.content,
+					};
+				});
+				acc.push(...gabInfo);
+				return acc;
+			},
+			[] as TGet['data']['history']['fixedList'],
+		);
+
+		return historyList;
+	} catch (error) {
+		const customError = convertErrorToCustomError(error, { trace: 'Service', code: 400 });
+		throw customError;
+	}
+};
+
+/** History 및 Category 반환 */
+export const getSIMDefaultInfo = async (info: {
+	accountBookId: number;
+	startDate: string;
+	endDate: string;
+}) => {
+	try {
+		const { accountBookId } = info;
+		const categoryList = await getCategory(accountBookId, { start: 2, end: 2 });
+
+		const notFixedList = await getNotFixedColumnList(info, categoryList);
+		const fixedList = await getFixedColumnList({ accountBookId }, categoryList);
+
+		return { history: { notFixedList, fixedList }, categoryList } as TGet['data'];
 	} catch (error) {
 		const customError = convertErrorToCustomError(error, { trace: 'Service', code: 400 });
 		throw customError;

@@ -58,7 +58,7 @@ export class GroupModel extends Model<
 		GroupAccountBookModel,
 		'groupId'
 	>;
-	declare crongroupaccountbook?: NonAttribute<CronGroupAccountBookModel[]>;
+	declare crongroupaccountbooks?: NonAttribute<CronGroupAccountBookModel[]>;
 	declare getCrongroupaccountbooks: HasManyGetAssociationsMixin<CronGroupAccountBookModel>;
 	declare getGroupaccountbooks: HasManyGetAssociationsMixin<GroupAccountBookModel>;
 	declare groupaccountbooks?: NonAttribute<GroupAccountBookModel[]>;

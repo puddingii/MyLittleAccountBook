@@ -133,10 +133,6 @@ const getColumnList = zod.object({
 		accountBookId: zod.string(),
 		startDate: zod.string(),
 		endDate: zod.string(),
-		writeType: zod.enum([COLUMN_WRITE_TYPE.FIXED, COLUMN_WRITE_TYPE.NOTFIXED], {
-			required_error: '고정/지출 타입정보가 필요합니다.',
-			invalid_type_error: '알 수 없는 타입입니다.',
-		}),
 	}),
 });
 
