@@ -13,6 +13,7 @@ import {
 	TextField,
 } from '@mui/material';
 import PropTypes from 'prop-types';
+import { useState } from 'react';
 
 import AnimateButton from 'components/@extended/AnimateButton';
 import { fixedWriterSchema } from 'validation/spendingAndIncome';
@@ -45,11 +46,12 @@ const initialValue = {
 
 const FixedWriter = ({ accountBookId, categoryList, mutate, onMutateSuccess, onMutateError, customInitialValue }) => {
 	const formInitialValue = { ...initialValue, ...customInitialValue };
+	const [isInitialCategory, setIsInitialCategory] = useState(false);
 
 	const categoryDefaultId = (categoryList ?? []).findIndex(category => category.childId === formInitialValue.category);
 	const defaultCategory = categoryDefaultId !== -1 ? categoryList[categoryDefaultId] : undefined;
 
-	const handleSubmit = async (values, { setErrors, setStatus, setSubmitting }) => {
+	const handleSubmit = async (values, { setErrors, setStatus, setSubmitting, resetForm }) => {
 		mutate(
 			{ ...values, accountBookId },
 			{
@@ -57,6 +59,8 @@ const FixedWriter = ({ accountBookId, categoryList, mutate, onMutateSuccess, onM
 					onMutateSuccess(response, values);
 					setStatus({ success: false });
 					setSubmitting(false);
+					resetForm({ values: { ...initialValue } });
+					setIsInitialCategory(true);
 				},
 				onError: error => {
 					onMutateError(error);
@@ -113,8 +117,14 @@ const FixedWriter = ({ accountBookId, categoryList, mutate, onMutateSuccess, onM
 									groupBy={category => category.parentName}
 									getOptionLabel={category => category.categoryNamePath}
 									isOptionEqualToValue={(options, values) => options.categoryIdPath === values.categoryIdPath}
+									onChange={() => {
+										setIsInitialCategory(false);
+									}}
 									renderInput={params => {
 										params.InputProps.style = { height: '41px', paddingTop: '4px' };
+										if (isInitialCategory) {
+											params.inputProps.value = '';
+										}
 										if (!params.inputProps.value && defaultCategory) {
 											params.inputProps.value = defaultCategory.categoryNamePath;
 										}

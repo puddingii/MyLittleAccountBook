@@ -16,6 +16,7 @@ import PropTypes from 'prop-types';
 import dayjs from 'dayjs';
 import { LocalizationProvider, DateTimePicker } from '@mui/x-date-pickers';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
+import { useState } from 'react';
 
 import AnimateButton from 'components/@extended/AnimateButton';
 import { notFixedWriterSchema } from 'validation/spendingAndIncome';
@@ -54,11 +55,12 @@ const NotFixedWriter = ({
 	customInitialValue,
 }) => {
 	const formInitialValue = { ...initialValue, ...customInitialValue };
+	const [isInitialCategory, setIsInitialCategory] = useState(false);
 
 	const categoryDefaultId = (categoryList ?? []).findIndex(category => category.childId === formInitialValue.category);
 	const defaultCategory = categoryDefaultId !== -1 ? categoryList[categoryDefaultId] : undefined;
 
-	const handleSubmit = async (values, { setErrors, setStatus, setSubmitting }) => {
+	const handleSubmit = async (values, { setErrors, setStatus, setSubmitting, resetForm }) => {
 		mutate(
 			{ ...values, accountBookId },
 			{
@@ -66,6 +68,8 @@ const NotFixedWriter = ({
 					onMutateSuccess(response, values);
 					setStatus({ success: false });
 					setSubmitting(false);
+					resetForm({ values: { ...initialValue } });
+					setIsInitialCategory(true);
 				},
 				onError: error => {
 					onMutateError(error);
@@ -143,8 +147,14 @@ const NotFixedWriter = ({
 									groupBy={category => category.parentName}
 									getOptionLabel={category => category.categoryNamePath}
 									isOptionEqualToValue={(options, values) => options.categoryIdPath === values.categoryIdPath}
+									onChange={() => {
+										setIsInitialCategory(false);
+									}}
 									renderInput={params => {
 										params.InputProps.style = { height: '41px', paddingTop: '4px' };
+										if (isInitialCategory) {
+											params.inputProps.value = '';
+										}
 										if (!params.inputProps.value && defaultCategory) {
 											params.inputProps.value = defaultCategory.categoryNamePath;
 										}
