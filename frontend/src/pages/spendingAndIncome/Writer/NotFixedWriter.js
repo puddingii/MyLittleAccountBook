@@ -145,7 +145,7 @@ const NotFixedWriter = ({
 									isOptionEqualToValue={(options, values) => options.categoryIdPath === values.categoryIdPath}
 									renderInput={params => {
 										params.InputProps.style = { height: '41px', paddingTop: '4px' };
-										if (defaultCategory) {
+										if (!params.inputProps.value && defaultCategory) {
 											params.inputProps.value = defaultCategory.categoryNamePath;
 										}
 										return <TextField {...params} />;
