@@ -1,5 +1,5 @@
 import { useMemo, useState } from 'react';
-import { Box, Table, TableContainer, TablePagination, Paper } from '@mui/material';
+import { Box, Table, TableContainer, TablePagination, Paper, CircularProgress } from '@mui/material';
 import PropTypes from 'prop-types';
 
 import SortCheckTableHead from './Header';
@@ -40,7 +40,7 @@ const stableSort = (array, comparator) => {
 	return stabilizedThis.map(el => el[0]);
 };
 
-const SortCheckTable = ({ manageType, spendIncomeType, handleClickEdit, rows }) => {
+const SortCheckTable = ({ manageType, spendIncomeType, handleClickEdit, handleClickDelete, rows, isFetching }) => {
 	const [order, setOrder] = useState('asc');
 	const [orderBy, setOrderBy] = useState(manageType === 'nf' ? 'spendingAndIncomeDate' : 'cycleTime');
 	const [page, setPage] = useState(0);
@@ -78,16 +78,25 @@ const SortCheckTable = ({ manageType, spendIncomeType, handleClickEdit, rows }) 
 				<TableContainer sx={{ maxHeight: 450 }}>
 					<Table stickyHeader aria-label="collapsible table" aria-labelledby="tableTitle" size={'small'}>
 						<SortCheckTableHead order={order} orderBy={orderBy} onRequestSort={handleRequestSort} type={manageType} />
-						<SortCheckTableBody
-							visibleRows={visibleRows}
-							page={page}
-							rowsPerPage={rowsPerPage}
-							rowCount={rows.length}
-							type={manageType}
-							handleClickEdit={handleClickEdit}
-						/>
+						{!isFetching && (
+							<SortCheckTableBody
+								visibleRows={visibleRows}
+								page={page}
+								rowsPerPage={rowsPerPage}
+								rowCount={rows.length}
+								type={manageType}
+								handleClickEdit={handleClickEdit}
+								handleClickDelete={handleClickDelete}
+							/>
+						)}
 					</Table>
 				</TableContainer>
+				{isFetching && (
+					<Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', marginTop: '35px' }}>
+						<CircularProgress color="secondary" size={100} />
+					</Box>
+				)}
+
 				<TablePagination
 					labelRowsPerPage="페이지당 항목 수"
 					labelDisplayedRows={({ from, to, count }) => {
@@ -110,6 +119,8 @@ SortCheckTable.propTypes = {
 	manageType: PropTypes.oneOf(['nf', 'f']).isRequired,
 	spendIncomeType: PropTypes.oneOf(['all', 'spending', 'income']).isRequired,
 	handleClickEdit: PropTypes.func.isRequired,
+	handleClickDelete: PropTypes.func.isRequired,
+	isFetching: PropTypes.bool.isRequired,
 	rows: PropTypes.array.isRequired,
 };
 

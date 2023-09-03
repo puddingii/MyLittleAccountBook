@@ -15,7 +15,7 @@ import userState from 'recoil/user';
  */
 const createColumnFetcher = columnInfo =>
 	axios
-		.post(QUERY_KEY.postColumnm, columnInfo, {
+		.post(QUERY_KEY.postColumn, columnInfo, {
 			withCredentials: true,
 		})
 		.then(({ data }) => data);
@@ -27,7 +27,7 @@ export const useCreateColumnMutation = () => {
 
 	return useMutation(createColumnFetcher, {
 		onSuccess: () => {
-			queryClient.invalidateQueries(`${QUERY_KEY.postColumnm}create`);
+			queryClient.invalidateQueries(`${QUERY_KEY.postColumn}create`);
 		},
 		onError: error => {
 			if (isExpiredToken(error)) {
@@ -45,7 +45,7 @@ export const useCreateColumnMutation = () => {
  */
 const patchColumnFetcher = columnInfo =>
 	axios
-		.patch(QUERY_KEY.patchColumnm, columnInfo, {
+		.patch(QUERY_KEY.patchColumn, columnInfo, {
 			withCredentials: true,
 		})
 		.then(({ data }) => data);
@@ -57,7 +57,35 @@ export const usePatchColumnMutation = () => {
 
 	return useMutation(patchColumnFetcher, {
 		onSuccess: () => {
-			queryClient.invalidateQueries(`${QUERY_KEY.postColumnm}patch`);
+			queryClient.invalidateQueries(`${QUERY_KEY.postColumn}patch`);
+		},
+		onError: error => {
+			if (isExpiredToken(error)) {
+				deleteToken('Authorization');
+				deleteToken('refresh');
+				setUserState(() => ({ email: '', isLogin: false, nickname: '' }));
+				navigate('/login');
+			}
+		},
+	});
+};
+
+/**
+ * @param {{ writeType: 'nf' | 'f'; id: number; }} columnInfo
+ */
+const deleteColumnFetcher = columnInfo =>
+	axios
+		.delete(`${QUERY_KEY.deleteColumn}?${new URLSearchParams(columnInfo).toString()}`, { withCredentials: true })
+		.then(({ data }) => data);
+
+export const useDeleteColumnMutation = () => {
+	const queryClient = useQueryClient();
+	const setUserState = useSetRecoilState(userState);
+	const navigate = useNavigate();
+
+	return useMutation(deleteColumnFetcher, {
+		onSuccess: () => {
+			queryClient.invalidateQueries(`${QUERY_KEY.deleteColumn}delete`);
 		},
 		onError: error => {
 			if (isExpiredToken(error)) {

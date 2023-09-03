@@ -27,7 +27,11 @@ const SpendingAndIncomeManageBoard = () => {
 	const { nickname } = useRecoilValue(userState);
 	const accountBookId = parseInt(param?.id ?? -1, 10);
 
-	const { data: response, refetch } = useGetQuery(
+	const {
+		data: response,
+		refetch,
+		isFetching,
+	} = useGetQuery(
 		{
 			accountBookId,
 			startDate: date.startOf('month').toDate(),
@@ -52,15 +56,23 @@ const SpendingAndIncomeManageBoard = () => {
 	);
 
 	const updateColumn = useCallback(
-		editedHistory => {
+		(updatedHistory, isDelete) => {
 			const setFunc = writeType === 'nf' ? setNotFixedHistoryList : setFixedHistoryList;
+			const editColumn = copiedList => {
+				const idx = copiedList.findIndex(history => history.gabId === updatedHistory.gabId);
+				if (idx !== -1) {
+					copiedList[idx] = { ...updatedHistory };
+				}
+
+				return copiedList;
+			};
+			const deleteColumn = copiedList => {
+				return copiedList.filter(history => history.gabId !== updatedHistory.gabId);
+			};
+
 			setFunc(beforeList => {
 				const copiedList = [...beforeList];
-				const idx = copiedList.findIndex(history => history.gabId === editedHistory.gabId);
-				if (idx !== -1) {
-					copiedList[idx] = { ...editedHistory };
-				}
-				return copiedList;
+				return isDelete ? deleteColumn(copiedList) : editColumn(copiedList);
 			});
 		},
 		[writeType, setNotFixedHistoryList, setFixedHistoryList],
@@ -148,6 +160,7 @@ const SpendingAndIncomeManageBoard = () => {
 						rows={manageType === 'nf' ? notFixedHistoryList : fixedHistoryList}
 						updateColumn={updateColumn}
 						handleDate={handleDate}
+						isFetching={isFetching}
 						date={date}
 					/>
 				</MainCard>

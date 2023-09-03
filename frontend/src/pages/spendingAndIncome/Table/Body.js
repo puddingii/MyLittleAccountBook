@@ -6,8 +6,10 @@ import { TableBody, TableCell, TableRow, Chip, IconButton, Collapse, Button, Gri
 import dayjs from 'dayjs';
 
 import { formatCycle } from 'utils';
+import { useDeleteColumnMutation } from 'queries/accountBook/accountBookMutation';
 
-const SortCheckTableBody = ({ page, visibleRows, rowsPerPage, rowCount, type, handleClickEdit }) => {
+const SortCheckTableBody = ({ page, visibleRows, rowsPerPage, rowCount, type, handleClickEdit, handleClickDelete }) => {
+	const { mutate: deleteColumnMutate } = useDeleteColumnMutation();
 	const [open, setOpen] = useState(new Array(visibleRows.length).fill(false));
 	// Avoid a layout jump when reaching the last page with empty rows.
 	const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - rowCount) : 0;
@@ -17,6 +19,18 @@ const SortCheckTableBody = ({ page, visibleRows, rowsPerPage, rowCount, type, ha
 			list[index] = !list[index];
 			return [...list];
 		});
+	};
+
+	const handleClickDeleteButton = (info, index) => {
+		deleteColumnMutate(
+			{ writeType: type, id: info.gabId },
+			{
+				onSuccess: () => {
+					handleClickArrow(index);
+					handleClickDelete(info);
+				},
+			},
+		);
 	};
 
 	return (
@@ -70,7 +84,13 @@ const SortCheckTableBody = ({ page, visibleRows, rowsPerPage, rowCount, type, ha
 											</Button>
 										</Grid>
 										<Grid item style={{ paddingTop: 0 }}>
-											<Button variant="outlined" size="small" color="error" startIcon={<Delete />}>
+											<Button
+												onClick={() => handleClickDeleteButton(visibleRows[index], index)}
+												variant="outlined"
+												size="small"
+												color="error"
+												startIcon={<Delete />}
+											>
 												삭제하기
 											</Button>
 										</Grid>
@@ -101,6 +121,7 @@ SortCheckTableBody.propTypes = {
 	rowCount: PropTypes.number.isRequired,
 	type: PropTypes.oneOf(['nf', 'f']).isRequired,
 	handleClickEdit: PropTypes.func.isRequired,
+	handleClickDelete: PropTypes.func.isRequired,
 };
 
 export default SortCheckTableBody;

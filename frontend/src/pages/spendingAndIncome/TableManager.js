@@ -17,7 +17,16 @@ const a11yProps = index => {
 
 const FILTER_LIST = ['all', 'spending', 'income'];
 
-const TableManager = ({ accountBookId, manageType, categoryList, date, rows, updateColumn, handleDate }) => {
+const TableManager = ({
+	accountBookId,
+	manageType,
+	categoryList,
+	date,
+	rows,
+	updateColumn,
+	handleDate,
+	isFetching,
+}) => {
 	const [value, setValue] = useState(0);
 	const [selectedRow, setSelectedRow] = useState({});
 	const filterType = useMemo(() => {
@@ -38,6 +47,11 @@ const TableManager = ({ accountBookId, manageType, categoryList, date, rows, upd
 		}
 		setSelectedRow(copyInfo);
 		setIsOpenModal(true);
+	};
+
+	const handleClickDelete = rowInfo => {
+		const copyInfo = { ...rowInfo };
+		updateColumn(copyInfo, true);
 	};
 
 	return (
@@ -80,6 +94,8 @@ const TableManager = ({ accountBookId, manageType, categoryList, date, rows, upd
 					manageType={manageType}
 					spendIncomeType={filterType}
 					handleClickEdit={handleClickEdit}
+					handleClickDelete={handleClickDelete}
+					isFetching={isFetching}
 					rows={rows}
 				/>
 			</Box>
@@ -91,6 +107,7 @@ const TableManager = ({ accountBookId, manageType, categoryList, date, rows, upd
 TableManager.propTypes = {
 	manageType: PropTypes.oneOf(['nf', 'f']).isRequired,
 	accountBookId: PropTypes.number.isRequired,
+	isFetching: PropTypes.bool.isRequired,
 	categoryList: PropTypes.array,
 	rows: PropTypes.array,
 	updateColumn: PropTypes.func.isRequired,
