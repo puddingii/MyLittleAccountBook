@@ -2,6 +2,7 @@ import { TResponseType } from '@/interface/api/response';
 import { TCycleType } from '@/interface/user';
 
 export type TPostColumn = TResponseType<{ newId: number }>;
+export type TDeleteColumn = TResponseType<{}>;
 export type TGet = TResponseType<{
 	history: {
 		notFixedList: Array<{

@@ -4,11 +4,13 @@ import dayjs from 'dayjs';
 /** Repository */
 import {
 	createNewColumn as createNewNFColumn,
+	deleteColumn as deleteNFColumn,
 	findGAB as findNotFixedGAB,
 	updateColumn as updateNFColumn,
 } from '@/repository/groupAccountBookRepository';
 import {
 	createNewColumn as createNewFColumn,
+	deleteColumn as deleteFColumn,
 	findGAB as findFixedGAB,
 	updateColumn as updateFColumn,
 } from '@/repository/cronGroupAccountBookRepository';
@@ -109,12 +111,12 @@ export const updateFixedColumn = async (info: {
 }) => {
 	try {
 		const { id, userEmail, ...columnInfo } = info;
-		const gab = await findFixedGAB({ id }, userEmail);
-		if (!gab) {
+		const cgab = await findFixedGAB({ id }, userEmail);
+		if (!cgab) {
 			throw new Error('권한이 없는 사용자이거나 삭제된 내용입니다.');
 		}
 
-		await updateFColumn(gab, {
+		await updateFColumn(cgab, {
 			...columnInfo,
 		});
 	} catch (error) {
@@ -143,6 +145,36 @@ export const updateNotFixedColumn = async (info: {
 			...columnInfo,
 			spendingAndIncomeDate: dayjs(spendingAndIncomeDate).toDate(),
 		});
+	} catch (error) {
+		const customError = convertErrorToCustomError(error, { trace: 'Service', code: 400 });
+		throw customError;
+	}
+};
+
+export const deleteFixedColumn = async (info: { id: number; userEmail: string }) => {
+	try {
+		const { id, userEmail } = info;
+		const cgab = await findFixedGAB({ id }, userEmail);
+		if (!cgab) {
+			throw new Error('권한이 없는 사용자이거나 삭제된 내용입니다.');
+		}
+
+		await deleteFColumn(cgab);
+	} catch (error) {
+		const customError = convertErrorToCustomError(error, { trace: 'Service', code: 400 });
+		throw customError;
+	}
+};
+
+export const deleteNotFixedColumn = async (info: { id: number; userEmail: string }) => {
+	try {
+		const { id, userEmail } = info;
+		const gab = await findNotFixedGAB({ id }, userEmail);
+		if (!gab) {
+			throw new Error('권한이 없는 사용자이거나 삭제된 내용입니다.');
+		}
+
+		await deleteNFColumn(gab);
 	} catch (error) {
 		const customError = convertErrorToCustomError(error, { trace: 'Service', code: 400 });
 		throw customError;

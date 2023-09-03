@@ -126,3 +126,15 @@ export const updateColumn = async (
 		throw customError;
 	}
 };
+
+export const deleteColumn = async (column: GroupAccountBookModel) => {
+	try {
+		await column.destroy();
+	} catch (error) {
+		const customError = convertErrorToCustomError(error, {
+			trace: 'Repository',
+			code: 400,
+		});
+		throw customError;
+	}
+};

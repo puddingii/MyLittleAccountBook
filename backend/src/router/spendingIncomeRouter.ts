@@ -12,10 +12,16 @@ import {
 	createNewNotFixedColumn,
 	updateFixedColumn,
 	updateNotFixedColumn,
+	deleteNotFixedColumn,
+	deleteFixedColumn,
 } from '@/service/spendingIncomeService';
 import { COLUMN_WRITE_TYPE } from '@/util/parser/schema/accountBookSchema';
 
-import { TGet, TPostColumn } from '@/interface/api/response/accountBookResponse';
+import {
+	TDeleteColumn,
+	TGet,
+	TPostColumn,
+} from '@/interface/api/response/accountBookResponse';
 
 const router = express.Router();
 
@@ -94,27 +100,26 @@ router.patch('/column', verifyToken, async (req, res) => {
 
 router.delete('/column', verifyToken, async (req, res) => {
 	try {
-		const columnInfo = await zParser(zodSchema.accountBook.postColumn, req.body);
+		const {
+			query: { id, writeType },
+		} = await zParser(zodSchema.accountBook.deleteColumn, req);
+		const convertedId = parseInt(id, 10);
 
-		if (columnInfo.writeType === COLUMN_WRITE_TYPE.FIXED) {
-			const { category, ...columnData } = columnInfo;
-			await createNewFixedColumn({
-				categoryId: category,
+		if (writeType === COLUMN_WRITE_TYPE.FIXED) {
+			await deleteFixedColumn({
+				id: convertedId,
 				userEmail: (req.user as Exclude<Request['user'], undefined>).email,
-				...columnData,
 			});
 		} else {
-			const { category, ...columnData } = columnInfo;
-			await createNewNotFixedColumn({
-				categoryId: category,
+			await deleteNotFixedColumn({
+				id: convertedId,
 				userEmail: (req.user as Exclude<Request['user'], undefined>).email,
-				...columnData,
 			});
 		}
 
 		return res
 			.status(200)
-			.json({ data: {}, message: '', status: 'success' } as TPostColumn);
+			.json({ data: {}, message: '', status: 'success' } as TDeleteColumn);
 	} catch (error) {
 		const { message, traceList, code } = convertErrorToCustomError(error, {
 			trace: 'Router',

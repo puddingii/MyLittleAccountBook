@@ -136,11 +136,19 @@ const getColumnList = zod.object({
 	}),
 });
 
+const deleteColumn = zod.object({
+	query: zod.object({
+		id: zod.string(),
+		writeType: zod.enum([COLUMN_WRITE_TYPE.FIXED, COLUMN_WRITE_TYPE.NOTFIXED]),
+	}),
+});
+
 export type TGetCategoryQuery = zod.infer<typeof getCategory>;
 export type TPostFixedColumnQuery = zod.infer<typeof postFixedColumn>;
 export type TPostNotFixedColumnQuery = zod.infer<typeof postNotFixedColumn>;
 export type TPostColumnQuery = zod.infer<typeof postColumn>;
 export type TPatchColumnQuery = zod.infer<typeof patchColumn>;
 export type TGetColumnListQuery = zod.infer<typeof getColumnList>;
+export type TDeleteColumnQuery = zod.infer<typeof deleteColumn>;
 
-export default { getCategory, postColumn, patchColumn, getColumnList };
+export default { getCategory, postColumn, patchColumn, getColumnList, deleteColumn };
