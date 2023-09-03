@@ -6,16 +6,16 @@ import { logger } from '@/util';
 import { convertErrorToCustomError } from '@/util/error';
 
 import { verifyToken } from '@/middleware/authentication';
-import { getSIMDefaultInfo } from '@/service/accountBookService';
-import { COLUMN_WRITE_TYPE } from '@/util/parser/schema/accountBookSchema';
-
-import { TGet, TPostColumn } from '@/interface/api/response/accountBookResponse';
 import {
+	getDefaultInfo,
 	createNewFixedColumn,
 	createNewNotFixedColumn,
 	updateFixedColumn,
 	updateNotFixedColumn,
 } from '@/service/spendingIncomeService';
+import { COLUMN_WRITE_TYPE } from '@/util/parser/schema/accountBookSchema';
+
+import { TGet, TPostColumn } from '@/interface/api/response/accountBookResponse';
 
 const router = express.Router();
 
@@ -132,7 +132,7 @@ router.get('/', verifyToken, async (req, res) => {
 			query: { accountBookId, endDate, startDate },
 		} = await zParser(zodSchema.accountBook.getColumnList, req);
 
-		const result = await getSIMDefaultInfo({
+		const result = await getDefaultInfo({
 			accountBookId: parseInt(accountBookId, 10),
 			startDate,
 			endDate,

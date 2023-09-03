@@ -7,7 +7,10 @@ import { convertErrorToCustomError } from '@/util/error';
 
 import { TGet } from '@/interface/api/response/accountBookResponse';
 
-const getCategory = async (accountBookId: number, depth = { start: 2, end: 2 }) => {
+export const getCategory = async (
+	accountBookId: number,
+	depth = { start: 2, end: 2 },
+) => {
 	try {
 		const categoryList = await getCategoryList(accountBookId, depth);
 
@@ -32,7 +35,7 @@ const getCategory = async (accountBookId: number, depth = { start: 2, end: 2 }) 
 	}
 };
 
-const getNotFixedColumnList = async (
+export const getNotFixedColumnList = async (
 	info: {
 		accountBookId: number;
 		startDate: string;
@@ -79,7 +82,7 @@ const getNotFixedColumnList = async (
 	}
 };
 
-const getFixedColumnList = async (
+export const getFixedColumnList = async (
 	info: {
 		accountBookId: number;
 		startDate?: string;
@@ -128,26 +131,6 @@ const getFixedColumnList = async (
 		);
 
 		return historyList;
-	} catch (error) {
-		const customError = convertErrorToCustomError(error, { trace: 'Service', code: 400 });
-		throw customError;
-	}
-};
-
-/** History 및 Category 반환 */
-export const getSIMDefaultInfo = async (info: {
-	accountBookId: number;
-	startDate: string;
-	endDate: string;
-}) => {
-	try {
-		const { accountBookId } = info;
-		const categoryList = await getCategory(accountBookId, { start: 2, end: 2 });
-
-		const notFixedList = await getNotFixedColumnList(info, categoryList);
-		const fixedList = await getFixedColumnList({ accountBookId }, categoryList);
-
-		return { history: { notFixedList, fixedList }, categoryList } as TGet['data'];
 	} catch (error) {
 		const customError = convertErrorToCustomError(error, { trace: 'Service', code: 400 });
 		throw customError;

@@ -14,8 +14,12 @@ import {
 } from '@/repository/cronGroupAccountBookRepository';
 import { findGroup } from '@/repository/groupRepository';
 
+/** Sub Service */
+import { getCategory, getFixedColumnList, getNotFixedColumnList } from './getInfoService';
+
 /** Interface */
 import { TCycleType } from '@/interface/user';
+import { TGet } from '@/interface/api/response/accountBookResponse';
 
 /** Etc */
 import { convertErrorToCustomError } from '@/util/error';
@@ -139,6 +143,26 @@ export const updateNotFixedColumn = async (info: {
 			...columnInfo,
 			spendingAndIncomeDate: dayjs(spendingAndIncomeDate).toDate(),
 		});
+	} catch (error) {
+		const customError = convertErrorToCustomError(error, { trace: 'Service', code: 400 });
+		throw customError;
+	}
+};
+
+/** History 및 Category 반환(해당 페이지에서 보여줄 기본값 가져오기) */
+export const getDefaultInfo = async (info: {
+	accountBookId: number;
+	startDate: string;
+	endDate: string;
+}) => {
+	try {
+		const { accountBookId } = info;
+		const categoryList = await getCategory(accountBookId, { start: 2, end: 2 });
+
+		const notFixedList = await getNotFixedColumnList(info, categoryList);
+		const fixedList = await getFixedColumnList({ accountBookId }, categoryList);
+
+		return { history: { notFixedList, fixedList }, categoryList } as TGet['data'];
 	} catch (error) {
 		const customError = convertErrorToCustomError(error, { trace: 'Service', code: 400 });
 		throw customError;
