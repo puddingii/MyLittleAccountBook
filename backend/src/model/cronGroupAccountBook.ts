@@ -6,8 +6,8 @@ import {
 	InferAttributes,
 	InferCreationAttributes,
 	Model,
+	NOW,
 } from 'sequelize';
-import dayjs from 'dayjs';
 
 import sequelize from '@/loader/mysql';
 import CategoryModel from './category';
@@ -63,7 +63,8 @@ CronGroupAccountBookModel.init(
 		},
 		needToUpdateDate: {
 			type: DataTypes.DATE,
-			defaultValue: dayjs().toDate(),
+			defaultValue: NOW,
+			allowNull: false,
 		},
 		isActivated: {
 			type: DataTypes.BOOLEAN,
