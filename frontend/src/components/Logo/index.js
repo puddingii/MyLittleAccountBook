@@ -19,13 +19,12 @@ const LogoSection = ({ sx, to }) => {
 		<ButtonBase
 			disableRipple
 			component={Link}
-			onClick={() =>
-				setMenuState(beforeState => ({ ...beforeState, openItem: [defaultId] }))
-			}
+			onClick={() => setMenuState(beforeState => ({ ...beforeState, openItem: [defaultId] }))}
 			to={!to ? config.defaultPath : to}
 			sx={sx}
 		>
-			<Logo />
+			<Logo style={{ marginRight: '5px' }} />
+			나만의 작은 가계부
 		</ButtonBase>
 	);
 };

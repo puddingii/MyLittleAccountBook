@@ -11,7 +11,7 @@ const icons = {
 
 const dashboard = {
 	id: 'group-dashboard',
-	title: 'Navigation',
+	title: '내 가계부',
 	type: 'group',
 	children: [
 		{

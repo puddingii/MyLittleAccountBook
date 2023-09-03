@@ -22,7 +22,7 @@ const icons = {
 
 const utilities = {
 	id: 'utilities',
-	title: 'Utilities',
+	title: '가계부 설정',
 	type: 'group',
 	children: [
 		{
