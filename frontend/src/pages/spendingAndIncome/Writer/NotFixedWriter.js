@@ -53,6 +53,7 @@ const NotFixedWriter = ({
 	onMutateSuccess,
 	onMutateError,
 	customInitialValue,
+	isEditForm,
 }) => {
 	const formInitialValue = { ...initialValue, ...customInitialValue };
 	const [isInitialCategory, setIsInitialCategory] = useState(false);
@@ -68,8 +69,10 @@ const NotFixedWriter = ({
 					onMutateSuccess(response, values);
 					setStatus({ success: false });
 					setSubmitting(false);
-					resetForm({ values: { ...initialValue } });
-					setIsInitialCategory(true);
+					if (!isEditForm) {
+						resetForm({ values: { ...initialValue } });
+						setIsInitialCategory(true);
+					}
 				},
 				onError: error => {
 					onMutateError(error);
@@ -252,6 +255,7 @@ NotFixedWriter.propTypes = {
 	onMutateSuccess: PropTypes.func,
 	onMutateError: PropTypes.func,
 	customInitialValue: PropTypes.object,
+	isEditForm: PropTypes.bool,
 };
 
 export default NotFixedWriter;

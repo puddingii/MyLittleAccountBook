@@ -44,7 +44,15 @@ const initialValue = {
 	submit: null,
 };
 
-const FixedWriter = ({ accountBookId, categoryList, mutate, onMutateSuccess, onMutateError, customInitialValue }) => {
+const FixedWriter = ({
+	accountBookId,
+	categoryList,
+	mutate,
+	onMutateSuccess,
+	onMutateError,
+	customInitialValue,
+	isEditForm,
+}) => {
 	const formInitialValue = { ...initialValue, ...customInitialValue };
 	const [isInitialCategory, setIsInitialCategory] = useState(false);
 
@@ -59,8 +67,10 @@ const FixedWriter = ({ accountBookId, categoryList, mutate, onMutateSuccess, onM
 					onMutateSuccess(response, values);
 					setStatus({ success: false });
 					setSubmitting(false);
-					resetForm({ values: { ...initialValue } });
-					setIsInitialCategory(true);
+					if (!isEditForm) {
+						resetForm({ values: { ...initialValue } });
+						setIsInitialCategory(true);
+					}
 				},
 				onError: error => {
 					onMutateError(error);
@@ -265,6 +275,7 @@ FixedWriter.propTypes = {
 	onMutateSuccess: PropTypes.func.isRequired,
 	onMutateError: PropTypes.func.isRequired,
 	customInitialValue: PropTypes.object,
+	isEditForm: PropTypes.bool,
 };
 
 export default FixedWriter;

@@ -64,6 +64,7 @@ const EditModal = ({
 								onMutateError={onMutateError}
 								onMutateSuccess={onMutateSuccess}
 								customInitialValue={selectedRow}
+								isEditForm={true}
 							/>
 						) : (
 							<FixedWriter
@@ -73,6 +74,7 @@ const EditModal = ({
 								onMutateError={onMutateError}
 								onMutateSuccess={onMutateSuccess}
 								customInitialValue={selectedRow}
+								isEditForm={true}
 							/>
 						)}
 					</MainCard>
