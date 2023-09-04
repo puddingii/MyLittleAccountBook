@@ -26,6 +26,7 @@ const TableManager = ({
 	updateColumn,
 	handleDate,
 	isFetching,
+	setSnackbarInfo,
 }) => {
 	const [value, setValue] = useState(0);
 	const [selectedRow, setSelectedRow] = useState({});
@@ -52,6 +53,7 @@ const TableManager = ({
 	const handleClickDelete = rowInfo => {
 		const copyInfo = { ...rowInfo };
 		updateColumn(copyInfo, true);
+		setSnackbarInfo({ isOpen: true, message: '삭제되었습니다.', severity: 'success' });
 	};
 
 	return (
@@ -64,6 +66,7 @@ const TableManager = ({
 				categoryList={categoryList}
 				selectedRow={selectedRow}
 				updateColumn={updateColumn}
+				setSnackbarInfo={setSnackbarInfo}
 			/>
 			<Grid item xs={4} md={4} lg={4} />
 			<Grid item xs={4} md={4} lg={4} sx={{ paddingTop: '25px' }}>
@@ -113,6 +116,7 @@ TableManager.propTypes = {
 	updateColumn: PropTypes.func.isRequired,
 	handleDate: PropTypes.func.isRequired,
 	date: PropTypes.instanceOf(dayjs).isRequired,
+	setSnackbarInfo: PropTypes.func.isRequired,
 };
 
 export default TableManager;

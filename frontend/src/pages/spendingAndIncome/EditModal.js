@@ -17,15 +17,27 @@ const boxStyle = {
 	p: 4,
 };
 
-const EditModal = ({ open, handleClose, manageType, accountBookId, categoryList, selectedRow, updateColumn }) => {
+const EditModal = ({
+	open,
+	handleClose,
+	manageType,
+	accountBookId,
+	categoryList,
+	selectedRow,
+	updateColumn,
+	setSnackbarInfo,
+}) => {
 	const { mutate: patchColumnMutate } = usePatchColumnMutation();
 
 	const onMutateSuccess = (response, editedHistory) => {
 		const category = categoryList.find(category => category.childId === editedHistory.category);
 		const categoryName = category ? category.categoryNamePath : '';
 		updateColumn({ ...editedHistory, category: categoryName });
+		setSnackbarInfo({ isOpen: true, message: '수정되었습니다.', severity: 'success' });
 	};
-	const onMutateError = () => {};
+	const onMutateError = error => {
+		setSnackbarInfo({ isOpen: true, message: error?.response?.data?.message, severity: 'error' });
+	};
 
 	return (
 		<Modal
@@ -75,6 +87,7 @@ EditModal.propTypes = {
 	open: PropTypes.bool.isRequired,
 	handleClose: PropTypes.func.isRequired,
 	updateColumn: PropTypes.func.isRequired,
+	setSnackbarInfo: PropTypes.func.isRequired,
 	manageType: PropTypes.oneOf(['nf', 'f']).isRequired,
 	categoryList: PropTypes.array,
 	selectedRow: PropTypes.object.isRequired,

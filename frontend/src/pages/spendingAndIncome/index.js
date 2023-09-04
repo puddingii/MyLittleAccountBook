@@ -4,7 +4,7 @@ import { useRecoilValue } from 'recoil';
 import dayjs from 'dayjs';
 
 // material-ui
-import { Button, Grid, Stack, Typography } from '@mui/material';
+import { Alert, Button, Grid, Snackbar, Stack, Typography } from '@mui/material';
 
 // project import
 import MainCard from 'components/MainCard';
@@ -23,6 +23,7 @@ const SpendingAndIncomeManageBoard = () => {
 	const [manageType, setManageType] = useState('nf');
 	const [notFixedHistoryList, setNotFixedHistoryList] = useState([]);
 	const [fixedHistoryList, setFixedHistoryList] = useState([]);
+	const [snackbarInfo, setSnackbarInfo] = useState({ isOpen: false, message: '', severity: 'info' });
 	const param = useParams();
 	const { nickname } = useRecoilValue(userState);
 	const accountBookId = parseInt(param?.id ?? -1, 10);
@@ -82,6 +83,10 @@ const SpendingAndIncomeManageBoard = () => {
 		setDate(date);
 	};
 
+	const handleCloseSnackbar = () => {
+		setSnackbarInfo(beforeInfo => ({ ...beforeInfo, isOpen: false }));
+	};
+
 	useEffect(() => {
 		refetch();
 	}, [refetch, date]);
@@ -122,6 +127,7 @@ const SpendingAndIncomeManageBoard = () => {
 					writeType={writeType}
 					categoryList={categoryList}
 					addHistory={addHistory}
+					setSnackbarInfo={setSnackbarInfo}
 				/>
 			</Grid>
 
@@ -162,9 +168,22 @@ const SpendingAndIncomeManageBoard = () => {
 						handleDate={handleDate}
 						isFetching={isFetching}
 						date={date}
+						setSnackbarInfo={setSnackbarInfo}
 					/>
 				</MainCard>
 			</Grid>
+
+			<Snackbar
+				anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
+				open={snackbarInfo.isOpen}
+				onClose={handleCloseSnackbar}
+				autoHideDuration={5000}
+				key={'snackbarBox'}
+			>
+				<Alert onClose={handleCloseSnackbar} severity={snackbarInfo.severity} sx={{ width: '100%' }}>
+					{snackbarInfo.message}
+				</Alert>
+			</Snackbar>
 		</Grid>
 	);
 };
