@@ -143,6 +143,12 @@ const deleteColumn = zod.object({
 	}),
 });
 
+const getSummary = zod.object({
+	query: zod.object({
+		accountBookId: zod.string(),
+	}),
+});
+
 export type TGetCategoryQuery = zod.infer<typeof getCategory>;
 export type TPostFixedColumnQuery = zod.infer<typeof postFixedColumn>;
 export type TPostNotFixedColumnQuery = zod.infer<typeof postNotFixedColumn>;
@@ -150,5 +156,13 @@ export type TPostColumnQuery = zod.infer<typeof postColumn>;
 export type TPatchColumnQuery = zod.infer<typeof patchColumn>;
 export type TGetColumnListQuery = zod.infer<typeof getColumnList>;
 export type TDeleteColumnQuery = zod.infer<typeof deleteColumn>;
+export type TGetSummaryQuery = zod.infer<typeof getSummary>;
 
-export default { getCategory, postColumn, patchColumn, getColumnList, deleteColumn };
+export default {
+	getCategory,
+	postColumn,
+	patchColumn,
+	getColumnList,
+	deleteColumn,
+	getSummary,
+};

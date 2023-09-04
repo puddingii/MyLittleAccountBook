@@ -17,7 +17,11 @@ import {
 import { findGroup } from '@/repository/groupRepository';
 
 /** Sub Service */
-import { getCategory, getFixedColumnList, getNotFixedColumnList } from './getInfoService';
+import {
+	getCategory,
+	getFixedColumnList,
+	getNotFixedColumnList,
+} from '../common/getService';
 
 /** Interface */
 import { TCycleType } from '@/interface/user';
