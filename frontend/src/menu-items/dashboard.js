@@ -15,10 +15,10 @@ const dashboard = {
 	type: 'group',
 	children: [
 		{
-			id: 'dashboard',
-			title: '종합 대시보드',
+			id: 'summary',
+			title: '이번 달 요약',
 			type: 'item',
-			url: '/group/:id/dashboard/default',
+			url: '/group/:id/summary',
 			icon: icons.DashboardOutlined,
 			breadcrumbs: false,
 		},

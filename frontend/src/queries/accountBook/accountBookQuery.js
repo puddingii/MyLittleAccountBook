@@ -64,3 +64,32 @@ export const useGetQuery = (info, { onSuccess }) => {
 		},
 	});
 };
+
+const getSummaryFetcher = info => {
+	const fetcher = () =>
+		axios.get(`${QUERY_KEY.getSummary}?${info}`, { withCredentials: true }).then(({ data }) => data);
+
+	return fetcher;
+};
+
+export const useGetSummaryQuery = (info, { onSuccess }) => {
+	const params = new URLSearchParams(info);
+	const fetcher = getSummaryFetcher(params.toString());
+	const setUserState = useSetRecoilState(userState);
+	const navigate = useNavigate();
+
+	return useQuery(QUERY_KEY.getSummary, fetcher, {
+		retry: false,
+		onSuccess: response => {
+			onSuccess(response);
+		},
+		onError: error => {
+			if (isExpiredToken(error)) {
+				deleteToken('Authorization');
+				deleteToken('refresh');
+				setUserState(() => ({ email: '', isLogin: false, nickname: '' }));
+				navigate('/login');
+			}
+		},
+	});
+};

@@ -35,7 +35,7 @@ export const useEmailLoginMutation = () => {
 					nickname: decodedData.nickname,
 					isLogin: true,
 				}));
-				navigate(`/group/${data.accountBookId}/dashboard/default`);
+				navigate(`/group/${data.accountBookId}/summary`);
 			}
 			queryClient.invalidateQueries(QUERY_KEY.login);
 		},
@@ -66,7 +66,7 @@ export const useSocialLoginMutation = type => {
 					nickname: decodedData.nickname,
 					isLogin: true,
 				}));
-				navigate(`/group/${data.accountBookId}/dashboard/default`);
+				navigate(`/group/${data.accountBookId}/summary`);
 			} else {
 				deleteToken('Authorization');
 				deleteToken('refresh');

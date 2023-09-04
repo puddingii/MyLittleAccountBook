@@ -3,8 +3,8 @@ import { atom } from 'recoil';
 
 // initial state
 const initialState = {
-	openItem: ['dashboard'],
-	defaultId: 'dashboard',
+	openItem: ['summary'],
+	defaultId: 'summary',
 	openComponent: 'buttons',
 	drawerOpen: false,
 	componentDrawerOpen: true,
