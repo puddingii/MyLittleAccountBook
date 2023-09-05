@@ -11,7 +11,7 @@ import { verifyToken } from '@/middleware/authentication';
 import { getDefaultInfo } from '@/service/thisMonthSummaryService';
 
 /** Interface */
-import { TGet } from '@/interface/api/response/accountBookResponse';
+import { TGetSummary } from '@/interface/api/response/accountBookResponse';
 
 const router = express.Router();
 
@@ -29,7 +29,7 @@ router.get('/', verifyToken, async (req, res) => {
 			data: result,
 			message: '',
 			status: 'success',
-		} as TGet);
+		} as TGetSummary);
 	} catch (error) {
 		const { message, traceList, code } = convertErrorToCustomError(error, {
 			trace: 'Router',
