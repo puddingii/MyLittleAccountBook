@@ -1,10 +1,12 @@
+import { Grid, Stack, Typography } from '@mui/material';
 import { useEffect, useState } from 'react';
-
-// material-ui
+import PropTypes from 'prop-types';
+import dayjs from 'dayjs';
 import { useTheme } from '@mui/material/styles';
-
-// third-party
 import ReactApexChart from 'react-apexcharts';
+
+import { setComma } from 'utils';
+import MainCard from 'components/MainCard';
 
 // chart options
 const columnChartOptions = {
@@ -26,12 +28,10 @@ const columnChartOptions = {
 	},
 	stroke: {
 		show: true,
-		width: 8,
+		width: 12,
 		colors: ['transparent'],
 	},
-	xaxis: {
-		categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
-	},
+	xaxis: {},
 	yaxis: {
 		title: {
 			text: '$ (thousands)',
@@ -43,7 +43,7 @@ const columnChartOptions = {
 	tooltip: {
 		y: {
 			formatter(val) {
-				return `$ ${val} thousands`;
+				return `${setComma(val)} 원`;
 			},
 		},
 	},
@@ -81,7 +81,7 @@ const columnChartOptions = {
 
 // ==============================|| SALES COLUMN CHART ||============================== //
 
-const SpendingAndIncomeChart = () => {
+const SpendingAndIncomeChart = ({ notFixedIncomeList, notFixedSpendingList }) => {
 	const theme = useTheme();
 
 	const { primary, secondary } = theme.palette.text;
@@ -91,16 +91,40 @@ const SpendingAndIncomeChart = () => {
 	const primaryMain = theme.palette.primary.main;
 	const successDark = theme.palette.success.dark;
 
-	const [series] = useState([
-		{
-			name: 'Net Profit',
-			data: [180, 90, 135, 114, 120, 145],
+	const incomeSeries = {
+		name: '수입',
+		data: notFixedIncomeList.map(infoList => {
+			const sum = infoList.reduce((acc, cur) => acc + cur.value, 0);
+			return sum;
+		}),
+	};
+	const spendingSeries = {
+		name: '지출',
+		data: notFixedSpendingList.map(infoList => {
+			const sum = infoList.reduce((acc, cur) => acc + cur.value, 0);
+			return sum;
+		}),
+	};
+	const [maxIncomeIdx, maxIncomeValue] = incomeSeries.data.reduce(
+		(acc, cur, idx) => {
+			if (acc[1] < cur) {
+				acc[0] = idx;
+				acc[1] = cur;
+			}
+			return acc;
 		},
-		{
-			name: 'Revenue',
-			data: [120, 45, 78, 150, 168, 99],
+		[-1, -1],
+	);
+	const [maxSpendingIdx, maxSpendingValue] = spendingSeries.data.reduce(
+		(acc, cur, idx) => {
+			if (acc[1] < cur) {
+				acc[0] = idx;
+				acc[1] = cur;
+			}
+			return acc;
 		},
-	]);
+		[-1, -1],
+	);
 
 	const [options, setOptions] = useState(columnChartOptions);
 
@@ -109,9 +133,14 @@ const SpendingAndIncomeChart = () => {
 			...prevState,
 			colors: [warning, primaryMain],
 			xaxis: {
+				categories: Array.from({ length: dayjs().endOf('month').get('date') }, (_, idx) =>
+					dayjs()
+						.set('date', idx + 1)
+						.format('DD'),
+				),
 				labels: {
 					style: {
-						colors: [secondary, secondary, secondary, secondary, secondary, secondary],
+						colors: secondary,
 					},
 				},
 			},
@@ -139,10 +168,42 @@ const SpendingAndIncomeChart = () => {
 	}, [primary, secondary, line, warning, primaryMain, successDark]);
 
 	return (
-		<div id="chart">
-			<ReactApexChart options={options} series={series} type="bar" height={430} />
-		</div>
+		<>
+			<Grid container alignItems="center" justifyContent="space-between">
+				<Grid item>
+					<Typography variant="h5">지출/수입 차트</Typography>
+				</Grid>
+				<Grid item />
+			</Grid>
+			<MainCard sx={{ mt: 1.75, maxHeight: '451px' }}>
+				<Stack spacing={1.5} sx={{ mb: -12 }}>
+					<Typography variant="h6" color="secondary">
+						가장 많은 수입 [
+						{dayjs()
+							.set('date', maxIncomeIdx + 1)
+							.format('MM/DD')}
+						] : <font color="red">{setComma(maxIncomeValue)} 원</font>
+					</Typography>
+					<Typography style={{ marginTop: '0px' }} variant="h6" color="secondary">
+						가장 많은 지출 [
+						{dayjs()
+							.set('date', maxSpendingIdx + 1)
+							.format('MM/DD')}
+						] : <font color="blue">{setComma(maxSpendingValue)} 원</font>
+					</Typography>
+					<Typography variant="h4"></Typography>
+				</Stack>
+				<div id="chart">
+					<ReactApexChart options={options} series={[incomeSeries, spendingSeries]} type="bar" height={430} />
+				</div>
+			</MainCard>
+		</>
 	);
+};
+
+SpendingAndIncomeChart.propTypes = {
+	notFixedIncomeList: PropTypes.array.isRequired,
+	notFixedSpendingList: PropTypes.array.isRequired,
 };
 
 export default SpendingAndIncomeChart;

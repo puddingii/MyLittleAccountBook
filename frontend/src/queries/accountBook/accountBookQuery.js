@@ -52,7 +52,7 @@ export const useGetQuery = (info, { onSuccess }) => {
 	return useQuery(QUERY_KEY.get, fetcher, {
 		retry: false,
 		onSuccess: response => {
-			onSuccess(response);
+			onSuccess && onSuccess(response);
 		},
 		onError: error => {
 			if (isExpiredToken(error)) {
@@ -72,7 +72,7 @@ const getSummaryFetcher = info => {
 	return fetcher;
 };
 
-export const useGetSummaryQuery = (info, { onSuccess }) => {
+export const useGetSummaryQuery = (info, { onSuccess } = {}) => {
 	const params = new URLSearchParams(info);
 	const fetcher = getSummaryFetcher(params.toString());
 	const setUserState = useSetRecoilState(userState);
@@ -81,7 +81,7 @@ export const useGetSummaryQuery = (info, { onSuccess }) => {
 	return useQuery(QUERY_KEY.getSummary, fetcher, {
 		retry: false,
 		onSuccess: response => {
-			onSuccess(response);
+			onSuccess && onSuccess(response);
 		},
 		onError: error => {
 			if (isExpiredToken(error)) {
