@@ -14,6 +14,9 @@ import {
 } from '@mui/material';
 import PropTypes from 'prop-types';
 import { useState } from 'react';
+import dayjs from 'dayjs';
+import { LocalizationProvider, DateTimePicker } from '@mui/x-date-pickers';
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 
 import AnimateButton from 'components/@extended/AnimateButton';
 import { fixedWriterSchema } from 'validation/spendingAndIncome';
@@ -41,6 +44,7 @@ const initialValue = {
 	content: '',
 	cycleTime: 1,
 	cycleType: 'sd',
+	needToUpdateDate: dayjs().add(1, 'day').toDate(),
 	submit: null,
 };
 
@@ -237,11 +241,31 @@ const FixedWriter = ({
 							</Stack>
 						</Grid>
 
-						{errors.submit && (
-							<Grid item xs={12}>
-								<FormHelperText error>{errors.submit}</FormHelperText>
-							</Grid>
-						)}
+						<Grid item xs={12} sm={6} md={4} lg={2}>
+							<Stack spacing={1}>
+								<InputLabel htmlFor="needToUpdateDate">시작할 날짜</InputLabel>
+								<LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale={'ko'}>
+									<DateTimePicker
+										shouldDisableDate={date => {
+											return date.isSame(dayjs(), 'day') || date.isBefore(dayjs(), 'day');
+										}}
+										inputFormat="YYYY-MM-DD"
+										value={dayjs(values.needToUpdateDate)}
+										onChange={newDate => {
+											setFieldValue('needToUpdateDate', newDate.toDate(), true);
+										}}
+										views={['year', 'day']}
+										renderInput={params => <TextField {...params} />}
+									/>
+								</LocalizationProvider>
+								{touched.needToUpdateDate && errors.needToUpdateDate && (
+									<FormHelperText error id="standard-weight-helper-text-needToUpdateDate">
+										{errors.needToUpdateDate}
+									</FormHelperText>
+								)}
+							</Stack>
+						</Grid>
+
 						<Grid item xs={12}>
 							<AnimateButton>
 								<Button
@@ -257,6 +281,11 @@ const FixedWriter = ({
 								</Button>
 							</AnimateButton>
 						</Grid>
+						{errors.submit && (
+							<Grid item xs={12}>
+								<FormHelperText error>{errors.submit}</FormHelperText>
+							</Grid>
+						)}
 					</Grid>
 				</form>
 			)}

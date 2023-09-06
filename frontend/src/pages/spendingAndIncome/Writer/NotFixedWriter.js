@@ -217,11 +217,6 @@ const NotFixedWriter = ({
 							</Stack>
 						</Grid>
 
-						{errors.submit && (
-							<Grid item xs={12}>
-								<FormHelperText error>{errors.submit}</FormHelperText>
-							</Grid>
-						)}
 						<Grid item xs={12}>
 							<AnimateButton>
 								<Button
@@ -237,6 +232,11 @@ const NotFixedWriter = ({
 								</Button>
 							</AnimateButton>
 						</Grid>
+						{errors.submit && (
+							<Grid item xs={12}>
+								<FormHelperText error>{errors.submit}</FormHelperText>
+							</Grid>
+						)}
 					</Grid>
 				</form>
 			)}

@@ -44,6 +44,7 @@ const fixedWriterSchema = object().shape({
 		.oneOf(['sd', 'd', 'w', 'm', 'y'], '알 수 없는 주기입니다.')
 		.defined()
 		.required('고정주기 입력 시 필수 항목입니다.'),
+	needToUpdateDate: date().required('날짜는 필수 항목입니다.'),
 });
 
 export { notFixedWriterSchema, fixedWriterSchema };
