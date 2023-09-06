@@ -22,7 +22,7 @@ const WriterCard = ({ accountBookId, categoryList, writeType, addHistory, setSna
 		setSnackbarInfo({ isOpen: true, message: '성공적으로 작성되었습니다.', severity: 'success' });
 	};
 	const onMutateError = error => {
-		setSnackbarInfo({ isOpen: true, message: error, severity: 'error' });
+		setSnackbarInfo({ isOpen: true, message: error?.response?.data?.message, severity: 'error' });
 	};
 
 	return (

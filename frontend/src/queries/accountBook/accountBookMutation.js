@@ -2,13 +2,9 @@
 import axios from 'axios';
 import { useMutation, useQueryClient } from 'react-query';
 import { InferType } from 'yup';
-import { useNavigate } from 'react-router';
-import { useSetRecoilState } from 'recoil';
 
 import { QUERY_KEY } from './index';
 import { notFixedWriterSchema, fixedWriterSchema } from 'validation/spendingAndIncome';
-import { deleteToken } from 'utils/auth';
-import userState from 'recoil/user';
 
 /**
  * @param {InferType<typeof notFixedWriterSchema> | InferType<typeof fixedWriterSchema> } columnInfo
@@ -22,20 +18,10 @@ const createColumnFetcher = columnInfo =>
 
 export const useCreateColumnMutation = () => {
 	const queryClient = useQueryClient();
-	const setUserState = useSetRecoilState(userState);
-	const navigate = useNavigate();
 
 	return useMutation(createColumnFetcher, {
 		onSuccess: () => {
 			queryClient.invalidateQueries(`${QUERY_KEY.postColumn}create`);
-		},
-		onError: error => {
-			if (isExpiredToken(error)) {
-				deleteToken('Authorization');
-				deleteToken('refresh');
-				setUserState(() => ({ email: '', isLogin: false, nickname: '' }));
-				navigate('/login');
-			}
 		},
 	});
 };
@@ -52,20 +38,10 @@ const patchColumnFetcher = columnInfo =>
 
 export const usePatchColumnMutation = () => {
 	const queryClient = useQueryClient();
-	const setUserState = useSetRecoilState(userState);
-	const navigate = useNavigate();
 
 	return useMutation(patchColumnFetcher, {
 		onSuccess: () => {
 			queryClient.invalidateQueries(`${QUERY_KEY.postColumn}patch`);
-		},
-		onError: error => {
-			if (isExpiredToken(error)) {
-				deleteToken('Authorization');
-				deleteToken('refresh');
-				setUserState(() => ({ email: '', isLogin: false, nickname: '' }));
-				navigate('/login');
-			}
 		},
 	});
 };
@@ -80,20 +56,10 @@ const deleteColumnFetcher = columnInfo =>
 
 export const useDeleteColumnMutation = () => {
 	const queryClient = useQueryClient();
-	const setUserState = useSetRecoilState(userState);
-	const navigate = useNavigate();
 
 	return useMutation(deleteColumnFetcher, {
 		onSuccess: () => {
 			queryClient.invalidateQueries(`${QUERY_KEY.deleteColumn}delete`);
-		},
-		onError: error => {
-			if (isExpiredToken(error)) {
-				deleteToken('Authorization');
-				deleteToken('refresh');
-				setUserState(() => ({ email: '', isLogin: false, nickname: '' }));
-				navigate('/login');
-			}
 		},
 	});
 };
