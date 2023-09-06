@@ -1,3 +1,4 @@
+import dayjs from 'dayjs';
 import * as zod from 'zod';
 
 const getCategory = zod.object({
@@ -41,6 +42,7 @@ const fixedColumn = {
 		required_error: '고정주기 입력 시 필수 항목입니다.',
 		invalid_type_error: '알 수 없는 주기입니다.',
 	}),
+	needToUpdateDate: zod.string().datetime({ message: '날짜 형식이 아닙니다.' }),
 };
 
 const postNotFixedColumn = zod.object({ ...notFixedColumn, accountBookId: zod.number() });
@@ -63,6 +65,24 @@ const postColumn = zod
 			message:
 				'특정일 선택할 시 주기 날짜 <= 28일 / 특정일이 아닌 경우 주기 날짜 <= 365일',
 			path: ['cycleTime'],
+		},
+	)
+	.refine(
+		data => {
+			if (data.writeType === COLUMN_WRITE_TYPE.FIXED) {
+				const { needToUpdateDate } = data;
+				const needToUpdateDateDayjs = dayjs(needToUpdateDate);
+				const curDayjs = dayjs();
+				return (
+					!needToUpdateDateDayjs.isSame(curDayjs, 'day') &&
+					needToUpdateDateDayjs.isAfter(curDayjs, 'day')
+				);
+			}
+			return true;
+		},
+		{
+			message: '업데이트 날짜는 현재 날짜 + 1일부터 가능합니다.',
+			path: ['needToUpdateDate'],
 		},
 	);
 
@@ -91,6 +111,7 @@ const patchFixedColumn = zod.object({
 			invalid_type_error: '알 수 없는 주기입니다.',
 		})
 		.optional(),
+	needToUpdateDate: fixedColumn.needToUpdateDate.optional(),
 	gabId: zod.number(),
 	accountBookId: zod.number(),
 });
@@ -125,6 +146,24 @@ const patchColumn = zod
 			message:
 				'특정일 선택할 시 주기 날짜 <= 28일 / 특정일이 아닌 경우 주기 날짜 <= 365일',
 			path: ['cycleTime'],
+		},
+	)
+	.refine(
+		data => {
+			if (data.writeType === COLUMN_WRITE_TYPE.FIXED && data.needToUpdateDate) {
+				const { needToUpdateDate } = data;
+				const needToUpdateDateDayjs = dayjs(needToUpdateDate);
+				const curDayjs = dayjs();
+				return (
+					!needToUpdateDateDayjs.isSame(curDayjs, 'day') &&
+					needToUpdateDateDayjs.isAfter(curDayjs, 'day')
+				);
+			}
+			return true;
+		},
+		{
+			message: '업데이트 날짜는 현재 날짜 + 1일부터 가능합니다.',
+			path: ['needToUpdateDate'],
 		},
 	);
 

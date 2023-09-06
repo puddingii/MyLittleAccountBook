@@ -17,7 +17,11 @@ type TDiscriminatedUnion = ZodDiscriminatedUnion<
 >;
 
 const zParser = async <
-	T extends AnyZodObject | ZodEffects<AnyZodObject> | ZodEffects<TDiscriminatedUnion>,
+	T extends
+		| AnyZodObject
+		| ZodEffects<AnyZodObject>
+		| ZodEffects<TDiscriminatedUnion>
+		| ZodEffects<ZodEffects<TDiscriminatedUnion>>,
 >(
 	schema: T,
 	req: Request | Request['body'],

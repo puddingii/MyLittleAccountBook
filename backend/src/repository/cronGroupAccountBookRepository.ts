@@ -98,7 +98,7 @@ export const findAllFixedColumn = async (info: {
 
 export const updateColumn = async (
 	column: CronGroupAccountBookModel,
-	columnInfo: Partial<Omit<TColumnInfo, 'groupId' | 'needToUpdateDate' | 'id'>>,
+	columnInfo: Partial<Omit<TColumnInfo, 'groupId' | 'id'>>,
 ) => {
 	try {
 		await column.update(columnInfo);

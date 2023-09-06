@@ -29,7 +29,6 @@ import { TGet } from '@/interface/api/response/accountBookResponse';
 
 /** Etc */
 import { convertErrorToCustomError } from '@/util/error';
-import { calculateNextCycle } from '@/util/date';
 
 export const createNewFixedColumn = async (info: {
 	userEmail: string;
@@ -40,9 +39,10 @@ export const createNewFixedColumn = async (info: {
 	cycleTime: number;
 	cycleType: TCycleType;
 	content?: string | undefined;
+	needToUpdateDate: string;
 }) => {
 	try {
-		const { accountBookId, userEmail, ...columnInfo } = info;
+		const { accountBookId, userEmail, needToUpdateDate, ...columnInfo } = info;
 
 		const group = await findGroup({ accountBookId, userEmail });
 		if (!group) {
@@ -52,14 +52,9 @@ export const createNewFixedColumn = async (info: {
 			throw new Error('글쓰기 권한이 없는 사용자 입니다.');
 		}
 
-		const needToUpdateDate = calculateNextCycle(
-			new Date(),
-			columnInfo.cycleTime,
-			columnInfo.cycleType,
-		);
 		const newId = await createNewFColumn({
 			groupId: group.id,
-			needToUpdateDate,
+			needToUpdateDate: dayjs(needToUpdateDate).toDate(),
 			...columnInfo,
 		});
 
@@ -112,15 +107,17 @@ export const updateFixedColumn = async (info: {
 	cycleTime?: number;
 	cycleType?: TCycleType;
 	content?: string | undefined;
+	needToUpdateDate?: string;
 }) => {
 	try {
-		const { id, userEmail, ...columnInfo } = info;
+		const { id, userEmail, needToUpdateDate, ...columnInfo } = info;
 		const cgab = await findFixedGAB({ id }, userEmail);
 		if (!cgab) {
 			throw new Error('권한이 없는 사용자이거나 삭제된 내용입니다.');
 		}
 
 		await updateFColumn(cgab, {
+			needToUpdateDate: dayjs(needToUpdateDate).toDate(),
 			...columnInfo,
 		});
 	} catch (error) {

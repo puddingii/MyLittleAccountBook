@@ -15,7 +15,11 @@ export const calculateNextCycle = (
 	cycleType: TCycleType,
 ) => {
 	if (cycleType === 'sd') {
-		return dayjs(date).set('date', cycleTime).toDate();
+		const curDate = dayjs(date);
+		if (curDate.date() >= cycleTime) {
+			curDate.set('month', curDate.month() + 1);
+		}
+		return curDate.set('date', cycleTime).toDate();
 	}
 
 	return dayjs(date)
