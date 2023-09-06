@@ -54,7 +54,7 @@ const FixedWriter = ({
 	isEditForm,
 }) => {
 	const formInitialValue = { ...initialValue, ...customInitialValue };
-	const [isInitialCategory, setIsInitialCategory] = useState(false);
+	const [autocompleteKey, setAutocompleteKey] = useState(1);
 
 	const categoryDefaultId = (categoryList ?? []).findIndex(category => category.childId === formInitialValue.category);
 	const defaultCategory = categoryDefaultId !== -1 ? categoryList[categoryDefaultId] : undefined;
@@ -69,7 +69,7 @@ const FixedWriter = ({
 					setSubmitting(false);
 					if (!isEditForm) {
 						resetForm({ values: { ...initialValue } });
-						setIsInitialCategory(true);
+						setAutocompleteKey(before => before + 1);
 					}
 				},
 				onError: error => {
@@ -113,6 +113,7 @@ const FixedWriter = ({
 								<InputLabel htmlFor="category">카테고리</InputLabel>
 								<Autocomplete
 									id="category"
+									key={autocompleteKey}
 									onInputChange={(event, newInputValue) => {
 										const idx = categoryList.findIndex(category => category.categoryNamePath === newInputValue);
 										if (idx !== -1) {
@@ -127,14 +128,9 @@ const FixedWriter = ({
 									groupBy={category => category.parentName}
 									getOptionLabel={category => category.categoryNamePath}
 									isOptionEqualToValue={(options, values) => options.categoryIdPath === values.categoryIdPath}
-									onChange={() => {
-										setIsInitialCategory(false);
-									}}
+									value={values.categoryIdPath}
 									renderInput={params => {
 										params.InputProps.style = { height: '41px', paddingTop: '4px' };
-										if (isInitialCategory) {
-											params.inputProps.value = '';
-										}
 										if (!params.inputProps.value && defaultCategory) {
 											params.inputProps.value = defaultCategory.categoryNamePath;
 										}
