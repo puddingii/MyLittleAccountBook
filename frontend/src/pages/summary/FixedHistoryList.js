@@ -12,12 +12,16 @@ import {
 	MenuItem,
 	TextField,
 } from '@mui/material';
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import PropTypes from 'prop-types';
+import NumberFormat from 'react-number-format';
+import dayjs from 'dayjs';
 import MainCard from 'components/MainCard';
 
 // assets
-import { GiftOutlined, MessageOutlined, SettingOutlined } from '@ant-design/icons';
+import { DownOutlined, UpOutlined } from '@ant-design/icons';
+import { getComparator, stableSort } from 'utils/sort';
+import { formatCycle } from 'utils';
 
 // avatar style
 const avatarSX = {
@@ -52,20 +56,29 @@ const status = [
 ];
 
 const FixedHistoryList = ({ fixedIncomeList, fixedSpendingList }) => {
-	const [value, setValue] = useState('total');
+	const [filterType, setFilterType] = useState('total');
+
+	const fixedHistoryList = useMemo(() => {
+		let filteredRows = [...fixedIncomeList, ...fixedSpendingList];
+		if (filterType !== 'total') {
+			filteredRows = filteredRows.filter(row => row.type === filterType);
+		}
+		return stableSort(filteredRows, getComparator('asc', 'needToUpdateDate', ['needToUpdateDate']));
+	}, [fixedIncomeList, fixedSpendingList, filterType]);
+
 	return (
 		<>
 			<Grid container alignItems="center" justifyContent="space-between">
 				<Grid item>
-					<Typography variant="h5">고정 지출/수입</Typography>
+					<Typography variant="h5">고정 지출/수입 상세내용</Typography>
 				</Grid>
 				<Grid item>
 					<TextField
 						id="standard-select-currency"
 						size="small"
 						select
-						value={value}
-						onChange={e => setValue(e.target.value)}
+						value={filterType}
+						onChange={e => setFilterType(e.target.value)}
 						sx={{ '& .MuiInputBase-input': { py: 0.5, fontSize: '0.875rem' } }}
 					>
 						{status.map(option => (
@@ -76,7 +89,7 @@ const FixedHistoryList = ({ fixedIncomeList, fixedSpendingList }) => {
 					</TextField>
 				</Grid>
 			</Grid>
-			<MainCard sx={{ mt: 2, maxHeight: '451px' }} content={false}>
+			<MainCard sx={{ mt: 2, height: '442px' }} content={false}>
 				<List
 					component="nav"
 					sx={{
@@ -91,188 +104,34 @@ const FixedHistoryList = ({ fixedIncomeList, fixedSpendingList }) => {
 						maxHeight: '451px',
 					}}
 				>
-					<ListItemButton divider>
-						<ListItemAvatar>
-							<Avatar
-								sx={{
-									color: 'success.main',
-									bgcolor: 'success.lighter',
-								}}
-							>
-								<GiftOutlined />
-							</Avatar>
-						</ListItemAvatar>
-						<ListItemText
-							primary={<Typography variant="subtitle1">Order #002434</Typography>}
-							secondary="Today, 2:00 AM"
-						/>
-						<ListItemSecondaryAction>
-							<Stack alignItems="flex-end">
-								<Typography variant="subtitle1" noWrap>
-									+ $1,430
-								</Typography>
-								<Typography variant="h6" color="secondary" noWrap>
-									78%
-								</Typography>
-							</Stack>
-						</ListItemSecondaryAction>
-					</ListItemButton>
-					<ListItemButton divider>
-						<ListItemAvatar>
-							<Avatar
-								sx={{
-									color: 'primary.main',
-									bgcolor: 'primary.lighter',
-								}}
-							>
-								<MessageOutlined />
-							</Avatar>
-						</ListItemAvatar>
-						<ListItemText
-							primary={<Typography variant="subtitle1">Order #984947</Typography>}
-							secondary="5 August, 1:45 PM"
-						/>
-						<ListItemSecondaryAction>
-							<Stack alignItems="flex-end">
-								<Typography variant="subtitle1" noWrap>
-									+ $302
-								</Typography>
-								<Typography variant="h6" color="secondary" noWrap>
-									8%
-								</Typography>
-							</Stack>
-						</ListItemSecondaryAction>
-					</ListItemButton>
-					<ListItemButton>
-						<ListItemAvatar>
-							<Avatar
-								sx={{
-									color: 'error.main',
-									bgcolor: 'error.lighter',
-								}}
-							>
-								<SettingOutlined />
-							</Avatar>
-						</ListItemAvatar>
-						<ListItemText
-							primary={<Typography variant="subtitle1">Order #988784</Typography>}
-							secondary="7 hours ago"
-						/>
-						<ListItemSecondaryAction>
-							<Stack alignItems="flex-end">
-								<Typography variant="subtitle1" noWrap>
-									+ $682
-								</Typography>
-								<Typography variant="h6" color="secondary" noWrap>
-									16%
-								</Typography>
-							</Stack>
-						</ListItemSecondaryAction>
-					</ListItemButton>
-					<ListItemButton>
-						<ListItemAvatar>
-							<Avatar
-								sx={{
-									color: 'error.main',
-									bgcolor: 'error.lighter',
-								}}
-							>
-								<SettingOutlined />
-							</Avatar>
-						</ListItemAvatar>
-						<ListItemText
-							primary={<Typography variant="subtitle1">Order #988784</Typography>}
-							secondary="7 hours ago"
-						/>
-						<ListItemSecondaryAction>
-							<Stack alignItems="flex-end">
-								<Typography variant="subtitle1" noWrap>
-									+ $682
-								</Typography>
-								<Typography variant="h6" color="secondary" noWrap>
-									16%
-								</Typography>
-							</Stack>
-						</ListItemSecondaryAction>
-					</ListItemButton>
-					<ListItemButton>
-						<ListItemAvatar>
-							<Avatar
-								sx={{
-									color: 'error.main',
-									bgcolor: 'error.lighter',
-								}}
-							>
-								<SettingOutlined />
-							</Avatar>
-						</ListItemAvatar>
-						<ListItemText
-							primary={<Typography variant="subtitle1">Order #988784</Typography>}
-							secondary="7 hours ago"
-						/>
-						<ListItemSecondaryAction>
-							<Stack alignItems="flex-end">
-								<Typography variant="subtitle1" noWrap>
-									+ $682
-								</Typography>
-								<Typography variant="h6" color="secondary" noWrap>
-									16%
-								</Typography>
-							</Stack>
-						</ListItemSecondaryAction>
-					</ListItemButton>
-					<ListItemButton>
-						<ListItemAvatar>
-							<Avatar
-								sx={{
-									color: 'error.main',
-									bgcolor: 'error.lighter',
-								}}
-							>
-								<SettingOutlined />
-							</Avatar>
-						</ListItemAvatar>
-						<ListItemText
-							primary={<Typography variant="subtitle1">Order #988784</Typography>}
-							secondary="7 hours ago"
-						/>
-						<ListItemSecondaryAction>
-							<Stack alignItems="flex-end">
-								<Typography variant="subtitle1" noWrap>
-									+ $682
-								</Typography>
-								<Typography variant="h6" color="secondary" noWrap>
-									16%
-								</Typography>
-							</Stack>
-						</ListItemSecondaryAction>
-					</ListItemButton>
-					<ListItemButton>
-						<ListItemAvatar>
-							<Avatar
-								sx={{
-									color: 'error.main',
-									bgcolor: 'error.lighter',
-								}}
-							>
-								<SettingOutlined />
-							</Avatar>
-						</ListItemAvatar>
-						<ListItemText
-							primary={<Typography variant="subtitle1">Order #988784</Typography>}
-							secondary="7 hours ago"
-						/>
-						<ListItemSecondaryAction>
-							<Stack alignItems="flex-end">
-								<Typography variant="subtitle1" noWrap>
-									+ $682
-								</Typography>
-								<Typography variant="h6" color="secondary" noWrap>
-									16%
-								</Typography>
-							</Stack>
-						</ListItemSecondaryAction>
-					</ListItemButton>
+					{fixedHistoryList.map(fixedHistory => (
+						<ListItemButton key={fixedHistory.id} divider>
+							<ListItemAvatar>
+								<Avatar
+									sx={{
+										color: `${fixedHistory.type === 'spending' ? 'primary' : 'error'}.main`,
+										bgcolor: `${fixedHistory.type === 'spending' ? 'primary' : 'error'}.lighter`,
+									}}
+								>
+									{fixedHistory.type === 'spending' ? <DownOutlined /> : <UpOutlined />}
+								</Avatar>
+							</ListItemAvatar>
+							<ListItemText
+								primary={<Typography variant="subtitle1">{fixedHistory.content}</Typography>}
+								secondary={dayjs(fixedHistory.needToUpdateDate).format('YYYY년 MM월 DD일')}
+							/>
+							<ListItemSecondaryAction>
+								<Stack alignItems="flex-end">
+									<Typography variant="subtitle1" noWrap>
+										<NumberFormat value={fixedHistory.value} displayType="text" thousandSeparator="," /> 원
+									</Typography>
+									<Typography variant="h6" color="secondary" noWrap>
+										{formatCycle(fixedHistory.cycleType, fixedHistory.cycleTime)}
+									</Typography>
+								</Stack>
+							</ListItemSecondaryAction>
+						</ListItemButton>
+					))}
 				</List>
 			</MainCard>
 		</>

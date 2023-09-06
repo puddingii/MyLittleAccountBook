@@ -41,6 +41,11 @@ const columnChartOptions = {
 		opacity: 1,
 	},
 	tooltip: {
+		x: {
+			formatter(val) {
+				return `${dayjs().set('date', val).format('YYYY-MM-DD')}`;
+			},
+		},
 		y: {
 			formatter(val) {
 				return `${setComma(val)} 원`;
@@ -178,18 +183,24 @@ const SpendingAndIncomeChart = ({ notFixedIncomeList, notFixedSpendingList }) =>
 			<MainCard sx={{ mt: 1.75, maxHeight: '451px' }}>
 				<Stack spacing={1.5} sx={{ mb: -12 }}>
 					<Typography variant="h6" color="secondary">
-						가장 많은 수입 [
+						가장 많은 수입총합 [
 						{dayjs()
 							.set('date', maxIncomeIdx + 1)
 							.format('MM/DD')}
-						] : <font color="red">{setComma(maxIncomeValue)} 원</font>
+						] :{' '}
+						<Typography component="span" sx={{ color: 'error.main' }}>
+							{setComma(maxIncomeValue)} 원
+						</Typography>
 					</Typography>
 					<Typography style={{ marginTop: '0px' }} variant="h6" color="secondary">
-						가장 많은 지출 [
+						가장 많은 지출총합 [
 						{dayjs()
 							.set('date', maxSpendingIdx + 1)
 							.format('MM/DD')}
-						] : <font color="blue">{setComma(maxSpendingValue)} 원</font>
+						] :{' '}
+						<Typography component="span" sx={{ color: 'primary.main' }}>
+							{setComma(maxSpendingValue)} 원
+						</Typography>
 					</Typography>
 					<Typography variant="h4"></Typography>
 				</Stack>
