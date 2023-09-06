@@ -4,45 +4,11 @@ import PropTypes from 'prop-types';
 
 import SortCheckTableHead from './Header';
 import SortCheckTableBody from './Body';
-
-const isDateValue = orderBy => {
-	return orderBy === 'spendingAndIncomeDate' || orderBy === 'cycleTime';
-};
-
-const descendingComparator = (a, b, orderBy) => {
-	const avalue = isDateValue(orderBy) ? new Date(a[orderBy]) : a[orderBy];
-	const bvalue = isDateValue(orderBy) ? new Date(b[orderBy]) : b[orderBy];
-
-	if (bvalue < avalue) {
-		return -1;
-	}
-	if (bvalue > avalue) {
-		return 1;
-	}
-	return 0;
-};
-
-const getComparator = (order, orderBy) => {
-	return order === 'desc'
-		? (a, b) => descendingComparator(a, b, orderBy)
-		: (a, b) => -descendingComparator(a, b, orderBy);
-};
-
-const stableSort = (array, comparator) => {
-	const stabilizedThis = array.map((el, index) => [el, index]);
-	stabilizedThis.sort((a, b) => {
-		const order = comparator(a[0], b[0]);
-		if (order !== 0) {
-			return order;
-		}
-		return a[1] - b[1];
-	});
-	return stabilizedThis.map(el => el[0]);
-};
+import { getComparator, stableSort } from 'utils/sort';
 
 const SortCheckTable = ({ manageType, spendIncomeType, handleClickEdit, handleClickDelete, rows, isFetching }) => {
 	const [order, setOrder] = useState('asc');
-	const [orderBy, setOrderBy] = useState(manageType === 'nf' ? 'spendingAndIncomeDate' : 'cycleTime');
+	const [orderBy, setOrderBy] = useState(manageType === 'nf' ? 'spendingAndIncomeDate' : 'needToUpdateDate');
 	const [page, setPage] = useState(0);
 	const [rowsPerPage, setRowsPerPage] = useState(10);
 
@@ -66,7 +32,7 @@ const SortCheckTable = ({ manageType, spendIncomeType, handleClickEdit, handleCl
 		if (spendIncomeType === 'spending' || spendIncomeType === 'income') {
 			filteredRows = filteredRows.filter(row => row.type === spendIncomeType);
 		}
-		return stableSort(filteredRows, getComparator(order, orderBy)).slice(
+		return stableSort(filteredRows, getComparator(order, orderBy, ['spendingAndIncomeDate', 'needToUpdateDate'])).slice(
 			page * rowsPerPage,
 			page * rowsPerPage + rowsPerPage,
 		);
