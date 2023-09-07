@@ -117,7 +117,7 @@ const FixedHistoryList = ({ fixedIncomeList, fixedSpendingList }) => {
 								</Avatar>
 							</ListItemAvatar>
 							<ListItemText
-								primary={<Typography variant="subtitle1">{fixedHistory.content}</Typography>}
+								primary={<Typography variant="subtitle1">{fixedHistory.content || fixedHistory.category}</Typography>}
 								secondary={dayjs(fixedHistory.needToUpdateDate).format('YYYY년 MM월 DD일')}
 							/>
 							<ListItemSecondaryAction>
