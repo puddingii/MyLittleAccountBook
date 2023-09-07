@@ -1,3 +1,4 @@
+import dayjs from 'dayjs';
 import { object, string, number, mixed, date } from 'yup';
 
 const notFixedWriterSchema = object().shape({
@@ -44,7 +45,10 @@ const fixedWriterSchema = object().shape({
 		.oneOf(['sd', 'd', 'w', 'm', 'y'], '알 수 없는 주기입니다.')
 		.defined()
 		.required('고정주기 입력 시 필수 항목입니다.'),
-	needToUpdateDate: date().required('날짜는 필수 항목입니다.'),
+	needToUpdateDate: date()
+		.required('날짜는 필수 항목입니다.')
+		.typeError('날짜 형식이 아닙니다.')
+		.min(dayjs().toDate(), '오늘 날짜 + 1일 부터 선택 가능합니다.'),
 });
 
 export { notFixedWriterSchema, fixedWriterSchema };
