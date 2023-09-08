@@ -8,7 +8,7 @@ import { List, ListItemButton, ListItemIcon, ListItemText } from '@mui/material'
 // assets
 import { EditOutlined, ProfileOutlined, LogoutOutlined, UserOutlined, WalletOutlined } from '@ant-design/icons';
 
-import CreateGroupModal from 'components/modal/CreateGroupModal';
+import CreateGroupModal from 'layout/MainLayout/Header/HeaderContent/Profile/CreateGroupModal';
 
 // ==============================|| HEADER PROFILE - PROFILE TAB ||============================== //
 
