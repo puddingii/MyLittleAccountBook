@@ -89,7 +89,6 @@ const CreateGroup = ({ handleNext, setGroupInfo, activeStep, step, setSnackbarIn
 			setSubmitting(false);
 			handleNext();
 		} catch (error) {
-			console.error(error);
 			setStatus({ success: false });
 			setErrors({ submit: error.message });
 			setSubmitting(false);
@@ -99,7 +98,7 @@ const CreateGroup = ({ handleNext, setGroupInfo, activeStep, step, setSnackbarIn
 	return (
 		<Fragment>
 			<Formik initialValues={initialValue} validationSchema={createGroupSchema} onSubmit={handleSubmit}>
-				{({ errors, handleBlur, handleChange, handleSubmit, isSubmitting, touched, values, setFieldValue }) => (
+				{({ errors, handleBlur, handleChange, handleSubmit, touched, values }) => (
 					<form style={{ display: activeStep !== step ? 'none' : '' }} noValidate onSubmit={handleSubmit}>
 						<Grid container flexDirection="row" spacing={3}>
 							<Grid item xs={3}>
@@ -116,10 +115,11 @@ const CreateGroup = ({ handleNext, setGroupInfo, activeStep, step, setSnackbarIn
 										/>
 									</Grid>
 									<label htmlFor="contained-button-file">
-										<Button style={{ marginTop: '10px' }} variant="outlined" color="success" component="span">
-											사진 선택
+										<Button disabled style={{ marginTop: '10px' }} variant="outlined" color="success" component="span">
+											업데이트 예정
 											<Input
 												sx={{ display: 'none' }}
+												disabled
 												type="file"
 												inputProps={{ accept: 'image/png, image/jpg, image/jpeg' }}
 												id="contained-button-file"
