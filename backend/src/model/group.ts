@@ -103,8 +103,8 @@ export class GroupModel extends Model<
 
 	declare userEmail: ForeignKey<UserModel['email']>;
 	declare users?: NonAttribute<UserModel>;
-	/** owner, admin, writer, observer */
-	declare userType: 'admin' | 'owner' | 'writer' | 'observer';
+	/** owner, manager, writer, observer */
+	declare userType: 'manager' | 'owner' | 'writer' | 'observer';
 }
 
 GroupModel.init(

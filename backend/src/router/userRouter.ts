@@ -1,16 +1,41 @@
 import express from 'express';
 
-import { getUser } from '@/service/userService';
+/** Util */
+import zParser from '@/util/parser';
+import zodSchema from '@/util/parser/schema';
+import { logger } from '@/util';
+import { convertErrorToCustomError } from '@/util/error';
+
+/** Middleware & Service */
 import { verifyToken } from '@/middleware/authentication';
+import { getUserInfo } from '@/service/userService';
+
+/** Interface */
+import { TGet } from '@/interface/api/response/userResponse';
 
 const router = express.Router();
 
-router.get('/', verifyToken, (req, res) => {
+router.get('/', verifyToken, async (req, res) => {
 	try {
-		const user = getUser();
-		return res.status(200).json({ nickname: user });
+		const {
+			query: { email, nickname },
+		} = await zParser(zodSchema.user.getUser, req);
+
+		const result = await getUserInfo({ email, nickname });
+
+		return res.status(200).json({
+			data: result,
+			message: '',
+			status: 'success',
+		} as TGet);
 	} catch (error) {
-		return res.status(404).json({ isSucceed: false });
+		const { message, traceList, code } = convertErrorToCustomError(error, {
+			trace: 'Router',
+			code: 400,
+		});
+		logger.error(message, traceList);
+
+		return res.status(code).json({ data: {}, message, status: 'fail' });
 	}
 });
 
