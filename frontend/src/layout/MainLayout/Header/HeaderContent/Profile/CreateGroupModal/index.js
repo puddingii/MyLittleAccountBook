@@ -14,6 +14,7 @@ import {
 	Alert,
 } from '@mui/material';
 import CreateGroup from './CreateGroup';
+import InviteUser from './InviteUser';
 
 const steps = [{ title: '새 가계부 설정' }, { title: '사용자 추가', optional: true }, { title: '생성하기' }];
 const boxStyle = {
@@ -125,26 +126,18 @@ const CreateGroupModal = ({ open, handleClose }) => {
 						stepLength={steps.length - 1}
 						setSnackbarInfo={setSnackbarInfo}
 					/>
-					{activeStep === 1 && (
-						<Fragment>
-							<Typography sx={{ mt: 2, mb: 1 }}>Step {activeStep + 1}</Typography>
-							<Box sx={{ display: 'flex', flexDirection: 'row', pt: 2 }}>
-								<Button color="inherit" disabled={activeStep === 0} onClick={handleBack} sx={{ mr: 1 }}>
-									뒤로가기
-								</Button>
-								<Box sx={{ flex: '1 1 auto' }} />
-								{isStepOptional(activeStep) && (
-									<Button color="inherit" onClick={handleSkip} sx={{ mr: 1 }}>
-										건너뛰기
-									</Button>
-								)}
-
-								<Button variant="contained" onClick={handleNext}>
-									{activeStep === steps.length - 1 ? '생성' : '다음'}
-								</Button>
-							</Box>
-						</Fragment>
-					)}
+					<InviteUser
+						setGroupInfo={setGroupInfo}
+						handleNext={handleNext}
+						handleBack={handleBack}
+						activeStep={activeStep}
+						step={1}
+						isStepOptional={isStepOptional}
+						stepLength={steps.length - 1}
+						setSnackbarInfo={setSnackbarInfo}
+						invitedUserList={invitedUserList}
+						setInvitedUserList={setInvitedUserList}
+					/>
 					{activeStep === steps.length - 1 && (
 						<Fragment>
 							<Typography sx={{ mt: 2, mb: 1 }}>All steps completed - you&apos;re finished</Typography>
