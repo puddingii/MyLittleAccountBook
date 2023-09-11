@@ -63,3 +63,20 @@ export const useDeleteColumnMutation = () => {
 		},
 	});
 };
+
+const createAccountBookFetcher = info =>
+	axios
+		.post(QUERY_KEY.postAccountBook, info, {
+			withCredentials: true,
+		})
+		.then(({ data }) => data);
+
+export const useCreateAccountBookMutation = () => {
+	const queryClient = useQueryClient();
+
+	return useMutation(createAccountBookFetcher, {
+		onSuccess: () => {
+			queryClient.invalidateQueries(`${QUERY_KEY.postAccountBook}`);
+		},
+	});
+};
