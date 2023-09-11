@@ -1,22 +1,15 @@
-import { Fragment, useState } from 'react';
+import { useState } from 'react';
 import PropTypes from 'prop-types';
-import {
-	Backdrop,
-	Stepper,
-	Step,
-	StepLabel,
-	Box,
-	Button,
-	Typography,
-	Fade,
-	Modal,
-	Snackbar,
-	Alert,
-} from '@mui/material';
+import { Backdrop, Stepper, Step, StepLabel, Box, Typography, Fade, Modal, Snackbar, Alert } from '@mui/material';
 import CreateGroup from './CreateGroup';
 import InviteUser from './InviteUser';
+import CompleteStep from './CompleteStep';
 
-const steps = [{ title: '새 가계부 설정' }, { title: '사용자 추가', optional: true }, { title: '생성하기' }];
+const steps = [
+	{ title: '새 가계부 설정', optional: false },
+	{ title: '사용자 추가', optional: true },
+	{ title: '생성하기', optional: false },
+];
 const boxStyle = {
 	position: 'absolute',
 	top: '50%',
@@ -79,10 +72,6 @@ const CreateGroupModal = ({ open, handleClose }) => {
 		});
 	};
 
-	const handleReset = () => {
-		setActiveStep(0);
-	};
-
 	return (
 		<Modal
 			aria-labelledby="transition-modal-title"
@@ -122,7 +111,8 @@ const CreateGroupModal = ({ open, handleClose }) => {
 						handleBack={handleBack}
 						activeStep={activeStep}
 						step={0}
-						isStepOptional={isStepOptional}
+						isStepOptional={isStepOptional(activeStep)}
+						isDisabledComplete={false}
 						stepLength={steps.length - 1}
 						setSnackbarInfo={setSnackbarInfo}
 					/>
@@ -130,23 +120,27 @@ const CreateGroupModal = ({ open, handleClose }) => {
 						setGroupInfo={setGroupInfo}
 						handleNext={handleNext}
 						handleBack={handleBack}
+						handleSkip={handleSkip}
 						activeStep={activeStep}
 						step={1}
-						isStepOptional={isStepOptional}
+						isStepOptional={isStepOptional(activeStep) && invitedUserList.length < 1}
+						isDisabledComplete={invitedUserList.length < 1}
 						stepLength={steps.length - 1}
 						setSnackbarInfo={setSnackbarInfo}
 						invitedUserList={invitedUserList}
 						setInvitedUserList={setInvitedUserList}
 					/>
-					{activeStep === steps.length - 1 && (
-						<Fragment>
-							<Typography sx={{ mt: 2, mb: 1 }}>All steps completed - you&apos;re finished</Typography>
-							<Box sx={{ display: 'flex', flexDirection: 'row', pt: 2 }}>
-								<Box sx={{ flex: '1 1 auto' }} />
-								<Button onClick={handleReset}>이동하기</Button>
-							</Box>
-						</Fragment>
-					)}
+					<CompleteStep
+						handleBack={handleBack}
+						activeStep={activeStep}
+						step={2}
+						isStepOptional={isStepOptional(activeStep)}
+						stepLength={steps.length - 1}
+						setSnackbarInfo={setSnackbarInfo}
+						invitedUserList={invitedUserList}
+						groupInfo={groupInfo}
+						handleClose={handleClose}
+					/>
 					<Snackbar
 						anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
 						open={snackbarInfo.isOpen}
