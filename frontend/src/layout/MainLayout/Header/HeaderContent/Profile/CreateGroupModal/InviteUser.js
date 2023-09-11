@@ -1,12 +1,14 @@
 import { FormHelperText, Grid, InputLabel, Stack, OutlinedInput, Divider, Button, InputAdornment } from '@mui/material';
 import { Fragment, useEffect, useState } from 'react';
 import { Formik } from 'formik';
+import { useRecoilValue } from 'recoil';
 import PropTypes from 'prop-types';
 
 import { inviteUserSchema } from 'validation/header';
 import MiddleStepButtonGroup from './StepButtonGroup/MiddleStepButtonGroup';
 import SortTable from './InvitedUserTable';
 import { useGetUserQuery } from 'queries/user/userQuery';
+import userState from 'recoil/user';
 
 const initialValue = {
 	email: '',
@@ -23,15 +25,11 @@ const InviteUser = ({
 	...stepButtonProps
 }) => {
 	const [email, setEmail] = useState('');
+	const userInfo = useRecoilValue(userState);
 	const { refetch } = useGetUserQuery(
 		{ email },
 		{
 			onSuccess: response => {
-				const isExistedUser = invitedUserList.findIndex(info => info.email === response?.data?.email);
-				if (isExistedUser !== -1) {
-					setSnackbarInfo({ isOpen: true, message: '이미 추가된 유저입니다.', severity: 'warning' });
-					return;
-				}
 				setInvitedUserList(beforeList => {
 					const copiedList = [...beforeList];
 					copiedList.push({ ...response?.data, index: copiedList.length, type: 'observer' });
@@ -47,13 +45,21 @@ const InviteUser = ({
 
 	const handleSubmit = async (values, { setErrors, setStatus, setSubmitting }) => {
 		try {
+			if (userInfo.email === values.email) {
+				throw Error('자신을 추가할 수 없습니다.');
+			}
+			const isExistedUser = invitedUserList.findIndex(info => info.email === values.email);
+			if (isExistedUser !== -1) {
+				throw Error('이미 추가된 유저입니다.');
+			}
 			setStatus({ success: false });
 			setSubmitting(false);
 			setEmail(values.email);
 		} catch (error) {
 			setStatus({ success: false });
-			setErrors({ submit: error?.response?.data?.message });
+			setErrors({ submit: error?.response?.data?.message ?? error.message });
 			setSubmitting(false);
+			setSnackbarInfo({ isOpen: true, message: error?.response?.data?.message ?? error.message, severity: 'error' });
 		}
 	};
 

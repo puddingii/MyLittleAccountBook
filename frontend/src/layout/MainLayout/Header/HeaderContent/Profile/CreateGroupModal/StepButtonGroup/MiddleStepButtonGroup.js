@@ -6,6 +6,7 @@ const MiddleStepButtonGroup = ({
 	handleSkip,
 	activeStep,
 	isStepOptional,
+	isDisabledComplete,
 	handleNext,
 	isForm,
 	stepLength,
@@ -16,14 +17,17 @@ const MiddleStepButtonGroup = ({
 				뒤로가기
 			</Button>
 			<Box sx={{ flex: '1 1 auto' }} />
-			{isStepOptional(activeStep) && (
-				<Button color="inherit" onClick={handleSkip} sx={{ mr: 1 }}>
-					건너뛰기
-				</Button>
-			)}
+			<Button disabled={!isStepOptional} color="inherit" onClick={handleSkip} sx={{ mr: 1 }}>
+				건너뛰기
+			</Button>
 
-			<Button type={isForm ? 'submit' : 'button'} variant="contained" onClick={handleNext}>
-				{activeStep === stepLength ? '생성' : '다음'}
+			<Button
+				disabled={isDisabledComplete}
+				type={isForm ? 'submit' : 'button'}
+				variant="contained"
+				onClick={handleNext}
+			>
+				{activeStep === stepLength ? '생성하기' : '다음'}
 			</Button>
 		</Box>
 	);
@@ -35,7 +39,8 @@ MiddleStepButtonGroup.propTypes = {
 	handleNext: PropTypes.func.isRequired,
 	activeStep: PropTypes.number.isRequired,
 	stepLength: PropTypes.number.isRequired,
-	isStepOptional: PropTypes.func.isRequired,
+	isStepOptional: PropTypes.bool.isRequired,
+	isDisabledComplete: PropTypes.bool.isRequired,
 	isForm: PropTypes.bool.isRequired,
 };
 
