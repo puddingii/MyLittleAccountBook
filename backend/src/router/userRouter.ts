@@ -17,11 +17,9 @@ const router = express.Router();
 
 router.get('/', verifyToken, async (req, res) => {
 	try {
-		const {
-			query: { email, nickname },
-		} = await zParser(zodSchema.user.getUser, req);
+		const { query: info } = await zParser(zodSchema.user.getUser, req);
 
-		const result = await getUserInfo({ email, nickname });
+		const result = await getUserInfo(info);
 
 		return res.status(200).json({
 			data: result,
