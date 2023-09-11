@@ -1,9 +1,10 @@
-import { QueryTypes } from 'sequelize';
+import { QueryTypes, Transaction } from 'sequelize';
 
 /** ETC.. */
 import { convertErrorToCustomError } from '@/util/error';
 import CategoryModel from '@/model/category';
 import sequelize from '@/loader/mysql';
+import defaultCategory from '@/json/defaultCategory.json';
 
 import { TCategoryInfo } from '@/interface/model/categoryRepository';
 
@@ -66,6 +67,42 @@ export const createCategory = async (categoryInfo: {
 	} catch (error) {
 		const customError = convertErrorToCustomError(error, {
 			trace: 'Repository',
+		});
+		throw customError;
+	}
+};
+
+export const createDefaultCategory = async (
+	accountBookId: number,
+	transaction?: Transaction,
+) => {
+	try {
+		const categoryList = defaultCategory.rootCategory.map(category => ({
+			name: category.name,
+			accountBookId,
+		}));
+
+		const list = await CategoryModel.bulkCreate(categoryList, {
+			fields: ['name', 'accountBookId'],
+			validate: true,
+			transaction,
+		});
+
+		/** 메인 카테고리 각각의 기타 탭 생성 */
+		const parentList = list.map(parent => ({
+			name: '기타',
+			parentId: parent.id,
+			accountBookId,
+		}));
+		await CategoryModel.bulkCreate(parentList, {
+			fields: ['name', 'accountBookId', 'parentId'],
+			validate: true,
+			transaction,
+		});
+	} catch (error) {
+		const customError = convertErrorToCustomError(error, {
+			trace: 'Repository',
+			code: 400,
 		});
 		throw customError;
 	}

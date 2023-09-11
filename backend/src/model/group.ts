@@ -31,7 +31,7 @@ export class GroupModel extends Model<
 	InferAttributes<GroupModel>,
 	InferCreationAttributes<GroupModel>
 > {
-	declare accessHistory: Date;
+	declare accessHistory?: Date;
 	declare accountBookId: ForeignKey<AccountBookModel['id']>;
 	declare accountbooks?: NonAttribute<AccountBookModel>;
 	declare addCrongroupaccountbook: HasManyAddAssociationMixin<
@@ -120,7 +120,7 @@ GroupModel.init(
 		},
 		accessHistory: {
 			type: DataTypes.DATE,
-			allowNull: false,
+			allowNull: true,
 		},
 		createdAt: DataTypes.DATE,
 	},

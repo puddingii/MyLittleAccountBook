@@ -36,7 +36,7 @@ class AccountBookModel extends Model<
 	declare addGroup: HasManyAddAssociationMixin<GroupModel, number>;
 	declare addGroups: HasManyAddAssociationsMixin<GroupModel, number>;
 	declare categorys?: NonAttribute<CategoryModel[]>;
-	declare content: string;
+	declare content?: string;
 	declare countCategorys: HasManyCountAssociationsMixin;
 	declare countGroups: HasManyCountAssociationsMixin;
 	declare createCategory: HasManyCreateAssociationMixin<CategoryModel, 'accountBookId'>;
@@ -73,7 +73,7 @@ AccountBookModel.init(
 		},
 		content: {
 			type: DataTypes.STRING,
-			allowNull: false,
+			allowNull: true,
 		},
 		createdAt: DataTypes.DATE,
 		updatedAt: DataTypes.DATE,
