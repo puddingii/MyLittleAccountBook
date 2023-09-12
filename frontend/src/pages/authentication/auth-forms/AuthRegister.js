@@ -29,23 +29,27 @@ import { strengthColor, strengthIndicator } from 'utils/password-strength';
 
 // assets
 import { EyeOutlined, EyeInvisibleOutlined } from '@ant-design/icons';
+import { useJoinMutation } from 'queries/auth/authMutation';
 
 // ============================|| FIREBASE - REGISTER ||============================ //
 
 const AuthRegister = () => {
 	const [level, setLevel] = useState();
 	const [showPassword, setShowPassword] = useState(false);
+	const { mutate: joinMutate } = useJoinMutation();
 
 	const handleSubmit = async (values, { setErrors, setStatus, setSubmitting }) => {
-		try {
-			setStatus({ success: false });
-			setSubmitting(false);
-		} catch (err) {
-			console.error(err);
-			setStatus({ success: false });
-			setErrors({ submit: err.message });
-			setSubmitting(false);
-		}
+		joinMutate(values, {
+			onSuccess: () => {
+				setStatus({ success: false });
+				setSubmitting(false);
+			},
+			onError: error => {
+				setStatus({ success: false });
+				setErrors({ submit: error?.response?.data?.message });
+				setSubmitting(false);
+			},
+		});
 	};
 
 	const handleClickShowPassword = () => {
@@ -77,15 +81,7 @@ const AuthRegister = () => {
 				validationSchema={joinSchema}
 				onSubmit={handleSubmit}
 			>
-				{({
-					errors,
-					handleBlur,
-					handleChange,
-					handleSubmit,
-					isSubmitting,
-					touched,
-					values,
-				}) => (
+				{({ errors, handleBlur, handleChange, handleSubmit, isSubmitting, touched, values }) => (
 					<form noValidate onSubmit={handleSubmit}>
 						<Grid container spacing={3}>
 							<Grid item xs={12}>
