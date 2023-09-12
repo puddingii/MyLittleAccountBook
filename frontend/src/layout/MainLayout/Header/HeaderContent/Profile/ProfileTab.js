@@ -14,6 +14,7 @@ import CreateGroupModal from 'layout/MainLayout/Header/HeaderContent/Profile/Cre
 
 const ProfileTab = ({ handleLogout }) => {
 	const theme = useTheme();
+	const [createGroupModalKey, setCreateGroupModalKey] = useState(0);
 
 	const [selectedIndex, setSelectedIndex] = useState(0);
 	const [isOpenModal, setIsOpenModal] = useState(false);
@@ -24,9 +25,14 @@ const ProfileTab = ({ handleLogout }) => {
 		}
 	};
 
+	const handleCloseCreateGroupModal = () => {
+		setIsOpenModal(false);
+		setCreateGroupModalKey(before => before + 1);
+	};
+
 	return (
 		<>
-			<CreateGroupModal handleClose={() => setIsOpenModal(false)} open={isOpenModal} />
+			<CreateGroupModal key={createGroupModalKey} handleClose={handleCloseCreateGroupModal} open={isOpenModal} />
 			<List component="nav" sx={{ p: 0, '& .MuiListItemIcon-root': { minWidth: 32, color: theme.palette.grey[500] } }}>
 				<ListItemButton selected={selectedIndex === 0} onClick={event => handleListItemClick(event, 0)}>
 					<ListItemIcon>
