@@ -1,3 +1,4 @@
+import OAuthUserModel from '@/model/oauthUser';
 import UserModel from '@/model/user';
 import { convertErrorToCustomError } from '@/util/error';
 
@@ -6,7 +7,15 @@ export const findUserInfo = async (
 	info: Partial<{ email: string; nickname: string }>,
 ) => {
 	try {
-		const userInfo = await UserModel.findOne({ where: info });
+		const userInfo = await UserModel.findOne({
+			where: info,
+			include: {
+				model: OAuthUserModel,
+				as: 'oauthusers',
+				/** inner join */
+			},
+			subQuery: false,
+		});
 
 		return userInfo;
 	} catch (error) {

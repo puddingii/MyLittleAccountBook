@@ -18,8 +18,13 @@ export const getUserInfo = async (info: Partial<{ email: string; nickname: strin
 		if (!userInfo) {
 			throw Error('이메일에 해당하는 유저를 찾을 수 없습니다.');
 		}
+		const socialType = (userInfo.oauthusers ?? [])[0]?.type ?? '';
 
-		return { email: userInfo.email, nickname: userInfo.nickname } as TGet['data'];
+		return {
+			email: userInfo.email,
+			nickname: userInfo.nickname,
+			socialType,
+		} as TGet['data'];
 	} catch (error) {
 		const customError = convertErrorToCustomError(error, { trace: 'Service', code: 400 });
 		throw customError;
