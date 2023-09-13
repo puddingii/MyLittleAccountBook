@@ -25,3 +25,17 @@ export const findUserInfo = async (
 		throw customError;
 	}
 };
+
+export const updateUserInfo = async (info: { email: string; nickname: string }) => {
+	try {
+		const { email, nickname } = info;
+		const successCount = await UserModel.update({ nickname }, { where: { email } });
+
+		return successCount;
+	} catch (error) {
+		const customError = convertErrorToCustomError(error, {
+			trace: 'Repository',
+		});
+		throw customError;
+	}
+};

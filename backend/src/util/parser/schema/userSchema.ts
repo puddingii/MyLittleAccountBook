@@ -7,6 +7,19 @@ const getUser = zod.object({
 	}),
 });
 
-export type TGetUserQuery = zod.infer<typeof getUser>;
+const patchUser = zod.object({
+	body: zod.object({
+		nickname: zod.string(),
+	}),
+	headers: zod.object({
+		refresh: zod.string({ required_error: 'Refresh token is expired.' }),
+		authorization: zod
+			.string({ required_error: 'Access token is expired.' })
+			.refine(data => data.split(' ')[0] === 'Bearer', 'Token type error'),
+	}),
+});
 
-export default { getUser };
+export type TGetUserQuery = zod.infer<typeof getUser>;
+export type TPatchUserQuery = zod.infer<typeof patchUser>;
+
+export default { getUser, patchUser };
