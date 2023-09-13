@@ -29,6 +29,7 @@ const InviteUser = ({
 	const { refetch } = useGetUserQuery(
 		{ email },
 		{
+			enabled: false,
 			onSuccess: response => {
 				setInvitedUserList(beforeList => {
 					const copiedList = [...beforeList];

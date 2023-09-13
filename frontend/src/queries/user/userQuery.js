@@ -16,7 +16,7 @@ const getUser = info => {
 /**
  * @param {{ email: string; }} info
  */
-export const useGetUserQuery = (info, { onSuccess, onError } = {}) => {
+export const useGetUserQuery = (info, { onSuccess, onError, enabled } = {}) => {
 	const params = new URLSearchParams(info);
 	const fetcher = getUser(params.toString());
 	const setUserState = useSetRecoilState(userState);
@@ -24,7 +24,7 @@ export const useGetUserQuery = (info, { onSuccess, onError } = {}) => {
 
 	return useQuery(QUERY_KEY.get, fetcher, {
 		retry: false,
-		enabled: false,
+		enabled,
 		onSuccess: response => {
 			onSuccess && onSuccess(response);
 		},

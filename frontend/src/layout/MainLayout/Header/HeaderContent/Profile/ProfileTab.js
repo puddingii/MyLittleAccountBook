@@ -1,70 +1,90 @@
 import PropTypes from 'prop-types';
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 
 // material-ui
 import { useTheme } from '@mui/material/styles';
 import { List, ListItemButton, ListItemIcon, ListItemText } from '@mui/material';
 
 // assets
-import { EditOutlined, ProfileOutlined, LogoutOutlined, UserOutlined, WalletOutlined } from '@ant-design/icons';
+import { UserOutlined } from '@ant-design/icons';
 
-import CreateGroupModal from 'layout/MainLayout/Header/HeaderContent/Profile/CreateGroupModal';
+import CreateGroupModal from './CreateGroupModal';
+import UserProfileModal from './UserProfileModal';
 
 // ==============================|| HEADER PROFILE - PROFILE TAB ||============================== //
 
+const profileList = [{ title: '내 프로필' }, { title: '새 그룹 만들기' }, { title: '로그아웃' }];
+
 const ProfileTab = ({ handleLogout }) => {
 	const theme = useTheme();
-	const [createGroupModalKey, setCreateGroupModalKey] = useState(0);
+	const [createGroupModalKey, setCreateGroupModalKey] = useState({
+		name: 'createGroup',
+		idx: 0,
+	});
+	const [userProfileModalKey, setUserProfileModalKey] = useState({
+		name: 'profile',
+		idx: 0,
+	});
 
-	const [selectedIndex, setSelectedIndex] = useState(0);
-	const [isOpenModal, setIsOpenModal] = useState(false);
+	const [selectedIndex, setSelectedIndex] = useState(-1);
+	const [isOpenCreateGroupModal, setIsOpenCreateGroupModal] = useState(false);
+	const [isOpenUserProfileModal, setIsOpenUserProfileModal] = useState(false);
+
+	const clickManager = useMemo(() => {
+		return [
+			() => {
+				setIsOpenUserProfileModal(true);
+			},
+			() => {
+				setIsOpenCreateGroupModal(true);
+			},
+			() => {
+				handleLogout();
+			},
+		];
+	}, [setIsOpenUserProfileModal, setIsOpenCreateGroupModal, handleLogout]);
 	const handleListItemClick = (event, index) => {
 		setSelectedIndex(index);
-		if (index === 3) {
-			setIsOpenModal(true);
-		}
+		clickManager[index]();
 	};
 
 	const handleCloseCreateGroupModal = () => {
-		setIsOpenModal(false);
-		setCreateGroupModalKey(before => before + 1);
+		setIsOpenCreateGroupModal(false);
+		setCreateGroupModalKey(before => ({ ...before, idx: before.idx + 1 }));
+		setSelectedIndex(-1);
+	};
+
+	const handleCloseUserProfileModal = () => {
+		setIsOpenUserProfileModal(false);
+		setUserProfileModalKey(before => ({ ...before, idx: before.idx + 1 }));
+		setSelectedIndex(-1);
 	};
 
 	return (
 		<>
-			<CreateGroupModal key={createGroupModalKey} handleClose={handleCloseCreateGroupModal} open={isOpenModal} />
+			<CreateGroupModal
+				key={`${createGroupModalKey.name}${createGroupModalKey.idx}`}
+				handleClose={handleCloseCreateGroupModal}
+				open={isOpenCreateGroupModal}
+			/>
+			<UserProfileModal
+				key={`${userProfileModalKey.name}${userProfileModalKey.idx}`}
+				handleClose={handleCloseUserProfileModal}
+				open={isOpenUserProfileModal}
+			/>
 			<List component="nav" sx={{ p: 0, '& .MuiListItemIcon-root': { minWidth: 32, color: theme.palette.grey[500] } }}>
-				<ListItemButton selected={selectedIndex === 0} onClick={event => handleListItemClick(event, 0)}>
-					<ListItemIcon>
-						<EditOutlined />
-					</ListItemIcon>
-					<ListItemText primary="프로필 수정" />
-				</ListItemButton>
-				<ListItemButton selected={selectedIndex === 1} onClick={event => handleListItemClick(event, 1)}>
-					<ListItemIcon>
-						<UserOutlined />
-					</ListItemIcon>
-					<ListItemText primary="내 프로필" />
-				</ListItemButton>
-
-				<ListItemButton selected={selectedIndex === 3} onClick={event => handleListItemClick(event, 3)}>
-					<ListItemIcon>
-						<ProfileOutlined />
-					</ListItemIcon>
-					<ListItemText primary="새 그룹 만들기" />
-				</ListItemButton>
-				<ListItemButton selected={selectedIndex === 4} onClick={event => handleListItemClick(event, 4)}>
-					<ListItemIcon>
-						<WalletOutlined />
-					</ListItemIcon>
-					<ListItemText primary="Billing" />
-				</ListItemButton>
-				<ListItemButton selected={selectedIndex === 2} onClick={handleLogout}>
-					<ListItemIcon>
-						<LogoutOutlined />
-					</ListItemIcon>
-					<ListItemText primary="Logout" />
-				</ListItemButton>
+				{profileList.map((profile, idx) => (
+					<ListItemButton
+						key={profile.title}
+						selected={selectedIndex === idx}
+						onClick={event => handleListItemClick(event, idx)}
+					>
+						<ListItemIcon>
+							<UserOutlined />
+						</ListItemIcon>
+						<ListItemText primary={profile.title} />
+					</ListItemButton>
+				))}
 			</List>
 		</>
 	);

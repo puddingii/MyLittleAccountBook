@@ -7,5 +7,8 @@ const createGroupSchema = object().shape({
 const inviteUserSchema = object().shape({
 	email: string().email('이메일 형식이 아닙니다.').max(255),
 });
+const updateUserProfileSchema = object().shape({
+	nickname: string().max(255).required('수정 시 필수 항목입니다.'),
+});
 
-export { createGroupSchema, inviteUserSchema };
+export { createGroupSchema, inviteUserSchema, updateUserProfileSchema };
