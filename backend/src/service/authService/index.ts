@@ -147,7 +147,7 @@ const socialLogin = async (
 		}
 
 		const refreshToken = createRefreshToken();
-		const accessToken = createAccessToken(userInfo);
+		const accessToken = createAccessToken({ email, nickname: user.nickname });
 
 		await setCache(userInfo.email, refreshToken, secret.express.jwtRefreshTokenTime);
 
