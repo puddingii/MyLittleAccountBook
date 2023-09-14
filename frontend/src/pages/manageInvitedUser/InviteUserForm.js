@@ -48,12 +48,12 @@ const InviteUserForm = ({ invitedUserList, setSnackbarInfo, setInvitedUserList, 
 		}
 
 		addUserMutate(
-			{ ...values, accountBookId },
+			{ userEmail: values.email, userType: values.type, accountBookId },
 			{
 				onSuccess: response => {
 					setInvitedUserList(beforeList => {
 						const copiedList = [...beforeList];
-						copiedList.push({ ...response?.data, type: 'observer', index: copiedList.length });
+						copiedList.push({ ...response?.data, index: copiedList.length });
 						return copiedList;
 					});
 					setSnackbarInfo({ isOpen: true, message: '추가되었습니다.', severity: 'success' });
