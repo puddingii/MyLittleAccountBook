@@ -8,17 +8,19 @@ const getList = zod.object({
 
 const addGroupUser = zod.object({
 	body: zod.object({
-		email: zod.string(),
-		type: zod.enum(['observer', 'writer', 'manager']),
+		userEmail: zod.string(),
+		userType: zod.enum(['observer', 'writer', 'manager']),
 		accountBookId: zod.number(),
+		accessHistory: zod.string().optional(),
 	}),
 });
 
 const updateGroupUser = zod.object({
 	body: zod.object({
-		email: zod.string(),
-		type: zod.enum(['observer', 'writer', 'manager']),
+		userEmail: zod.string(),
+		userType: zod.enum(['observer', 'writer', 'manager']),
 		accountBookId: zod.number(),
+		accessHistory: zod.string().optional(),
 	}),
 });
 

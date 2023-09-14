@@ -1,4 +1,5 @@
-import express from 'express';
+import express, { Request } from 'express';
+import dayjs from 'dayjs';
 
 /** Util */
 import zParser from '@/util/parser';
@@ -8,10 +9,10 @@ import { convertErrorToCustomError } from '@/util/error';
 
 /** Middleware & Service */
 import { verifyToken } from '@/middleware/authentication';
-import { getGroupList } from '@/service/groupService';
+import { addGroup, getGroupList } from '@/service/groupService';
 
 /** Interface */
-import { TGetList } from '@/interface/api/response/groupResponse';
+import { TGetList, TPost } from '@/interface/api/response/groupResponse';
 
 const router = express.Router();
 
@@ -42,14 +43,22 @@ router.get('/list', verifyToken, async (req, res) => {
 router.post('/', verifyToken, async (req, res) => {
 	try {
 		const {
-			body: { email, type, accountBookId },
+			body: { accessHistory, ...groupInfo },
 		} = await zParser(zodSchema.group.addGroupUser, req);
 
+		const paramInfo = accessHistory
+			? { ...groupInfo, accessHistory: dayjs(accessHistory).toDate() }
+			: { ...groupInfo };
+		const newGroup = await addGroup({
+			myEmail: (req.user as Exclude<Request['user'], undefined>).email,
+			...paramInfo,
+		});
+
 		return res.status(200).json({
-			data: {},
+			data: newGroup,
 			message: '',
 			status: 'success',
-		} as TGetList);
+		} as TPost);
 	} catch (error) {
 		const { message, traceList, code } = convertErrorToCustomError(error, {
 			trace: 'Router',

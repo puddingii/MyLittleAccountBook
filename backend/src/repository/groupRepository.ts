@@ -72,6 +72,28 @@ export const createGroupList = async (
 	}
 };
 
+export const createGroup = async (
+	groupInfo: {
+		userEmail: string;
+		userType: GroupModel['userType'];
+		accessHistory?: Date;
+		accountBookId: number;
+	},
+	transaction?: Transaction,
+) => {
+	try {
+		const group = await GroupModel.create(groupInfo, { transaction });
+
+		return group;
+	} catch (error) {
+		const customError = convertErrorToCustomError(error, {
+			trace: 'Repository',
+			code: 400,
+		});
+		throw customError;
+	}
+};
+
 export const updateGroup = async (
 	groupInfo: {
 		userEmail: string;
@@ -82,16 +104,16 @@ export const updateGroup = async (
 	transaction?: Transaction,
 ) => {
 	try {
-		const { userEmail, accountBookId, ...updateInfo } = groupInfo;
-		const groupList = await GroupModel.update(
+		const { userEmail, accountBookId, ...where } = groupInfo;
+		const group = await GroupModel.update(
 			{ userEmail, accountBookId },
 			{
-				where: updateInfo,
+				where,
 				transaction,
 			},
 		);
 
-		return groupList;
+		return group;
 	} catch (error) {
 		const customError = convertErrorToCustomError(error, {
 			trace: 'Repository',
