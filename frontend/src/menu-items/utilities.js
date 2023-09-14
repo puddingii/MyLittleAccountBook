@@ -6,6 +6,7 @@ import {
 	BgColorsOutlined,
 	FontSizeOutlined,
 	LoadingOutlined,
+	TeamOutlined,
 } from '@ant-design/icons';
 
 // icons
@@ -16,6 +17,7 @@ const icons = {
 	AntDesignOutlined,
 	LoadingOutlined,
 	AppstoreAddOutlined,
+	TeamOutlined,
 };
 
 // ==============================|| MENU ITEMS - UTILITIES ||============================== //
@@ -25,6 +27,13 @@ const utilities = {
 	title: '가계부 설정',
 	type: 'group',
 	children: [
+		{
+			id: 'manage-user',
+			title: '멤버 관리',
+			type: 'item',
+			url: '/group/:id/manage-user',
+			icon: icons.TeamOutlined,
+		},
 		{
 			id: 'util-typography',
 			title: 'Typography',
