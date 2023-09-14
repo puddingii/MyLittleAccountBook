@@ -146,7 +146,7 @@ const CreateGroupModal = ({ open, handleClose }) => {
 						open={snackbarInfo.isOpen}
 						onClose={handleCloseSnackbar}
 						autoHideDuration={5000}
-						key={'snackbarBox'}
+						key={'CreateGroupModalSnackbar'}
 					>
 						<Alert onClose={handleCloseSnackbar} severity={snackbarInfo.severity} sx={{ width: '100%' }}>
 							{snackbarInfo.message}
