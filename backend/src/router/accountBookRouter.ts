@@ -9,9 +9,13 @@ import { convertErrorToCustomError } from '@/util/error';
 /** Middleware & Service */
 import { verifyToken } from '@/middleware/authentication';
 import { createAccountBookAndInviteUser } from '@/service/headerService';
+import { updateAccountBookInfo } from '@/service/manageAccountBook';
 
 /** Interface */
-import { TPostAccountBook } from '@/interface/api/response/headerResponse';
+import {
+	TPatchAccountBook,
+	TPostAccountBook,
+} from '@/interface/api/response/headerResponse';
 
 const router = express.Router();
 
@@ -29,6 +33,31 @@ router.post('/', verifyToken, async (req, res) => {
 			message: '',
 			status: 'success',
 		} as TPostAccountBook);
+	} catch (error) {
+		const { message, traceList, code } = convertErrorToCustomError(error, {
+			trace: 'Router',
+			code: 400,
+		});
+		logger.error(message, traceList);
+
+		return res.status(code).json({ data: {}, message, status: 'fail' });
+	}
+});
+
+router.patch('/', verifyToken, async (req, res) => {
+	try {
+		const { body: info } = await zParser(zodSchema.header.patchAccountBook, req);
+
+		await updateAccountBookInfo({
+			...info,
+			myEmail: (req.user as Exclude<Request['user'], undefined>).email,
+		});
+
+		return res.status(200).json({
+			data: {},
+			message: '',
+			status: 'success',
+		} as TPatchAccountBook);
 	} catch (error) {
 		const { message, traceList, code } = convertErrorToCustomError(error, {
 			trace: 'Router',

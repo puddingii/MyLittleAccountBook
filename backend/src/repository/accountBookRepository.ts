@@ -29,3 +29,24 @@ export const createAccountBook = async (
 		throw customError;
 	}
 };
+
+export const updateAccountBook = async (
+	info: { title?: string; content?: string; accountBookId: number },
+	transaction?: Transaction,
+) => {
+	try {
+		const { accountBookId, ...updatedInfo } = info;
+		const updatedCount = await AccountBookModel.update(updatedInfo, {
+			where: { id: accountBookId },
+			transaction,
+		});
+
+		return updatedCount[0];
+	} catch (error) {
+		const customError = convertErrorToCustomError(error, {
+			trace: 'Repository',
+			code: 400,
+		});
+		throw customError;
+	}
+};

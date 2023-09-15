@@ -1,12 +1,12 @@
 /** Library */
 
 /** Repository */
-import GroupModel from '@/model/group';
 import {
 	createGroup,
 	deleteGroup,
 	findGroup,
 	findGroupList,
+	isAdmin,
 	updateGroup,
 } from '@/repository/groupRepository';
 import { findUserInfo } from '@/repository/userRepository';
@@ -16,14 +16,9 @@ import { findUserInfo } from '@/repository/userRepository';
 /** Interface */
 
 /** Etc */
+import GroupModel from '@/model/group';
 import { convertErrorToCustomError } from '@/util/error';
 import { CustomError } from '@/util/error/class';
-
-const isAdmin = (userType: GroupModel['userType']) => {
-	const adminList = ['owner', 'manager'];
-
-	return adminList.findIndex(adminType => adminType === userType) !== -1;
-};
 
 export const getGroupList = async (info: { accountBookId: number }) => {
 	try {

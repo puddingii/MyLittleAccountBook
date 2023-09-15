@@ -15,8 +15,19 @@ const postAccountBook = zod.object({
 		),
 	}),
 });
+
+const patchAccountBook = zod.object({
+	body: zod.object({
+		title: zod.string().optional(),
+		content: zod.string().optional(),
+		accountBookId: zod.number(),
+	}),
+});
+
 export type TPostAccountBookQuery = zod.infer<typeof postAccountBook>;
+export type TPatchAccountBookQuery = zod.infer<typeof patchAccountBook>;
 
 export default {
 	postAccountBook,
+	patchAccountBook,
 };

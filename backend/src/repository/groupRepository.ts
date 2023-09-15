@@ -1,8 +1,15 @@
 import { Transaction } from 'sequelize';
 
-import GroupModel from '@/model/group';
 import { convertErrorToCustomError } from '@/util/error';
+
+import GroupModel from '@/model/group';
 import UserModel from '@/model/user';
+
+export const isAdmin = (userType: GroupModel['userType']) => {
+	const adminList = ['owner', 'manager'];
+
+	return adminList.findIndex(adminType => adminType === userType) !== -1;
+};
 
 export const findGroup = async (
 	groupParams: Partial<{
