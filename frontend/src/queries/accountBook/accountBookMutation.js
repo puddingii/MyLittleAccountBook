@@ -76,7 +76,27 @@ export const useCreateAccountBookMutation = () => {
 
 	return useMutation(createAccountBookFetcher, {
 		onSuccess: () => {
-			queryClient.invalidateQueries(`${QUERY_KEY.postAccountBook}`);
+			queryClient.invalidateQueries(`${QUERY_KEY.postAccountBook}create`);
+		},
+	});
+};
+
+/**
+ * @param {{ accountBookId: number; title?: string; content?: string; }} info
+ */
+const updateAccountBookFetcher = info =>
+	axios
+		.patch(QUERY_KEY.updateAccountBook, info, {
+			withCredentials: true,
+		})
+		.then(({ data }) => data);
+
+export const useUpdateAccountBookMutation = () => {
+	const queryClient = useQueryClient();
+
+	return useMutation(updateAccountBookFetcher, {
+		onSuccess: () => {
+			queryClient.invalidateQueries(`${QUERY_KEY.updateAccountBook}update`);
 		},
 	});
 };

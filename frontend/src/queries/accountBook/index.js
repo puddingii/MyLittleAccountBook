@@ -6,4 +6,5 @@ export const QUERY_KEY = {
 	deleteColumn: `${process.env.REACT_APP_BACKEND_API}/accountbook/spending-income/column`,
 	getSummary: `${process.env.REACT_APP_BACKEND_API}/accountbook/summary`,
 	postAccountBook: `${process.env.REACT_APP_BACKEND_API}/accountbook`,
+	updateAccountBook: `${process.env.REACT_APP_BACKEND_API}/accountbook`,
 };
