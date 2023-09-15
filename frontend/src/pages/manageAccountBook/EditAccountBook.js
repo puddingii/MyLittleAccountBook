@@ -50,7 +50,7 @@ const EditAccountBook = ({ accountBookInfo, setAccountBookInfo, setSnackbarInfo,
 				onError: error => {
 					setSnackbarInfo({ isOpen: true, message: error?.response?.data?.message, severity: 'error' });
 					setStatus({ success: false });
-					setErrors({ submit: error.message });
+					setErrors({ submit: error?.response?.data?.message });
 					setSubmitting(false);
 				},
 			},
