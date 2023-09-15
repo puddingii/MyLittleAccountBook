@@ -78,16 +78,18 @@ const SortCheckTableBody = ({ page, visibleRows, rowsPerPage, rowCount, setInvit
 	const handleClose = value => {
 		setIsOpenDialog(false);
 		if (curPointedIndex !== -1 && value) {
-			console.log(value, curPointedIndex, visibleRows[curPointedIndex]);
-			// updateMutate(({...value, accountBookId}), {
-			// 	onSuccess: () => {
-			// 		setInvitedUserList(beforeList => {
-			// 			const afterList = [...beforeList];
-			// 			afterList[curPointedIndex] = { ...afterList[curPointedIndex], type: value };
-			// 			return afterList;
-			// 		});
-			// 	},
-			// });
+			updateMutate(
+				{ accountBookId, userType: value, userEmail: visibleRows[curPointedIndex].email },
+				{
+					onSuccess: () => {
+						setInvitedUserList(beforeList => {
+							const afterList = [...beforeList];
+							afterList[curPointedIndex] = { ...afterList[curPointedIndex], type: value };
+							return afterList;
+						});
+					},
+				},
+			);
 		}
 		setCurPointedIndex(-1);
 	};
