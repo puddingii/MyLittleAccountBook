@@ -1,7 +1,10 @@
 /** Library */
 
 /** Repository */
-import { updateAccountBook } from '@/repository/accountBookRepository';
+import {
+	findOneAccountBook,
+	updateAccountBook,
+} from '@/repository/accountBookRepository';
 import { findGroup, isAdmin } from '@/repository/groupRepository';
 
 /** Sub Service */
@@ -11,6 +14,30 @@ import { findGroup, isAdmin } from '@/repository/groupRepository';
 /** Etc */
 import { convertErrorToCustomError } from '@/util/error';
 import { CustomError } from '@/util/error/class';
+
+export const getAccountBookInfo = async (info: {
+	id?: number;
+	title?: string;
+	myEmail: string;
+}) => {
+	try {
+		const { myEmail, ...accountBookInfo } = info;
+		const myGroupInfo = await findGroup({ userEmail: myEmail, accountBookId: info.id });
+		if (!myGroupInfo) {
+			throw new Error('현재 계정은 해당 그룹에 참여하지 않아 정보를 불러올 수 없습니다.');
+		}
+
+		const accountBook = await findOneAccountBook(accountBookInfo);
+		if (!accountBook) {
+			throw new Error('가계부 정보를 찾을 수 없습니다.');
+		}
+
+		return { title: accountBook.title, content: accountBook.content };
+	} catch (error) {
+		const customError = convertErrorToCustomError(error, { trace: 'Service', code: 400 });
+		throw customError;
+	}
+};
 
 export const updateAccountBookInfo = async (info: {
 	myEmail: string;

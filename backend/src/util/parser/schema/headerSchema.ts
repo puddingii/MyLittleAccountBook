@@ -1,5 +1,12 @@
 import * as zod from 'zod';
 
+const getAccountBook = zod.object({
+	query: zod.object({
+		id: zod.string().optional(),
+		title: zod.string().optional(),
+	}),
+});
+
 const postAccountBook = zod.object({
 	body: zod.object({
 		title: zod.string(),
@@ -24,10 +31,12 @@ const patchAccountBook = zod.object({
 	}),
 });
 
+export type TGetAccountBookQuery = zod.infer<typeof getAccountBook>;
 export type TPostAccountBookQuery = zod.infer<typeof postAccountBook>;
 export type TPatchAccountBookQuery = zod.infer<typeof patchAccountBook>;
 
 export default {
+	getAccountBook,
 	postAccountBook,
 	patchAccountBook,
 };

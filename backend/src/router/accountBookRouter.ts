@@ -9,15 +9,49 @@ import { convertErrorToCustomError } from '@/util/error';
 /** Middleware & Service */
 import { verifyToken } from '@/middleware/authentication';
 import { createAccountBookAndInviteUser } from '@/service/headerService';
-import { updateAccountBookInfo } from '@/service/manageAccountBook';
+import { getAccountBookInfo, updateAccountBookInfo } from '@/service/manageAccountBook';
 
 /** Interface */
 import {
+	TGetAccountBook,
 	TPatchAccountBook,
 	TPostAccountBook,
 } from '@/interface/api/response/headerResponse';
 
 const router = express.Router();
+
+router.get('/', verifyToken, async (req, res) => {
+	try {
+		const { query: info } = await zParser(zodSchema.header.getAccountBook, req);
+
+		const params: { id?: number; myEmail: string; content?: string } = {
+			...info,
+			id: parseInt(info.id ?? '', 10),
+			myEmail: (req.user as Exclude<Request['user'], undefined>).email,
+		};
+		if (!info.id) {
+			delete params.id;
+		}
+		const accountBookInfo = await getAccountBookInfo({
+			...params,
+			myEmail: (req.user as Exclude<Request['user'], undefined>).email,
+		});
+
+		return res.status(200).json({
+			data: accountBookInfo,
+			message: '',
+			status: 'success',
+		} as TGetAccountBook);
+	} catch (error) {
+		const { message, traceList, code } = convertErrorToCustomError(error, {
+			trace: 'Router',
+			code: 400,
+		});
+		logger.error(message, traceList);
+
+		return res.status(code).json({ data: {}, message, status: 'fail' });
+	}
+});
 
 router.post('/', verifyToken, async (req, res) => {
 	try {

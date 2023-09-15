@@ -3,6 +3,24 @@ import { Transaction } from 'sequelize';
 import AccountBookModel from '@/model/accountBook';
 import { convertErrorToCustomError } from '@/util/error';
 
+export const findOneAccountBook = async (
+	info: Partial<{ id: number; title: string }>,
+) => {
+	try {
+		const accountBook = await AccountBookModel.findOne({
+			where: info,
+		});
+
+		return accountBook;
+	} catch (error) {
+		const customError = convertErrorToCustomError(error, {
+			trace: 'Repository',
+			code: 400,
+		});
+		throw customError;
+	}
+};
+
 /** 새로운 가계부 생성 */
 export const createAccountBook = async (
 	info: {
