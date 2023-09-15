@@ -14,7 +14,7 @@ import {
 } from '@mui/material';
 import { CloseOutlined } from '@ant-design/icons';
 
-import { useUpdateTypeMutation } from 'queries/group/groupMutation';
+import { useDeleteGroupUserMutation, useUpdateTypeMutation } from 'queries/group/groupMutation';
 
 const publicAccessLevelInfo = {
 	manager: { text: '관리자', color: 'info' },
@@ -60,9 +60,18 @@ AccessLevelPicker.propTypes = {
 	open: PropTypes.bool.isRequired,
 };
 
-const SortCheckTableBody = ({ page, visibleRows, rowsPerPage, rowCount, setInvitedUserList, accountBookId }) => {
+const SortCheckTableBody = ({
+	page,
+	visibleRows,
+	rowsPerPage,
+	rowCount,
+	setInvitedUserList,
+	accountBookId,
+	setSnackbarInfo,
+}) => {
 	const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - rowCount) : 0;
 	const { mutate: updateMutate } = useUpdateTypeMutation();
+	const { mutate: deleteMutate } = useDeleteGroupUserMutation();
 	const [isOpenDialog, setIsOpenDialog] = useState(false);
 	const [curPointedIndex, setCurPointedIndex] = useState(-1);
 
@@ -87,6 +96,10 @@ const SortCheckTableBody = ({ page, visibleRows, rowsPerPage, rowCount, setInvit
 							afterList[curPointedIndex] = { ...afterList[curPointedIndex], type: value };
 							return afterList;
 						});
+						setSnackbarInfo({ isOpen: true, message: '변경되었습니다.', severity: 'success' });
+					},
+					onError: error => {
+						setSnackbarInfo({ isOpen: true, message: error?.response?.data?.message, severity: 'error' });
 					},
 				},
 			);
@@ -95,9 +108,24 @@ const SortCheckTableBody = ({ page, visibleRows, rowsPerPage, rowCount, setInvit
 	};
 
 	const handleClickDelete = index => {
-		setInvitedUserList(beforeList => {
-			return beforeList.filter(info => info.index !== index);
-		});
+		if (visibleRows[index].type === 'owner') {
+			setSnackbarInfo({ isOpen: true, message: '소유자는 제거할 수 없습니다.', severity: 'error' });
+			return;
+		}
+		deleteMutate(
+			{ accountBookId, id: visibleRows[index].id },
+			{
+				onSuccess: () => {
+					setInvitedUserList(beforeList => {
+						return beforeList.filter(info => info.index !== index);
+					});
+					setSnackbarInfo({ isOpen: true, message: '삭제되었습니다.', severity: 'success' });
+				},
+				onError: error => {
+					setSnackbarInfo({ isOpen: true, message: error?.response?.data?.message, severity: 'error' });
+				},
+			},
+		);
 	};
 
 	return (
@@ -144,6 +172,7 @@ SortCheckTableBody.propTypes = {
 	rowsPerPage: PropTypes.number.isRequired,
 	rowCount: PropTypes.number.isRequired,
 	setInvitedUserList: PropTypes.func.isRequired,
+	setSnackbarInfo: PropTypes.func.isRequired,
 	accountBookId: PropTypes.number.isRequired,
 };
 

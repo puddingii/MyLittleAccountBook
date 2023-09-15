@@ -8,7 +8,7 @@ import SortCheckTableBody from './Body';
 import { getComparator, stableSort } from 'utils/sort';
 import MainCard from 'components/MainCard';
 
-const SortTable = ({ setInvitedUserList, rows, accountBookId }) => {
+const SortTable = ({ setSnackbarInfo, setInvitedUserList, rows, accountBookId }) => {
 	const ROWS_PER_PAGE = 5;
 	const [order, setOrder] = useState('asc');
 	const [orderBy, setOrderBy] = useState('index');
@@ -44,6 +44,7 @@ const SortTable = ({ setInvitedUserList, rows, accountBookId }) => {
 								rowsPerPage={ROWS_PER_PAGE}
 								rowCount={rows.length}
 								setInvitedUserList={setInvitedUserList}
+								setSnackbarInfo={setSnackbarInfo}
 								accountBookId={accountBookId}
 							/>
 						</Table>
@@ -66,6 +67,7 @@ const SortTable = ({ setInvitedUserList, rows, accountBookId }) => {
 
 SortTable.propTypes = {
 	setInvitedUserList: PropTypes.func.isRequired,
+	setSnackbarInfo: PropTypes.func.isRequired,
 	rows: PropTypes.array.isRequired,
 	accountBookId: PropTypes.number.isRequired,
 };

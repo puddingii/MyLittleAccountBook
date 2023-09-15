@@ -3,7 +3,7 @@ import { useMutation, useQueryClient } from 'react-query';
 import { QUERY_KEY } from '.';
 
 /**
- * @param {{ email: string; type: 'observer' | 'writer' | 'manager'}} userInfo
+ * @param {{ email: string; type: 'observer' | 'writer' | 'manager'; accountBookId: number;}} userInfo
  */
 const updateTypeFetcher = userInfo =>
 	axios
@@ -23,7 +23,7 @@ export const useUpdateTypeMutation = () => {
 };
 
 /**
- * @param {{email: string; type: 'observer' | 'writer' | 'manager'}} userInfo
+ * @param {{email: string; type: 'observer' | 'writer' | 'manager'; accountBookId: number;}} userInfo
  */
 const addGroupUserFetcher = userInfo =>
 	axios
@@ -36,6 +36,29 @@ export const useAddGroupUserMutation = () => {
 	const queryClient = useQueryClient();
 
 	return useMutation(addGroupUserFetcher, {
+		onSuccess: () => {
+			queryClient.invalidateQueries(`${QUERY_KEY.add}add`);
+		},
+	});
+};
+
+/**
+ * @param {{id: number; accountBookId: number;}} info
+ */
+const deleteGroupUserFetcher = async info => {
+	const params = new URLSearchParams(info).toString();
+
+	const { data } = await axios.delete(`${QUERY_KEY.delete}?${params}`, {
+		withCredentials: true,
+	});
+
+	return data;
+};
+
+export const useDeleteGroupUserMutation = () => {
+	const queryClient = useQueryClient();
+
+	return useMutation(deleteGroupUserFetcher, {
 		onSuccess: () => {
 			queryClient.invalidateQueries(`${QUERY_KEY.add}add`);
 		},

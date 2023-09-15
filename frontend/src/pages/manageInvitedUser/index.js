@@ -60,7 +60,12 @@ const ManageInvitedUser = () => {
 					</Grid>
 					<Grid item />
 				</Grid>
-				<SortTable rows={invitedUserList} setInvitedUserList={setInvitedUserList} accountBookId={accountBookId} />
+				<SortTable
+					rows={invitedUserList}
+					setInvitedUserList={setInvitedUserList}
+					accountBookId={accountBookId}
+					setSnackbarInfo={setSnackbarInfo}
+				/>
 			</Grid>
 		</Grid>
 	);
