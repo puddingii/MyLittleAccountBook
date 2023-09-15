@@ -24,8 +24,16 @@ const updateGroupUser = zod.object({
 	}),
 });
 
+const deleteGroupUser = zod.object({
+	query: zod.object({
+		accountBookId: zod.string(),
+		id: zod.string(),
+	}),
+});
+
 export type TGetListQuery = zod.infer<typeof getList>;
 export type TAddGroupUserQuery = zod.infer<typeof addGroupUser>;
 export type TUpdateGroupUserQuery = zod.infer<typeof updateGroupUser>;
+export type TDeleteGroupUserQuery = zod.infer<typeof deleteGroupUser>;
 
-export default { getList, addGroupUser, updateGroupUser };
+export default { getList, addGroupUser, updateGroupUser, deleteGroupUser };

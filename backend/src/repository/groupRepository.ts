@@ -119,3 +119,20 @@ export const updateGroup = async (
 		throw customError;
 	}
 };
+
+export const deleteGroup = async (
+	info: { id: number; accountBookId: number },
+	transaction?: Transaction,
+) => {
+	try {
+		const deleteCount = await GroupModel.destroy({ where: info, transaction });
+
+		return deleteCount;
+	} catch (error) {
+		const customError = convertErrorToCustomError(error, {
+			trace: 'Repository',
+			code: 400,
+		});
+		throw customError;
+	}
+};

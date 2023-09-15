@@ -10,3 +10,7 @@ export type TPost = TResponseType<{
 	nickname: string;
 	id: number;
 }>;
+
+export type TPatch = TResponseType<{}>;
+
+export type TDelete = TResponseType<{}>;

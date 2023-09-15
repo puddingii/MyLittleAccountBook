@@ -4,6 +4,7 @@
 import GroupModel from '@/model/group';
 import {
 	createGroup,
+	deleteGroup,
 	findGroup,
 	findGroupList,
 	updateGroup,
@@ -99,6 +100,34 @@ export const updateGroupInfo = async (info: {
 		const successCount = await updateGroup(groupInfo);
 		if (successCount === 0) {
 			throw new CustomError('성공적으로 저장되지 않았습니다.', { code: 500 });
+		}
+	} catch (error) {
+		const customError = convertErrorToCustomError(error, { trace: 'Service', code: 400 });
+		throw customError;
+	}
+};
+
+export const deleteGroupUser = async (info: {
+	myEmail: string;
+	accountBookId: number;
+	id: number;
+}) => {
+	try {
+		const { myEmail, accountBookId, id } = info;
+		const myGroupInfo = await findGroup({
+			userEmail: myEmail,
+			accountBookId,
+		});
+		if (!myGroupInfo) {
+			throw new Error('현재 계정은 해당 그룹에 참여하지 않았습니다.');
+		}
+		if (!isAdmin(myGroupInfo.userType)) {
+			throw new Error('관리 가능한 유저가 아닙니다.');
+		}
+
+		const deleteCount = await deleteGroup({ accountBookId, id });
+		if (deleteCount === 0) {
+			throw new CustomError('성공적으로 삭제되지 않았습니다.', { code: 500 });
 		}
 	} catch (error) {
 		const customError = convertErrorToCustomError(error, { trace: 'Service', code: 400 });
