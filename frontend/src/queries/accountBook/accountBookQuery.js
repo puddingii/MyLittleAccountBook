@@ -93,3 +93,33 @@ export const useGetSummaryQuery = (info, { onSuccess } = {}) => {
 		},
 	});
 };
+
+const getAccountBookInfoFetcher = info => {
+	const fetcher = () =>
+		axios.get(`${QUERY_KEY.getAccountBook}?${info}`, { withCredentials: true }).then(({ data }) => data);
+
+	return fetcher;
+};
+
+export const useGetAccountBookQuery = (info, { onSuccess, enabled } = { enabled: true }) => {
+	const params = new URLSearchParams(info);
+	const fetcher = getAccountBookInfoFetcher(params.toString());
+	const setUserState = useSetRecoilState(userState);
+	const navigate = useNavigate();
+
+	return useQuery(`${QUERY_KEY.getAccountBook}get`, fetcher, {
+		retry: false,
+		enabled,
+		onSuccess: response => {
+			onSuccess && onSuccess(response);
+		},
+		onError: error => {
+			if (isExpiredToken(error)) {
+				deleteToken('Authorization');
+				deleteToken('refresh');
+				setUserState(() => ({ email: '', isLogin: false, nickname: '' }));
+				navigate('/login');
+			}
+		},
+	});
+};

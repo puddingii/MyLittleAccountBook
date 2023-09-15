@@ -1,18 +1,34 @@
 import { Grid, Typography, Snackbar, Alert } from '@mui/material';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useParams } from 'react-router';
 
 import EditAccountBook from './EditAccountBook';
+import { useGetAccountBookQuery } from 'queries/accountBook/accountBookQuery';
 
 const ManageAccountBook = () => {
 	const [snackbarInfo, setSnackbarInfo] = useState({ isOpen: false, message: '', severity: 'info' });
 	const [accountBookInfo, setAccountBookInfo] = useState({ title: 'title' });
 	const param = useParams();
 	const accountBookId = parseInt(param?.id ?? -1, 10);
+	const { refetch } = useGetAccountBookQuery(
+		{ id: accountBookId },
+		{
+			enabled: false,
+			onSuccess: response => {
+				setAccountBookInfo({ title: response?.data?.title ?? '', content: response?.data?.content ?? '' });
+			},
+		},
+	);
 
 	const handleCloseSnackbar = () => {
 		setSnackbarInfo(beforeInfo => ({ ...beforeInfo, isOpen: false }));
 	};
+
+	useEffect(() => {
+		if (accountBookId) {
+			refetch();
+		}
+	}, [refetch, accountBookId]);
 
 	return (
 		<Grid container rowSpacing={4.5} columnSpacing={2.75}>
