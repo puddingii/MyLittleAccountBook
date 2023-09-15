@@ -7,6 +7,7 @@ import {
 	FontSizeOutlined,
 	LoadingOutlined,
 	TeamOutlined,
+	SettingOutlined,
 } from '@ant-design/icons';
 
 // icons
@@ -18,12 +19,13 @@ const icons = {
 	LoadingOutlined,
 	AppstoreAddOutlined,
 	TeamOutlined,
+	SettingOutlined,
 };
 
 // ==============================|| MENU ITEMS - UTILITIES ||============================== //
 
 const utilities = {
-	id: 'utilities',
+	id: 'manager',
 	title: '가계부 설정',
 	type: 'group',
 	children: [
@@ -33,6 +35,15 @@ const utilities = {
 			type: 'item',
 			url: '/group/:id/manage-user',
 			icon: icons.TeamOutlined,
+			breadcrumbs: false,
+		},
+		{
+			id: 'manage-accountbook',
+			title: '가계부 설정',
+			type: 'item',
+			url: '/group/:id/manage-accountbook',
+			icon: icons.SettingOutlined,
+			breadcrumbs: false,
 		},
 		{
 			id: 'util-typography',

@@ -10,6 +10,7 @@ const DashboardDefault = Loadable(lazy(() => import('pages/dashboard')));
 const ThisMonthSummary = Loadable(lazy(() => import('pages/summary')));
 const SpendingAndIncomeManageBoard = Loadable(lazy(() => import('pages/spendingAndIncome')));
 const ManageInvitedUser = Loadable(lazy(() => import('pages/manageInvitedUser')));
+const ManageAccountBook = Loadable(lazy(() => import('pages/manageAccountBook')));
 
 // render - sample page
 const SamplePage = Loadable(lazy(() => import('pages/extra-pages/SamplePage')));
@@ -58,6 +59,10 @@ const GuestGuardRoutes = {
 		{
 			path: 'group/:id/manage-user',
 			element: <ManageInvitedUser />,
+		},
+		{
+			path: 'group/:id/manage-accountbook',
+			element: <ManageAccountBook />,
 		},
 		{
 			path: 'group/:id/sample-page',
