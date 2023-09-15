@@ -1,6 +1,6 @@
 import { Grid, Divider, Snackbar, Typography, Alert } from '@mui/material';
 import { useParams } from 'react-router';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 import SortTable from './InvitedUserTable';
 import InviteUserForm from './InviteUserForm';
@@ -12,7 +12,7 @@ const ManageInvitedUser = () => {
 	const param = useParams();
 	const accountBookId = parseInt(param?.id ?? -1, 10);
 
-	useGetGroupListQuery(
+	const { refetch } = useGetGroupListQuery(
 		{ accountBookId },
 		{
 			onSuccess: response => {
@@ -24,6 +24,10 @@ const ManageInvitedUser = () => {
 	const handleCloseSnackbar = () => {
 		setSnackbarInfo(beforeInfo => ({ ...beforeInfo, isOpen: false }));
 	};
+
+	useEffect(() => {
+		refetch();
+	}, [refetch]);
 
 	return (
 		<Grid container rowSpacing={4.5} columnSpacing={2.75}>
