@@ -104,16 +104,13 @@ export const updateGroup = async (
 	transaction?: Transaction,
 ) => {
 	try {
-		const { userEmail, accountBookId, ...where } = groupInfo;
-		const group = await GroupModel.update(
-			{ userEmail, accountBookId },
-			{
-				where,
-				transaction,
-			},
-		);
+		const { userEmail, accountBookId, ...updatedInfo } = groupInfo;
+		const group = await GroupModel.update(updatedInfo, {
+			where: { userEmail, accountBookId },
+			transaction,
+		});
 
-		return group;
+		return group[0];
 	} catch (error) {
 		const customError = convertErrorToCustomError(error, {
 			trace: 'Repository',

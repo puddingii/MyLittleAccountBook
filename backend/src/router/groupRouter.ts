@@ -9,7 +9,7 @@ import { convertErrorToCustomError } from '@/util/error';
 
 /** Middleware & Service */
 import { verifyToken } from '@/middleware/authentication';
-import { addGroup, getGroupList } from '@/service/groupService';
+import { addGroup, getGroupList, updateGroupInfo } from '@/service/groupService';
 
 /** Interface */
 import { TGetList, TPost } from '@/interface/api/response/groupResponse';
@@ -56,6 +56,36 @@ router.post('/', verifyToken, async (req, res) => {
 
 		return res.status(200).json({
 			data: newGroup,
+			message: '',
+			status: 'success',
+		} as TPost);
+	} catch (error) {
+		const { message, traceList, code } = convertErrorToCustomError(error, {
+			trace: 'Router',
+			code: 400,
+		});
+		logger.error(message, traceList);
+
+		return res.status(code).json({ data: {}, message, status: 'fail' });
+	}
+});
+
+router.patch('/', verifyToken, async (req, res) => {
+	try {
+		const {
+			body: { accessHistory, ...groupInfo },
+		} = await zParser(zodSchema.group.updateGroupUser, req);
+
+		const paramInfo = accessHistory
+			? { ...groupInfo, accessHistory: dayjs(accessHistory).toDate() }
+			: { ...groupInfo };
+		await updateGroupInfo({
+			myEmail: (req.user as Exclude<Request['user'], undefined>).email,
+			...paramInfo,
+		});
+
+		return res.status(200).json({
+			data: {},
 			message: '',
 			status: 'success',
 		} as TPost);
