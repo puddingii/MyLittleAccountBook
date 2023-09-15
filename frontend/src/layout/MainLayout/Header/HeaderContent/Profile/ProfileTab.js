@@ -6,14 +6,18 @@ import { useTheme } from '@mui/material/styles';
 import { List, ListItemButton, ListItemIcon, ListItemText } from '@mui/material';
 
 // assets
-import { UserOutlined } from '@ant-design/icons';
+import { PoweroffOutlined, UserOutlined, UsergroupAddOutlined } from '@ant-design/icons';
 
 import CreateGroupModal from './CreateGroupModal';
 import UserProfileModal from './UserProfileModal';
 
 // ==============================|| HEADER PROFILE - PROFILE TAB ||============================== //
 
-const profileList = [{ title: '내 프로필' }, { title: '새 그룹 만들기' }, { title: '로그아웃' }];
+const profileList = [
+	{ title: '내 프로필', icon: <UserOutlined /> },
+	{ title: '새 그룹 만들기', icon: <UsergroupAddOutlined /> },
+	{ title: '로그아웃', icon: <PoweroffOutlined /> },
+];
 
 const ProfileTab = ({ handleLogout }) => {
 	const theme = useTheme();
@@ -79,9 +83,7 @@ const ProfileTab = ({ handleLogout }) => {
 						selected={selectedIndex === idx}
 						onClick={event => handleListItemClick(event, idx)}
 					>
-						<ListItemIcon>
-							<UserOutlined />
-						</ListItemIcon>
+						<ListItemIcon>{profile.icon}</ListItemIcon>
 						<ListItemText primary={profile.title} />
 					</ListItemButton>
 				))}
