@@ -1,5 +1,6 @@
 // assets
 import {
+	AppstoreOutlined,
 	AppstoreAddOutlined,
 	AntDesignOutlined,
 	BarcodeOutlined,
@@ -20,6 +21,7 @@ const icons = {
 	AppstoreAddOutlined,
 	TeamOutlined,
 	SettingOutlined,
+	AppstoreOutlined,
 };
 
 // ==============================|| MENU ITEMS - UTILITIES ||============================== //
@@ -30,6 +32,14 @@ const utilities = {
 	type: 'group',
 	children: [
 		{
+			id: 'manage-accountbook',
+			title: '가계부 설정',
+			type: 'item',
+			url: '/group/:id/manage-accountbook',
+			icon: icons.SettingOutlined,
+			breadcrumbs: false,
+		},
+		{
 			id: 'manage-user',
 			title: '멤버 관리',
 			type: 'item',
@@ -38,11 +48,11 @@ const utilities = {
 			breadcrumbs: false,
 		},
 		{
-			id: 'manage-accountbook',
-			title: '가계부 설정',
+			id: 'manage-category',
+			title: '카테고리 관리',
 			type: 'item',
-			url: '/group/:id/manage-accountbook',
-			icon: icons.SettingOutlined,
+			url: '/group/:id/manage-category',
+			icon: icons.AppstoreOutlined,
 			breadcrumbs: false,
 		},
 		{
