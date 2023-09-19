@@ -100,3 +100,66 @@ export const useUpdateAccountBookMutation = () => {
 		},
 	});
 };
+
+/**
+ * @param {{ accountBookId: number; name: string; id: number; }} info
+ */
+const updateCategoryFetcher = info =>
+	axios
+		.patch(QUERY_KEY.patchCategory, info, {
+			withCredentials: true,
+		})
+		.then(({ data }) => data);
+
+export const useUpdateCategoryMutation = () => {
+	const queryClient = useQueryClient();
+
+	return useMutation(updateCategoryFetcher, {
+		onSuccess: () => {
+			queryClient.invalidateQueries(`${QUERY_KEY.patchCategory}update`);
+		},
+	});
+};
+
+/**
+ * @param {{ accountBookId: number; name: string; parentId: number }} info
+ */
+const createCategoryFetcher = info =>
+	axios
+		.post(QUERY_KEY.postCategory, info, {
+			withCredentials: true,
+		})
+		.then(({ data }) => data);
+
+export const useCreateCategoryMutation = () => {
+	const queryClient = useQueryClient();
+
+	return useMutation(createCategoryFetcher, {
+		onSuccess: () => {
+			queryClient.invalidateQueries(`${QUERY_KEY.postCategory}create`);
+		},
+	});
+};
+
+/**
+ * @param {{id: number; accountBookId: number;}} info
+ */
+const deleteCategoryFetcher = async info => {
+	const params = new URLSearchParams(info).toString();
+
+	const { data } = await axios.delete(`${QUERY_KEY.deleteCategory}?${params}`, {
+		withCredentials: true,
+	});
+
+	return data;
+};
+
+export const useDeleteCategoryMutation = () => {
+	const queryClient = useQueryClient();
+
+	return useMutation(deleteCategoryFetcher, {
+		onSuccess: () => {
+			queryClient.invalidateQueries(`${QUERY_KEY.deleteCategory}delete`);
+		},
+	});
+};

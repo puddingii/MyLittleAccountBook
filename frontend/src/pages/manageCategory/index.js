@@ -1,5 +1,5 @@
 import { Grid, Typography } from '@mui/material';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { useParams } from 'react-router';
 
 import CategoryManager from './CategoryManager';
@@ -18,6 +18,115 @@ const ManageCategory = () => {
 				setCategoryList(response?.data ?? []);
 			},
 		},
+	);
+
+	const updateMainCategory = useCallback(
+		/** @param {'add' | 'edit' | 'delete'} type  */
+		(info, type) => {
+			const updateManager = {
+				/**
+				 * id, childList의 경우 Server에서 받은 데이터로 설정해야 함
+				 * @param { {id: number; name: string; parentId: null; childList: Array<{id: number; name: string; parentId: number;}>}} info
+				 */
+				add: info => {
+					setCategoryList(beforeList => {
+						const copiedList = [...beforeList];
+						copiedList.push(info);
+
+						return copiedList;
+					});
+				},
+				/**
+				 * @param { {id: number; name: string; }} info
+				 */
+				edit: info => {
+					setCategoryList(beforeList => {
+						const copiedList = [...beforeList];
+						const idx = copiedList.findIndex(beforeInfo => beforeInfo.id === info.id);
+						if (idx === -1) {
+							return copiedList;
+						}
+						copiedList[idx] = { ...copiedList[idx], ...info };
+
+						return copiedList;
+					});
+				},
+				/**
+				 * @param {{id: number;}} info
+				 */
+				delete: info => {
+					setCategoryList(beforeList => {
+						return beforeList.filter(beforeInfo => beforeInfo.id !== info.id);
+					});
+				},
+			};
+
+			return updateManager[type](info);
+		},
+		[setCategoryList],
+	);
+
+	const updateSubCategory = useCallback(
+		/** @param {'add' | 'edit' | 'delete'} type  */
+		(info, type) => {
+			const getMainCategoryIndex = (list, parentId) => {
+				return list.findIndex(mainInfo => mainInfo.id === parentId);
+			};
+			const updateManager = {
+				/**
+				 * id의 경우 Server에서 받은 데이터로 설정해야 함
+				 * @param { {id: number; name: string; parentId: number; }} info
+				 */
+				add: info => {
+					setCategoryList(beforeList => {
+						const copiedList = [...beforeList];
+						const idx = getMainCategoryIndex(copiedList, info.parentId);
+						if (idx === -1) {
+							return copiedList;
+						}
+						copiedList[idx].childList.push(info);
+
+						return copiedList;
+					});
+				},
+				/**
+				 * @param { {id: number; name: string; parentId: number; }} info
+				 */
+				edit: info => {
+					const copiedList = [...beforeList];
+					const idx = getMainCategoryIndex(copiedList, info.parentId);
+					if (idx === -1) {
+						return copiedList;
+					}
+
+					const childIdx = copiedList[idx].childList.findIndex(childInfo => childInfo.id === info.id);
+					if (childIdx === -1) {
+						return copiedList;
+					}
+
+					copiedList[idx].childList[childIdx] = { ...copiedList[idx].childList[childIdx], ...info };
+
+					return copiedList;
+				},
+				/**
+				 * @param {{id: number;}} info
+				 */
+				delete: info => {
+					const copiedList = [...beforeList];
+					const idx = getMainCategoryIndex(copiedList, info.parentId);
+					if (idx === -1) {
+						return copiedList;
+					}
+
+					copiedList[idx].childList = copiedList[idx].childList.filter(childInfo => childInfo.id !== info.id);
+
+					return copiedList;
+				},
+			};
+
+			return updateManager[type](info);
+		},
+		[setCategoryList],
 	);
 
 	const handleClickMainCategory = index => {
@@ -41,9 +150,11 @@ const ManageCategory = () => {
 				<CategoryManager
 					key="mainCategory"
 					list={categoryList}
-					setList={() => {}}
+					setList={updateMainCategory}
 					inputLabelName="메인 카테고리"
 					selectedCategoryIndex={selectedCategoryIndex}
+					maxLength={15}
+					accountBookId={accountBookId}
 					onClickCategory={handleClickMainCategory}
 				/>
 			</Grid>
@@ -57,9 +168,11 @@ const ManageCategory = () => {
 				<CategoryManager
 					key="subCategory"
 					list={categoryList[selectedCategoryIndex]?.childList ?? []}
-					setList={() => {}}
+					setList={updateSubCategory}
 					inputLabelName={`${categoryList[selectedCategoryIndex]?.name ?? ''}의 서브 카테고리`}
-					selectedCategoryIndex={-1}
+					maxLength={10}
+					accountBookId={accountBookId}
+					parentId={selectedCategoryIndex}
 				/>
 			</Grid>
 		</Grid>
