@@ -3,10 +3,6 @@ import {
 	Avatar,
 	Box,
 	Button,
-	Dialog,
-	DialogActions,
-	DialogContent,
-	DialogTitle,
 	Divider,
 	FormHelperText,
 	Grid,
@@ -22,88 +18,14 @@ import {
 	Typography,
 } from '@mui/material';
 import PropTypes from 'prop-types';
-import { Fragment, useState } from 'react';
+import { useState } from 'react';
 import { EditOutlined } from '@mui/icons-material';
 import { Formik } from 'formik';
 
 import MainCard from 'components/MainCard';
 import { categorySchema } from 'validation/manageCategory';
-
-const FormDialog = ({ open, onClose, onSubmit, beforeValue }) => {
-	const handleSubmit = async (values, { setErrors, setStatus, setSubmitting }) => {
-		try {
-			setStatus({ success: false });
-			setSubmitting(false);
-			onSubmit(values);
-		} catch (error) {
-			setStatus({ success: false });
-			setErrors({ submit: error.message });
-			setSubmitting(false);
-		}
-	};
-
-	const handleClose = () => {
-		onClose();
-	};
-
-	return (
-		<Fragment>
-			<Formik
-				initialValues={{ name: beforeValue, submit: null }}
-				validationSchema={categorySchema}
-				onSubmit={handleSubmit}
-				enableReinitialize={true}
-			>
-				{({ errors, handleBlur, handleChange, handleSubmit, touched, values }) => (
-					<form noValidate onSubmit={handleSubmit}>
-						<Dialog open={open} onClose={handleClose}>
-							<DialogTitle>카테고리 이름 수정하기</DialogTitle>
-							<DialogContent>
-								<Grid container spacing={3}>
-									<Grid item xs={12}>
-										<Stack spacing={1}>
-											<InputLabel htmlFor="name">이름</InputLabel>
-											<OutlinedInput
-												id="name"
-												type="name"
-												value={values.name}
-												name="name"
-												onBlur={handleBlur}
-												onChange={handleChange}
-												fullWidth
-												error={Boolean(touched.name && errors.name)}
-											/>
-											{touched.name && errors.name && (
-												<FormHelperText error id="standard-weight-helper-text-name">
-													{errors.name}
-												</FormHelperText>
-											)}
-										</Stack>
-									</Grid>
-								</Grid>
-							</DialogContent>
-							<DialogActions>
-								<Button type="button" onClick={handleClose}>
-									취소
-								</Button>
-								<Button type="submit" onClick={handleSubmit}>
-									수정하기
-								</Button>
-							</DialogActions>
-						</Dialog>
-					</form>
-				)}
-			</Formik>
-		</Fragment>
-	);
-};
-
-FormDialog.propTypes = {
-	open: PropTypes.bool.isRequired,
-	onClose: PropTypes.func.isRequired,
-	onSubmit: PropTypes.func.isRequired,
-	beforeValue: PropTypes.string.isRequired,
-};
+import FormDialog from './FormDialog';
+import { useCreateCategoryMutation } from 'queries/accountBook/accountBookMutation';
 
 // avatar style
 const avatarSX = {
@@ -122,22 +44,43 @@ const actionSX = {
 	transform: 'none',
 };
 
-const CategoryManager = ({ list, setList, inputLabelName, selectedCategoryIndex, onClickCategory }) => {
+const CategoryManager = ({
+	accountBookId,
+	list,
+	setList,
+	inputLabelName,
+	maxLength,
+	selectedCategoryIndex,
+	onClickCategory,
+	parentId,
+}) => {
 	const initialValue = { name: '', submit: null };
 	const [isOpenModal, setIsOpenModal] = useState(false);
+	const { mutate: createMutate } = useCreateCategoryMutation();
 
 	const handleDeleteButton = index => {
-		console.log(index);
+		setList({ id: index }, 'delete');
 	};
 	const handleSubmit = async (values, { setErrors, setStatus, setSubmitting }) => {
-		try {
-			setStatus({ success: false });
-			setSubmitting(false);
-		} catch (error) {
-			setStatus({ success: false });
-			setErrors({ submit: error.message });
-			setSubmitting(false);
+		if (list.length >= maxLength) {
+			throw new Error(`카테고리를 ${maxLength}개 초과로 만들 수 없습니다.`);
 		}
+		createMutate(
+			{ accountBookId, name: values.name, parentId },
+			{
+				onSuccess: response => {
+					const data = response?.data ?? {};
+					setList({ name: values.name, parentId: parentId || null, ...data }, 'add');
+					setStatus({ success: false });
+					setSubmitting(false);
+				},
+				onError: error => {
+					setStatus({ success: false });
+					setErrors({ submit: error.message });
+					setSubmitting(false);
+				},
+			},
+		);
 	};
 
 	return (
@@ -190,6 +133,11 @@ const CategoryManager = ({ list, setList, inputLabelName, selectedCategoryIndex,
 									</Stack>
 								</Grid>
 							</Grid>
+							{errors.submit && (
+								<Grid item xs={12}>
+									<FormHelperText error>{errors.submit}</FormHelperText>
+								</Grid>
+							)}
 						</form>
 					)}
 				</Formik>
@@ -205,7 +153,7 @@ const CategoryManager = ({ list, setList, inputLabelName, selectedCategoryIndex,
 							'& .MuiListItemSecondaryAction-root': { ...actionSX, position: 'relative' },
 						},
 						overflow: 'auto',
-						maxHeight: '525px',
+						maxHeight: '500px',
 					}}
 				>
 					{list.map((info, idx) => (
@@ -250,9 +198,12 @@ const CategoryManager = ({ list, setList, inputLabelName, selectedCategoryIndex,
 CategoryManager.propTypes = {
 	list: PropTypes.array.isRequired,
 	setList: PropTypes.func.isRequired,
-	onClickCategory: PropTypes.func,
 	inputLabelName: PropTypes.string.isRequired,
-	selectedCategoryIndex: PropTypes.number.isRequired,
+	maxLength: PropTypes.number.isRequired,
+	accountBookId: PropTypes.number.isRequired,
+	parentId: PropTypes.number,
+	selectedCategoryIndex: PropTypes.number,
+	onClickCategory: PropTypes.func,
 };
 
 export default CategoryManager;
