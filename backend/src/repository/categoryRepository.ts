@@ -65,6 +65,31 @@ export const findCategoryList = async (info: {
 	}
 };
 
+export const findCategory = async (
+	info: {
+		accountBookId: number;
+		name?: string;
+		parentId?: number;
+		id?: number;
+	},
+	options?: Partial<{ transaction: Transaction; lock: boolean; skipLocked: boolean }>,
+) => {
+	try {
+		const category = await CategoryModel.findOne({
+			where: info,
+			...options,
+		});
+
+		return category;
+	} catch (error) {
+		const customError = convertErrorToCustomError(error, {
+			trace: 'Repository',
+			code: 500,
+		});
+		throw customError;
+	}
+};
+
 export const createCategory = async (
 	categoryInfo: {
 		parentId?: number;
@@ -74,20 +99,9 @@ export const createCategory = async (
 	transaction?: Transaction,
 ) => {
 	try {
-		if (!categoryInfo.parentId) {
-			await CategoryModel.create(categoryInfo);
-			return;
-		}
+		const newCategory = await CategoryModel.create(categoryInfo, { transaction });
 
-		const isExistParent = await CategoryModel.findOne({
-			where: { id: categoryInfo.parentId, accountBookId: categoryInfo.accountBookId },
-			lock: true,
-			skipLocked: true,
-		});
-		if (!isExistParent) {
-			throw new Error('parentId에 해당하는 상위 노드가 존재하지 않습니다.');
-		}
-		await CategoryModel.create(categoryInfo, { transaction });
+		return newCategory;
 	} catch (error) {
 		const customError = convertErrorToCustomError(error, {
 			trace: 'Repository',

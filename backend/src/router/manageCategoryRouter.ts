@@ -7,11 +7,11 @@ import { logger } from '@/util';
 import { convertErrorToCustomError } from '@/util/error';
 
 /** Middleware & Service */
-import { getCategoryList } from '@/service/manageCategory';
+import { addCategory, getCategoryList } from '@/service/manageCategory';
 import { verifyToken } from '@/middleware/authentication';
 
 /** Interface */
-import { TGet } from '@/interface/api/response/manageCategoryResponse';
+import { TGet, TPost } from '@/interface/api/response/manageCategoryResponse';
 
 const router = express.Router();
 
@@ -28,6 +28,28 @@ router.get('/', verifyToken, async (req, res) => {
 			message: '',
 			status: 'success',
 		} as TGet);
+	} catch (error) {
+		const { message, traceList, code } = convertErrorToCustomError(error, {
+			trace: 'Router',
+			code: 400,
+		});
+		logger.error(message, traceList);
+
+		return res.status(code).json({ data: {}, message, status: 'fail' });
+	}
+});
+
+router.post('/', verifyToken, async (req, res) => {
+	try {
+		const { body: info } = await zParser(zodSchema.manageCategory.postCategory, req);
+
+		const result = await addCategory(info);
+
+		return res.status(200).json({
+			data: result,
+			message: '',
+			status: 'success',
+		} as TPost);
 	} catch (error) {
 		const { message, traceList, code } = convertErrorToCustomError(error, {
 			trace: 'Router',

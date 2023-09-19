@@ -7,3 +7,7 @@ export type TCategoryMap = {
 	childList: Array<Omit<TCategoryMap, 'childList'>>;
 };
 export type TGet = TResponseType<Array<TCategoryMap>>;
+export type TPost = TResponseType<{
+	id: number;
+	childList?: Array<{ id: number; parentId: number; name: string }>;
+}>;
