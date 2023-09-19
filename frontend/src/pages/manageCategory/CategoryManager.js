@@ -22,17 +22,24 @@ import {
 	Typography,
 } from '@mui/material';
 import PropTypes from 'prop-types';
+import { Fragment, useState } from 'react';
+import { EditOutlined } from '@mui/icons-material';
 import { Formik } from 'formik';
-import { useDeepCompareMemo } from 'use-deep-compare';
 
 import MainCard from 'components/MainCard';
-import { getComparator, stableSort } from 'utils/sort';
-import { EditOutlined } from '@mui/icons-material';
-import { Fragment, useState } from 'react';
+import { categorySchema } from 'validation/manageCategory';
 
 const FormDialog = ({ open, onClose, onSubmit, beforeValue }) => {
-	const handleSubmit = () => {
-		onSubmit();
+	const handleSubmit = async (values, { setErrors, setStatus, setSubmitting }) => {
+		try {
+			setStatus({ success: false });
+			setSubmitting(false);
+			onSubmit(values);
+		} catch (error) {
+			setStatus({ success: false });
+			setErrors({ submit: error.message });
+			setSubmitting(false);
+		}
 	};
 
 	const handleClose = () => {
@@ -41,7 +48,12 @@ const FormDialog = ({ open, onClose, onSubmit, beforeValue }) => {
 
 	return (
 		<Fragment>
-			<Formik initialValues={{ name: beforeValue }} validationSchema={{}} onSubmit={handleSubmit}>
+			<Formik
+				initialValues={{ name: beforeValue, submit: null }}
+				validationSchema={categorySchema}
+				onSubmit={handleSubmit}
+				enableReinitialize={true}
+			>
 				{({ errors, handleBlur, handleChange, handleSubmit, touched, values }) => (
 					<form noValidate onSubmit={handleSubmit}>
 						<Dialog open={open} onClose={handleClose}>
@@ -60,19 +72,6 @@ const FormDialog = ({ open, onClose, onSubmit, beforeValue }) => {
 												onChange={handleChange}
 												fullWidth
 												error={Boolean(touched.name && errors.name)}
-												endAdornment={
-													<InputAdornment position="end">
-														<Button
-															type="submit"
-															variant="contained"
-															color="info"
-															aria-label="toggle password visibility"
-															edge="end"
-														>
-															추가하기
-														</Button>
-													</InputAdornment>
-												}
 											/>
 											{touched.name && errors.name && (
 												<FormHelperText error id="standard-weight-helper-text-name">
@@ -84,8 +83,12 @@ const FormDialog = ({ open, onClose, onSubmit, beforeValue }) => {
 								</Grid>
 							</DialogContent>
 							<DialogActions>
-								<Button onClick={handleClose}>취소</Button>
-								<Button onClick={handleSubmit}>수정하기</Button>
+								<Button type="button" onClick={handleClose}>
+									취소
+								</Button>
+								<Button type="submit" onClick={handleSubmit}>
+									수정하기
+								</Button>
 							</DialogActions>
 						</Dialog>
 					</form>
@@ -119,18 +122,23 @@ const actionSX = {
 	transform: 'none',
 };
 
-const CategoryManager = ({ list, setList, inputLabelName }) => {
-	const initialValue = {};
+const CategoryManager = ({ list, setList, inputLabelName, selectedCategoryIndex, onClickCategory }) => {
+	const initialValue = { name: '', submit: null };
 	const [isOpenModal, setIsOpenModal] = useState(false);
-
-	const orderedList = useDeepCompareMemo(() => {
-		return stableSort(list, getComparator('asc', 'name', list));
-	}, [list]);
 
 	const handleDeleteButton = index => {
 		console.log(index);
 	};
-	const handleSubmit = async (values, { setErrors, setStatus, setSubmitting }) => {};
+	const handleSubmit = async (values, { setErrors, setStatus, setSubmitting }) => {
+		try {
+			setStatus({ success: false });
+			setSubmitting(false);
+		} catch (error) {
+			setStatus({ success: false });
+			setErrors({ submit: error.message });
+			setSubmitting(false);
+		}
+	};
 
 	return (
 		<MainCard sx={{ mt: 2, height: '635px' }} content={false}>
@@ -144,22 +152,22 @@ const CategoryManager = ({ list, setList, inputLabelName }) => {
 				open={isOpenModal}
 			/>
 			<Box sx={{ p: { xs: 1, sm: 2, md: 3, xl: 4 } }}>
-				<Formik initialValues={initialValue} validationSchema={{}} onSubmit={handleSubmit}>
+				<Formik initialValues={initialValue} validationSchema={categorySchema} onSubmit={handleSubmit}>
 					{({ errors, handleBlur, handleChange, handleSubmit, touched, values }) => (
 						<form noValidate onSubmit={handleSubmit}>
 							<Grid container spacing={3}>
 								<Grid item xs={12}>
 									<Stack spacing={1}>
-										<InputLabel htmlFor="email">{inputLabelName}</InputLabel>
+										<InputLabel htmlFor="name">{inputLabelName}</InputLabel>
 										<OutlinedInput
-											id="email"
-											type="email"
-											value={values.email}
-											name="email"
+											id="name"
+											type="name"
+											value={values.name}
+											name="name"
 											onBlur={handleBlur}
 											onChange={handleChange}
 											fullWidth
-											error={Boolean(touched.email && errors.email)}
+											error={Boolean(touched.name && errors.name)}
 											endAdornment={
 												<InputAdornment position="end">
 													<Button
@@ -174,9 +182,9 @@ const CategoryManager = ({ list, setList, inputLabelName }) => {
 												</InputAdornment>
 											}
 										/>
-										{touched.email && errors.email && (
-											<FormHelperText error id="standard-weight-helper-text-email">
-												{errors.email}
+										{touched.name && errors.name && (
+											<FormHelperText error id="standard-weight-helper-text-name">
+												{errors.name}
 											</FormHelperText>
 										)}
 									</Stack>
@@ -200,13 +208,20 @@ const CategoryManager = ({ list, setList, inputLabelName }) => {
 						maxHeight: '525px',
 					}}
 				>
-					{orderedList.map((info, idx) => (
-						<ListItemButton key={idx} divider>
+					{list.map((info, idx) => (
+						<ListItemButton
+							key={idx}
+							divider
+							selected={idx === selectedCategoryIndex}
+							onClick={() => {
+								onClickCategory && onClickCategory(idx);
+							}}
+						>
 							<ListItemAvatar>
 								<Avatar
 									sx={{
 										color: 'error.main',
-										bgcolor: 'error.lighter',
+										bgcolor: 'white',
 									}}
 									onClick={() => handleDeleteButton(idx)}
 								>
@@ -235,7 +250,9 @@ const CategoryManager = ({ list, setList, inputLabelName }) => {
 CategoryManager.propTypes = {
 	list: PropTypes.array.isRequired,
 	setList: PropTypes.func.isRequired,
+	onClickCategory: PropTypes.func,
 	inputLabelName: PropTypes.string.isRequired,
+	selectedCategoryIndex: PropTypes.number.isRequired,
 };
 
 export default CategoryManager;
