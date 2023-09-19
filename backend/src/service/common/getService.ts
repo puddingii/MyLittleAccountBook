@@ -1,6 +1,6 @@
 import dayjs from 'dayjs';
 
-import { getCategoryList } from '@/repository/categoryRepository';
+import { findRecursiveCategoryList } from '@/repository/categoryRepository';
 import { findAllNotFixedColumn } from '@/repository/groupAccountBookRepository';
 import { findAllFixedColumn } from '@/repository/cronGroupAccountBookRepository';
 import { convertErrorToCustomError } from '@/util/error';
@@ -12,7 +12,7 @@ export const getCategory = async (
 	depth = { start: 2, end: 2 },
 ) => {
 	try {
-		const categoryList = await getCategoryList(accountBookId, depth);
+		const categoryList = await findRecursiveCategoryList(accountBookId, depth);
 
 		const filteredList = categoryList.map(category => {
 			const parentName = category.categoryNamePath.split(' > ')[0];

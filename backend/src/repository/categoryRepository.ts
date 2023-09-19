@@ -9,7 +9,7 @@ import defaultCategory from '@/json/defaultCategory.json';
 import { TCategoryInfo } from '@/interface/model/categoryRepository';
 
 /** 유저 찾기(소셜 정보 추가) */
-export const getCategoryList = async (
+export const findRecursiveCategoryList = async (
 	accountBookId: number,
 	depth: { start: number; end: number },
 ) => {
@@ -33,40 +33,65 @@ export const getCategoryList = async (
 	} catch (error) {
 		const customError = convertErrorToCustomError(error, {
 			trace: 'Repository',
+			code: 500,
 		});
 		throw customError;
 	}
 };
 
-export const createCategory = async (categoryInfo: {
-	parentId?: number;
-	name: string;
+/** parentId 및 name을 기준으로 오름차순 정렬하여 가져옴. */
+export const findCategoryList = async (info: {
 	accountBookId: number;
+	name?: string;
+	parentId?: number;
+	id?: number;
 }) => {
+	try {
+		const categoryList = await CategoryModel.findAll({
+			where: info,
+			order: [
+				['parentId', 'ASC'],
+				['name', 'ASC'],
+			],
+		});
+
+		return categoryList;
+	} catch (error) {
+		const customError = convertErrorToCustomError(error, {
+			trace: 'Repository',
+			code: 500,
+		});
+		throw customError;
+	}
+};
+
+export const createCategory = async (
+	categoryInfo: {
+		parentId?: number;
+		name: string;
+		accountBookId: number;
+	},
+	transaction?: Transaction,
+) => {
 	try {
 		if (!categoryInfo.parentId) {
 			await CategoryModel.create(categoryInfo);
 			return;
 		}
-		const transaction = await sequelize.transaction({ autocommit: false });
-		try {
-			const isExistParent = await CategoryModel.findOne({
-				where: { id: categoryInfo.parentId, accountBookId: categoryInfo.accountBookId },
-				lock: true,
-				skipLocked: true,
-			});
-			if (!isExistParent) {
-				throw new Error('parentId에 해당하는 상위 노드가 존재하지 않습니다.');
-			}
-			await CategoryModel.create(categoryInfo, { transaction });
-			await transaction.commit();
-		} catch (error) {
-			await transaction.rollback();
-			throw error;
+
+		const isExistParent = await CategoryModel.findOne({
+			where: { id: categoryInfo.parentId, accountBookId: categoryInfo.accountBookId },
+			lock: true,
+			skipLocked: true,
+		});
+		if (!isExistParent) {
+			throw new Error('parentId에 해당하는 상위 노드가 존재하지 않습니다.');
 		}
+		await CategoryModel.create(categoryInfo, { transaction });
 	} catch (error) {
 		const customError = convertErrorToCustomError(error, {
 			trace: 'Repository',
+			code: 500,
 		});
 		throw customError;
 	}
@@ -102,7 +127,7 @@ export const createDefaultCategory = async (
 	} catch (error) {
 		const customError = convertErrorToCustomError(error, {
 			trace: 'Repository',
-			code: 400,
+			code: 500,
 		});
 		throw customError;
 	}
