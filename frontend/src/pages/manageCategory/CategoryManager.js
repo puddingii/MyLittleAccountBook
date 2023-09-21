@@ -22,10 +22,12 @@ import { useState } from 'react';
 import { EditOutlined } from '@mui/icons-material';
 import { Formik } from 'formik';
 
-import MainCard from 'components/MainCard';
 import { categorySchema } from 'validation/manageCategory';
+import { useCreateCategoryMutation, useDeleteCategoryMutation } from 'queries/accountBook/accountBookMutation';
+import { getComparator, stableSort } from 'utils/sort';
+
+import MainCard from 'components/MainCard';
 import FormDialog from './FormDialog';
-import { useCreateCategoryMutation } from 'queries/accountBook/accountBookMutation';
 
 // avatar style
 const avatarSX = {
@@ -53,13 +55,26 @@ const CategoryManager = ({
 	selectedCategoryIndex,
 	onClickCategory,
 	parentId,
+	setSnackbarInfo,
 }) => {
 	const initialValue = { name: '', submit: null };
 	const [isOpenModal, setIsOpenModal] = useState(false);
 	const { mutate: createMutate } = useCreateCategoryMutation();
+	const { mutate: deleteMutate } = useDeleteCategoryMutation();
 
 	const handleDeleteButton = index => {
-		setList({ id: index }, 'delete');
+		const categoryId = list[index].id;
+		deleteMutate(
+			{ id: categoryId, accountBookId },
+			{
+				onSuccess: () => {
+					setList({ id: categoryId, parentId }, 'delete');
+				},
+				onError: error => {
+					setSnackbarInfo({ isOpen: true, message: error?.response?.data?.message, severity: 'error' });
+				},
+			},
+		);
 	};
 	const handleSubmit = async (values, { setErrors, setStatus, setSubmitting }) => {
 		if (list.length >= maxLength) {
@@ -75,8 +90,9 @@ const CategoryManager = ({
 					setSubmitting(false);
 				},
 				onError: error => {
+					setSnackbarInfo({ isOpen: true, message: error?.response?.data?.message, severity: 'error' });
 					setStatus({ success: false });
-					setErrors({ submit: error.message });
+					setErrors({ submit: error?.response?.data?.message });
 					setSubmitting(false);
 				},
 			},
@@ -156,7 +172,7 @@ const CategoryManager = ({
 						maxHeight: '500px',
 					}}
 				>
-					{list.map((info, idx) => (
+					{stableSort(list, getComparator('asc', 'name', list)).map((info, idx) => (
 						<ListItemButton
 							key={idx}
 							divider
@@ -201,6 +217,7 @@ CategoryManager.propTypes = {
 	inputLabelName: PropTypes.string.isRequired,
 	maxLength: PropTypes.number.isRequired,
 	accountBookId: PropTypes.number.isRequired,
+	setSnackbarInfo: PropTypes.func.isRequired,
 	parentId: PropTypes.number,
 	selectedCategoryIndex: PropTypes.number,
 	onClickCategory: PropTypes.func,
