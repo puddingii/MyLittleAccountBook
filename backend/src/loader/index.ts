@@ -15,7 +15,7 @@ export default async ({ app }: { app: Express }): Promise<void> => {
 		await connectRedis();
 		await syncMySQL();
 		if (secret.nodeEnv === 'development') {
-			await createTestAccount();
+			// await createTestAccount();
 		}
 		expressLoader(app);
 

@@ -39,7 +39,7 @@ const getModelList = async () => {
 
 export const sync = async () => {
 	try {
-		const syncOptions = secret.nodeEnv === 'production' ? {} : { force: true };
+		const syncOptions = secret.nodeEnv === 'production' ? {} : {};
 		const modelInfo = await getModelList();
 
 		modelInfo.associateList.forEach(associate => associate(modelInfo.modelList));

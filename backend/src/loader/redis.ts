@@ -18,12 +18,10 @@ export const connect = async () => {
 			const customError = convertErrorToCustomError(err, { trace: 'Redis' });
 			logger.error(customError.message, customError.traceList);
 		});
+		client.on('connect', () => {
+			logger.info('Connection has been established successfully.', ['Redis']);
+		});
 		await client.connect();
-		if (secret.nodeEnv === 'development') {
-			await client.flushAll();
-		}
-
-		logger.info('Connection has been established successfully.', ['Redis']);
 	} catch (error) {
 		const customError = convertErrorToCustomError(error, {
 			trace: 'Redis',

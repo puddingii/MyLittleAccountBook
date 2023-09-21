@@ -172,7 +172,7 @@ const ManageCategory = () => {
 					inputLabelName={`${categoryList[selectedCategoryIndex]?.name ?? ''}의 서브 카테고리`}
 					maxLength={10}
 					accountBookId={accountBookId}
-					parentId={selectedCategoryIndex}
+					parentId={categoryList[selectedCategoryIndex]?.id ?? -1}
 				/>
 			</Grid>
 		</Grid>
