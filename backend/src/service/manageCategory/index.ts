@@ -4,9 +4,12 @@ import { Transaction } from 'sequelize';
 /** Repository */
 import {
 	createCategory,
+	deleteChildCategoryList,
 	findCategory,
 	findCategoryList,
 } from '@/repository/categoryRepository';
+import { findGAB as findFGAB } from '@/repository/cronGroupAccountBookRepository';
+import { findGAB } from '@/repository/groupAccountBookRepository';
 
 /** Sub Service */
 
@@ -119,6 +122,58 @@ export const addCategory = async (info: {
 			await transaction.commit();
 
 			return result;
+		} catch (error) {
+			await transaction.rollback();
+			throw error;
+		}
+	} catch (error) {
+		const customError = convertErrorToCustomError(error, { trace: 'Service', code: 400 });
+		throw customError;
+	}
+};
+
+export const deleteCategory = async (info: { accountBookId: number; id: number }) => {
+	try {
+		const { accountBookId, id } = info;
+		const category = await findCategory({ accountBookId, id });
+		if (!category) {
+			throw new Error('해당 카테고리를 찾을 수 없습니다.');
+		}
+
+		if (typeof category.parentId === 'number') {
+			const fgab = await findFGAB({ categoryId: category.id });
+			if (fgab) {
+				throw new Error('해당 카테고리를 사용하는 기록이 있습니다.');
+			}
+			const gab = await findGAB({ categoryId: category.id });
+			if (gab) {
+				throw new Error('해당 카테고리를 사용하는 기록이 있습니다.');
+			}
+
+			await category.destroy();
+
+			return 1;
+		}
+
+		const childList = await findCategoryList({ accountBookId, parentId: id });
+		if (childList.length > 0) {
+			throw new Error(
+				'서브 카테고리를 모두 제거 후, 메인 카테고리를 제거할 수 있습니다.',
+			);
+		}
+
+		// 해당 카테고리 뿐만이 아닌 자식 카테고리들도 삭제 필요함.
+		const transaction = await sequelize.transaction({ autocommit: false });
+		try {
+			const count = await deleteChildCategoryList(
+				{ accountBookId, parentId: id },
+				transaction,
+			);
+			await category.destroy({ transaction });
+
+			await transaction.commit();
+
+			return count + 1;
 		} catch (error) {
 			await transaction.rollback();
 			throw error;

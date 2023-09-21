@@ -146,3 +146,20 @@ export const createDefaultCategory = async (
 		throw customError;
 	}
 };
+
+export const deleteChildCategoryList = async (
+	info: { parentId: number; accountBookId: number },
+	transaction: Transaction,
+) => {
+	try {
+		const count = await CategoryModel.destroy({ where: info, transaction });
+
+		return count;
+	} catch (error) {
+		const customError = convertErrorToCustomError(error, {
+			trace: 'Repository',
+			code: 500,
+		});
+		throw customError;
+	}
+};

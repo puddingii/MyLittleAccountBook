@@ -7,11 +7,11 @@ import { logger } from '@/util';
 import { convertErrorToCustomError } from '@/util/error';
 
 /** Middleware & Service */
-import { addCategory, getCategoryList } from '@/service/manageCategory';
+import { addCategory, deleteCategory, getCategoryList } from '@/service/manageCategory';
 import { verifyToken } from '@/middleware/authentication';
 
 /** Interface */
-import { TGet, TPost } from '@/interface/api/response/manageCategoryResponse';
+import { TDelete, TGet, TPost } from '@/interface/api/response/manageCategoryResponse';
 
 const router = express.Router();
 
@@ -50,6 +50,33 @@ router.post('/', verifyToken, async (req, res) => {
 			message: '',
 			status: 'success',
 		} as TPost);
+	} catch (error) {
+		const { message, traceList, code } = convertErrorToCustomError(error, {
+			trace: 'Router',
+			code: 400,
+		});
+		logger.error(message, traceList);
+
+		return res.status(code).json({ data: {}, message, status: 'fail' });
+	}
+});
+
+router.delete('/', verifyToken, async (req, res) => {
+	try {
+		const {
+			query: { accountBookId, id },
+		} = await zParser(zodSchema.manageCategory.deleteCategory, req);
+
+		const count = await deleteCategory({
+			accountBookId: parseInt(accountBookId, 10),
+			id: parseInt(id, 10),
+		});
+
+		return res.status(200).json({
+			data: { cnt: count },
+			message: '',
+			status: 'success',
+		} as TDelete);
 	} catch (error) {
 		const { message, traceList, code } = convertErrorToCustomError(error, {
 			trace: 'Router',

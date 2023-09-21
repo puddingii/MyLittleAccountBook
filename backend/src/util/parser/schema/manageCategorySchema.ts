@@ -14,10 +14,19 @@ const postCategory = zod.object({
 	}),
 });
 
+const deleteCategory = zod.object({
+	query: zod.object({
+		accountBookId: zod.string(),
+		id: zod.string(),
+	}),
+});
+
 export type TGetCategoryQuery = zod.infer<typeof getCategory>;
 export type TPostCategoryQuery = zod.infer<typeof postCategory>;
+export type TDeleteCategoryQuery = zod.infer<typeof deleteCategory>;
 
 export default {
 	getCategory,
 	postCategory,
+	deleteCategory,
 };
