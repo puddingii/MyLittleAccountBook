@@ -24,7 +24,6 @@ import { Formik } from 'formik';
 
 import { categorySchema } from 'validation/manageCategory';
 import { useCreateCategoryMutation, useDeleteCategoryMutation } from 'queries/accountBook/accountBookMutation';
-import { getComparator, stableSort } from 'utils/sort';
 
 import MainCard from 'components/MainCard';
 import FormDialog from './FormDialog';
@@ -58,17 +57,16 @@ const CategoryManager = ({
 	setSnackbarInfo,
 }) => {
 	const initialValue = { name: '', submit: null };
-	const [isOpenModal, setIsOpenModal] = useState(false);
+	const [{ isOpen, ...modalInfo }, setModalInfo] = useState({ isOpen: false, beforeValue: '', id: -1 });
 	const { mutate: createMutate } = useCreateCategoryMutation();
 	const { mutate: deleteMutate } = useDeleteCategoryMutation();
 
-	const handleDeleteButton = index => {
-		const categoryId = list[index].id;
+	const handleDeleteButton = id => {
 		deleteMutate(
-			{ id: categoryId, accountBookId },
+			{ id, accountBookId },
 			{
 				onSuccess: () => {
-					setList({ id: categoryId, parentId }, 'delete');
+					setList({ id, parentId }, 'delete');
 				},
 				onError: error => {
 					setSnackbarInfo({ isOpen: true, message: error?.response?.data?.message, severity: 'error' });
@@ -76,7 +74,8 @@ const CategoryManager = ({
 			},
 		);
 	};
-	const handleSubmit = async (values, { setErrors, setStatus, setSubmitting }) => {
+
+	const handleSubmit = async (values, { setErrors, setStatus, setSubmitting, resetForm }) => {
 		if (list.length >= maxLength) {
 			throw new Error(`카테고리를 ${maxLength}개 초과로 만들 수 없습니다.`);
 		}
@@ -88,6 +87,7 @@ const CategoryManager = ({
 					setList({ name: values.name, parentId: parentId || null, ...data }, 'add');
 					setStatus({ success: false });
 					setSubmitting(false);
+					resetForm({ values: { ...initialValue } });
 				},
 				onError: error => {
 					setSnackbarInfo({ isOpen: true, message: error?.response?.data?.message, severity: 'error' });
@@ -102,13 +102,17 @@ const CategoryManager = ({
 	return (
 		<MainCard sx={{ mt: 2, height: '635px' }} content={false}>
 			<FormDialog
-				beforeValue="asdf"
-				onClose={() => setIsOpenModal(false)}
-				onSubmit={() => {
-					setIsOpenModal(false);
-					console.log('!');
+				accountBookId={accountBookId}
+				onClose={() => setModalInfo(beforeInfo => ({ ...beforeInfo, isOpen: false }))}
+				onSuccess={name => {
+					setModalInfo(beforeInfo => ({ ...beforeInfo, isOpen: false }));
+					setList({ ...modalInfo, name }, 'edit');
 				}}
-				open={isOpenModal}
+				onError={error => {
+					setSnackbarInfo({ isOpen: true, message: error?.response?.data?.message, severity: 'error' });
+				}}
+				modalInfo={modalInfo}
+				open={isOpen}
 			/>
 			<Box sx={{ p: { xs: 1, sm: 2, md: 3, xl: 4 } }}>
 				<Formik initialValues={initialValue} validationSchema={categorySchema} onSubmit={handleSubmit}>
@@ -172,7 +176,7 @@ const CategoryManager = ({
 						maxHeight: '500px',
 					}}
 				>
-					{stableSort(list, getComparator('asc', 'name', list)).map((info, idx) => (
+					{list.map((info, idx) => (
 						<ListItemButton
 							key={idx}
 							divider
@@ -187,7 +191,7 @@ const CategoryManager = ({
 										color: 'error.main',
 										bgcolor: 'white',
 									}}
-									onClick={() => handleDeleteButton(idx)}
+									onClick={() => handleDeleteButton(info.id)}
 								>
 									<CloseOutlined />
 								</Avatar>
@@ -200,6 +204,9 @@ const CategoryManager = ({
 										size="small"
 										sx={{ fontSize: '0.875rem' }}
 										endIcon={<EditOutlined />}
+										onClick={() => {
+											setModalInfo({ isOpen: true, beforeValue: info.name, ...info });
+										}}
 									></Button>
 								</Stack>
 							</ListItemSecondaryAction>

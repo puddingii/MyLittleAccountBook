@@ -4,6 +4,8 @@ import { useParams } from 'react-router';
 
 import CategoryManager from './CategoryManager';
 import { useGetCategoryQuery } from 'queries/accountBook/accountBookQuery';
+import { useDeepCompareMemo } from 'use-deep-compare';
+import { getComparator, stableSort } from 'utils/sort';
 
 const ManageCategory = () => {
 	const [selectedCategoryIndex, setSelectedCategoryIndex] = useState(0);
@@ -52,7 +54,7 @@ const ManageCategory = () => {
 						if (idx === -1) {
 							return copiedList;
 						}
-						copiedList[idx] = { ...copiedList[idx], ...info };
+						copiedList[idx] = { ...copiedList[idx], name: info.name };
 
 						return copiedList;
 					});
@@ -115,7 +117,7 @@ const ManageCategory = () => {
 							return copiedList;
 						}
 
-						copiedList[idx].childList[childIdx] = { ...copiedList[idx].childList[childIdx], ...info };
+						copiedList[idx].childList[childIdx] = { ...copiedList[idx].childList[childIdx], name: info.name };
 
 						return copiedList;
 					});
@@ -149,6 +151,10 @@ const ManageCategory = () => {
 		setSelectedCategoryIndex(index);
 	};
 
+	const sortedList = useDeepCompareMemo(() => {
+		return stableSort(categoryList, getComparator('asc', 'name', categoryList));
+	}, [categoryList]);
+
 	useEffect(() => {
 		if (accountBookId) {
 			refetch();
@@ -176,7 +182,7 @@ const ManageCategory = () => {
 				</Grid>
 				<CategoryManager
 					key="mainCategory"
-					list={categoryList}
+					list={sortedList}
 					setList={updateMainCategory}
 					inputLabelName="메인 카테고리"
 					selectedCategoryIndex={selectedCategoryIndex}
@@ -195,13 +201,13 @@ const ManageCategory = () => {
 				</Grid>
 				<CategoryManager
 					key="subCategory"
-					list={categoryList[selectedCategoryIndex]?.childList ?? []}
+					list={sortedList[selectedCategoryIndex]?.childList ?? []}
 					setList={updateSubCategory}
-					inputLabelName={`${categoryList[selectedCategoryIndex]?.name ?? ''}의 서브 카테고리`}
+					inputLabelName={`${sortedList[selectedCategoryIndex]?.name ?? ''}의 서브 카테고리`}
 					maxLength={10}
 					setSnackbarInfo={setSnackbarInfo}
 					accountBookId={accountBookId}
-					parentId={categoryList[selectedCategoryIndex]?.id ?? -1}
+					parentId={sortedList[selectedCategoryIndex]?.id ?? -1}
 				/>
 			</Grid>
 		</Grid>

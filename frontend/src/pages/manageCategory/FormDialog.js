@@ -11,22 +11,33 @@ import {
 	Stack,
 } from '@mui/material';
 import PropTypes from 'prop-types';
-import { Fragment, useState } from 'react';
+import { Fragment } from 'react';
 import { Formik } from 'formik';
 
 import { categorySchema } from 'validation/manageCategory';
+import { useUpdateCategoryMutation } from 'queries/accountBook/accountBookMutation';
 
-const FormDialog = ({ open, onClose, onSubmit, beforeValue }) => {
+const FormDialog = ({ accountBookId, open, onClose, onSuccess, onError, modalInfo }) => {
+	const { mutate: updateMutate } = useUpdateCategoryMutation();
+	const { beforeValue, ...categoryInfo } = modalInfo;
+
 	const handleSubmit = async (values, { setErrors, setStatus, setSubmitting }) => {
-		try {
-			setStatus({ success: false });
-			setSubmitting(false);
-			onSubmit(values);
-		} catch (error) {
-			setStatus({ success: false });
-			setErrors({ submit: error.message });
-			setSubmitting(false);
-		}
+		updateMutate(
+			{ ...categoryInfo, accountBookId, name: values.name },
+			{
+				onSuccess: () => {
+					setStatus({ success: false });
+					setSubmitting(false);
+					onSuccess(values.name);
+				},
+				onError: error => {
+					setStatus({ success: false });
+					setErrors({ submit: error?.response?.data?.message });
+					setSubmitting(false);
+					onError(error);
+				},
+			},
+		);
 	};
 
 	const handleClose = () => {
@@ -86,10 +97,12 @@ const FormDialog = ({ open, onClose, onSubmit, beforeValue }) => {
 };
 
 FormDialog.propTypes = {
+	accountBookId: PropTypes.number.isRequired,
 	open: PropTypes.bool.isRequired,
 	onClose: PropTypes.func.isRequired,
-	onSubmit: PropTypes.func.isRequired,
-	beforeValue: PropTypes.string.isRequired,
+	onSuccess: PropTypes.func.isRequired,
+	onError: PropTypes.func.isRequired,
+	modalInfo: PropTypes.object.isRequired,
 };
 
 export default FormDialog;
