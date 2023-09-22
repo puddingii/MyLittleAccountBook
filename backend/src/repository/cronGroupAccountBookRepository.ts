@@ -20,17 +20,17 @@ export const createNewColumn = async (columnInfo: Omit<TColumnInfo, 'id'>) => {
 	}
 };
 
-export const findGAB = async (gabInfo: Partial<TColumnInfo>, userEmail?: string) => {
+export const findGAB = async (
+	gabInfo: Partial<TColumnInfo>,
+	options?: { isIncludeGroup: boolean },
+) => {
 	try {
-		const includeOption = userEmail
+		const includeOption = options?.isIncludeGroup
 			? {
 					include: {
 						model: GroupModel,
 						as: 'groups',
 						required: true,
-						where: {
-							userEmail: { [Op.eq]: userEmail },
-						},
 					},
 			  }
 			: {};

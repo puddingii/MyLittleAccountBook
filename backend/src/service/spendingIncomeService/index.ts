@@ -22,6 +22,7 @@ import {
 	getFixedColumnList,
 	getNotFixedColumnList,
 } from '../common/getService';
+import { checkAdminGroupUser } from '../common/user';
 
 /** Interface */
 import { TCycleType } from '@/interface/user';
@@ -29,6 +30,7 @@ import { TGet } from '@/interface/api/response/accountBookResponse';
 
 /** Etc */
 import { convertErrorToCustomError } from '@/util/error';
+import { CustomError } from '@/util/error/class';
 
 export const createNewFixedColumn = async (info: {
 	userEmail: string;
@@ -111,9 +113,17 @@ export const updateFixedColumn = async (info: {
 }) => {
 	try {
 		const { id, userEmail, needToUpdateDate, ...columnInfo } = info;
-		const cgab = await findFixedGAB({ id }, userEmail);
+		const cgab = await findFixedGAB({ id }, { isIncludeGroup: true });
 		if (!cgab) {
-			throw new Error('권한이 없는 사용자이거나 삭제된 내용입니다.');
+			throw new Error('삭제된 내용입니다.');
+		}
+
+		if (!cgab.groups) {
+			throw new CustomError('DB 에러. 운영자에게 문의 주세요.', { code: 500 });
+		}
+
+		if (cgab.groups.userEmail !== userEmail) {
+			await checkAdminGroupUser({ userEmail, accountBookId: cgab.groups.accountBookId });
 		}
 
 		await updateFColumn(cgab, {
@@ -137,9 +147,17 @@ export const updateNotFixedColumn = async (info: {
 }) => {
 	try {
 		const { id, userEmail, spendingAndIncomeDate, ...columnInfo } = info;
-		const gab = await findNotFixedGAB({ id }, userEmail);
+		const gab = await findNotFixedGAB({ id }, { isIncludeGroup: true });
 		if (!gab) {
-			throw new Error('권한이 없는 사용자이거나 삭제된 내용입니다.');
+			throw new Error('삭제된 내용입니다.');
+		}
+
+		if (!gab.groups) {
+			throw new CustomError('DB 에러. 운영자에게 문의 주세요.', { code: 500 });
+		}
+
+		if (gab.groups.userEmail !== userEmail) {
+			await checkAdminGroupUser({ userEmail, accountBookId: gab.groups.accountBookId });
 		}
 
 		await updateNFColumn(gab, {
@@ -155,9 +173,17 @@ export const updateNotFixedColumn = async (info: {
 export const deleteFixedColumn = async (info: { id: number; userEmail: string }) => {
 	try {
 		const { id, userEmail } = info;
-		const cgab = await findFixedGAB({ id }, userEmail);
+		const cgab = await findFixedGAB({ id }, { isIncludeGroup: true });
 		if (!cgab) {
-			throw new Error('권한이 없는 사용자이거나 삭제된 내용입니다.');
+			throw new Error('삭제된 내용입니다.');
+		}
+
+		if (!cgab.groups) {
+			throw new CustomError('DB 에러. 운영자에게 문의 주세요.', { code: 500 });
+		}
+
+		if (cgab.groups.userEmail !== userEmail) {
+			await checkAdminGroupUser({ userEmail, accountBookId: cgab.groups.accountBookId });
 		}
 
 		await deleteFColumn(cgab);
@@ -170,9 +196,17 @@ export const deleteFixedColumn = async (info: { id: number; userEmail: string })
 export const deleteNotFixedColumn = async (info: { id: number; userEmail: string }) => {
 	try {
 		const { id, userEmail } = info;
-		const gab = await findNotFixedGAB({ id }, userEmail);
+		const gab = await findNotFixedGAB({ id }, { isIncludeGroup: true });
 		if (!gab) {
-			throw new Error('권한이 없는 사용자이거나 삭제된 내용입니다.');
+			throw new Error('삭제된 내용입니다.');
+		}
+
+		if (!gab.groups) {
+			throw new CustomError('DB 에러. 운영자에게 문의 주세요.', { code: 500 });
+		}
+
+		if (gab.groups.userEmail !== userEmail) {
+			await checkAdminGroupUser({ userEmail, accountBookId: gab.groups.accountBookId });
 		}
 
 		await deleteNFColumn(gab);

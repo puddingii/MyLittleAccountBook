@@ -15,18 +15,15 @@ export const findGAB = async (
 		spendingAndIncomeDate: Date;
 		value: number;
 	}>,
-	userEmail?: string,
+	options?: { isIncludeGroup: boolean },
 ) => {
 	try {
-		const includeOption = userEmail
+		const includeOption = options?.isIncludeGroup
 			? {
 					include: {
 						model: GroupModel,
 						as: 'groups',
 						required: true,
-						where: {
-							userEmail: { [Op.eq]: userEmail },
-						},
 					},
 			  }
 			: {};
