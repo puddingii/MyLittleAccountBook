@@ -7,6 +7,7 @@ import {
 	InferCreationAttributes,
 	Model,
 	NOW,
+	NonAttribute,
 } from 'sequelize';
 
 import sequelize from '@/loader/mysql';
@@ -21,11 +22,13 @@ export class CronGroupAccountBookModel extends Model<
 	InferCreationAttributes<CronGroupAccountBookModel>
 > {
 	declare categoryId: ForeignKey<CategoryModel['id']>;
+	declare categorys?: NonAttribute<CategoryModel>;
 	declare content?: string;
 	declare createdAt: CreationOptional<Date>;
 	declare cycleTime: number;
 	declare cycleType: TCycleType;
 	declare groupId: ForeignKey<GroupModel['id']>;
+	declare groups?: NonAttribute<GroupModel>;
 	declare id: CreationOptional<number>;
 	declare isActivated?: boolean;
 	declare needToUpdateDate: Date;

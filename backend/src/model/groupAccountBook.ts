@@ -6,6 +6,7 @@ import {
 	InferAttributes,
 	InferCreationAttributes,
 	Model,
+	NonAttribute,
 } from 'sequelize';
 
 import sequelize from '@/loader/mysql';
@@ -19,9 +20,11 @@ export class GroupAccountBookModel extends Model<
 	InferCreationAttributes<GroupAccountBookModel>
 > {
 	declare categoryId: ForeignKey<CategoryModel['id']>;
+	declare categorys?: NonAttribute<CategoryModel>;
 	declare content?: string;
 	declare createdAt: CreationOptional<Date>;
 	declare groupId: ForeignKey<GroupModel['id']>;
+	declare groups?: NonAttribute<GroupModel>;
 	declare id: CreationOptional<number>;
 	declare spendingAndIncomeDate: Date;
 	declare type: 'income' | 'spending';

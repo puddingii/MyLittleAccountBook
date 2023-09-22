@@ -6,6 +6,7 @@ import {
 	InferAttributes,
 	InferCreationAttributes,
 	Model,
+	NonAttribute,
 } from 'sequelize';
 
 import sequelize from '@/loader/mysql';
@@ -20,8 +21,8 @@ export class OAuthUserModel extends Model<
 	declare id: CreationOptional<number>;
 	/** Type 종류: Default, Google, Naver */
 	declare type: string;
-
 	declare userEmail: ForeignKey<UserModel['email']>;
+	declare users?: NonAttribute<UserModel>;
 }
 
 OAuthUserModel.init(

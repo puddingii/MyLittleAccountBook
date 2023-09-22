@@ -34,6 +34,7 @@ class CategoryModel extends Model<
 	InferCreationAttributes<CategoryModel>
 > {
 	declare accountBookId: ForeignKey<AccountBookModel['id']>;
+	declare accountBooks?: NonAttribute<AccountBookModel>;
 	declare addCrongroupaccountbook: HasManyAddAssociationMixin<
 		CronGroupAccountBookModel,
 		number
