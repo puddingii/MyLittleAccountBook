@@ -6,7 +6,15 @@ import SortCheckTableHead from './Header';
 import SortCheckTableBody from './Body';
 import { getComparator, stableSort } from 'utils/sort';
 
-const SortCheckTable = ({ manageType, spendIncomeType, handleClickEdit, handleClickDelete, rows, isFetching }) => {
+const SortCheckTable = ({
+	manageType,
+	spendIncomeType,
+	handleClickEdit,
+	handleClickDelete,
+	rows,
+	isFetching,
+	setSnackbarInfo,
+}) => {
 	const [order, setOrder] = useState('asc');
 	const [orderBy, setOrderBy] = useState(manageType === 'nf' ? 'spendingAndIncomeDate' : 'needToUpdateDate');
 	const [page, setPage] = useState(0);
@@ -53,6 +61,7 @@ const SortCheckTable = ({ manageType, spendIncomeType, handleClickEdit, handleCl
 								type={manageType}
 								handleClickEdit={handleClickEdit}
 								handleClickDelete={handleClickDelete}
+								setSnackbarInfo={setSnackbarInfo}
 							/>
 						)}
 					</Table>
@@ -86,6 +95,7 @@ SortCheckTable.propTypes = {
 	spendIncomeType: PropTypes.oneOf(['all', 'spending', 'income']).isRequired,
 	handleClickEdit: PropTypes.func.isRequired,
 	handleClickDelete: PropTypes.func.isRequired,
+	setSnackbarInfo: PropTypes.func.isRequired,
 	isFetching: PropTypes.bool.isRequired,
 	rows: PropTypes.array.isRequired,
 };

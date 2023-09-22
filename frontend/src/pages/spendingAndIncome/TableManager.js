@@ -100,6 +100,7 @@ const TableManager = ({
 					handleClickDelete={handleClickDelete}
 					isFetching={isFetching}
 					rows={rows}
+					setSnackbarInfo={setSnackbarInfo}
 				/>
 			</Box>
 			<Grid item />

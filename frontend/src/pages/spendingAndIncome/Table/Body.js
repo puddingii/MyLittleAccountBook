@@ -8,7 +8,16 @@ import dayjs from 'dayjs';
 import { formatCycle } from 'utils';
 import { useDeleteColumnMutation } from 'queries/accountBook/accountBookMutation';
 
-const SortCheckTableBody = ({ page, visibleRows, rowsPerPage, rowCount, type, handleClickEdit, handleClickDelete }) => {
+const SortCheckTableBody = ({
+	page,
+	visibleRows,
+	rowsPerPage,
+	rowCount,
+	type,
+	handleClickEdit,
+	handleClickDelete,
+	setSnackbarInfo,
+}) => {
 	const { mutate: deleteColumnMutate } = useDeleteColumnMutation();
 	const [open, setOpen] = useState(new Array(visibleRows.length).fill(false));
 	// Avoid a layout jump when reaching the last page with empty rows.
@@ -28,6 +37,9 @@ const SortCheckTableBody = ({ page, visibleRows, rowsPerPage, rowCount, type, ha
 				onSuccess: () => {
 					handleClickArrow(index);
 					handleClickDelete(info);
+				},
+				onError: error => {
+					setSnackbarInfo({ isOpen: true, message: error?.response?.data?.message, severity: 'error' });
 				},
 			},
 		);
@@ -122,6 +134,7 @@ SortCheckTableBody.propTypes = {
 	type: PropTypes.oneOf(['nf', 'f']).isRequired,
 	handleClickEdit: PropTypes.func.isRequired,
 	handleClickDelete: PropTypes.func.isRequired,
+	setSnackbarInfo: PropTypes.func.isRequired,
 };
 
 export default SortCheckTableBody;
