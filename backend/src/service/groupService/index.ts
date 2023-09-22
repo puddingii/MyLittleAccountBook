@@ -6,12 +6,12 @@ import {
 	deleteGroup,
 	findGroup,
 	findGroupList,
-	isAdmin,
 	updateGroup,
 } from '@/repository/groupRepository';
 import { findUserInfo } from '@/repository/userRepository';
 
 /** Sub Service */
+import { isAdminUser } from '../common/user';
 
 /** Interface */
 
@@ -53,7 +53,7 @@ export const addGroup = async (info: {
 		if (!myGroupInfo) {
 			throw new Error('현재 계정은 해당 그룹에 참여하지 않았습니다.');
 		}
-		if (!isAdmin(myGroupInfo.userType)) {
+		if (!isAdminUser(myGroupInfo.userType)) {
 			throw new Error('관리 가능한 유저가 아닙니다.');
 		}
 
@@ -88,7 +88,7 @@ export const updateGroupInfo = async (info: {
 		if (!myGroupInfo) {
 			throw new Error('현재 계정은 해당 그룹에 참여하지 않았습니다.');
 		}
-		if (!isAdmin(myGroupInfo.userType)) {
+		if (!isAdminUser(myGroupInfo.userType)) {
 			throw new Error('관리 가능한 유저가 아닙니다.');
 		}
 
@@ -116,7 +116,7 @@ export const deleteGroupUser = async (info: {
 		if (!myGroupInfo) {
 			throw new Error('현재 계정은 해당 그룹에 참여하지 않았습니다.');
 		}
-		if (!isAdmin(myGroupInfo.userType)) {
+		if (!isAdminUser(myGroupInfo.userType)) {
 			throw new Error('관리 가능한 유저가 아닙니다.');
 		}
 

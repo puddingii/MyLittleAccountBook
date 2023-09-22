@@ -147,6 +147,24 @@ export const createDefaultCategory = async (
 	}
 };
 
+export const updateCategory = async (
+	info: { accountBookId: number; id: number; name: string },
+	transaction?: Transaction,
+) => {
+	try {
+		const { name, ...where } = info;
+		const updatedCategory = await CategoryModel.update({ name }, { where, transaction });
+
+		return updatedCategory;
+	} catch (error) {
+		const customError = convertErrorToCustomError(error, {
+			trace: 'Repository',
+			code: 500,
+		});
+		throw customError;
+	}
+};
+
 export const deleteChildCategoryList = async (
 	info: { parentId: number; accountBookId: number },
 	transaction: Transaction,

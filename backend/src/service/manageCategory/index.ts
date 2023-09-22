@@ -7,11 +7,13 @@ import {
 	deleteChildCategoryList,
 	findCategory,
 	findCategoryList,
+	updateCategory,
 } from '@/repository/categoryRepository';
 import { findGAB as findFGAB } from '@/repository/cronGroupAccountBookRepository';
 import { findGAB } from '@/repository/groupAccountBookRepository';
 
 /** Sub Service */
+import { checkAdminGroupUser } from '../common/user';
 
 /** Interface */
 import { TCategoryMap } from '@/interface/api/response/manageCategoryResponse';
@@ -101,11 +103,16 @@ const isParentIdNumber = (info: {
 };
 
 export const addCategory = async (info: {
+	myEmail: string;
 	accountBookId: number;
 	name: string;
 	parentId?: number;
 }) => {
 	try {
+		await checkAdminGroupUser({
+			userEmail: info.myEmail,
+			accountBookId: info.accountBookId,
+		});
 		const transaction = await sequelize.transaction({ autocommit: false });
 		try {
 			let result: {
@@ -132,9 +139,35 @@ export const addCategory = async (info: {
 	}
 };
 
-export const deleteCategory = async (info: { accountBookId: number; id: number }) => {
+export const updateCategoryInfo = async (info: {
+	myEmail: string;
+	accountBookId: number;
+	id: number;
+	name: string;
+}) => {
 	try {
-		const { accountBookId, id } = info;
+		const { myEmail, ...categoryInfo } = info;
+		await checkAdminGroupUser({ userEmail: myEmail, accountBookId: info.accountBookId });
+
+		const countList = await updateCategory(categoryInfo);
+		if (countList[0] < 1) {
+			throw new Error('정상적으로 수정되지 않았습니다.');
+		}
+	} catch (error) {
+		const customError = convertErrorToCustomError(error, { trace: 'Service', code: 400 });
+		throw customError;
+	}
+};
+
+export const deleteCategory = async (info: {
+	accountBookId: number;
+	id: number;
+	myEmail: string;
+}) => {
+	try {
+		const { accountBookId, id, myEmail } = info;
+		await checkAdminGroupUser({ userEmail: myEmail, accountBookId });
+
 		const category = await findCategory({ accountBookId, id });
 		if (!category) {
 			throw new Error('해당 카테고리를 찾을 수 없습니다.');

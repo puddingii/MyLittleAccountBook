@@ -11,4 +11,5 @@ export type TPost = TResponseType<{
 	id: number;
 	childList?: Array<{ id: number; parentId: number; name: string }>;
 }>;
+export type TPatch = TResponseType<{}>;
 export type TDelete = TResponseType<{ cnt: number }>;

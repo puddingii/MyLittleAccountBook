@@ -5,9 +5,10 @@ import {
 	findOneAccountBook,
 	updateAccountBook,
 } from '@/repository/accountBookRepository';
-import { findGroup, isAdmin } from '@/repository/groupRepository';
+import { findGroup } from '@/repository/groupRepository';
 
 /** Sub Service */
+import { isAdminUser } from '../common/user';
 
 /** Interface */
 
@@ -54,7 +55,7 @@ export const updateAccountBookInfo = async (info: {
 		if (!myGroupInfo) {
 			throw new Error('현재 계정은 해당 그룹에 참여하지 않았습니다.');
 		}
-		if (!isAdmin(myGroupInfo.userType)) {
+		if (!isAdminUser(myGroupInfo.userType)) {
 			throw new Error('관리 가능한 유저가 아닙니다.');
 		}
 
