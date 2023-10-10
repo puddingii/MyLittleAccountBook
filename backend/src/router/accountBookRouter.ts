@@ -8,7 +8,7 @@ import { convertErrorToCustomError } from '@/util/error';
 
 /** Middleware & Service */
 import { verifyToken } from '@/middleware/authentication';
-import { createAccountBookAndInviteUser } from '@/service/headerService';
+import { createAccountBookAndInviteUser } from '@/service/headerService/dependency';
 import { getAccountBookInfo, updateAccountBookInfo } from '@/service/manageAccountBook';
 
 /** Interface */
