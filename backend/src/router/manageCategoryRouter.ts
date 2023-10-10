@@ -12,7 +12,7 @@ import {
 	deleteCategory,
 	getCategoryList,
 	updateCategoryInfo,
-} from '@/service/manageCategory';
+} from '@/service/manageCategory/dependency';
 import { verifyToken } from '@/middleware/authentication';
 
 /** Interface */
