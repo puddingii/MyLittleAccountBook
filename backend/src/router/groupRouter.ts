@@ -15,7 +15,7 @@ import {
 	getGroupList,
 	updateGroupInfo,
 	validateGroupUser,
-} from '@/service/groupService';
+} from '@/service/groupService/dependency';
 
 /** Interface */
 import {
