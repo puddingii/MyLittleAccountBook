@@ -14,10 +14,17 @@ import {
 	deleteGroupUser,
 	getGroupList,
 	updateGroupInfo,
+	validateGroupUser,
 } from '@/service/groupService';
 
 /** Interface */
-import { TDelete, TGetList, TPatch, TPost } from '@/interface/api/response/groupResponse';
+import {
+	TDelete,
+	TGetList,
+	TGetValidate,
+	TPatch,
+	TPost,
+} from '@/interface/api/response/groupResponse';
 
 const router = express.Router();
 
@@ -34,6 +41,33 @@ router.get('/list', verifyToken, async (req, res) => {
 			message: '',
 			status: 'success',
 		} as TGetList);
+	} catch (error) {
+		const { message, traceList, code } = convertErrorToCustomError(error, {
+			trace: 'Router',
+			code: 400,
+		});
+		logger.error(message, traceList);
+
+		return res.status(code).json({ data: {}, message, status: 'fail' });
+	}
+});
+
+router.get('/validate', verifyToken, async (req, res) => {
+	try {
+		const {
+			query: { accountBookId },
+		} = await zParser(zodSchema.group.validation, req);
+
+		const info = await validateGroupUser({
+			accountBookId: parseInt(accountBookId, 10),
+			myEmail: (req.user as Exclude<Request['user'], undefined>).email,
+		});
+
+		return res.status(200).json({
+			data: info,
+			message: '',
+			status: 'success',
+		} as TGetValidate);
 	} catch (error) {
 		const { message, traceList, code } = convertErrorToCustomError(error, {
 			trace: 'Router',

@@ -20,6 +20,23 @@ import GroupModel from '@/model/group';
 import { convertErrorToCustomError } from '@/util/error';
 import { CustomError } from '@/util/error/class';
 
+export const validateGroupUser = async (info: {
+	accountBookId: number;
+	myEmail: string;
+}) => {
+	try {
+		const myGroupInfo = await findGroup({
+			userEmail: info.myEmail,
+			accountBookId: info.accountBookId,
+		});
+
+		return { isValid: !!myGroupInfo };
+	} catch (error) {
+		const customError = convertErrorToCustomError(error, { trace: 'Service', code: 400 });
+		throw customError;
+	}
+};
+
 export const getGroupList = async (info: { accountBookId: number }) => {
 	try {
 		const groupList = await findGroupList(info);

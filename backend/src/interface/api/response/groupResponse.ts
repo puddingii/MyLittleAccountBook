@@ -10,6 +10,7 @@ export type TPost = TResponseType<{
 	nickname: string;
 	id: number;
 }>;
+export type TGetValidate = TResponseType<{ isValid: boolean }>;
 
 export type TPatch = TResponseType<{}>;
 
