@@ -1,3 +1,4 @@
+/** Library */
 import dayjs from 'dayjs';
 
 import {
@@ -5,9 +6,10 @@ import {
 	getFixedColumnList,
 	getNotFixedColumnList,
 } from '../common/getService';
-import { convertErrorToCustomError } from '@/util/error';
 
+/** Interface */
 import { TGetSummary } from '@/interface/api/response/accountBookResponse';
+import { TGetDefaultInfo } from '@/interface/service/thisMonthSummaryService';
 
 const filterListByTypeAndDate = <
 	T extends { type: string; [key: string]: Date | string | number | undefined },
@@ -56,31 +58,40 @@ const filterListByType = <
 };
 
 /** 이번 달의 History 및 Category 반환(해당 페이지에서 보여줄 기본값 가져오기) */
-export const getDefaultInfo = async (info: { accountBookId: number }) => {
-	try {
-		const { accountBookId } = info;
-		const findOptions = {
-			...info,
-			startDate: dayjs().startOf('month').toDate().toString(),
-			endDate: dayjs().endOf('month').toDate().toString(),
-		};
-		const categoryList = await getCategory(accountBookId, { start: 2, end: 2 });
+export const getDefaultInfo =
+	(dependencies: TGetDefaultInfo['dependency']) =>
+	async (info: TGetDefaultInfo['param']) => {
+		const {
+			errorUtil: { convertErrorToCustomError },
+		} = dependencies;
 
-		const notFixedList = await getNotFixedColumnList(findOptions, categoryList);
-		const fixedList = await getFixedColumnList(findOptions, categoryList);
-		const { incomeList: notFixedIncomeList, spendingList: notFixedSpendingList } =
-			filterListByTypeAndDate(notFixedList, 'spendingAndIncomeDate');
-		const { incomeList: fixedIncomeList, spendingList: fixedSpendingList } =
-			filterListByType(fixedList);
+		try {
+			const { accountBookId } = info;
+			const findOptions = {
+				...info,
+				startDate: dayjs().startOf('month').toDate().toString(),
+				endDate: dayjs().endOf('month').toDate().toString(),
+			};
+			const categoryList = await getCategory(accountBookId, { start: 2, end: 2 });
 
-		return {
-			notFixedIncomeList,
-			notFixedSpendingList,
-			fixedIncomeList,
-			fixedSpendingList,
-		} as TGetSummary['data'];
-	} catch (error) {
-		const customError = convertErrorToCustomError(error, { trace: 'Service', code: 400 });
-		throw customError;
-	}
-};
+			const notFixedList = await getNotFixedColumnList(findOptions, categoryList);
+			const fixedList = await getFixedColumnList(findOptions, categoryList);
+			const { incomeList: notFixedIncomeList, spendingList: notFixedSpendingList } =
+				filterListByTypeAndDate(notFixedList, 'spendingAndIncomeDate');
+			const { incomeList: fixedIncomeList, spendingList: fixedSpendingList } =
+				filterListByType(fixedList);
+
+			return {
+				notFixedIncomeList,
+				notFixedSpendingList,
+				fixedIncomeList,
+				fixedSpendingList,
+			} as TGetSummary['data'];
+		} catch (error) {
+			const customError = convertErrorToCustomError(error, {
+				trace: 'Service',
+				code: 400,
+			});
+			throw customError;
+		}
+	};

@@ -8,7 +8,7 @@ import { convertErrorToCustomError } from '@/util/error';
 
 /** Middleware & Service */
 import { verifyToken } from '@/middleware/authentication';
-import { getDefaultInfo } from '@/service/thisMonthSummaryService';
+import { getDefaultInfo } from '@/service/thisMonthSummaryService/dependency';
 
 /** Interface */
 import { TGetSummary } from '@/interface/api/response/accountBookResponse';
