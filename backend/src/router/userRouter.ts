@@ -8,7 +8,10 @@ import { convertErrorToCustomError } from '@/util/error';
 
 /** Middleware & Service */
 import { verifyToken } from '@/middleware/authentication';
-import { getUserInfo, updateUserInfoAndRefreshToken } from '@/service/userService';
+import {
+	getUserInfo,
+	updateUserInfoAndRefreshToken,
+} from '@/service/userService/dependency';
 
 /** Interface */
 import { TGet, TPatch } from '@/interface/api/response/userResponse';
