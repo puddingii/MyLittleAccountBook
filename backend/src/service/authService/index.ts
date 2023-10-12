@@ -2,12 +2,13 @@ import { google } from 'googleapis';
 import { nanoid } from 'nanoid/async';
 import bcrypt from 'bcrypt';
 
-import { getClient as getGoogleClient, getUrl as getGoogleUrl } from './googleManager';
+import { getClient as getGoogleClient } from './socialManager/google';
 import {
 	getTokenInfo as getNaverTokenInfo,
-	getUrl as getNaverUrl,
 	getUserInfo as getNaverUserInfo,
-} from './naverManager';
+} from './socialManager/naver';
+import { SOCIAL_URL_MANAGER } from './socialManager';
+
 import {
 	createEmailUser,
 	createSocialUser,
@@ -26,19 +27,6 @@ import {
 import secret from '@/config/secret';
 
 import { TDecodedAccessTokenInfo, TSocialType } from '@/interface/auth';
-
-const SOCIAL_URL_MANAGER = {
-	Google: getGoogleUrl,
-	Naver: getNaverUrl,
-};
-
-/** Social 로그인 시 검증하기 위한 State 발급 및 캐싱처리 */
-const getRandomStateAndCaching = async (time = 600) => {
-	const randomState = await nanoid(15);
-	await setCache(randomState, 1, time);
-
-	return randomState;
-};
 
 /** Refresh Token - Access Token 의 유효성 검증 */
 const isValidatedState = async (state?: string) => {
@@ -110,7 +98,10 @@ export const emailLogin = async (userInfo: { email: string; password: string }) 
 /** 소셜 로그인을 위한 Redirect 주소 반환 */
 export const getSocialLoginLocation = async (type: TSocialType) => {
 	try {
-		const randomState = await getRandomStateAndCaching();
+		const randomState = await nanoid(15);
+
+		/** Social 로그인 시 검증하기 위한 State 발급 및 캐싱처리 */
+		await setCache(randomState, 1, 600);
 
 		return SOCIAL_URL_MANAGER[type](randomState);
 	} catch (error) {
