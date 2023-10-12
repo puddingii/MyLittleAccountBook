@@ -6,7 +6,7 @@ import {
 	getCategory,
 	getFixedColumnList,
 	getNotFixedColumnList,
-} from '../common/getService';
+} from '../common/accountBook';
 import { checkAdminGroupUser } from '../common/user';
 
 /** Interface */
