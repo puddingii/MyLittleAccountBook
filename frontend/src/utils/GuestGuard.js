@@ -29,7 +29,6 @@ const GuardedRoute = ({ children }) => {
 			},
 			onSuccess: response => {
 				const isValid = !!response?.data?.isValid;
-				console.log('refetchValidate', isValid);
 				setValidInfo(beforeInfo => ({ ...beforeInfo, groupUserValid: isValid }));
 				if (isValid === false) {
 					navigate('/');
