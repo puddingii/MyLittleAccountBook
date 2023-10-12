@@ -2,7 +2,7 @@
 import { Transaction } from 'sequelize';
 
 /** Sub Service */
-import { checkAdminGroupUser } from '../common/user';
+import { checkAdminGroupUser } from '../common/user/dependency';
 
 /** Interface */
 import { TCategoryMap } from '@/interface/api/response/manageCategoryResponse';

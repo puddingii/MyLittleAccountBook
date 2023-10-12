@@ -6,8 +6,8 @@ import {
 	getCategory,
 	getFixedColumnList,
 	getNotFixedColumnList,
-} from '../common/accountBook';
-import { checkAdminGroupUser } from '../common/user';
+} from '../common/accountBook/dependency';
+import { checkAdminGroupUser } from '../common/user/dependency';
 
 /** Interface */
 import { TGet } from '@/interface/api/response/accountBookResponse';

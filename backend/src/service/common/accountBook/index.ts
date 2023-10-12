@@ -1,138 +1,158 @@
 import dayjs from 'dayjs';
 
-import { findRecursiveCategoryList } from '@/repository/categoryRepository';
-import { findAllNotFixedColumn } from '@/repository/groupAccountBookRepository';
-import { findAllFixedColumn } from '@/repository/cronGroupAccountBookRepository';
-import { convertErrorToCustomError } from '@/util/error';
-
+/** Interface */
 import { TGet } from '@/interface/api/response/accountBookResponse';
+import {
+	TGetCategory,
+	TGetFixedColumnList,
+	TGetNotFixedColumnList,
+} from '@/interface/service/commonAccountBookService';
 
-export const getCategory = async (
-	accountBookId: number,
-	depth = { start: 2, end: 2 },
-) => {
-	try {
-		const categoryList = await findRecursiveCategoryList(accountBookId, depth);
+export const getCategory =
+	(dependencies: TGetCategory['dependency']) =>
+	async (
+		accountBookId: TGetCategory['param'][0],
+		depth: TGetCategory['param'][1] = { start: 2, end: 2 },
+	) => {
+		const {
+			errorUtil: { convertErrorToCustomError },
+			repository: { findRecursiveCategoryList },
+		} = dependencies;
 
-		const filteredList = categoryList.map(category => {
-			const parentName = category.categoryNamePath.split(' > ')[0];
-			return {
-				parentId: category.parentId,
-				childId: category.id,
-				parentName,
-				categoryNamePath: category.categoryNamePath,
-				categoryIdPath: category.categoryIdPath,
-			};
-		});
+		try {
+			const categoryList = await findRecursiveCategoryList(accountBookId, depth);
 
-		return filteredList;
-	} catch (error) {
-		const customError = convertErrorToCustomError(error, {
-			trace: 'Service',
-			code: 400,
-		});
-		throw customError;
-	}
-};
+			const filteredList = categoryList.map(category => {
+				const parentName = category.categoryNamePath.split(' > ')[0];
+				return {
+					parentId: category.parentId,
+					childId: category.id,
+					parentName,
+					categoryNamePath: category.categoryNamePath,
+					categoryIdPath: category.categoryIdPath,
+				};
+			});
 
-export const getNotFixedColumnList = async (
-	info: {
-		accountBookId: number;
-		startDate: string;
-		endDate: string;
-	},
-	categoryList: Awaited<ReturnType<typeof getCategory>>,
-) => {
-	try {
-		const { accountBookId, endDate, startDate } = info;
+			return filteredList;
+		} catch (error) {
+			const customError = convertErrorToCustomError(error, {
+				trace: 'Service',
+				code: 400,
+			});
+			throw customError;
+		}
+	};
 
-		const list = await findAllNotFixedColumn({
-			accountBookId,
-			endDate: dayjs(endDate).toDate(),
-			startDate: dayjs(startDate).toDate(),
-		});
+export const getNotFixedColumnList =
+	(dependencies: TGetNotFixedColumnList['dependency']) =>
+	async (
+		info: TGetNotFixedColumnList['param'][0],
+		categoryList: TGetNotFixedColumnList['param'][1],
+	) => {
+		const {
+			errorUtil: { convertErrorToCustomError },
+			repository: { findAllNotFixedColumn },
+		} = dependencies;
 
-		const historyList = list.reduce(
-			(acc, column) => {
-				const nickname = column.users?.nickname ?? '';
-				const gabInfo = (column.groupaccountbooks ?? []).map((gab, idx) => {
-					return {
-						id: idx,
-						gabId: gab.id,
-						nickname,
-						category:
-							categoryList.find(category => category.childId === gab.categoryId)
-								?.categoryNamePath ?? '',
-						type: gab.type,
-						spendingAndIncomeDate: gab.spendingAndIncomeDate,
-						value: gab.value,
-						content: gab.content,
-					};
-				});
-				acc.push(...gabInfo);
-				return acc;
-			},
-			[] as TGet['data']['history']['notFixedList'],
-		);
+		try {
+			const { accountBookId, endDate, startDate } = info;
 
-		return historyList;
-	} catch (error) {
-		const customError = convertErrorToCustomError(error, { trace: 'Service', code: 400 });
-		throw customError;
-	}
-};
+			const list = await findAllNotFixedColumn({
+				accountBookId,
+				endDate: dayjs(endDate).toDate(),
+				startDate: dayjs(startDate).toDate(),
+			});
 
-export const getFixedColumnList = async (
-	info: {
-		accountBookId: number;
-		startDate?: string;
-		endDate?: string;
-	},
-	categoryList: Awaited<ReturnType<typeof getCategory>>,
-) => {
-	try {
-		const { accountBookId, endDate, startDate } = info;
-		const dateInfo =
-			startDate && endDate
-				? {
-						endDate: dayjs(endDate).toDate(),
-						startDate: dayjs(startDate).toDate(),
-				  }
-				: {};
+			const historyList = list.reduce(
+				(acc, column) => {
+					const nickname = column.users?.nickname ?? '';
+					const gabInfo = (column.groupaccountbooks ?? []).map((gab, idx) => {
+						return {
+							id: idx,
+							gabId: gab.id,
+							nickname,
+							category:
+								categoryList.find(category => category.childId === gab.categoryId)
+									?.categoryNamePath ?? '',
+							type: gab.type,
+							spendingAndIncomeDate: gab.spendingAndIncomeDate,
+							value: gab.value,
+							content: gab.content,
+						};
+					});
+					acc.push(...gabInfo);
+					return acc;
+				},
+				[] as TGet['data']['history']['notFixedList'],
+			);
 
-		const list = await findAllFixedColumn({
-			accountBookId,
-			...dateInfo,
-		});
+			return historyList;
+		} catch (error) {
+			const customError = convertErrorToCustomError(error, {
+				trace: 'Service',
+				code: 400,
+			});
+			throw customError;
+		}
+	};
 
-		const historyList = list.reduce(
-			(acc, column) => {
-				const nickname = column.users?.nickname ?? '';
-				const gabInfo = (column.crongroupaccountbooks ?? []).map((gab, idx) => {
-					return {
-						id: idx,
-						gabId: gab.id,
-						nickname,
-						category:
-							categoryList.find(category => category.childId === gab.categoryId)
-								?.categoryNamePath ?? '',
-						type: gab.type,
-						cycleType: gab.cycleType,
-						cycleTime: gab.cycleTime,
-						needToUpdateDate: gab.needToUpdateDate,
-						value: gab.value,
-						content: gab.content,
-					};
-				});
-				acc.push(...gabInfo);
-				return acc;
-			},
-			[] as TGet['data']['history']['fixedList'],
-		);
+export const getFixedColumnList =
+	(dependencies: TGetFixedColumnList['dependency']) =>
+	async (
+		info: TGetFixedColumnList['param'][0],
+		categoryList: TGetFixedColumnList['param'][1],
+	) => {
+		const {
+			errorUtil: { convertErrorToCustomError },
+			repository: { findAllFixedColumn },
+		} = dependencies;
 
-		return historyList;
-	} catch (error) {
-		const customError = convertErrorToCustomError(error, { trace: 'Service', code: 400 });
-		throw customError;
-	}
-};
+		try {
+			const { accountBookId, endDate, startDate } = info;
+			const dateInfo =
+				startDate && endDate
+					? {
+							endDate: dayjs(endDate).toDate(),
+							startDate: dayjs(startDate).toDate(),
+					  }
+					: {};
+
+			const list = await findAllFixedColumn({
+				accountBookId,
+				...dateInfo,
+			});
+
+			const historyList = list.reduce(
+				(acc, column) => {
+					const nickname = column.users?.nickname ?? '';
+					const gabInfo = (column.crongroupaccountbooks ?? []).map((gab, idx) => {
+						return {
+							id: idx,
+							gabId: gab.id,
+							nickname,
+							category:
+								categoryList.find(category => category.childId === gab.categoryId)
+									?.categoryNamePath ?? '',
+							type: gab.type,
+							cycleType: gab.cycleType,
+							cycleTime: gab.cycleTime,
+							needToUpdateDate: gab.needToUpdateDate,
+							value: gab.value,
+							content: gab.content,
+						};
+					});
+					acc.push(...gabInfo);
+					return acc;
+				},
+				[] as TGet['data']['history']['fixedList'],
+			);
+
+			return historyList;
+		} catch (error) {
+			const customError = convertErrorToCustomError(error, {
+				trace: 'Service',
+				code: 400,
+			});
+			throw customError;
+		}
+	};

@@ -5,7 +5,7 @@ import {
 	getCategory,
 	getFixedColumnList,
 	getNotFixedColumnList,
-} from '../common/accountBook';
+} from '../common/accountBook/dependency';
 
 /** Interface */
 import { TGetSummary } from '@/interface/api/response/accountBookResponse';
