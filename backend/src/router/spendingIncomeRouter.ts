@@ -14,7 +14,7 @@ import {
 	updateNotFixedColumn,
 	deleteNotFixedColumn,
 	deleteFixedColumn,
-} from '@/service/spendingIncomeService';
+} from '@/service/spendingIncomeService/dependency';
 import { COLUMN_WRITE_TYPE } from '@/util/parser/schema/accountBookSchema';
 
 import {
