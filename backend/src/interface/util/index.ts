@@ -1,7 +1,13 @@
 import { convertErrorToCustomError } from '@/util/error';
 import { CustomError } from '@/util/error/class';
 
-import { createAccessToken, createRefreshToken, verifyAll } from '@/util/jwt';
+import {
+	createAccessToken,
+	createRefreshToken,
+	verifyAll,
+	decodeToken,
+	isExpiredToken,
+} from '@/util/jwt';
 
 import { setCache, deleteCache, getCache } from '@/util/cache';
 
@@ -19,5 +25,7 @@ export type TCacheUtil = {
 export type TJwtUtil = {
 	createAccessToken: typeof createAccessToken;
 	createRefreshToken: typeof createRefreshToken;
+	decodeToken: typeof decodeToken;
+	isExpiredToken: typeof isExpiredToken;
 	verifyAll: typeof verifyAll;
 };

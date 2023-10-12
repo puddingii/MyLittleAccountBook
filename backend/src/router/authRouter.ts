@@ -8,7 +8,7 @@ import {
 	refreshToken,
 	emailJoin,
 	deleteToken,
-} from '@/service/authService';
+} from '@/service/authService/dependency';
 import zParser from '@/util/parser';
 import zodSchema from '@/util/parser/schema';
 import { logger } from '@/util';
@@ -36,7 +36,7 @@ router.post('/social/google', async (req, res) => {
 			throw error;
 		}
 
-		const tokenInfo = await googleLogin(code, state);
+		const tokenInfo = await googleLogin({ code, state });
 
 		return res
 			.status(200)
@@ -62,7 +62,7 @@ router.post('/social/naver', async (req, res) => {
 			throw new Error(errorDescription, { cause: error });
 		}
 
-		const tokenInfo = await naverLogin(code, state);
+		const tokenInfo = await naverLogin({ code, state });
 
 		return res
 			.status(200)
@@ -150,7 +150,10 @@ router.get('/token', async (req, res) => {
 		} = await zParser(zodSchema.auth.tokenInfo, req);
 
 		const accessToken = authorization.split(' ')[1];
-		const newAccessToken = await refreshToken(refresh, accessToken);
+		const newAccessToken = await refreshToken({
+			accessToken,
+			refreshToken: refresh,
+		});
 
 		return res.status(200).json({
 			data: { accessToken: newAccessToken },
@@ -179,7 +182,7 @@ router.delete('/token', async (req, res) => {
 		} = await zParser(zodSchema.auth.tokenInfo, req);
 
 		const accessToken = authorization.split(' ')[1];
-		await deleteToken(refresh, accessToken);
+		await deleteToken({ refreshToken: refresh, accessToken });
 
 		return res.status(200).json({
 			data: {},
