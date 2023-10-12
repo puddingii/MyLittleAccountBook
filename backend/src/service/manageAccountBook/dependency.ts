@@ -4,7 +4,7 @@ import * as Logic from '.';
 import {
 	findOneAccountBook,
 	updateAccountBook,
-} from '@/repository/accountBookRepository';
+} from '@/repository/accountBookRepository/dependency';
 import { findGroup } from '@/repository/groupRepository';
 
 /** Util */

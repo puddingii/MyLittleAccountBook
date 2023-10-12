@@ -1,70 +1,87 @@
-import { Transaction } from 'sequelize';
+import {
+	TCreateAccountBook,
+	TFindOneAccountBook,
+	TUpdateAccountBook,
+} from '@/interface/repository/accountBookRepository';
 
-import AccountBookModel from '@/model/accountBook';
-import { convertErrorToCustomError } from '@/util/error';
+export const findOneAccountBook =
+	(dependencies: TFindOneAccountBook['dependency']) =>
+	async (info: Partial<{ id: number; title: string }>) => {
+		const {
+			AccountBookModel,
+			errorUtil: { convertErrorToCustomError },
+		} = dependencies;
 
-export const findOneAccountBook = async (
-	info: Partial<{ id: number; title: string }>,
-) => {
-	try {
-		const accountBook = await AccountBookModel.findOne({
-			where: info,
-		});
+		try {
+			const accountBook = await AccountBookModel.findOne({
+				where: info,
+			});
 
-		return accountBook;
-	} catch (error) {
-		const customError = convertErrorToCustomError(error, {
-			trace: 'Repository',
-			code: 400,
-		});
-		throw customError;
-	}
-};
+			return accountBook;
+		} catch (error) {
+			const customError = convertErrorToCustomError(error, {
+				trace: 'Repository',
+				code: 400,
+			});
+			throw customError;
+		}
+	};
 
 /** 새로운 가계부 생성 */
-export const createAccountBook = async (
-	info: {
-		title: string;
-		content?: string;
-	},
-	transaction?: Transaction,
-) => {
-	try {
-		const newAccountBook = await AccountBookModel.create(
-			{
-				title: info.title,
-				content: info.content,
-			},
-			{ transaction },
-		);
+export const createAccountBook =
+	(dependencies: TCreateAccountBook['dependency']) =>
+	async (
+		info: TCreateAccountBook['param'][0],
+		transaction?: TCreateAccountBook['param'][1],
+	) => {
+		const {
+			AccountBookModel,
+			errorUtil: { convertErrorToCustomError },
+		} = dependencies;
 
-		return newAccountBook;
-	} catch (error) {
-		const customError = convertErrorToCustomError(error, {
-			trace: 'Repository',
-			code: 400,
-		});
-		throw customError;
-	}
-};
+		try {
+			const newAccountBook = await AccountBookModel.create(
+				{
+					title: info.title,
+					content: info.content,
+				},
+				{ transaction },
+			);
 
-export const updateAccountBook = async (
-	info: { title?: string; content?: string; accountBookId: number },
-	transaction?: Transaction,
-) => {
-	try {
-		const { accountBookId, ...updatedInfo } = info;
-		const updatedCount = await AccountBookModel.update(updatedInfo, {
-			where: { id: accountBookId },
-			transaction,
-		});
+			return newAccountBook;
+		} catch (error) {
+			const customError = convertErrorToCustomError(error, {
+				trace: 'Repository',
+				code: 400,
+			});
+			throw customError;
+		}
+	};
 
-		return updatedCount[0];
-	} catch (error) {
-		const customError = convertErrorToCustomError(error, {
-			trace: 'Repository',
-			code: 400,
-		});
-		throw customError;
-	}
-};
+export const updateAccountBook =
+	(dependencies: TUpdateAccountBook['dependency']) =>
+	async (
+		info: TUpdateAccountBook['param'][0],
+		transaction?: TUpdateAccountBook['param'][1],
+	) => {
+		const {
+			AccountBookModel,
+			errorUtil: { convertErrorToCustomError },
+		} = dependencies;
+
+		try {
+			const { accountBookId, ...updatedInfo } = info;
+			const updatedCount = await AccountBookModel.update(updatedInfo, {
+				where: { id: accountBookId },
+				transaction,
+			});
+
+			return updatedCount[0];
+		} catch (error) {
+			const customError = convertErrorToCustomError(error, {
+				trace: 'Repository',
+				code: 400,
+			});
+			throw customError;
+		}
+	};
