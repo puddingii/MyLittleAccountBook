@@ -6,7 +6,7 @@ import {
 	createSocialUser,
 	findOneSocialUserInfo,
 	findOneUser,
-} from '@/repository/authRepository';
+} from '@/repository/authRepository/dependency';
 
 /** Util */
 import { convertErrorToCustomError } from '@/util/error';

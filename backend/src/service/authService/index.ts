@@ -164,7 +164,10 @@ const socialLogin = async (
 	if (user) {
 		accountBookId = (user.groups ?? [])[0].accountBookId;
 	} else {
-		const { accountBookId: newAccountBookId } = await createSocialUser(info.user, type);
+		const { accountBookId: newAccountBookId } = await createSocialUser({
+			userInfo: info.user,
+			socialType: type,
+		});
 		accountBookId = newAccountBookId;
 	}
 

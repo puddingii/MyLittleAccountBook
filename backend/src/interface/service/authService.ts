@@ -4,7 +4,7 @@ import {
 	createSocialUser,
 	findOneSocialUserInfo,
 	findOneUser,
-} from '@/repository/authRepository';
+} from '@/repository/authRepository/dependency';
 
 /** Util */
 import { TErrorUtil, TCacheUtil, TJwtUtil } from '../util';
