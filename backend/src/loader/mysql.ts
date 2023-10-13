@@ -55,23 +55,6 @@ export const sync = async () => {
 	}
 };
 
-export const createTestAccount = async () => {
-	try {
-		const { createEmailUser, test } = await import('../repository/authRepository');
-		await createEmailUser({
-			email: 'test@naver.com',
-			password: 'test123!@TEST',
-			nickname: 'testUser',
-		});
-		await test();
-	} catch (error) {
-		const customError = convertErrorToCustomError(error, {
-			trace: 'Mysql',
-		});
-		throw customError;
-	}
-};
-
 export const closeConnection = async () => {
 	try {
 		await sequelize.close();
