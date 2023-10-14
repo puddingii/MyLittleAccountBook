@@ -1,7 +1,7 @@
 /** Repository */
 import { findRecursiveCategoryList } from '@/repository/categoryRepository/dependency';
 import { findAllNotFixedColumn } from '@/repository/groupAccountBookRepository';
-import { findAllFixedColumn } from '@/repository/cronGroupAccountBookRepository';
+import { findAllFixedColumn } from '@/repository/cronGroupAccountBookRepository/dependency';
 
 /** Util */
 import { TErrorUtil } from '../util';

@@ -1,124 +1,151 @@
 import { Op } from 'sequelize';
 
-import CronGroupAccountBookModel from '@/model/cronGroupAccountBook';
-import GroupModel from '@/model/group';
-import UserModel from '@/model/user';
-import { convertErrorToCustomError } from '@/util/error';
+import {
+	TCreateNewColumn,
+	TDeleteColumn,
+	TFindAllFixedColumn,
+	TFindGAB,
+	TUpdateColumn,
+} from '@/interface/repository/cronGroupAccountBookRepository';
 
-import { TColumnInfo } from '@/interface/model/cronGroupAccountBookRepository';
+export const createNewColumn =
+	(dependencies: TCreateNewColumn['dependency']) =>
+	async (columnInfo: TCreateNewColumn['param']) => {
+		const {
+			CronGroupAccountBookModel,
+			errorUtil: { convertErrorToCustomError },
+		} = dependencies;
 
-export const createNewColumn = async (columnInfo: Omit<TColumnInfo, 'id'>) => {
-	try {
-		const newColumn = await CronGroupAccountBookModel.create(columnInfo);
+		try {
+			const newColumn = await CronGroupAccountBookModel.create(columnInfo);
 
-		return newColumn.id;
-	} catch (error) {
-		const customError = convertErrorToCustomError(error, {
-			trace: 'Repository',
-		});
-		throw customError;
-	}
-};
-
-export const findGAB = async (
-	gabInfo: Partial<TColumnInfo>,
-	options?: { isIncludeGroup: boolean },
-) => {
-	try {
-		const includeOption = options?.isIncludeGroup
-			? {
-					include: {
-						model: GroupModel,
-						as: 'groups',
-						required: true,
-					},
-			  }
-			: {};
-		const gab = await CronGroupAccountBookModel.findAll({
-			where: gabInfo,
-			...includeOption,
-			limit: 1,
-			subQuery: false,
-		});
-
-		return gab[0];
-	} catch (error) {
-		const customError = convertErrorToCustomError(error, {
-			trace: 'Repository',
-			code: 400,
-		});
-		throw customError;
-	}
-};
-
-export const findAllFixedColumn = async (info: {
-	accountBookId: number;
-	startDate?: Date;
-	endDate?: Date;
-}) => {
-	try {
-		const { accountBookId, endDate, startDate } = info;
-		let dateCondition = {};
-		if (endDate && startDate) {
-			dateCondition = {
-				where: {
-					needToUpdateDate: { [Op.between]: [startDate, endDate] },
-				},
-			};
+			return newColumn.id;
+		} catch (error) {
+			const customError = convertErrorToCustomError(error, {
+				trace: 'Repository',
+			});
+			throw customError;
 		}
+	};
 
-		const columnList = await GroupModel.findAll({
-			where: { accountBookId },
-			include: [
-				{
-					model: CronGroupAccountBookModel,
-					as: 'crongroupaccountbooks',
-					required: true,
-					...dateCondition,
-				},
-				{
-					model: UserModel,
-					as: 'users',
-					required: true,
-					attributes: ['nickname'],
-				},
-			],
-			subQuery: false,
-		});
+export const findGAB =
+	(dependencies: TFindGAB['dependency']) =>
+	async (gabInfo: TFindGAB['param'][0], options?: TFindGAB['param'][1]) => {
+		const {
+			CronGroupAccountBookModel,
+			GroupModel,
+			errorUtil: { convertErrorToCustomError },
+		} = dependencies;
 
-		return columnList;
-	} catch (error) {
-		const customError = convertErrorToCustomError(error, {
-			trace: 'Repository',
-			code: 400,
-		});
-		throw customError;
-	}
-};
+		try {
+			const includeOption = options?.isIncludeGroup
+				? {
+						include: {
+							model: GroupModel,
+							as: 'groups',
+							required: true,
+						},
+				  }
+				: {};
+			const gab = await CronGroupAccountBookModel.findAll({
+				where: gabInfo,
+				...includeOption,
+				limit: 1,
+				subQuery: false,
+			});
 
-export const updateColumn = async (
-	column: CronGroupAccountBookModel,
-	columnInfo: Partial<Omit<TColumnInfo, 'groupId' | 'id'>>,
-) => {
-	try {
-		await column.update(columnInfo);
-	} catch (error) {
-		const customError = convertErrorToCustomError(error, {
-			trace: 'Repository',
-			code: 400,
-		});
-		throw customError;
-	}
-};
+			return gab[0];
+		} catch (error) {
+			const customError = convertErrorToCustomError(error, {
+				trace: 'Repository',
+				code: 400,
+			});
+			throw customError;
+		}
+	};
 
-export const deleteColumn = async (column: CronGroupAccountBookModel) => {
-	try {
-		await column.destroy();
-	} catch (error) {
-		const customError = convertErrorToCustomError(error, {
-			trace: 'Repository',
-			code: 400,
-		});
-		throw customError;
-	}
-};
+export const findAllFixedColumn =
+	(dependencies: TFindAllFixedColumn['dependency']) =>
+	async (info: TFindAllFixedColumn['param']) => {
+		const {
+			CronGroupAccountBookModel,
+			GroupModel,
+			UserModel,
+			errorUtil: { convertErrorToCustomError },
+		} = dependencies;
+
+		try {
+			const { accountBookId, endDate, startDate } = info;
+			let dateCondition = {};
+			if (endDate && startDate) {
+				dateCondition = {
+					where: {
+						needToUpdateDate: { [Op.between]: [startDate, endDate] },
+					},
+				};
+			}
+
+			const columnList = await GroupModel.findAll({
+				where: { accountBookId },
+				include: [
+					{
+						model: CronGroupAccountBookModel,
+						as: 'crongroupaccountbooks',
+						required: true,
+						...dateCondition,
+					},
+					{
+						model: UserModel,
+						as: 'users',
+						required: true,
+						attributes: ['nickname'],
+					},
+				],
+				subQuery: false,
+			});
+
+			return columnList;
+		} catch (error) {
+			const customError = convertErrorToCustomError(error, {
+				trace: 'Repository',
+				code: 400,
+			});
+			throw customError;
+		}
+	};
+
+export const updateColumn =
+	(dependencies: TUpdateColumn['dependency']) =>
+	async (column: TUpdateColumn['param'][0], columnInfo: TUpdateColumn['param'][1]) => {
+		const {
+			errorUtil: { convertErrorToCustomError },
+		} = dependencies;
+
+		try {
+			await column.update(columnInfo);
+		} catch (error) {
+			const customError = convertErrorToCustomError(error, {
+				trace: 'Repository',
+				code: 400,
+			});
+			throw customError;
+		}
+	};
+
+export const deleteColumn =
+	(dependencies: TDeleteColumn['dependency']) =>
+	async (column: TDeleteColumn['param']) => {
+		const {
+			errorUtil: { convertErrorToCustomError },
+		} = dependencies;
+
+		try {
+			await column.destroy();
+		} catch (error) {
+			const customError = convertErrorToCustomError(error, {
+				trace: 'Repository',
+				code: 400,
+			});
+			throw customError;
+		}
+	};

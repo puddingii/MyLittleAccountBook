@@ -12,7 +12,7 @@ import {
 	deleteColumn as deleteFColumn,
 	findGAB as findFixedGAB,
 	updateColumn as updateFColumn,
-} from '@/repository/cronGroupAccountBookRepository';
+} from '@/repository/cronGroupAccountBookRepository/dependency';
 import { findGroup } from '@/repository/groupRepository';
 
 /** Util */
