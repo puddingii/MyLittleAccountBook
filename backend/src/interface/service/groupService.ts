@@ -6,7 +6,7 @@ import {
 	findGroupList,
 	updateGroup,
 } from '@/repository/groupRepository/dependency';
-import { findUserInfo } from '@/repository/userRepository';
+import { findUserInfo } from '@/repository/userRepository/dependency';
 
 /** ETC */
 import { TErrorUtil } from '../util';

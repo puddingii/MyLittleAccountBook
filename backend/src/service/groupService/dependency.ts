@@ -8,7 +8,7 @@ import {
 	findGroupList,
 	updateGroup,
 } from '@/repository/groupRepository/dependency';
-import { findUserInfo } from '@/repository/userRepository';
+import { findUserInfo } from '@/repository/userRepository/dependency';
 
 /** Util */
 import { convertErrorToCustomError } from '@/util/error';

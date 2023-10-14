@@ -1,7 +1,7 @@
 import * as Logic from '.';
 
 /** Repository */
-import { findUserInfo, updateUserInfo } from '@/repository/userRepository';
+import { findUserInfo, updateUserInfo } from '@/repository/userRepository/dependency';
 
 /** Util */
 import { convertErrorToCustomError } from '@/util/error';

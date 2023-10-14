@@ -1,41 +1,51 @@
-import OAuthUserModel from '@/model/oauthUser';
-import UserModel from '@/model/user';
-import { convertErrorToCustomError } from '@/util/error';
+import { TFindUserInfo, TUpdateUserInfo } from '@/interface/repository/userRepository';
 
 /** Email로 찾을 것 */
-export const findUserInfo = async (
-	info: Partial<{ email: string; nickname: string }>,
-) => {
-	try {
-		const userInfo = await UserModel.findOne({
-			where: info,
-			include: {
-				model: OAuthUserModel,
-				as: 'oauthusers',
-				/** inner join */
-			},
-			subQuery: false,
-		});
+export const findUserInfo =
+	(dependencies: TFindUserInfo['dependency']) => async (info: TFindUserInfo['param']) => {
+		const {
+			OAuthUserModel,
+			UserModel,
+			errorUtil: { convertErrorToCustomError },
+		} = dependencies;
 
-		return userInfo;
-	} catch (error) {
-		const customError = convertErrorToCustomError(error, {
-			trace: 'Repository',
-		});
-		throw customError;
-	}
-};
+		try {
+			const userInfo = await UserModel.findOne({
+				where: info,
+				include: {
+					model: OAuthUserModel,
+					as: 'oauthusers',
+					/** inner join */
+				},
+				subQuery: false,
+			});
 
-export const updateUserInfo = async (info: { email: string; nickname: string }) => {
-	try {
-		const { email, nickname } = info;
-		const successCount = await UserModel.update({ nickname }, { where: { email } });
+			return userInfo;
+		} catch (error) {
+			const customError = convertErrorToCustomError(error, {
+				trace: 'Repository',
+			});
+			throw customError;
+		}
+	};
 
-		return successCount;
-	} catch (error) {
-		const customError = convertErrorToCustomError(error, {
-			trace: 'Repository',
-		});
-		throw customError;
-	}
-};
+export const updateUserInfo =
+	(dependencies: TUpdateUserInfo['dependency']) =>
+	async (info: TUpdateUserInfo['param']) => {
+		const {
+			UserModel,
+			errorUtil: { convertErrorToCustomError },
+		} = dependencies;
+
+		try {
+			const { email, nickname } = info;
+			const successCount = await UserModel.update({ nickname }, { where: { email } });
+
+			return successCount;
+		} catch (error) {
+			const customError = convertErrorToCustomError(error, {
+				trace: 'Repository',
+			});
+			throw customError;
+		}
+	};

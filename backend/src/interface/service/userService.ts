@@ -1,5 +1,5 @@
 /** Repository */
-import { findUserInfo, updateUserInfo } from '@/repository/userRepository';
+import { findUserInfo, updateUserInfo } from '@/repository/userRepository/dependency';
 
 /** ETC */
 import { TErrorUtil, TCacheUtil, TJwtUtil } from '../util';
