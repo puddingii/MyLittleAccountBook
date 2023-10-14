@@ -1,139 +1,152 @@
-import { Transaction } from 'sequelize';
+import {
+	TCreateGroup,
+	TCreateGroupList,
+	TDeleteGroup,
+	TFindGroup,
+	TFindGroupList,
+	TUpdateGroup,
+} from '@/interface/repository/groupRepository';
 
-import { convertErrorToCustomError } from '@/util/error';
+export const findGroup =
+	(dependencies: TFindGroup['dependency']) =>
+	async (groupParams: TFindGroup['param']) => {
+		const {
+			GroupModel,
+			errorUtil: { convertErrorToCustomError },
+		} = dependencies;
 
-import GroupModel from '@/model/group';
-import UserModel from '@/model/user';
+		try {
+			const groupInfo = await GroupModel.findOne({ where: groupParams });
 
-export const findGroup = async (
-	groupParams: Partial<{
-		userEmail: string;
-		accountBookId: number;
-		id: number;
-		userType: string;
-		accessHistory: Date;
-	}>,
-) => {
-	try {
-		const groupInfo = await GroupModel.findOne({ where: groupParams });
+			return groupInfo;
+		} catch (error) {
+			const customError = convertErrorToCustomError(error, {
+				trace: 'Repository',
+				code: 500,
+			});
+			throw customError;
+		}
+	};
 
-		return groupInfo;
-	} catch (error) {
-		const customError = convertErrorToCustomError(error, {
-			trace: 'Repository',
-			code: 500,
-		});
-		throw customError;
-	}
-};
+export const findGroupList =
+	(dependencies: TFindGroupList['dependency']) =>
+	async (info: TFindGroupList['param']) => {
+		const {
+			GroupModel,
+			UserModel,
+			errorUtil: { convertErrorToCustomError },
+		} = dependencies;
 
-export const findGroupList = async (info: { accountBookId: number }) => {
-	try {
-		const groupList = await GroupModel.findAll({
-			where: info,
-			include: {
-				model: UserModel,
-				as: 'users',
-				required: true,
-			},
-		});
+		try {
+			const groupList = await GroupModel.findAll({
+				where: info,
+				include: {
+					model: UserModel,
+					as: 'users',
+					required: true,
+				},
+			});
 
-		return groupList;
-	} catch (error) {
-		const customError = convertErrorToCustomError(error, {
-			trace: 'Repository',
-			code: 500,
-		});
-		throw customError;
-	}
-};
+			return groupList;
+		} catch (error) {
+			const customError = convertErrorToCustomError(error, {
+				trace: 'Repository',
+				code: 500,
+			});
+			throw customError;
+		}
+	};
 
-export const createGroupList = async (
-	groupInfoList: Array<{
-		userEmail: string;
-		userType: GroupModel['userType'];
-		accessHistory?: Date;
-		accountBookId: number;
-	}>,
-	transaction?: Transaction,
-) => {
-	try {
-		const groupList = await GroupModel.bulkCreate(groupInfoList, {
-			validate: true,
-			transaction,
-		});
+export const createGroupList =
+	(dependencies: TCreateGroupList['dependency']) =>
+	async (
+		groupInfoList: TCreateGroupList['param'][0],
+		transaction?: TCreateGroupList['param'][1],
+	) => {
+		const {
+			GroupModel,
+			errorUtil: { convertErrorToCustomError },
+		} = dependencies;
 
-		return groupList;
-	} catch (error) {
-		const customError = convertErrorToCustomError(error, {
-			trace: 'Repository',
-			code: 400,
-		});
-		throw customError;
-	}
-};
+		try {
+			const groupList = await GroupModel.bulkCreate(groupInfoList, {
+				validate: true,
+				transaction,
+			});
 
-export const createGroup = async (
-	groupInfo: {
-		userEmail: string;
-		userType: GroupModel['userType'];
-		accessHistory?: Date;
-		accountBookId: number;
-	},
-	transaction?: Transaction,
-) => {
-	try {
-		const group = await GroupModel.create(groupInfo, { transaction });
+			return groupList;
+		} catch (error) {
+			const customError = convertErrorToCustomError(error, {
+				trace: 'Repository',
+				code: 400,
+			});
+			throw customError;
+		}
+	};
 
-		return group;
-	} catch (error) {
-		const customError = convertErrorToCustomError(error, {
-			trace: 'Repository',
-			code: 400,
-		});
-		throw customError;
-	}
-};
+export const createGroup =
+	(dependencies: TCreateGroup['dependency']) =>
+	async (groupInfo: TCreateGroup['param'][0], transaction?: TCreateGroup['param'][1]) => {
+		const {
+			GroupModel,
+			errorUtil: { convertErrorToCustomError },
+		} = dependencies;
 
-export const updateGroup = async (
-	groupInfo: {
-		userEmail: string;
-		userType?: GroupModel['userType'];
-		accessHistory?: Date;
-		accountBookId: number;
-	},
-	transaction?: Transaction,
-) => {
-	try {
-		const { userEmail, accountBookId, ...updatedInfo } = groupInfo;
-		const group = await GroupModel.update(updatedInfo, {
-			where: { userEmail, accountBookId },
-			transaction,
-		});
+		try {
+			const group = await GroupModel.create(groupInfo, { transaction });
 
-		return group[0];
-	} catch (error) {
-		const customError = convertErrorToCustomError(error, {
-			trace: 'Repository',
-			code: 400,
-		});
-		throw customError;
-	}
-};
+			return group;
+		} catch (error) {
+			const customError = convertErrorToCustomError(error, {
+				trace: 'Repository',
+				code: 400,
+			});
+			throw customError;
+		}
+	};
 
-export const deleteGroup = async (
-	info: { id: number; accountBookId: number },
-	transaction?: Transaction,
-) => {
-	try {
-		const deleteCount = await GroupModel.destroy({ where: info, transaction });
+export const updateGroup =
+	(dependencies: TUpdateGroup['dependency']) =>
+	async (groupInfo: TUpdateGroup['param'][0], transaction?: TUpdateGroup['param'][1]) => {
+		const {
+			GroupModel,
+			errorUtil: { convertErrorToCustomError },
+		} = dependencies;
 
-		return deleteCount;
-	} catch (error) {
-		const customError = convertErrorToCustomError(error, {
-			trace: 'Repository',
-			code: 400,
-		});
-		throw customError;
-	}
-};
+		try {
+			const { userEmail, accountBookId, ...updatedInfo } = groupInfo;
+			const group = await GroupModel.update(updatedInfo, {
+				where: { userEmail, accountBookId },
+				transaction,
+			});
+
+			return group[0];
+		} catch (error) {
+			const customError = convertErrorToCustomError(error, {
+				trace: 'Repository',
+				code: 400,
+			});
+			throw customError;
+		}
+	};
+
+export const deleteGroup =
+	(dependencies: TDeleteGroup['dependency']) =>
+	async (info: TDeleteGroup['param'][0], transaction?: TDeleteGroup['param'][1]) => {
+		const {
+			GroupModel,
+			errorUtil: { convertErrorToCustomError },
+		} = dependencies;
+
+		try {
+			const deleteCount = await GroupModel.destroy({ where: info, transaction });
+
+			return deleteCount;
+		} catch (error) {
+			const customError = convertErrorToCustomError(error, {
+				trace: 'Repository',
+				code: 400,
+			});
+			throw customError;
+		}
+	};

@@ -5,7 +5,7 @@ import {
 	findOneAccountBook,
 	updateAccountBook,
 } from '@/repository/accountBookRepository/dependency';
-import { findGroup } from '@/repository/groupRepository';
+import { findGroup } from '@/repository/groupRepository/dependency';
 
 /** Util */
 import { CustomError } from '@/util/error/class';

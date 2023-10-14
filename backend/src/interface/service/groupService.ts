@@ -5,7 +5,7 @@ import {
 	findGroup,
 	findGroupList,
 	updateGroup,
-} from '@/repository/groupRepository';
+} from '@/repository/groupRepository/dependency';
 import { findUserInfo } from '@/repository/userRepository';
 
 /** ETC */

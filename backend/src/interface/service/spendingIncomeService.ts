@@ -11,7 +11,7 @@ import {
 	findGAB as findFixedGAB,
 	updateColumn as updateFColumn,
 } from '@/repository/cronGroupAccountBookRepository/dependency';
-import { findGroup } from '@/repository/groupRepository';
+import { findGroup } from '@/repository/groupRepository/dependency';
 
 /** Util */
 import { TErrorUtil } from '../util';

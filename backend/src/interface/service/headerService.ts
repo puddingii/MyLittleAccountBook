@@ -1,7 +1,7 @@
 /** Repository */
 import { createAccountBook } from '@/repository/accountBookRepository/dependency';
 import { createDefaultCategory } from '@/repository/categoryRepository/dependency';
-import { createGroupList } from '@/repository/groupRepository';
+import { createGroupList } from '@/repository/groupRepository/dependency';
 
 /** ETC */
 import sequelize from '@/loader/mysql';

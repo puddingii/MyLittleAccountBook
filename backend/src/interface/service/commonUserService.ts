@@ -1,5 +1,5 @@
 /** Repository */
-import { findGroup } from '@/repository/groupRepository';
+import { findGroup } from '@/repository/groupRepository/dependency';
 
 export type TGetCategory = {
 	dependency: {

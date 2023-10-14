@@ -3,7 +3,7 @@ import {
 	findOneAccountBook,
 	updateAccountBook,
 } from '@/repository/accountBookRepository/dependency';
-import { findGroup } from '@/repository/groupRepository';
+import { findGroup } from '@/repository/groupRepository/dependency';
 
 /** ETC */
 import { TErrorUtil } from '../util';
