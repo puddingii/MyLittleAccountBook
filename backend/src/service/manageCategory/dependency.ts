@@ -9,7 +9,7 @@ import {
 	updateCategory,
 } from '@/repository/categoryRepository/dependency';
 import { findGAB as findFGAB } from '@/repository/cronGroupAccountBookRepository/dependency';
-import { findGAB } from '@/repository/groupAccountBookRepository';
+import { findGAB } from '@/repository/groupAccountBookRepository/dependency';
 
 /** Util */
 import sequelize from '@/loader/mysql';

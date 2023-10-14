@@ -6,7 +6,7 @@ import {
 	deleteColumn as deleteNFColumn,
 	findGAB as findNotFixedGAB,
 	updateColumn as updateNFColumn,
-} from '@/repository/groupAccountBookRepository';
+} from '@/repository/groupAccountBookRepository/dependency';
 import {
 	createNewColumn as createNewFColumn,
 	deleteColumn as deleteFColumn,

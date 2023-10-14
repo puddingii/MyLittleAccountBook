@@ -2,7 +2,7 @@ import * as Logic from '.';
 
 /** Repository */
 import { findRecursiveCategoryList } from '@/repository/categoryRepository/dependency';
-import { findAllNotFixedColumn } from '@/repository/groupAccountBookRepository';
+import { findAllNotFixedColumn } from '@/repository/groupAccountBookRepository/dependency';
 import { findAllFixedColumn } from '@/repository/cronGroupAccountBookRepository/dependency';
 
 /** Util */
