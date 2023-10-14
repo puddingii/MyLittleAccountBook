@@ -9,6 +9,7 @@ import OAuthUserModel from '@/model/oauthUser';
 
 import { convertErrorToCustomError } from '@/util/error';
 import defaultCategory from '@/json/defaultCategory.json';
+import sequelize from '@/loader/mysql';
 
 export const createSocialUser = Logic.createSocialUser({
 	AccountBookModel,
@@ -16,6 +17,7 @@ export const createSocialUser = Logic.createSocialUser({
 	defaultCategory,
 	UserModel,
 	errorUtil: { convertErrorToCustomError },
+	sequelize,
 });
 
 export const createEmailUser = Logic.createEmailUser({

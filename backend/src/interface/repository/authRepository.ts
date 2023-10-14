@@ -12,6 +12,7 @@ import { TErrorUtil } from '../util';
 
 /** ETC */
 import defaultCategory from '@/json/defaultCategory.json';
+import sequelize from '@/loader/mysql';
 import { TSocialType } from '../auth';
 import { TUserInfo } from '../user';
 
@@ -31,6 +32,7 @@ export type TCreateSocialUser = {
 		CategoryModel: typeof CategoryModel;
 		UserModel: typeof UserModel;
 		defaultCategory: typeof defaultCategory;
+		sequelize: typeof sequelize;
 	};
 	param: { userInfo: { nickname: string; email: string }; socialType: TSocialType };
 };

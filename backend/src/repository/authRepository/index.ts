@@ -13,7 +13,6 @@ import {
 } from '@/interface/repository/authRepository';
 
 /** ETC.. */
-import sequelize from '@/loader/mysql';
 import secret from '@/config/secret';
 
 /** 새로운 계정에 대한 새로운 가계부, 그룹, 카테고리 생성 */
@@ -80,6 +79,7 @@ export const createSocialUser =
 			defaultCategory,
 			errorUtil: { convertErrorToCustomError },
 			UserModel,
+			sequelize,
 		} = dependencies;
 
 		try {
