@@ -1,5 +1,5 @@
 /** Repository */
-import { findRecursiveCategoryList } from '@/repository/categoryRepository';
+import { findRecursiveCategoryList } from '@/repository/categoryRepository/dependency';
 import { findAllNotFixedColumn } from '@/repository/groupAccountBookRepository';
 import { findAllFixedColumn } from '@/repository/cronGroupAccountBookRepository';
 

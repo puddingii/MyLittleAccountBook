@@ -5,7 +5,7 @@ import {
 	findCategory,
 	findCategoryList,
 	updateCategory,
-} from '@/repository/categoryRepository';
+} from '@/repository/categoryRepository/dependency';
 import { findGAB as findFGAB } from '@/repository/cronGroupAccountBookRepository';
 import { findGAB } from '@/repository/groupAccountBookRepository';
 

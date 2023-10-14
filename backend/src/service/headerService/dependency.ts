@@ -2,7 +2,7 @@ import * as Logic from '.';
 
 /** Repository */
 import { createAccountBook } from '@/repository/accountBookRepository/dependency';
-import { createDefaultCategory } from '@/repository/categoryRepository';
+import { createDefaultCategory } from '@/repository/categoryRepository/dependency';
 import { createGroupList } from '@/repository/groupRepository';
 
 /** Util */
