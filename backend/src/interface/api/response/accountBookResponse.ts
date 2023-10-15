@@ -1,5 +1,7 @@
 import { TResponseType } from '@/interface/api/response';
 import { TCycleType } from '@/interface/user';
+import CronGroupAccountBookModel from '@/model/cronGroupAccountBook';
+import GroupAccountBookModel from '@/model/groupAccountBook';
 
 export type TPostColumn = TResponseType<{ newId: number }>;
 export type TDeleteColumn = TResponseType<{}>;
@@ -9,7 +11,7 @@ type TNotFixedList = Array<{
 	gabId: number;
 	nickname: string;
 	category: string;
-	type: string;
+	type: GroupAccountBookModel['type'];
 	spendingAndIncomeDate: Date;
 	value: number;
 	content?: string;
@@ -19,7 +21,7 @@ type TFixedList = Array<{
 	gabId: number;
 	nickname: string;
 	category: string;
-	type: string;
+	type: CronGroupAccountBookModel['type'];
 	cycleType: TCycleType;
 	cycleTime: number;
 	needToUpdateDate: Date;
