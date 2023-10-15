@@ -1,12 +1,6 @@
 /** Library */
 import dayjs from 'dayjs';
 
-import {
-	getCategory,
-	getFixedColumnList,
-	getNotFixedColumnList,
-} from '../common/accountBook/dependency';
-
 /** Interface */
 import { TGetSummary } from '@/interface/api/response/accountBookResponse';
 import { TGetDefaultInfo } from '@/interface/service/thisMonthSummaryService';
@@ -63,6 +57,7 @@ export const getDefaultInfo =
 	async (info: TGetDefaultInfo['param']) => {
 		const {
 			errorUtil: { convertErrorToCustomError },
+			service: { getCategory, getFixedColumnList, getNotFixedColumnList },
 		} = dependencies;
 
 		try {
