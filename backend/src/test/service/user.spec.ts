@@ -114,8 +114,7 @@ describe('User Service Test', function () {
 			});
 
 			try {
-				const result = await injectedFunc({ ...userInfo });
-				console.log(result);
+				await injectedFunc({ ...userInfo });
 				fail(
 					`Repository or DB Error. The result does not match the user's nickname or email: ${8}`,
 				);
