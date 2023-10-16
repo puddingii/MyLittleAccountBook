@@ -23,7 +23,8 @@ export const getCategory =
 			const categoryList = await findRecursiveCategoryList(accountBookId, depth);
 
 			const filteredList = categoryList.map(category => {
-				const parentName = category.categoryNamePath.split(' > ')[0];
+				const parent = category.categoryNamePath.split(' > ');
+				const parentName = parent.at(-2) ?? parent[0];
 				return {
 					parentId: category.parentId,
 					childId: category.id,
