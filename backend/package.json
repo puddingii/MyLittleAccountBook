@@ -10,7 +10,8 @@
 		"dev:start": "cross-env NODE_ENV=development nodemon --config ./nodemon.json src/index.ts",
 		"dev:tscheck": "tsc-watch",
 		"dev:test": "cross-env NODE_ENV=development mocha",
-		"w": "node ./tsconfig-paths-bootstrap.js"
+		"w": "node ./tsconfig-paths-bootstrap.js",
+		"coverage": "nyc --reporter=text mocha"
 	},
 	"author": "",
 	"license": "MIT",
@@ -38,6 +39,7 @@
 		"zod": "^3.21.4"
 	},
 	"devDependencies": {
+		"@istanbuljs/nyc-config-typescript": "^1.0.2",
 		"@types/bcrypt": "^5.0.0",
 		"@types/cookie-parser": "^1.4.3",
 		"@types/cors": "^2.8.13",
@@ -60,6 +62,7 @@
 		"eslint-plugin-sort-class-members": "^1.18.0",
 		"mocha": "^10.2.0",
 		"nodemon": "^3.0.1",
+		"nyc": "^15.1.0",
 		"prettier": "^3.0.0",
 		"sinon": "^16.1.0",
 		"ts-node": "^10.9.1",
