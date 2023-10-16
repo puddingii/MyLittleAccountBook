@@ -8,5 +8,5 @@
 		"src/test"
 	],
 	"exit": true,
-	"parallel": true
+	"parallel": false
 }

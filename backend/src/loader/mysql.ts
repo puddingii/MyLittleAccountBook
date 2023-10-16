@@ -6,6 +6,8 @@ import { logger } from '@/util';
 import secret from '@/config/secret';
 import { convertErrorToCustomError } from '@/util/error';
 
+import { TModelInfo } from '@/interface/model';
+
 const { databaseName, host, pw, username } = secret.mysql;
 
 const sequelize = new Sequelize(databaseName, username, pw, {
@@ -26,7 +28,7 @@ const getModelList = async () => {
 	const modelInfoList = await Promise.all(importList);
 
 	const associateList = modelInfoList.map(modelInfo => modelInfo.associate);
-	const modelList = modelInfoList.reduce((acc, cur) => {
+	const modelList: TModelInfo = modelInfoList.reduce((acc, cur) => {
 		const key = cur.default.name;
 		return { ...acc, [key]: cur.default };
 	}, {});

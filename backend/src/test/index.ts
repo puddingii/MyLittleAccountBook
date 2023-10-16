@@ -1,9 +1,14 @@
+/* eslint-disable import/no-extraneous-dependencies */
 import sinon from 'sinon';
-// import { sync } from '@/loader/mysql';
+import { sync, closeConnection } from '@/loader/mysql';
 
-// (async () => {
-// 	await sync();
-// })();
+export const mochaGlobalSetup = async () => {
+	await sync();
+};
+
+export const mochaGlobalTeardown = async () => {
+	await closeConnection();
+};
 
 export const mochaHooks = {
 	afterEach() {
