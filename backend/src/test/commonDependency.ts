@@ -1,4 +1,5 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
+import GroupModel from '@/model/group';
 import { CustomError } from '@/util/error/class';
 import { TContext } from '@/util/error/class/interface';
 
@@ -57,4 +58,11 @@ export const jwtUtil = {
 	verifyAllError(info: { refreshToken: string; accessToken: string }) {
 		throw new Error('error');
 	},
+};
+
+export const validationUtil = {
+	isAdminUserTrue: (userType: GroupModel['userType']) => true,
+	isAdminUserFalse: (userType: GroupModel['userType']) => false,
+	canUserWriteTrue: (userType: GroupModel['userType']) => true,
+	canUserWriteFalse: (userType: GroupModel['userType']) => false,
 };
