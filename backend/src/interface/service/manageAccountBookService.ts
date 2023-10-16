@@ -6,7 +6,7 @@ import {
 import { findGroup } from '@/repository/groupRepository/dependency';
 
 /** ETC */
-import { TErrorUtil } from '../util';
+import { TErrorUtil, TValidationUtil } from '../util';
 
 export type TGetAccountBookInfo = {
 	dependency: {
@@ -26,6 +26,7 @@ export type TGetAccountBookInfo = {
 export type TUpdateAccountBookInfo = {
 	dependency: {
 		errorUtil: Pick<TErrorUtil, 'convertErrorToCustomError' | 'CustomError'>;
+		validationUtil: Pick<TValidationUtil, 'isAdminUser'>;
 		repository: {
 			findGroup: typeof findGroup;
 			updateAccountBook: typeof updateAccountBook;

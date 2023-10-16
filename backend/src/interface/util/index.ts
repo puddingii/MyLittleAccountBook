@@ -10,6 +10,7 @@ import {
 } from '@/util/jwt';
 
 import { setCache, deleteCache, getCache } from '@/util/cache';
+import { isAdminUser, canUserWrite } from '@/util/validation/user';
 
 export type TErrorUtil = {
 	convertErrorToCustomError: typeof convertErrorToCustomError;
@@ -28,4 +29,9 @@ export type TJwtUtil = {
 	decodeToken: typeof decodeToken;
 	isExpiredToken: typeof isExpiredToken;
 	verifyAll: typeof verifyAll;
+};
+
+export type TValidationUtil = {
+	isAdminUser: typeof isAdminUser;
+	canUserWrite: typeof canUserWrite;
 };

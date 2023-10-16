@@ -1,8 +1,5 @@
 /** Library */
 
-/** Sub Service */
-import { isAdminUser } from '../common/user';
-
 /** Interface */
 import {
 	TGetAccountBookInfo,
@@ -46,6 +43,7 @@ export const updateAccountBookInfo =
 	async (info: TUpdateAccountBookInfo['param']) => {
 		const {
 			errorUtil: { convertErrorToCustomError, CustomError },
+			validationUtil: { isAdminUser },
 			repository: { findGroup, updateAccountBook },
 		} = dependencies;
 

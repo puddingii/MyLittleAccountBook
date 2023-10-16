@@ -9,7 +9,7 @@ import {
 import { findUserInfo } from '@/repository/userRepository/dependency';
 
 /** ETC */
-import { TErrorUtil } from '../util';
+import { TErrorUtil, TValidationUtil } from '../util';
 import GroupModel from '@/model/group';
 
 export type TValidateGroupUser = {
@@ -35,6 +35,7 @@ export type TGetGroupList = {
 export type TAddGroup = {
 	dependency: {
 		errorUtil: Pick<TErrorUtil, 'convertErrorToCustomError'>;
+		validationUtil: Pick<TValidationUtil, 'isAdminUser'>;
 		repository: {
 			findGroup: typeof findGroup;
 			createGroup: typeof createGroup;
@@ -53,6 +54,7 @@ export type TAddGroup = {
 export type TUpdateGroupInfo = {
 	dependency: {
 		errorUtil: Pick<TErrorUtil, 'convertErrorToCustomError' | 'CustomError'>;
+		validationUtil: Pick<TValidationUtil, 'isAdminUser'>;
 		repository: {
 			findGroup: typeof findGroup;
 			updateGroup: typeof updateGroup;
@@ -70,6 +72,7 @@ export type TUpdateGroupInfo = {
 export type TDeleteGroupUser = {
 	dependency: {
 		errorUtil: Pick<TErrorUtil, 'convertErrorToCustomError' | 'CustomError'>;
+		validationUtil: Pick<TValidationUtil, 'isAdminUser'>;
 		repository: {
 			findGroup: typeof findGroup;
 			deleteGroup: typeof deleteGroup;

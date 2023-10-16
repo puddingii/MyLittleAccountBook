@@ -1,8 +1,5 @@
 /** Library */
 
-/** Sub Service */
-import { isAdminUser } from '../common/user';
-
 /** Interface */
 import {
 	TAddGroup,
@@ -66,6 +63,7 @@ export const addGroup =
 	(dependencies: TAddGroup['dependency']) => async (info: TAddGroup['param']) => {
 		const {
 			errorUtil: { convertErrorToCustomError },
+			validationUtil: { isAdminUser },
 			repository: { createGroup, findGroup, findUserInfo },
 		} = dependencies;
 
@@ -105,6 +103,7 @@ export const updateGroupInfo =
 	async (info: TUpdateGroupInfo['param']) => {
 		const {
 			errorUtil: { convertErrorToCustomError, CustomError },
+			validationUtil: { isAdminUser },
 			repository: { findGroup, updateGroup },
 		} = dependencies;
 
@@ -139,6 +138,7 @@ export const deleteGroupUser =
 	async (info: TDeleteGroupUser['param']) => {
 		const {
 			errorUtil: { convertErrorToCustomError, CustomError },
+			validationUtil: { isAdminUser },
 			repository: { findGroup, deleteGroup },
 		} = dependencies;
 
