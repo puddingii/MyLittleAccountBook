@@ -10,7 +10,10 @@ import {
 
 export const findGAB =
 	(dependencies: TFindGAB['dependency']) =>
-	async (gabInfo: TFindGAB['param'][0], options?: TFindGAB['param'][1]) => {
+	async (
+		gabInfo: TFindGAB['param'][0],
+		options?: TFindGAB['param'][1],
+	): Promise<InstanceType<typeof GroupAccountBookModel> | undefined> => {
 		const {
 			GroupAccountBookModel,
 			GroupModel,

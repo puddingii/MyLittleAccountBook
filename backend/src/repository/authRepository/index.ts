@@ -156,7 +156,9 @@ export const createEmailUser =
 /** 유저 찾기 */
 export const findOneUser =
 	(dependencies: TFindOneUser['dependency']) =>
-	async (userInfo: TFindOneUser['param']) => {
+	async (
+		userInfo: TFindOneUser['param'],
+	): Promise<InstanceType<typeof UserModel> | undefined> => {
 		const {
 			GroupModel,
 			UserModel,
@@ -192,7 +194,7 @@ export const findOneSocialUserInfo =
 	async (
 		userInfo: TFindOneSocialUserInfo['param'][0],
 		socialType: TFindOneSocialUserInfo['param'][1],
-	) => {
+	): Promise<InstanceType<typeof UserModel> | undefined> => {
 		const {
 			GroupModel,
 			UserModel,
