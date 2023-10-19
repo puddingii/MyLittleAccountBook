@@ -96,7 +96,7 @@ export const createSocialUser =
 
 				await transaction.commit();
 
-				return { accountBookId: accountBook.id };
+				return { accountBookId: accountBook.id, newUser };
 			} catch (error) {
 				await transaction.rollback();
 				throw error;

@@ -74,7 +74,7 @@ export const emailLogin =
 			const user = await findOneUser({ email });
 
 			/** 유저 계정이 없는 경우 */
-			if (user === null) {
+			if (!user) {
 				throw new Error('없는 계정입니다. 회원가입 후 이용해주세요.');
 			}
 			/** 비밀번호가 없는 경우는 소셜 로그인 계정 */
@@ -149,7 +149,7 @@ const socialLogin = async (
 		type,
 	} = info;
 
-	const user = await findOneSocialUserInfo({ email }, type);
+	let user = await findOneSocialUserInfo({ email }, type);
 	/**
 	 * 1. User Table O, OAuth Table O => Login
 	 * 2. User Table O, OAuth Table X => Email Login Required
@@ -164,11 +164,12 @@ const socialLogin = async (
 	if (user) {
 		accountBookId = (user.groups ?? [])[0].accountBookId;
 	} else {
-		const { accountBookId: newAccountBookId } = await createSocialUser({
+		const { accountBookId: newAccountBookId, newUser } = await createSocialUser({
 			userInfo: info.user,
 			socialType: type,
 		});
 		accountBookId = newAccountBookId;
+		user = newUser;
 	}
 
 	const refreshToken = createRefreshToken();
