@@ -1,14 +1,6 @@
 /** Library */
 import dayjs from 'dayjs';
 
-/** Sub Service */
-import {
-	getCategory,
-	getFixedColumnList,
-	getNotFixedColumnList,
-} from '../common/accountBook/dependency';
-import { checkAdminGroupUser } from '../common/user/dependency';
-
 /** Interface */
 import { TGet } from '@/interface/api/response/accountBookResponse';
 import {
@@ -96,6 +88,7 @@ export const updateFixedColumn =
 	async (info: TUpdateFixedColumn['param']) => {
 		const {
 			errorUtil: { convertErrorToCustomError, CustomError },
+			service: { checkAdminGroupUser },
 			repository: { findFixedGAB, updateFColumn },
 		} = dependencies;
 
@@ -135,6 +128,7 @@ export const updateNotFixedColumn =
 	async (info: TUpdateNotFixedColumn['param']) => {
 		const {
 			errorUtil: { convertErrorToCustomError, CustomError },
+			service: { checkAdminGroupUser },
 			repository: { findNotFixedGAB, updateNFColumn },
 		} = dependencies;
 
@@ -171,6 +165,7 @@ export const deleteFixedColumn =
 	async (info: TDeleteFixedColumn['param']) => {
 		const {
 			errorUtil: { convertErrorToCustomError, CustomError },
+			service: { checkAdminGroupUser },
 			repository: { findFixedGAB, deleteFColumn },
 		} = dependencies;
 
@@ -207,6 +202,7 @@ export const deleteNotFixedColumn =
 	async (info: TDeleteNotFixedColumn['param']) => {
 		const {
 			errorUtil: { convertErrorToCustomError, CustomError },
+			service: { checkAdminGroupUser },
 			repository: { findNotFixedGAB, deleteNFColumn },
 		} = dependencies;
 
@@ -241,6 +237,7 @@ export const getDefaultInfo =
 	async (info: TGetDefaultInfo['param']) => {
 		const {
 			errorUtil: { convertErrorToCustomError },
+			service: { getCategory, getFixedColumnList, getNotFixedColumnList },
 		} = dependencies;
 
 		try {

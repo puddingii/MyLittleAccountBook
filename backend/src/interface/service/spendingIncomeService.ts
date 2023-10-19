@@ -13,6 +13,14 @@ import {
 } from '@/repository/cronGroupAccountBookRepository/dependency';
 import { findGroup } from '@/repository/groupRepository/dependency';
 
+/** Service */
+import {
+	getCategory,
+	getFixedColumnList,
+	getNotFixedColumnList,
+} from '@/service/common/accountBook/dependency';
+import { checkAdminGroupUser } from '@/service/common/user/dependency';
+
 /** Util */
 import { TErrorUtil } from '../util';
 
@@ -62,6 +70,7 @@ export type TCreateNewNotFixedColumn = {
 export type TUpdateFixedColumn = {
 	dependency: {
 		errorUtil: Pick<TErrorUtil, 'convertErrorToCustomError' | 'CustomError'>;
+		service: { checkAdminGroupUser: typeof checkAdminGroupUser };
 		repository: {
 			findFixedGAB: typeof findFixedGAB;
 			updateFColumn: typeof updateFColumn;
@@ -83,6 +92,7 @@ export type TUpdateFixedColumn = {
 export type TUpdateNotFixedColumn = {
 	dependency: {
 		errorUtil: Pick<TErrorUtil, 'convertErrorToCustomError' | 'CustomError'>;
+		service: { checkAdminGroupUser: typeof checkAdminGroupUser };
 		repository: {
 			findNotFixedGAB: typeof findNotFixedGAB;
 			updateNFColumn: typeof updateNFColumn;
@@ -102,6 +112,7 @@ export type TUpdateNotFixedColumn = {
 export type TDeleteFixedColumn = {
 	dependency: {
 		errorUtil: Pick<TErrorUtil, 'convertErrorToCustomError' | 'CustomError'>;
+		service: { checkAdminGroupUser: typeof checkAdminGroupUser };
 		repository: {
 			findFixedGAB: typeof findFixedGAB;
 			deleteFColumn: typeof deleteFColumn;
@@ -113,6 +124,7 @@ export type TDeleteFixedColumn = {
 export type TDeleteNotFixedColumn = {
 	dependency: {
 		errorUtil: Pick<TErrorUtil, 'convertErrorToCustomError' | 'CustomError'>;
+		service: { checkAdminGroupUser: typeof checkAdminGroupUser };
 		repository: {
 			findNotFixedGAB: typeof findNotFixedGAB;
 			deleteNFColumn: typeof deleteNFColumn;
@@ -124,6 +136,11 @@ export type TDeleteNotFixedColumn = {
 export type TGetDefaultInfo = {
 	dependency: {
 		errorUtil: Pick<TErrorUtil, 'convertErrorToCustomError'>;
+		service: {
+			getCategory: typeof getCategory;
+			getFixedColumnList: typeof getFixedColumnList;
+			getNotFixedColumnList: typeof getNotFixedColumnList;
+		};
 	};
 	param: {
 		accountBookId: number;
