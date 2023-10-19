@@ -13,7 +13,7 @@ export const errorUtil = {
 			code: number;
 		}>,
 	) => {
-		return new CustomError('에러', { code: 400 });
+		return new CustomError((error as Error).message, { code: 400 });
 	},
 	CustomError: CustomError,
 };
