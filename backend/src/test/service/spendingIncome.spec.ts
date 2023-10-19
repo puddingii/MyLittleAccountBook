@@ -1,7 +1,10 @@
+/* eslint-disable import/no-extraneous-dependencies */
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { AssertionError, equal, fail, ok } from 'assert';
+import sinon from 'sinon';
 
 /** Test */
+import dayjs from 'dayjs';
 import {
 	createNewFixedColumn,
 	createNewNotFixedColumn,
@@ -18,6 +21,20 @@ import {
 	getFixedColumnList,
 	getNotFixedColumnList,
 } from '@/service/common/accountBook/dependency';
+import {
+	createNewColumn as createNewFColumn,
+	deleteColumn as deleteFColumn,
+	findGAB as findFixedGAB,
+	updateColumn as updateFColumn,
+} from '@/repository/cronGroupAccountBookRepository/dependency';
+import {
+	createNewColumn as createNewNFColumn,
+	deleteColumn as deleteNFColumn,
+	findGAB as findNotFixedGAB,
+	updateColumn as updateNFColumn,
+} from '@/repository/groupAccountBookRepository/dependency';
+import { findGroup } from '@/repository/groupRepository/dependency';
+import { checkAdminGroupUser } from '@/service/common/user/dependency';
 
 /** Model */
 import GroupModel from '@/model/group';
@@ -26,7 +43,6 @@ import GroupAccountBookModel from '@/model/groupAccountBook';
 
 /** Interface */
 import { TColumnInfo } from '@/interface/model/cronGroupAccountBookRepository';
-import { findGAB } from '@/repository/groupAccountBookRepository/dependency';
 import { TGet } from '@/interface/api/response/accountBookResponse';
 
 describe('SpendingIncome Service Test', function () {
@@ -37,6 +53,9 @@ describe('SpendingIncome Service Test', function () {
 	};
 
 	describe('#createNewFixedColumn', function () {
+		const repository = { createNewFColumn, findGroup };
+		let stubFindGroup = sinon.stub(repository, 'findGroup');
+		let stubCreateNewFColumn = sinon.stub(repository, 'createNewFColumn');
 		const defaultGroupInfo = {
 			userEmail: 'test@naver.com',
 			userType: 'owner' as const,
@@ -54,25 +73,38 @@ describe('SpendingIncome Service Test', function () {
 			value: 100,
 			content: '내용',
 		};
-		it('Check owner user', async function () {
+
+		beforeEach(function () {
+			stubFindGroup = sinon.stub(repository, 'findGroup');
+			stubCreateNewFColumn = sinon.stub(repository, 'createNewFColumn');
+		});
+
+		it('Check owner user and correct value is passed to function', async function () {
+			stubFindGroup.resolves(new GroupModel({ ...defaultGroupInfo }));
+			stubCreateNewFColumn.resolves(1);
+
 			const injectedFunc = createNewFixedColumn({
 				...common,
-				repository: {
-					createNewFColumn: (columnInfo: Omit<TColumnInfo, 'id'>) => Promise.resolve(1),
-					findGroup: (
-						groupParams: Partial<{
-							userEmail: string;
-							accountBookId: number;
-							id: number;
-							userType: string;
-							accessHistory: Date;
-						}>,
-					) => Promise.resolve(new GroupModel({ ...defaultGroupInfo })),
-				},
+				repository,
 			});
 
 			try {
 				const result = await injectedFunc({ ...defaultColumnInfo });
+
+				sinon.assert.calledWith(stubFindGroup, {
+					accountBookId: defaultColumnInfo.accountBookId,
+					userEmail: defaultColumnInfo.userEmail,
+				});
+				sinon.assert.calledWith(stubCreateNewFColumn, {
+					categoryId: defaultColumnInfo.categoryId,
+					content: defaultColumnInfo.content,
+					cycleTime: defaultColumnInfo.cycleTime,
+					cycleType: defaultColumnInfo.cycleType,
+					groupId: defaultGroupInfo.id,
+					needToUpdateDate: dayjs(defaultColumnInfo.needToUpdateDate).toDate(),
+					type: defaultColumnInfo.type,
+					value: defaultColumnInfo.value,
+				});
 
 				equal(result, 1);
 			} catch (err) {
@@ -81,25 +113,21 @@ describe('SpendingIncome Service Test', function () {
 		});
 
 		it('Check manager user', async function () {
+			stubFindGroup.resolves(
+				new GroupModel({ ...defaultGroupInfo, userType: 'manager' }),
+			);
+			stubCreateNewFColumn.resolves(1);
+
 			const injectedFunc = createNewFixedColumn({
 				...common,
-				repository: {
-					createNewFColumn: (columnInfo: Omit<TColumnInfo, 'id'>) => Promise.resolve(1),
-					findGroup: (
-						groupParams: Partial<{
-							userEmail: string;
-							accountBookId: number;
-							id: number;
-							userType: string;
-							accessHistory: Date;
-						}>,
-					) =>
-						Promise.resolve(new GroupModel({ ...defaultGroupInfo, userType: 'manager' })),
-				},
+				repository,
 			});
 
 			try {
 				const result = await injectedFunc({ ...defaultColumnInfo });
+
+				sinon.assert.callCount(stubFindGroup, 1);
+				sinon.assert.callCount(stubCreateNewFColumn, 1);
 
 				equal(result, 1);
 			} catch (err) {
@@ -108,25 +136,19 @@ describe('SpendingIncome Service Test', function () {
 		});
 
 		it('Check writer user', async function () {
+			stubFindGroup.resolves(new GroupModel({ ...defaultGroupInfo, userType: 'writer' }));
+			stubCreateNewFColumn.resolves(1);
+
 			const injectedFunc = createNewFixedColumn({
 				...common,
-				repository: {
-					createNewFColumn: (columnInfo: Omit<TColumnInfo, 'id'>) => Promise.resolve(1),
-					findGroup: (
-						groupParams: Partial<{
-							userEmail: string;
-							accountBookId: number;
-							id: number;
-							userType: string;
-							accessHistory: Date;
-						}>,
-					) =>
-						Promise.resolve(new GroupModel({ ...defaultGroupInfo, userType: 'writer' })),
-				},
+				repository,
 			});
 
 			try {
 				const result = await injectedFunc({ ...defaultColumnInfo });
+
+				sinon.assert.callCount(stubFindGroup, 1);
+				sinon.assert.callCount(stubCreateNewFColumn, 1);
 
 				equal(result, 1);
 			} catch (err) {
@@ -135,23 +157,14 @@ describe('SpendingIncome Service Test', function () {
 		});
 
 		it('Check observer user', async function () {
+			stubFindGroup.resolves(
+				new GroupModel({ ...defaultGroupInfo, userType: 'observer' }),
+			);
+			stubCreateNewFColumn.resolves(1);
+
 			const injectedFunc = createNewFixedColumn({
 				...common,
-				repository: {
-					createNewFColumn: (columnInfo: Omit<TColumnInfo, 'id'>) => Promise.resolve(1),
-					findGroup: (
-						groupParams: Partial<{
-							userEmail: string;
-							accountBookId: number;
-							id: number;
-							userType: string;
-							accessHistory: Date;
-						}>,
-					) =>
-						Promise.resolve(
-							new GroupModel({ ...defaultGroupInfo, userType: 'observer' }),
-						),
-				},
+				repository,
 			});
 
 			try {
@@ -162,25 +175,18 @@ describe('SpendingIncome Service Test', function () {
 				if (err instanceof AssertionError) {
 					fail(err);
 				}
-				ok(true);
+				sinon.assert.callCount(stubFindGroup, 1);
+				sinon.assert.callCount(stubCreateNewFColumn, 0);
 			}
 		});
 
 		it('Check not existing group', async function () {
+			stubFindGroup.resolves(null);
+			stubCreateNewFColumn.resolves(1);
+
 			const injectedFunc = createNewFixedColumn({
 				...common,
-				repository: {
-					createNewFColumn: (columnInfo: Omit<TColumnInfo, 'id'>) => Promise.resolve(1),
-					findGroup: (
-						groupParams: Partial<{
-							userEmail: string;
-							accountBookId: number;
-							id: number;
-							userType: string;
-							accessHistory: Date;
-						}>,
-					) => Promise.resolve(null),
-				},
+				repository,
 			});
 
 			try {
@@ -189,14 +195,62 @@ describe('SpendingIncome Service Test', function () {
 				fail('Expected to error that group is not found.');
 			} catch (err) {
 				if (err instanceof AssertionError) {
-					fail(err);
+					return fail(err);
 				}
-				ok(true);
+				sinon.assert.callCount(stubFindGroup, 1);
+				sinon.assert.callCount(stubCreateNewFColumn, 0);
+			}
+		});
+
+		it('If findGroup is error', async function () {
+			stubFindGroup.rejects('findGroup error');
+			stubCreateNewFColumn.resolves(1);
+
+			const injectedFunc = createNewFixedColumn({
+				...common,
+				repository,
+			});
+
+			try {
+				await injectedFunc({ ...defaultColumnInfo });
+
+				fail('Expected to error that group is not found.');
+			} catch (err) {
+				if (err instanceof AssertionError) {
+					return fail(err);
+				}
+				sinon.assert.callCount(stubFindGroup, 1);
+				sinon.assert.callCount(stubCreateNewFColumn, 0);
+			}
+		});
+
+		it('If createNewFColumn is error', async function () {
+			stubFindGroup.resolves(new GroupModel({ ...defaultGroupInfo }));
+			stubCreateNewFColumn.rejects('findGroup error');
+
+			const injectedFunc = createNewFixedColumn({
+				...common,
+				repository,
+			});
+
+			try {
+				await injectedFunc({ ...defaultColumnInfo });
+
+				fail('Expected to error that group is not found.');
+			} catch (err) {
+				if (err instanceof AssertionError) {
+					return fail(err);
+				}
+				sinon.assert.callCount(stubFindGroup, 1);
+				sinon.assert.callCount(stubCreateNewFColumn, 1);
 			}
 		});
 	});
 
 	describe('#createNewNotFixedColumn', function () {
+		const repository = { createNewNFColumn, findGroup };
+		let stubFindGroup = sinon.stub(repository, 'findGroup');
+		let stubCreateNewNFColumn = sinon.stub(repository, 'createNewNFColumn');
 		const defaultGroupInfo = {
 			userEmail: 'test@naver.com',
 			userType: 'owner' as const,
@@ -212,32 +266,36 @@ describe('SpendingIncome Service Test', function () {
 			value: 100,
 			content: '내용',
 		};
-		it('Check owner user', async function () {
+
+		beforeEach(function () {
+			stubFindGroup = sinon.stub(repository, 'findGroup');
+			stubCreateNewNFColumn = sinon.stub(repository, 'createNewNFColumn');
+		});
+
+		it('Check owner user and correct value is passed to function', async function () {
+			stubFindGroup.resolves(new GroupModel({ ...defaultGroupInfo }));
+			stubCreateNewNFColumn.resolves(1);
+
 			const injectedFunc = createNewNotFixedColumn({
 				...common,
-				repository: {
-					createNewNFColumn: (columnInfo: {
-						categoryId: number;
-						spendingAndIncomeDate: Date;
-						value: number;
-						content?: string | undefined;
-						groupId: number;
-						type: 'income' | 'spending';
-					}) => Promise.resolve(1),
-					findGroup: (
-						groupParams: Partial<{
-							userEmail: string;
-							accountBookId: number;
-							id: number;
-							userType: string;
-							accessHistory: Date;
-						}>,
-					) => Promise.resolve(new GroupModel({ ...defaultGroupInfo })),
-				},
+				repository,
 			});
 
 			try {
 				const result = await injectedFunc({ ...defaultColumnInfo });
+
+				sinon.assert.calledWith(stubFindGroup, {
+					accountBookId: defaultColumnInfo.accountBookId,
+					userEmail: defaultColumnInfo.userEmail,
+				});
+				sinon.assert.calledWith(stubCreateNewNFColumn, {
+					categoryId: defaultColumnInfo.categoryId,
+					content: defaultColumnInfo.content,
+					groupId: defaultGroupInfo.id,
+					spendingAndIncomeDate: dayjs(defaultColumnInfo.spendingAndIncomeDate).toDate(),
+					type: defaultColumnInfo.type,
+					value: defaultColumnInfo.value,
+				});
 
 				equal(result, 1);
 			} catch (err) {
@@ -246,32 +304,21 @@ describe('SpendingIncome Service Test', function () {
 		});
 
 		it('Check manager user', async function () {
+			stubFindGroup.resolves(
+				new GroupModel({ ...defaultGroupInfo, userType: 'manager' }),
+			);
+			stubCreateNewNFColumn.resolves(1);
+
 			const injectedFunc = createNewNotFixedColumn({
 				...common,
-				repository: {
-					createNewNFColumn: (columnInfo: {
-						categoryId: number;
-						spendingAndIncomeDate: Date;
-						value: number;
-						content?: string | undefined;
-						groupId: number;
-						type: 'income' | 'spending';
-					}) => Promise.resolve(1),
-					findGroup: (
-						groupParams: Partial<{
-							userEmail: string;
-							accountBookId: number;
-							id: number;
-							userType: string;
-							accessHistory: Date;
-						}>,
-					) =>
-						Promise.resolve(new GroupModel({ ...defaultGroupInfo, userType: 'manager' })),
-				},
+				repository,
 			});
 
 			try {
 				const result = await injectedFunc({ ...defaultColumnInfo });
+
+				sinon.assert.callCount(stubFindGroup, 1);
+				sinon.assert.callCount(stubCreateNewNFColumn, 1);
 
 				equal(result, 1);
 			} catch (err) {
@@ -280,32 +327,19 @@ describe('SpendingIncome Service Test', function () {
 		});
 
 		it('Check writer user', async function () {
+			stubFindGroup.resolves(new GroupModel({ ...defaultGroupInfo, userType: 'writer' }));
+			stubCreateNewNFColumn.resolves(1);
+
 			const injectedFunc = createNewNotFixedColumn({
 				...common,
-				repository: {
-					createNewNFColumn: (columnInfo: {
-						categoryId: number;
-						spendingAndIncomeDate: Date;
-						value: number;
-						content?: string | undefined;
-						groupId: number;
-						type: 'income' | 'spending';
-					}) => Promise.resolve(1),
-					findGroup: (
-						groupParams: Partial<{
-							userEmail: string;
-							accountBookId: number;
-							id: number;
-							userType: string;
-							accessHistory: Date;
-						}>,
-					) =>
-						Promise.resolve(new GroupModel({ ...defaultGroupInfo, userType: 'writer' })),
-				},
+				repository,
 			});
 
 			try {
 				const result = await injectedFunc({ ...defaultColumnInfo });
+
+				sinon.assert.callCount(stubFindGroup, 1);
+				sinon.assert.callCount(stubCreateNewNFColumn, 1);
 
 				equal(result, 1);
 			} catch (err) {
@@ -314,30 +348,14 @@ describe('SpendingIncome Service Test', function () {
 		});
 
 		it('Check observer user', async function () {
+			stubFindGroup.resolves(
+				new GroupModel({ ...defaultGroupInfo, userType: 'observer' }),
+			);
+			stubCreateNewNFColumn.resolves(1);
+
 			const injectedFunc = createNewNotFixedColumn({
 				...common,
-				repository: {
-					createNewNFColumn: (columnInfo: {
-						categoryId: number;
-						spendingAndIncomeDate: Date;
-						value: number;
-						content?: string | undefined;
-						groupId: number;
-						type: 'income' | 'spending';
-					}) => Promise.resolve(1),
-					findGroup: (
-						groupParams: Partial<{
-							userEmail: string;
-							accountBookId: number;
-							id: number;
-							userType: string;
-							accessHistory: Date;
-						}>,
-					) =>
-						Promise.resolve(
-							new GroupModel({ ...defaultGroupInfo, userType: 'observer' }),
-						),
-				},
+				repository,
 			});
 
 			try {
@@ -348,32 +366,18 @@ describe('SpendingIncome Service Test', function () {
 				if (err instanceof AssertionError) {
 					fail(err);
 				}
-				ok(true);
+				sinon.assert.callCount(stubFindGroup, 1);
+				sinon.assert.callCount(stubCreateNewNFColumn, 0);
 			}
 		});
 
 		it('Check not existing group', async function () {
+			stubFindGroup.resolves(null);
+			stubCreateNewNFColumn.resolves(1);
+
 			const injectedFunc = createNewNotFixedColumn({
 				...common,
-				repository: {
-					createNewNFColumn: (columnInfo: {
-						categoryId: number;
-						spendingAndIncomeDate: Date;
-						value: number;
-						content?: string | undefined;
-						groupId: number;
-						type: 'income' | 'spending';
-					}) => Promise.resolve(1),
-					findGroup: (
-						groupParams: Partial<{
-							userEmail: string;
-							accountBookId: number;
-							id: number;
-							userType: string;
-							accessHistory: Date;
-						}>,
-					) => Promise.resolve(null),
-				},
+				repository,
 			});
 
 			try {
@@ -384,12 +388,62 @@ describe('SpendingIncome Service Test', function () {
 				if (err instanceof AssertionError) {
 					fail(err);
 				}
-				ok(true);
+				sinon.assert.callCount(stubFindGroup, 1);
+				sinon.assert.callCount(stubCreateNewNFColumn, 0);
+			}
+		});
+
+		it('If findGroup is error', async function () {
+			stubFindGroup.rejects('findGroup error');
+			stubCreateNewNFColumn.resolves(1);
+
+			const injectedFunc = createNewNotFixedColumn({
+				...common,
+				repository,
+			});
+
+			try {
+				await injectedFunc({ ...defaultColumnInfo });
+
+				fail('Expected to error that group is not found.');
+			} catch (err) {
+				if (err instanceof AssertionError) {
+					return fail(err);
+				}
+				sinon.assert.callCount(stubFindGroup, 1);
+				sinon.assert.callCount(stubCreateNewNFColumn, 0);
+			}
+		});
+
+		it('If createNewNFColumn is error', async function () {
+			stubFindGroup.resolves(new GroupModel({ ...defaultGroupInfo }));
+			stubCreateNewNFColumn.rejects('findGroup error');
+
+			const injectedFunc = createNewNotFixedColumn({
+				...common,
+				repository,
+			});
+
+			try {
+				await injectedFunc({ ...defaultColumnInfo });
+
+				fail('Expected to error that group is not found.');
+			} catch (err) {
+				if (err instanceof AssertionError) {
+					return fail(err);
+				}
+				sinon.assert.callCount(stubFindGroup, 1);
+				sinon.assert.callCount(stubCreateNewNFColumn, 1);
 			}
 		});
 	});
 
 	describe('#updateFixedColumn', function () {
+		const repository = { findFixedGAB, updateFColumn };
+		const service = { checkAdminGroupUser };
+		let stubFindFixedGAB = sinon.stub(repository, 'findFixedGAB');
+		let stubUpdateFColumn = sinon.stub(repository, 'updateFColumn');
+		let stubCheckAdminGroupUser = sinon.stub(service, 'checkAdminGroupUser');
 		const defaultColumnInfo = {
 			accountBookId: 1,
 			categoryId: 1,
@@ -406,27 +460,63 @@ describe('SpendingIncome Service Test', function () {
 			accountBookId: 1,
 		};
 
-		it('If column is deleted in the past', async function () {
+		beforeEach(function () {
+			stubFindFixedGAB = sinon.stub(repository, 'findFixedGAB');
+			stubUpdateFColumn = sinon.stub(repository, 'updateFColumn');
+			stubCheckAdminGroupUser = sinon.stub(service, 'checkAdminGroupUser');
+		});
+
+		it('Check function parameters', async function () {
+			const cgabJoinGroup = new CronGroupAccountBookModel({ ...defaultColumnInfo });
+			const group = new GroupModel({ ...defaultOwnerGroupInfo });
+			cgabJoinGroup.groups = group;
+			const requestUserInfo = {
+				userEmail: 'test2@naver.com',
+				userType: 'owner' as const,
+				accountBookId: 1,
+			};
+
+			stubFindFixedGAB.resolves(cgabJoinGroup);
+			stubUpdateFColumn.resolves();
+			stubCheckAdminGroupUser.resolves(new GroupModel({ ...requestUserInfo }));
+
 			const injectedFunc = updateFixedColumn({
 				errorUtil: { ...common.errorUtil, CustomError: errorUtil.CustomError },
-				service: {
-					checkAdminGroupUser: (info: { userEmail: string; accountBookId: number }) =>
-						Promise.resolve(new GroupModel({ ...defaultOwnerGroupInfo })),
-				},
-				repository: {
-					findFixedGAB: (
-						gabInfo: Partial<TColumnInfo>,
-						options?: {
-							isIncludeGroup: boolean;
-						},
-					) => {
-						return Promise.resolve(undefined);
-					},
-					updateFColumn: (
-						column: CronGroupAccountBookModel,
-						columnInfo: Partial<Omit<TColumnInfo, 'id' | 'groupId'>>,
-					) => Promise.resolve(),
-				},
+				service,
+				repository,
+			});
+
+			try {
+				await injectedFunc({
+					...defaultColumnInfo,
+					id: 1,
+					needToUpdateDate: '2022-02-02',
+					userEmail: requestUserInfo.userEmail,
+				});
+
+				sinon.assert.calledWith(stubFindFixedGAB, { id: 1 }, { isIncludeGroup: true });
+				sinon.assert.calledWith(stubUpdateFColumn, cgabJoinGroup, {
+					...defaultColumnInfo,
+					needToUpdateDate: dayjs('2022-02-02').toDate(),
+				});
+				sinon.assert.calledWith(stubCheckAdminGroupUser, {
+					userEmail: requestUserInfo.userEmail,
+					accountBookId: cgabJoinGroup.groups.accountBookId,
+				});
+			} catch (err) {
+				fail(err as Error);
+			}
+		});
+
+		it('If column is deleted in the past', async function () {
+			stubFindFixedGAB.resolves(undefined);
+			stubUpdateFColumn.resolves();
+			stubCheckAdminGroupUser.resolves(new GroupModel({ ...defaultOwnerGroupInfo }));
+
+			const injectedFunc = updateFixedColumn({
+				errorUtil: { ...common.errorUtil, CustomError: errorUtil.CustomError },
+				service,
+				repository,
 			});
 
 			try {
@@ -442,35 +532,25 @@ describe('SpendingIncome Service Test', function () {
 				if (err instanceof AssertionError) {
 					fail(err);
 				}
-				ok(true);
+				sinon.assert.callCount(stubFindFixedGAB, 1);
+				sinon.assert.callCount(stubUpdateFColumn, 0);
+				sinon.assert.callCount(stubCheckAdminGroupUser, 0);
 			}
 		});
 
 		it("If column's owner is me", async function () {
+			const cgabJoinGroup = new CronGroupAccountBookModel({ ...defaultColumnInfo });
+			const group = new GroupModel({ ...defaultOwnerGroupInfo });
+			cgabJoinGroup.groups = group;
+
+			stubFindFixedGAB.resolves(cgabJoinGroup);
+			stubUpdateFColumn.resolves();
+			stubCheckAdminGroupUser.resolves(new GroupModel({ ...defaultOwnerGroupInfo }));
+
 			const injectedFunc = updateFixedColumn({
 				errorUtil: { ...common.errorUtil, CustomError: errorUtil.CustomError },
-				service: {
-					checkAdminGroupUser: (info: { userEmail: string; accountBookId: number }) =>
-						Promise.resolve(new GroupModel({ ...defaultOwnerGroupInfo })),
-				},
-				repository: {
-					findFixedGAB: (
-						gabInfo: Partial<TColumnInfo>,
-						options?: {
-							isIncludeGroup: boolean;
-						},
-					) => {
-						const cgab = new CronGroupAccountBookModel({ ...defaultColumnInfo });
-						const group = new GroupModel({ ...defaultOwnerGroupInfo });
-						cgab.groups = group;
-
-						return Promise.resolve(cgab);
-					},
-					updateFColumn: (
-						column: CronGroupAccountBookModel,
-						columnInfo: Partial<Omit<TColumnInfo, 'id' | 'groupId'>>,
-					) => Promise.resolve(),
-				},
+				service,
+				repository,
 			});
 
 			try {
@@ -481,43 +561,33 @@ describe('SpendingIncome Service Test', function () {
 					needToUpdateDate: '2022-02-02',
 				});
 
-				ok(true);
+				sinon.assert.callCount(stubFindFixedGAB, 1);
+				sinon.assert.callCount(stubUpdateFColumn, 1);
+				sinon.assert.callCount(stubCheckAdminGroupUser, 0);
 			} catch (err) {
 				fail(err as Error);
 			}
 		});
 
 		it("If column's owner isn't me and user who is updating column is admin", async function () {
+			const cgabJoinGroup = new CronGroupAccountBookModel({ ...defaultColumnInfo });
+			const group = new GroupModel({ ...defaultOwnerGroupInfo });
+			cgabJoinGroup.groups = group;
+
+			stubFindFixedGAB.resolves(cgabJoinGroup);
+			stubUpdateFColumn.resolves();
+			stubCheckAdminGroupUser.resolves(
+				new GroupModel({
+					userEmail: 'test2@naver.com',
+					userType: 'manager', // or 'owner'
+					accountBookId: 1,
+				}),
+			);
+
 			const injectedFunc = updateFixedColumn({
 				errorUtil: { ...common.errorUtil, CustomError: errorUtil.CustomError },
-				service: {
-					checkAdminGroupUser: (info: { userEmail: string; accountBookId: number }) =>
-						Promise.resolve(
-							new GroupModel({
-								userEmail: 'test2@naver.com',
-								userType: 'manager', // or 'owner'
-								accountBookId: 1,
-							}),
-						),
-				},
-				repository: {
-					findFixedGAB: (
-						gabInfo: Partial<TColumnInfo>,
-						options?: {
-							isIncludeGroup: boolean;
-						},
-					) => {
-						const cgab = new CronGroupAccountBookModel({ ...defaultColumnInfo });
-						const group = new GroupModel({ ...defaultOwnerGroupInfo });
-						cgab.groups = group;
-
-						return Promise.resolve(cgab);
-					},
-					updateFColumn: (
-						column: CronGroupAccountBookModel,
-						columnInfo: Partial<Omit<TColumnInfo, 'id' | 'groupId'>>,
-					) => Promise.resolve(),
-				},
+				service,
+				repository,
 			});
 
 			try {
@@ -528,6 +598,10 @@ describe('SpendingIncome Service Test', function () {
 					needToUpdateDate: '2022-02-02',
 				});
 
+				sinon.assert.callCount(stubFindFixedGAB, 1);
+				sinon.assert.callCount(stubUpdateFColumn, 1);
+				sinon.assert.callCount(stubCheckAdminGroupUser, 1);
+
 				ok(true);
 			} catch (err) {
 				fail(err as Error);
@@ -535,31 +609,18 @@ describe('SpendingIncome Service Test', function () {
 		});
 
 		it("If column's owner isn't me and user who is updating column is not admin", async function () {
+			const cgabJoinGroup = new CronGroupAccountBookModel({ ...defaultColumnInfo });
+			const group = new GroupModel({ ...defaultOwnerGroupInfo });
+			cgabJoinGroup.groups = group;
+
+			stubFindFixedGAB.resolves(cgabJoinGroup);
+			stubUpdateFColumn.resolves();
+			stubCheckAdminGroupUser.rejects('Admin user 아님');
+
 			const injectedFunc = updateFixedColumn({
 				errorUtil: { ...common.errorUtil, CustomError: errorUtil.CustomError },
-				service: {
-					checkAdminGroupUser: (info: { userEmail: string; accountBookId: number }) => {
-						throw new Error('Admin user 아님'); // user is writer or observer
-					},
-				},
-				repository: {
-					findFixedGAB: (
-						gabInfo: Partial<TColumnInfo>,
-						options?: {
-							isIncludeGroup: boolean;
-						},
-					) => {
-						const cgab = new CronGroupAccountBookModel({ ...defaultColumnInfo });
-						const group = new GroupModel({ ...defaultOwnerGroupInfo });
-						cgab.groups = group;
-
-						return Promise.resolve(cgab);
-					},
-					updateFColumn: (
-						column: CronGroupAccountBookModel,
-						columnInfo: Partial<Omit<TColumnInfo, 'id' | 'groupId'>>,
-					) => Promise.resolve(),
-				},
+				service,
+				repository,
 			});
 
 			try {
@@ -577,34 +638,23 @@ describe('SpendingIncome Service Test', function () {
 				if (err instanceof AssertionError) {
 					fail(err);
 				}
-				ok(true);
+				sinon.assert.callCount(stubFindFixedGAB, 1);
+				sinon.assert.callCount(stubUpdateFColumn, 0);
+				sinon.assert.callCount(stubCheckAdminGroupUser, 1);
 			}
 		});
 
 		it('Database join error ', async function () {
+			const cgab = new CronGroupAccountBookModel({ ...defaultColumnInfo });
+
+			stubFindFixedGAB.resolves(cgab);
+			stubUpdateFColumn.resolves();
+			stubCheckAdminGroupUser.resolves(new GroupModel({ ...defaultOwnerGroupInfo }));
+
 			const injectedFunc = updateFixedColumn({
 				errorUtil: { ...common.errorUtil, CustomError: errorUtil.CustomError },
-				service: {
-					checkAdminGroupUser: (info: { userEmail: string; accountBookId: number }) => {
-						throw new Error('');
-					},
-				},
-				repository: {
-					findFixedGAB: (
-						gabInfo: Partial<TColumnInfo>,
-						options?: {
-							isIncludeGroup: boolean;
-						},
-					) => {
-						return Promise.resolve(
-							new CronGroupAccountBookModel({ ...defaultColumnInfo }),
-						);
-					},
-					updateFColumn: (
-						column: CronGroupAccountBookModel,
-						columnInfo: Partial<Omit<TColumnInfo, 'id' | 'groupId'>>,
-					) => Promise.resolve(),
-				},
+				service,
+				repository,
 			});
 
 			try {
@@ -620,7 +670,9 @@ describe('SpendingIncome Service Test', function () {
 				);
 			} catch (err) {
 				if (err instanceof errorUtil.CustomError) {
-					ok(true);
+					sinon.assert.callCount(stubFindFixedGAB, 1);
+					sinon.assert.callCount(stubUpdateFColumn, 0);
+					sinon.assert.callCount(stubCheckAdminGroupUser, 0);
 					return;
 				}
 				fail(err as Error);
@@ -652,8 +704,8 @@ describe('SpendingIncome Service Test', function () {
 				},
 				repository: {
 					findNotFixedGAB: (
-						gabInfo: Parameters<typeof findGAB>[0],
-						options?: Parameters<typeof findGAB>[1],
+						gabInfo: Parameters<typeof findNotFixedGAB>[0],
+						options?: Parameters<typeof findNotFixedGAB>[1],
 					) => {
 						return Promise.resolve(undefined);
 					},
@@ -690,8 +742,8 @@ describe('SpendingIncome Service Test', function () {
 				},
 				repository: {
 					findNotFixedGAB: (
-						gabInfo: Parameters<typeof findGAB>[0],
-						options?: Parameters<typeof findGAB>[1],
+						gabInfo: Parameters<typeof findNotFixedGAB>[0],
+						options?: Parameters<typeof findNotFixedGAB>[1],
 					) => {
 						const cgab = new GroupAccountBookModel({ ...defaultColumnInfo });
 						const group = new GroupModel({ ...defaultOwnerGroupInfo });
@@ -735,8 +787,8 @@ describe('SpendingIncome Service Test', function () {
 				},
 				repository: {
 					findNotFixedGAB: (
-						gabInfo: Parameters<typeof findGAB>[0],
-						options?: Parameters<typeof findGAB>[1],
+						gabInfo: Parameters<typeof findNotFixedGAB>[0],
+						options?: Parameters<typeof findNotFixedGAB>[1],
 					) => {
 						const cgab = new GroupAccountBookModel({ ...defaultColumnInfo });
 						const group = new GroupModel({ ...defaultOwnerGroupInfo });
@@ -775,8 +827,8 @@ describe('SpendingIncome Service Test', function () {
 				},
 				repository: {
 					findNotFixedGAB: (
-						gabInfo: Parameters<typeof findGAB>[0],
-						options?: Parameters<typeof findGAB>[1],
+						gabInfo: Parameters<typeof findNotFixedGAB>[0],
+						options?: Parameters<typeof findNotFixedGAB>[1],
 					) => {
 						const cgab = new GroupAccountBookModel({ ...defaultColumnInfo });
 						const group = new GroupModel({ ...defaultOwnerGroupInfo });
@@ -820,8 +872,8 @@ describe('SpendingIncome Service Test', function () {
 				},
 				repository: {
 					findNotFixedGAB: (
-						gabInfo: Parameters<typeof findGAB>[0],
-						options?: Parameters<typeof findGAB>[1],
+						gabInfo: Parameters<typeof findNotFixedGAB>[0],
+						options?: Parameters<typeof findNotFixedGAB>[1],
 					) => {
 						return Promise.resolve(new GroupAccountBookModel({ ...defaultColumnInfo }));
 					},
@@ -1096,8 +1148,8 @@ describe('SpendingIncome Service Test', function () {
 				},
 				repository: {
 					findNotFixedGAB: (
-						gabInfo: Parameters<typeof findGAB>[0],
-						options?: Parameters<typeof findGAB>[1],
+						gabInfo: Parameters<typeof findNotFixedGAB>[0],
+						options?: Parameters<typeof findNotFixedGAB>[1],
 					) => {
 						return Promise.resolve(undefined);
 					},
@@ -1130,8 +1182,8 @@ describe('SpendingIncome Service Test', function () {
 				},
 				repository: {
 					findNotFixedGAB: (
-						gabInfo: Parameters<typeof findGAB>[0],
-						options?: Parameters<typeof findGAB>[1],
+						gabInfo: Parameters<typeof findNotFixedGAB>[0],
+						options?: Parameters<typeof findNotFixedGAB>[1],
 					) => {
 						const cgab = new GroupAccountBookModel({ ...defaultColumnInfo });
 						const group = new GroupModel({ ...defaultOwnerGroupInfo });
@@ -1171,8 +1223,8 @@ describe('SpendingIncome Service Test', function () {
 				},
 				repository: {
 					findNotFixedGAB: (
-						gabInfo: Parameters<typeof findGAB>[0],
-						options?: Parameters<typeof findGAB>[1],
+						gabInfo: Parameters<typeof findNotFixedGAB>[0],
+						options?: Parameters<typeof findNotFixedGAB>[1],
 					) => {
 						const cgab = new GroupAccountBookModel({ ...defaultColumnInfo });
 						const group = new GroupModel({ ...defaultOwnerGroupInfo });
@@ -1207,8 +1259,8 @@ describe('SpendingIncome Service Test', function () {
 				},
 				repository: {
 					findNotFixedGAB: (
-						gabInfo: Parameters<typeof findGAB>[0],
-						options?: Parameters<typeof findGAB>[1],
+						gabInfo: Parameters<typeof findNotFixedGAB>[0],
+						options?: Parameters<typeof findNotFixedGAB>[1],
 					) => {
 						const cgab = new GroupAccountBookModel({ ...defaultColumnInfo });
 						const group = new GroupModel({ ...defaultOwnerGroupInfo });
@@ -1248,8 +1300,8 @@ describe('SpendingIncome Service Test', function () {
 				},
 				repository: {
 					findNotFixedGAB: (
-						gabInfo: Parameters<typeof findGAB>[0],
-						options?: Parameters<typeof findGAB>[1],
+						gabInfo: Parameters<typeof findNotFixedGAB>[0],
+						options?: Parameters<typeof findNotFixedGAB>[1],
 					) => {
 						return Promise.resolve(new GroupAccountBookModel({ ...defaultColumnInfo }));
 					},
