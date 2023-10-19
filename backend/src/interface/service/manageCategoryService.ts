@@ -9,6 +9,9 @@ import {
 import { findGAB as findFGAB } from '@/repository/cronGroupAccountBookRepository/dependency';
 import { findGAB } from '@/repository/groupAccountBookRepository/dependency';
 
+/** Service */
+import { checkAdminGroupUser } from '@/service/common/user/dependency';
+
 /** ETC */
 import { TErrorUtil } from '../util';
 import sequelize from '@/loader/mysql';
@@ -27,6 +30,7 @@ export type TAddCategory = {
 	dependency: {
 		errorUtil: Pick<TErrorUtil, 'convertErrorToCustomError'>;
 		sequelize: typeof sequelize;
+		service: { checkAdminGroupUser: typeof checkAdminGroupUser };
 		repository: {
 			findCategory: typeof findCategory;
 			createCategory: typeof createCategory;
@@ -43,6 +47,7 @@ export type TAddCategory = {
 export type TUpdateCategoryInfo = {
 	dependency: {
 		errorUtil: Pick<TErrorUtil, 'convertErrorToCustomError'>;
+		service: { checkAdminGroupUser: typeof checkAdminGroupUser };
 		repository: {
 			updateCategory: typeof updateCategory;
 		};
@@ -59,6 +64,7 @@ export type TDeleteCategory = {
 	dependency: {
 		errorUtil: Pick<TErrorUtil, 'convertErrorToCustomError'>;
 		sequelize: typeof sequelize;
+		service: { checkAdminGroupUser: typeof checkAdminGroupUser };
 		repository: {
 			findCategory: typeof findCategory;
 			findFGAB: typeof findFGAB;

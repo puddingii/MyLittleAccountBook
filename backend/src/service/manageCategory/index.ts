@@ -1,9 +1,6 @@
 /** Library */
 import { Transaction } from 'sequelize';
 
-/** Sub Service */
-import { checkAdminGroupUser } from '../common/user/dependency';
-
 /** Interface */
 import { TCategoryMap } from '@/interface/api/response/manageCategoryResponse';
 import {
@@ -117,6 +114,7 @@ export const addCategory =
 		const {
 			errorUtil: { convertErrorToCustomError },
 			sequelize,
+			service: { checkAdminGroupUser },
 			repository: { createCategory, findCategory },
 		} = dependencies;
 
@@ -163,6 +161,7 @@ export const updateCategoryInfo =
 	async (info: TUpdateCategoryInfo['param']) => {
 		const {
 			errorUtil: { convertErrorToCustomError },
+			service: { checkAdminGroupUser },
 			repository: { updateCategory },
 		} = dependencies;
 
@@ -192,6 +191,7 @@ export const deleteCategory =
 		const {
 			errorUtil: { convertErrorToCustomError },
 			sequelize,
+			service: { checkAdminGroupUser },
 			repository: {
 				deleteChildCategoryList,
 				findCategory,
