@@ -1,36 +1,41 @@
+/* eslint-disable import/no-extraneous-dependencies */
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import { AssertionError, fail, ok } from 'assert';
+import { AssertionError, equal, fail, ok } from 'assert';
+import sinon from 'sinon';
 
-import GroupModel from '@/model/group';
+/** Service */
 import { checkAdminGroupUser } from '@/service/common/user';
+
+/** Dependency */
 import { validationUtil } from '../commonDependency';
+import { findGroup } from '@/repository/groupRepository/dependency';
+
+/** Model */
+import GroupModel from '@/model/group';
 
 describe('Common AccountBook Service Test', function () {
 	const { isAdminUserFalse, isAdminUserTrue } = validationUtil;
+
 	describe('#checkAdminGroupUser', function () {
-		it('Correct', async function () {
+		const repository = { findGroup: findGroup };
+		let stubFindGroup = sinon.stub(repository, 'findGroup');
+
+		beforeEach(function () {
+			stubFindGroup = sinon.stub(repository, 'findGroup');
+		});
+
+		it('Check function parameters', async function () {
+			const group = new GroupModel({
+				id: 1,
+				userEmail: 'test@naver.com',
+				userType: 'owner',
+				accountBookId: 1,
+			});
+			stubFindGroup.resolves(group);
+
 			const injectedFunc = checkAdminGroupUser({
 				validationUtil: { isAdminUser: isAdminUserTrue },
-				repository: {
-					findGroup: (
-						groupParams: Partial<{
-							userEmail: string;
-							accountBookId: number;
-							id: number;
-							userType: string;
-							accessHistory: Date;
-						}>,
-					) => {
-						const group = new GroupModel({
-							id: 1,
-							userEmail: 'test@naver.com',
-							userType: 'owner',
-							accountBookId: 1,
-						});
-
-						return Promise.resolve(group);
-					},
-				},
+				repository,
 			});
 
 			try {
@@ -38,35 +43,54 @@ describe('Common AccountBook Service Test', function () {
 					accountBookId: 1,
 					userEmail: 'test@naver.com',
 				});
-				ok(true);
+
+				sinon.assert.calledWith(stubFindGroup, {
+					accountBookId: 1,
+					userEmail: 'test@naver.com',
+				});
+			} catch (err) {
+				fail(err as Error);
+			}
+		});
+
+		it('Check correct result', async function () {
+			const group = new GroupModel({
+				id: 1,
+				userEmail: 'test@naver.com',
+				userType: 'owner',
+				accountBookId: 1,
+			});
+			stubFindGroup.resolves(group);
+
+			const injectedFunc = checkAdminGroupUser({
+				validationUtil: { isAdminUser: isAdminUserTrue },
+				repository,
+			});
+
+			try {
+				const result = await injectedFunc({
+					accountBookId: 1,
+					userEmail: 'test@naver.com',
+				});
+
+				equal(result, group);
 			} catch (err) {
 				fail(err as Error);
 			}
 		});
 
 		it('If user is not admin user', async function () {
+			const group = new GroupModel({
+				id: 1,
+				userEmail: 'test@naver.com',
+				userType: 'owner',
+				accountBookId: 1,
+			});
+			stubFindGroup.resolves(group);
+
 			const injectedFunc = checkAdminGroupUser({
 				validationUtil: { isAdminUser: isAdminUserFalse },
-				repository: {
-					findGroup: (
-						groupParams: Partial<{
-							userEmail: string;
-							accountBookId: number;
-							id: number;
-							userType: string;
-							accessHistory: Date;
-						}>,
-					) => {
-						const group = new GroupModel({
-							id: 1,
-							userEmail: 'test@naver.com',
-							userType: 'owner',
-							accountBookId: 1,
-						});
-
-						return Promise.resolve(group);
-					},
-				},
+				repository,
 			});
 
 			try {
@@ -74,6 +98,7 @@ describe('Common AccountBook Service Test', function () {
 					accountBookId: 1,
 					userEmail: 'test@naver.com',
 				});
+
 				fail('Result is expected to error');
 			} catch (err) {
 				if (err instanceof AssertionError) {
@@ -84,21 +109,11 @@ describe('Common AccountBook Service Test', function () {
 		});
 
 		it('If groupInfo is null', async function () {
+			stubFindGroup.resolves(null);
+
 			const injectedFunc = checkAdminGroupUser({
 				validationUtil: { isAdminUser: isAdminUserTrue },
-				repository: {
-					findGroup: (
-						groupParams: Partial<{
-							userEmail: string;
-							accountBookId: number;
-							id: number;
-							userType: string;
-							accessHistory: Date;
-						}>,
-					) => {
-						return Promise.resolve(null);
-					},
-				},
+				repository,
 			});
 
 			try {
@@ -106,6 +121,7 @@ describe('Common AccountBook Service Test', function () {
 					accountBookId: 1,
 					userEmail: 'test@naver.com',
 				});
+
 				fail('Result is expected to error');
 			} catch (err) {
 				if (err instanceof AssertionError) {
