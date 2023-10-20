@@ -1,7 +1,15 @@
+/* eslint-disable import/no-extraneous-dependencies */
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { AssertionError, equal, fail, ok } from 'assert';
+import sinon from 'sinon';
 
+/** Service */
 import { getUserInfo, updateUserInfoAndRefreshToken } from '@/service/userService';
+
+/** Dependency */
+import { findUserInfo, updateUserInfo } from '@/repository/userRepository/dependency';
+
+/** Model */
 import UserModel from '@/model/user';
 import OAuthUserModel from '@/model/oauthUser';
 
@@ -9,29 +17,46 @@ import { cacheUtil, errorUtil, jwtUtil } from '../commonDependency';
 
 describe('User Service Test', function () {
 	const userInfo = { email: 'test@naver.com', nickname: 'testNickname' };
+
 	describe('#getUserInfo', function () {
 		const common = {
 			errorUtil: { convertErrorToCustomError: errorUtil.convertErrorToCustomError },
 		};
+		const repository = { findUserInfo };
+		let stubFindUserInfo = sinon.stub(repository, 'findUserInfo');
 
-		it('Correct Email User', async function () {
+		beforeEach(function () {
+			stubFindUserInfo = sinon.stub(repository, 'findUserInfo');
+		});
+
+		it('Check function parameters', async function () {
+			stubFindUserInfo.resolves(new UserModel({ ...userInfo }));
+
 			const injectedFunc = getUserInfo({
 				...common,
-				repository: {
-					findUserInfo: (
-						info: Partial<{
-							email: string;
-							nickname: string;
-						}>,
-					) => {
-						const userModel = new UserModel({ ...userInfo });
-						return Promise.resolve(userModel);
-					},
-				},
+				repository,
+			});
+
+			try {
+				await injectedFunc({ ...userInfo });
+
+				sinon.assert.calledWith(stubFindUserInfo, { ...userInfo });
+			} catch (err) {
+				fail(err as Error);
+			}
+		});
+
+		it('Check correct Email User', async function () {
+			stubFindUserInfo.resolves(new UserModel({ ...userInfo }));
+
+			const injectedFunc = getUserInfo({
+				...common,
+				repository,
 			});
 
 			try {
 				const result = await injectedFunc({ ...userInfo });
+
 				equal(userInfo.email, result.email);
 				equal(userInfo.nickname, result.nickname);
 			} catch (err) {
@@ -39,29 +64,23 @@ describe('User Service Test', function () {
 			}
 		});
 
-		it('Correct OAuth User', async function () {
+		it('Check correct OAuth User', async function () {
+			const userModel = new UserModel({ ...userInfo });
+			const oauthModel = new OAuthUserModel({
+				type: 'Google',
+				userEmail: userModel.email,
+			});
+			userModel.oauthusers = [oauthModel];
+			stubFindUserInfo.resolves(userModel);
+
 			const injectedFunc = getUserInfo({
 				...common,
-				repository: {
-					findUserInfo: (
-						info: Partial<{
-							email: string;
-							nickname: string;
-						}>,
-					) => {
-						const userModel = new UserModel({ ...userInfo });
-						const oauthModel = new OAuthUserModel({
-							type: 'Google',
-							userEmail: userModel.email,
-						});
-						userModel.oauthusers = [oauthModel];
-						return Promise.resolve(userModel);
-					},
-				},
+				repository,
 			});
 
 			try {
 				const result = await injectedFunc({ ...userInfo });
+
 				equal(userInfo.email, result.email);
 				equal(userInfo.nickname, result.nickname);
 				equal('Google', result.socialType);
@@ -71,18 +90,11 @@ describe('User Service Test', function () {
 		});
 
 		it('Unknown User', async function () {
+			stubFindUserInfo.resolves(null);
+
 			const injectedFunc = getUserInfo({
 				...common,
-				repository: {
-					findUserInfo: (
-						info: Partial<{
-							email: string;
-							nickname: string;
-						}>,
-					) => {
-						return Promise.resolve(null);
-					},
-				},
+				repository,
 			});
 
 			try {
@@ -97,24 +109,18 @@ describe('User Service Test', function () {
 		});
 
 		it('params data !== result data', async function () {
+			stubFindUserInfo.resolves(
+				new UserModel({ email: 'test2@naver.com', nickname: 'test2Nickname' }),
+			);
+
 			const injectedFunc = getUserInfo({
 				...common,
-				repository: {
-					findUserInfo: (
-						info: Partial<{
-							email: string;
-							nickname: string;
-						}>,
-					) => {
-						return Promise.resolve(
-							new UserModel({ email: 'test2@naver.com', nickname: 'test2Nickname' }),
-						);
-					},
-				},
+				repository,
 			});
 
 			try {
 				await injectedFunc({ ...userInfo });
+
 				fail(
 					`Repository or DB Error. The result does not match the user's nickname or email: ${8}`,
 				);
@@ -137,17 +143,44 @@ describe('User Service Test', function () {
 				CustomError,
 			},
 		};
+		const repository = { updateUserInfo };
+		let stubUpdateUserInfo = sinon.stub(repository, 'updateUserInfo');
 
-		it('Correct', async function () {
+		beforeEach(function () {
+			stubUpdateUserInfo = sinon.stub(repository, 'updateUserInfo');
+		});
+
+		it('Check function parameters', async function () {
+			stubUpdateUserInfo.resolves([1]);
+
 			const injectedFunc = updateUserInfoAndRefreshToken({
 				...common,
 				cacheUtil: { setCache },
 				jwtUtil: { createAccessToken, createRefreshToken, verifyAll },
-				repository: {
-					updateUserInfo: (info: { email: string; nickname: string }) => {
-						return Promise.resolve([1] as [affectedCount: number]);
-					},
-				},
+				repository,
+			});
+
+			try {
+				await injectedFunc({
+					...userInfo,
+					accessToken: '',
+					refreshToken: '',
+				});
+
+				sinon.assert.calledWith(stubUpdateUserInfo, { ...userInfo });
+			} catch (err) {
+				fail(err as Error);
+			}
+		});
+
+		it('Check correct result', async function () {
+			stubUpdateUserInfo.resolves([1]);
+
+			const injectedFunc = updateUserInfoAndRefreshToken({
+				...common,
+				cacheUtil: { setCache },
+				jwtUtil: { createAccessToken, createRefreshToken, verifyAll },
+				repository,
 			});
 
 			try {
@@ -165,15 +198,13 @@ describe('User Service Test', function () {
 		});
 
 		it('Incorrect token', async function () {
+			stubUpdateUserInfo.resolves([1]);
+
 			const injectedFunc = updateUserInfoAndRefreshToken({
 				...common,
 				cacheUtil: { setCache },
 				jwtUtil: { createAccessToken, createRefreshToken, verifyAll: verifyAllError },
-				repository: {
-					updateUserInfo: (info: { email: string; nickname: string }) => {
-						return Promise.resolve([1] as [affectedCount: number]);
-					},
-				},
+				repository,
 			});
 
 			try {
@@ -182,6 +213,7 @@ describe('User Service Test', function () {
 					accessToken: '',
 					refreshToken: '',
 				});
+
 				fail('Expected to error that refresh token or access token is not verified.');
 			} catch (err) {
 				if (err instanceof AssertionError) {
@@ -192,15 +224,13 @@ describe('User Service Test', function () {
 		});
 
 		it('Update DB error', async function () {
+			stubUpdateUserInfo.resolves([0]);
+
 			const injectedFunc = updateUserInfoAndRefreshToken({
 				...common,
 				cacheUtil: { setCache },
 				jwtUtil: { createAccessToken, createRefreshToken, verifyAll },
-				repository: {
-					updateUserInfo: (info: { email: string; nickname: string }) => {
-						return Promise.resolve([0] as [affectedCount: number]);
-					},
-				},
+				repository,
 			});
 
 			try {
@@ -209,6 +239,7 @@ describe('User Service Test', function () {
 					accessToken: '',
 					refreshToken: '',
 				});
+
 				fail('Expected to error that user information is not updated.');
 			} catch (err) {
 				if (err instanceof AssertionError) {
@@ -219,6 +250,8 @@ describe('User Service Test', function () {
 		});
 
 		it('Set cache error', async function () {
+			stubUpdateUserInfo.resolves([1]);
+
 			const injectedFunc = updateUserInfoAndRefreshToken({
 				...common,
 				cacheUtil: {
@@ -229,11 +262,7 @@ describe('User Service Test', function () {
 					},
 				},
 				jwtUtil: { createAccessToken, createRefreshToken, verifyAll },
-				repository: {
-					updateUserInfo: (info: { email: string; nickname: string }) => {
-						return Promise.resolve([1] as [affectedCount: number]);
-					},
-				},
+				repository,
 			});
 
 			try {

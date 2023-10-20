@@ -1645,7 +1645,6 @@ describe('SpendingIncome Service Test', function () {
 				fail('Expected to error.');
 			} catch (err) {
 				if (err instanceof errorUtil.CustomError) {
-					console.log(err);
 					equal(err.message, errorMessage);
 					sinon.assert.callCount(stubGetCategory, 1);
 					sinon.assert.callCount(stubGetFixedColumnList, 0);
