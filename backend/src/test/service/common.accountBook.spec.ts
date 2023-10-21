@@ -1,7 +1,16 @@
+/* eslint-disable import/no-extraneous-dependencies */
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import { equal, fail, ok } from 'assert';
+import { equal, fail } from 'assert';
+import sinon from 'sinon';
+import dayjs from 'dayjs';
 
+/** Dependency */
 import { errorUtil } from '../commonDependency';
+import { findRecursiveCategoryList } from '@/repository/categoryRepository/dependency';
+import { findAllNotFixedColumn } from '@/repository/groupAccountBookRepository/dependency';
+import { findAllFixedColumn } from '@/repository/cronGroupAccountBookRepository/dependency';
+
+/** Service */
 import {
 	getCategory,
 	getNotFixedColumnList,
@@ -123,86 +132,92 @@ describe('Common AccountBook Service Test', function () {
 	};
 
 	describe('#getCategory', function () {
-		it('Correct', async function () {
+		const repository = { findRecursiveCategoryList };
+		let stubFindRecursiveCategoryList: sinon.SinonStub<
+			[
+				accountBookId: number,
+				depth: {
+					start: number;
+					end: number;
+				},
+			],
+			Promise<TCategoryInfo[]>
+		>;
+
+		beforeEach(function () {
+			stubFindRecursiveCategoryList = sinon.stub(repository, 'findRecursiveCategoryList');
+		});
+
+		it('Check function parameters', async function () {
+			stubFindRecursiveCategoryList.resolves([
+				{
+					accountBookId: 1,
+					categoryIdPath: '1 > 3',
+					categoryNamePath: 'A > B',
+					depth: 2,
+					id: 5,
+					name: 'B',
+					parentId: 1,
+				},
+			]);
+
 			const injectedFunc = getCategory({
 				...common,
-				repository: {
-					findRecursiveCategoryList: (
-						accountBookId: number,
-						depth: {
-							start: number;
-							end: number;
-						},
-					) => {
-						return Promise.resolve([
-							{
-								accountBookId: 1,
-								categoryIdPath: '1 > 3',
-								categoryNamePath: 'A > B',
-								depth: 2,
-								id: 5,
-								name: 'B',
-								parentId: 1,
-							} as TCategoryInfo,
-						]);
-					},
-				},
+				repository,
 			});
 
 			try {
 				await injectedFunc(1, { end: 2, start: 2 });
-				ok(true);
+
+				sinon.assert.calledWith(stubFindRecursiveCategoryList, 1);
 			} catch (err) {
 				fail(err as Error);
 			}
 		});
 
-		it('Check parent name', async function () {
+		it('Check correct result', async function () {
+			stubFindRecursiveCategoryList.resolves([
+				{
+					accountBookId: 1,
+					categoryIdPath: '1 > 3 > 5',
+					categoryNamePath: 'A > B > D',
+					depth: 3,
+					id: 7,
+					name: 'D',
+					parentId: 1,
+				},
+				{
+					accountBookId: 1,
+					categoryIdPath: '1 > 3',
+					categoryNamePath: 'A > B',
+					depth: 2,
+					id: 5,
+					name: 'B',
+					parentId: 1,
+				},
+				{
+					accountBookId: 1,
+					categoryIdPath: '4',
+					categoryNamePath: 'C',
+					depth: 1,
+					id: 6,
+					name: 'C',
+				},
+			]);
+
 			const injectedFunc = getCategory({
 				...common,
-				repository: {
-					findRecursiveCategoryList: (
-						accountBookId: number,
-						depth: {
-							start: number;
-							end: number;
-						},
-					) => {
-						return Promise.resolve([
-							{
-								accountBookId: 1,
-								categoryIdPath: '1 > 3 > 5',
-								categoryNamePath: 'A > B > D',
-								depth: 3,
-								id: 7,
-								name: 'D',
-								parentId: 1,
-							},
-							{
-								accountBookId: 1,
-								categoryIdPath: '1 > 3',
-								categoryNamePath: 'A > B',
-								depth: 2,
-								id: 5,
-								name: 'B',
-								parentId: 1,
-							},
-							{
-								accountBookId: 1,
-								categoryIdPath: '4',
-								categoryNamePath: 'C',
-								depth: 1,
-								id: 6,
-								name: 'C',
-							},
-						]);
-					},
-				},
+				repository,
 			});
 
 			try {
 				const result = await injectedFunc(1, { end: 3, start: 1 });
+
 				equal(result[0].parentName, 'B');
+				equal(result[0].parentId, 1);
+				equal(result[0].categoryIdPath, '1 > 3 > 5');
+				equal(result[0].categoryNamePath, 'A > B > D');
+				equal(result[0].childId, 7);
 				equal(result[1].parentName, 'A');
 				equal(result[2].parentName, 'C');
 			} catch (err) {
@@ -228,8 +243,14 @@ describe('Common AccountBook Service Test', function () {
 				categoryIdPath: '1 > 6',
 			},
 		];
+		const repository = { findAllNotFixedColumn };
+		let stubFindAllNotFixedColumn = sinon.stub(repository, 'findAllNotFixedColumn');
 
-		it('Check groupaccountbook', async function () {
+		beforeEach(function () {
+			stubFindAllNotFixedColumn = sinon.stub(repository, 'findAllNotFixedColumn');
+		});
+
+		it('Check function parameters', async function () {
 			const gabInfo = {
 				id: 1,
 				groupId: 1,
@@ -239,26 +260,60 @@ describe('Common AccountBook Service Test', function () {
 				content: 'asd',
 				categoryId: 6,
 			};
+			const group = new GroupModel({
+				id: 1,
+				userEmail: 'test@naver.com',
+				userType: 'owner',
+				accountBookId: 1,
+			});
+			const gab = new GroupAccountBookModel(gabInfo);
+			group.groupaccountbooks = [gab];
+
+			stubFindAllNotFixedColumn.resolves([group]);
+
 			const injectedFunc = getNotFixedColumnList({
 				...common,
-				repository: {
-					findAllNotFixedColumn: (info: {
-						accountBookId: number;
-						startDate: Date;
-						endDate: Date;
-					}) => {
-						const group = new GroupModel({
-							id: 1,
-							userEmail: 'test@naver.com',
-							userType: 'owner',
-							accountBookId: 1,
-						});
-						const gab = new GroupAccountBookModel(gabInfo);
-						group.groupaccountbooks = [gab];
+				repository,
+			});
 
-						return Promise.resolve([group]);
-					},
-				},
+			try {
+				const info = { accountBookId: 1, endDate: '2022-02-03', startDate: '2022-02-01' };
+				await injectedFunc(info, categoryList);
+
+				sinon.assert.calledWith(stubFindAllNotFixedColumn, {
+					accountBookId: info.accountBookId,
+					endDate: dayjs(info.endDate).toDate(),
+					startDate: dayjs(info.startDate).toDate(),
+				});
+			} catch (err) {
+				fail(err as Error);
+			}
+		});
+
+		it('Check correct groupaccountbook', async function () {
+			const gabInfo = {
+				id: 1,
+				groupId: 1,
+				type: 'income' as const,
+				spendingAndIncomeDate: new Date(),
+				value: 122,
+				content: 'asd',
+				categoryId: 6,
+			};
+			const group = new GroupModel({
+				id: 1,
+				userEmail: 'test@naver.com',
+				userType: 'owner',
+				accountBookId: 1,
+			});
+			const gab = new GroupAccountBookModel(gabInfo);
+			group.groupaccountbooks = [gab];
+
+			stubFindAllNotFixedColumn.resolves([group]);
+
+			const injectedFunc = getNotFixedColumnList({
+				...common,
+				repository,
 			});
 
 			try {
@@ -279,34 +334,28 @@ describe('Common AccountBook Service Test', function () {
 		});
 
 		it('Check category', async function () {
+			const group = new GroupModel({
+				id: 1,
+				userEmail: 'test@naver.com',
+				userType: 'owner',
+				accountBookId: 1,
+			});
+			const gabInfo = new GroupAccountBookModel({
+				id: 1,
+				groupId: group.id,
+				type: 'income',
+				spendingAndIncomeDate: new Date(),
+				value: 122,
+				content: 'asd',
+				categoryId: 6,
+			});
+			group.groupaccountbooks = [gabInfo];
+
+			stubFindAllNotFixedColumn.resolves([group]);
+
 			const injectedFunc = getNotFixedColumnList({
 				...common,
-				repository: {
-					findAllNotFixedColumn: (info: {
-						accountBookId: number;
-						startDate: Date;
-						endDate: Date;
-					}) => {
-						const group = new GroupModel({
-							id: 1,
-							userEmail: 'test@naver.com',
-							userType: 'owner',
-							accountBookId: 1,
-						});
-						const gabInfo = new GroupAccountBookModel({
-							id: 1,
-							groupId: group.id,
-							type: 'income',
-							spendingAndIncomeDate: new Date(),
-							value: 122,
-							content: 'asd',
-							categoryId: 6,
-						});
-						group.groupaccountbooks = [gabInfo];
-
-						return Promise.resolve([group]);
-					},
-				},
+				repository,
 			});
 
 			try {
@@ -322,51 +371,45 @@ describe('Common AccountBook Service Test', function () {
 		});
 
 		it('Check user', async function () {
+			const group = new GroupModel({
+				id: 1,
+				userEmail: 'test@naver.com',
+				userType: 'owner',
+				accountBookId: 1,
+			});
+			const group2 = new GroupModel({
+				id: 1,
+				userEmail: 'test@naver.com',
+				userType: 'owner',
+				accountBookId: 1,
+			});
+			const userInfo = new UserModel({
+				email: 'test@naver.com',
+				nickname: 'testNickname',
+			});
+			const userInfo2 = new UserModel({
+				email: 'test@naver.com',
+				nickname: 'testNickname2',
+			});
+			const gabInfo = new GroupAccountBookModel({
+				id: 1,
+				groupId: group.id,
+				type: 'income',
+				spendingAndIncomeDate: new Date(),
+				value: 122,
+				content: 'asd',
+				categoryId: 6,
+			});
+			group.users = userInfo;
+			group.groupaccountbooks = [gabInfo];
+			group2.users = userInfo2;
+			group2.groupaccountbooks = [gabInfo];
+
+			stubFindAllNotFixedColumn.resolves([group, group2]);
+
 			const injectedFunc = getNotFixedColumnList({
 				...common,
-				repository: {
-					findAllNotFixedColumn: (info: {
-						accountBookId: number;
-						startDate: Date;
-						endDate: Date;
-					}) => {
-						const group = new GroupModel({
-							id: 1,
-							userEmail: 'test@naver.com',
-							userType: 'owner',
-							accountBookId: 1,
-						});
-						const group2 = new GroupModel({
-							id: 1,
-							userEmail: 'test@naver.com',
-							userType: 'owner',
-							accountBookId: 1,
-						});
-						const userInfo = new UserModel({
-							email: 'test@naver.com',
-							nickname: 'testNickname',
-						});
-						const userInfo2 = new UserModel({
-							email: 'test@naver.com',
-							nickname: 'testNickname2',
-						});
-						const gabInfo = new GroupAccountBookModel({
-							id: 1,
-							groupId: group.id,
-							type: 'income',
-							spendingAndIncomeDate: new Date(),
-							value: 122,
-							content: 'asd',
-							categoryId: 6,
-						});
-						group.users = userInfo;
-						group.groupaccountbooks = [gabInfo];
-						group2.users = userInfo2;
-						group2.groupaccountbooks = [gabInfo];
-
-						return Promise.resolve([group, group2]);
-					},
-				},
+				repository,
 			});
 
 			try {
@@ -413,27 +456,88 @@ describe('Common AccountBook Service Test', function () {
 			isActivated: true,
 		};
 
-		it('Check crongroupaccountbook', async function () {
+		const repository = { findAllFixedColumn: findAllFixedColumn };
+		let stubFindAllFixedColumn = sinon.stub(repository, 'findAllFixedColumn');
+
+		beforeEach(function () {
+			stubFindAllFixedColumn = sinon.stub(repository, 'findAllFixedColumn');
+		});
+
+		it('Check function parameters', async function () {
+			const group = new GroupModel({
+				id: 1,
+				userEmail: 'test@naver.com',
+				userType: 'owner',
+				accountBookId: 1,
+			});
+			const cgab = new CronGroupAccountBookModel(cgabInfo);
+			group.crongroupaccountbooks = [cgab];
+
+			stubFindAllFixedColumn.resolves([group]);
+
 			const injectedFunc = getFixedColumnList({
 				...common,
-				repository: {
-					findAllFixedColumn: (info: {
-						accountBookId: number;
-						startDate?: Date;
-						endDate?: Date;
-					}) => {
-						const group = new GroupModel({
-							id: 1,
-							userEmail: 'test@naver.com',
-							userType: 'owner',
-							accountBookId: 1,
-						});
-						const cgab = new CronGroupAccountBookModel(cgabInfo);
-						group.crongroupaccountbooks = [cgab];
+				repository,
+			});
 
-						return Promise.resolve([group]);
-					},
-				},
+			try {
+				const info = { accountBookId: 1, endDate: '2022-02-03', startDate: '2022-02-01' };
+				await injectedFunc(info, categoryList);
+
+				sinon.assert.calledWith(stubFindAllFixedColumn, {
+					accountBookId: info.accountBookId,
+					endDate: dayjs(info.endDate).toDate(),
+					startDate: dayjs(info.startDate).toDate(),
+				});
+			} catch (err) {
+				fail(err as Error);
+			}
+		});
+
+		it('Check function parameters(startDate or endDate)', async function () {
+			const group = new GroupModel({
+				id: 1,
+				userEmail: 'test@naver.com',
+				userType: 'owner',
+				accountBookId: 1,
+			});
+			const cgab = new CronGroupAccountBookModel(cgabInfo);
+			group.crongroupaccountbooks = [cgab];
+
+			stubFindAllFixedColumn.resolves([group]);
+
+			const injectedFunc = getFixedColumnList({
+				...common,
+				repository,
+			});
+
+			try {
+				const info = { accountBookId: 1, endDate: '2022-02-03' };
+				await injectedFunc(info, categoryList);
+
+				sinon.assert.calledWith(stubFindAllFixedColumn, {
+					accountBookId: info.accountBookId,
+				});
+			} catch (err) {
+				fail(err as Error);
+			}
+		});
+
+		it('Check crongroupaccountbook', async function () {
+			const group = new GroupModel({
+				id: 1,
+				userEmail: 'test@naver.com',
+				userType: 'owner',
+				accountBookId: 1,
+			});
+			const cgab = new CronGroupAccountBookModel(cgabInfo);
+			group.crongroupaccountbooks = [cgab];
+
+			stubFindAllFixedColumn.resolves([group]);
+
+			const injectedFunc = getFixedColumnList({
+				...common,
+				repository,
 			});
 
 			try {
@@ -456,26 +560,20 @@ describe('Common AccountBook Service Test', function () {
 		});
 
 		it('Check category', async function () {
+			const group = new GroupModel({
+				id: 1,
+				userEmail: 'test@naver.com',
+				userType: 'owner',
+				accountBookId: 1,
+			});
+			const cgab = new CronGroupAccountBookModel(cgabInfo);
+			group.crongroupaccountbooks = [cgab];
+
+			stubFindAllFixedColumn.resolves([group]);
+
 			const injectedFunc = getFixedColumnList({
 				...common,
-				repository: {
-					findAllFixedColumn: (info: {
-						accountBookId: number;
-						startDate?: Date;
-						endDate?: Date;
-					}) => {
-						const group = new GroupModel({
-							id: 1,
-							userEmail: 'test@naver.com',
-							userType: 'owner',
-							accountBookId: 1,
-						});
-						const cgab = new CronGroupAccountBookModel(cgabInfo);
-						group.crongroupaccountbooks = [cgab];
-
-						return Promise.resolve([group]);
-					},
-				},
+				repository,
 			});
 
 			try {
@@ -491,43 +589,37 @@ describe('Common AccountBook Service Test', function () {
 		});
 
 		it('Check user', async function () {
+			const group = new GroupModel({
+				id: 1,
+				userEmail: 'test@naver.com',
+				userType: 'owner',
+				accountBookId: 1,
+			});
+			const group2 = new GroupModel({
+				id: 1,
+				userEmail: 'test@naver.com',
+				userType: 'owner',
+				accountBookId: 1,
+			});
+			const userInfo = new UserModel({
+				email: 'test@naver.com',
+				nickname: 'testNickname',
+			});
+			const userInfo2 = new UserModel({
+				email: 'test@naver.com',
+				nickname: 'testNickname2',
+			});
+			const cgab = new CronGroupAccountBookModel(cgabInfo);
+			group.users = userInfo;
+			group.crongroupaccountbooks = [cgab];
+			group2.users = userInfo2;
+			group2.crongroupaccountbooks = [cgab];
+
+			stubFindAllFixedColumn.resolves([group, group2]);
+
 			const injectedFunc = getFixedColumnList({
 				...common,
-				repository: {
-					findAllFixedColumn: (info: {
-						accountBookId: number;
-						startDate?: Date;
-						endDate?: Date;
-					}) => {
-						const group = new GroupModel({
-							id: 1,
-							userEmail: 'test@naver.com',
-							userType: 'owner',
-							accountBookId: 1,
-						});
-						const group2 = new GroupModel({
-							id: 1,
-							userEmail: 'test@naver.com',
-							userType: 'owner',
-							accountBookId: 1,
-						});
-						const userInfo = new UserModel({
-							email: 'test@naver.com',
-							nickname: 'testNickname',
-						});
-						const userInfo2 = new UserModel({
-							email: 'test@naver.com',
-							nickname: 'testNickname2',
-						});
-						const cgab = new CronGroupAccountBookModel(cgabInfo);
-						group.users = userInfo;
-						group.crongroupaccountbooks = [cgab];
-						group2.users = userInfo2;
-						group2.crongroupaccountbooks = [cgab];
-
-						return Promise.resolve([group, group2]);
-					},
-				},
+				repository,
 			});
 
 			try {
