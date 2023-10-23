@@ -2,6 +2,7 @@
 
 /** Interface */
 import { TCreateAccountBookAndInviteUser } from '@/interface/service/headerService';
+import GroupModel from '@/model/group';
 
 export const createAccountBookAndInviteUser =
 	(dependencies: TCreateAccountBookAndInviteUser['dependency']) =>
@@ -20,11 +21,21 @@ export const createAccountBookAndInviteUser =
 				const newAccountBook = await createAccountBook({ title, content }, transaction);
 				await createDefaultCategory(newAccountBook.id, transaction);
 
-				const groupInfoList = invitedUserList.map(invitedUser => ({
-					userType: invitedUser.type,
-					accountBookId: newAccountBook.id,
-					userEmail: invitedUser.email,
-				}));
+				const groupInfoList: Array<{
+					userType: GroupModel['userType'];
+					accountBookId: number;
+					userEmail: string;
+				}> = invitedUserList.map(invitedUser => {
+					if (invitedUser.type === 'owner') {
+						throw new Error('초대된 유저는 Owner가 될 수 없습니다.');
+					}
+
+					return {
+						userType: invitedUser.type,
+						accountBookId: newAccountBook.id,
+						userEmail: invitedUser.email,
+					};
+				});
 				groupInfoList.push({
 					userEmail: ownerEmail,
 					accountBookId: newAccountBook.id,
