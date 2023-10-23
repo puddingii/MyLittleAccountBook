@@ -28,6 +28,8 @@ import {
 	updateCategory,
 } from '@/repository/categoryRepository/dependency';
 import { checkAdminGroupUser } from '@/service/common/user/dependency';
+
+/** Model */
 import CronGroupAccountBookModel from '@/model/cronGroupAccountBook';
 import GroupAccountBookModel from '@/model/groupAccountBook';
 
