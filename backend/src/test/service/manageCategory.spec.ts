@@ -967,7 +967,7 @@ describe('ManageCategory Service Test', function () {
 
 			stubCheckAdminGroupUser.resolves(new GroupModel());
 			stubFindCategory.resolves(category);
-			stubFindCategoryList.resolves([]);
+			stubFindCategoryList.resolves([new CategoryModel()]);
 			stubFindFGAB.resolves(undefined);
 			stubFindGAB.resolves(undefined);
 
@@ -981,6 +981,8 @@ describe('ManageCategory Service Test', function () {
 
 			try {
 				await injectedFunc({ accountBookId: 1, id: 1, myEmail: 'test@naver.com' });
+
+				fail('Expected to error');
 			} catch (err) {
 				if (err instanceof AssertionError) {
 					fail(err);
