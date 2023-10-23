@@ -63,14 +63,12 @@ export type TUpdateCategoryInfo = {
 export type TDeleteCategory = {
 	dependency: {
 		errorUtil: Pick<TErrorUtil, 'convertErrorToCustomError'>;
-		sequelize: typeof sequelize;
 		service: { checkAdminGroupUser: typeof checkAdminGroupUser };
 		repository: {
 			findCategory: typeof findCategory;
 			findFGAB: typeof findFGAB;
 			findGAB: typeof findGAB;
 			findCategoryList: typeof findCategoryList;
-			deleteChildCategoryList: typeof deleteChildCategoryList;
 		};
 	};
 	param: {

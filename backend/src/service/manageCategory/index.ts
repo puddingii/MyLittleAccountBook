@@ -21,14 +21,18 @@ export const getCategoryList =
 		try {
 			const list = await findCategoryList(info);
 			const filteredMap: Map<number, TCategoryMap> = new Map();
+			const isParentIdExisted = (parentId?: number): parentId is number =>
+				typeof parentId === 'number';
+
 			list.forEach(info => {
 				const { id, parentId, name } = info;
-				const savedInfo = filteredMap.get(parentId || id);
+				const mapId = isParentIdExisted(parentId) ? parentId : id;
+				const savedInfo = filteredMap.get(mapId);
 
-				if (!parentId && !savedInfo) {
+				if (!isParentIdExisted(parentId) && !savedInfo) {
 					filteredMap.set(id, { id, parentId, name, childList: [] });
 				}
-				if (parentId && savedInfo) {
+				if (isParentIdExisted(parentId) && savedInfo) {
 					const childList = [...savedInfo.childList];
 					childList.push({ id, parentId, name });
 					filteredMap.set(parentId, { ...savedInfo, childList });
@@ -119,8 +123,10 @@ export const addCategory =
 		} = dependencies;
 
 		try {
+			const { myEmail, ...categoryInfo } = info;
+
 			await checkAdminGroupUser({
-				userEmail: info.myEmail,
+				userEmail: myEmail,
 				accountBookId: info.accountBookId,
 			});
 			const transaction = await sequelize.transaction({ autocommit: false });
@@ -130,14 +136,14 @@ export const addCategory =
 					childList?: Array<{ id: number; parentId?: number; name: string }>;
 				};
 
-				if (isParentIdNumber(info)) {
-					result = await addSubCategory(info, {
+				if (isParentIdNumber(categoryInfo)) {
+					result = await addSubCategory(categoryInfo, {
 						transaction,
 						createCategory,
 						findCategory,
 					});
 				} else {
-					result = await addMainCategory(info, { transaction, createCategory });
+					result = await addMainCategory(categoryInfo, { transaction, createCategory });
 				}
 
 				await transaction.commit();
@@ -190,15 +196,8 @@ export const deleteCategory =
 	async (info: TDeleteCategory['param']) => {
 		const {
 			errorUtil: { convertErrorToCustomError },
-			sequelize,
 			service: { checkAdminGroupUser },
-			repository: {
-				deleteChildCategoryList,
-				findCategory,
-				findCategoryList,
-				findFGAB,
-				findGAB,
-			},
+			repository: { findCategory, findCategoryList, findFGAB, findGAB },
 		} = dependencies;
 
 		try {
@@ -226,28 +225,16 @@ export const deleteCategory =
 			}
 
 			const childList = await findCategoryList({ accountBookId, parentId: id });
+			// 부모 카테고리는 자식 카테고리들을 먼저 삭제해야 삭제 가능
 			if (childList.length > 0) {
 				throw new Error(
 					'서브 카테고리를 모두 제거 후, 메인 카테고리를 제거할 수 있습니다.',
 				);
 			}
 
-			// 해당 카테고리 뿐만이 아닌 자식 카테고리들도 삭제 필요함.
-			const transaction = await sequelize.transaction({ autocommit: false });
-			try {
-				const count = await deleteChildCategoryList(
-					{ accountBookId, parentId: id },
-					transaction,
-				);
-				await category.destroy({ transaction });
+			await category.destroy();
 
-				await transaction.commit();
-
-				return count + 1;
-			} catch (error) {
-				await transaction.rollback();
-				throw error;
-			}
+			return 1;
 		} catch (error) {
 			const customError = convertErrorToCustomError(error, {
 				trace: 'Service',

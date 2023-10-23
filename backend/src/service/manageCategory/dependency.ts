@@ -3,7 +3,6 @@ import * as Logic from '.';
 /** Repository */
 import {
 	createCategory,
-	deleteChildCategoryList,
 	findCategory,
 	findCategoryList,
 	updateCategory,
@@ -38,10 +37,8 @@ export const updateCategoryInfo = Logic.updateCategoryInfo({
 
 export const deleteCategory = Logic.deleteCategory({
 	errorUtil: { convertErrorToCustomError },
-	sequelize,
 	service: { checkAdminGroupUser },
 	repository: {
-		deleteChildCategoryList,
 		findCategory,
 		findCategoryList,
 		findFGAB,
