@@ -37,14 +37,14 @@ export const getSocialLoginLocation = Logic.getSocialLoginLocation({
 
 export const googleLogin = Logic.googleLogin({
 	errorUtil: { convertErrorToCustomError },
-	cacheUtil: { setCache },
+	cacheUtil: { setCache, getCache, deleteCache },
 	jwtUtil: { createAccessToken, createRefreshToken },
 	repository: { createSocialUser, findOneSocialUserInfo },
 });
 
 export const naverLogin = Logic.naverLogin({
 	errorUtil: { convertErrorToCustomError },
-	cacheUtil: { setCache },
+	cacheUtil: { setCache, getCache, deleteCache },
 	jwtUtil: { createAccessToken, createRefreshToken },
 	repository: { createSocialUser, findOneSocialUserInfo },
 });

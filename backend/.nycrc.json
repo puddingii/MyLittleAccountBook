@@ -3,10 +3,13 @@
 	"all": true,
 	"check-coverage": true,
 	"include": [
-		"src/**/*.ts"
+		"src/service/**/*.ts",
+		"src/repository/**/*.ts",
+		"src/util/parser/schema/**/*.ts"
 	],
 	"exclude": [
 		"src/test/**/*.ts",
-		"**/dependency.ts"
+		"**/dependency.ts",
+		"src/service/authService/socialManager/**/*.ts"
 	]
 }

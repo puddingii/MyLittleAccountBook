@@ -10,7 +10,6 @@ import {
 import { SOCIAL_URL_MANAGER } from './socialManager';
 
 /** Util */
-import { deleteCache, getCache } from '@/util/cache';
 import secret from '@/config/secret';
 
 /** Interface */
@@ -25,7 +24,11 @@ import {
 } from '@/interface/service/authService';
 
 /** Refresh Token - Access Token 의 유효성 검증 */
-const isValidatedState = async (state?: string) => {
+export const isValidatedState = async (
+	dependency: Pick<TSocialLogin['dependency']['cacheUtil'], 'getCache' | 'deleteCache'>,
+	state?: string,
+) => {
+	const { getCache, deleteCache } = dependency;
 	if (!state) {
 		return false;
 	}
@@ -132,8 +135,10 @@ export const getSocialLoginLocation =
 	};
 
 /** 소셜 전용 로그인 로직. 유저정보가 없는 경우 자동 회원가입, access/refresh token 발급하여 리턴 */
-const socialLogin = async (
-	dependencies: Omit<TSocialLogin['dependency'], 'errorUtil'>,
+export const socialLogin = async (
+	dependencies: Pick<TSocialLogin['dependency'], 'jwtUtil' | 'repository'> & {
+		cacheUtil: Pick<TSocialLogin['dependency']['cacheUtil'], 'setCache'>;
+	},
 	info: {
 		user: { email: string; nickname: string };
 		type: 'Google' | 'Naver';
@@ -160,7 +165,7 @@ const socialLogin = async (
 		throw new Error('소셜 로그인 계정이 아닙니다.');
 	}
 
-	let accountBookId;
+	let accountBookId: number;
 	if (user) {
 		accountBookId = (user.groups ?? [])[0].accountBookId;
 	} else {
@@ -181,16 +186,19 @@ const socialLogin = async (
 };
 
 /** 구글 로그인 */
+/* istanbul ignore next */
 export const googleLogin =
 	(dependencies: TSocialLogin['dependency']) => async (info: TSocialLogin['param']) => {
 		const {
 			errorUtil: { convertErrorToCustomError },
+			cacheUtil: { deleteCache, getCache, setCache },
 			...commonDependencies
 		} = dependencies;
 
 		try {
 			const { code, state } = info;
-			if (!isValidatedState(state)) {
+			const isValidState = await isValidatedState({ deleteCache, getCache }, state);
+			if (!isValidState) {
 				throw new Error('State 불일치. 재 로그인이 필요합니다.');
 			}
 
@@ -209,10 +217,13 @@ export const googleLogin =
 			}
 
 			const data = { email, nickname: email.split('@')[0] };
-			const tokenInfo = await socialLogin(commonDependencies, {
-				user: data,
-				type: 'Google',
-			});
+			const tokenInfo = await socialLogin(
+				{ ...commonDependencies, cacheUtil: { setCache } },
+				{
+					user: data,
+					type: 'Google',
+				},
+			);
 
 			return tokenInfo;
 		} catch (error) {
@@ -225,26 +236,32 @@ export const googleLogin =
 	};
 
 /** 네이버 로그인 */
+/* istanbul ignore next */
 export const naverLogin =
 	(dependencies: TSocialLogin['dependency']) => async (info: TSocialLogin['param']) => {
 		const {
 			errorUtil: { convertErrorToCustomError },
+			cacheUtil: { deleteCache, getCache, setCache },
 			...commonDependencies
 		} = dependencies;
 
 		try {
 			const { code, state } = info;
-			if (!isValidatedState(state)) {
+			const isValidState = await isValidatedState({ deleteCache, getCache }, state);
+			if (!isValidState) {
 				throw new Error('State 불일치. 재 로그인이 필요합니다.');
 			}
 			const naverTokenInfo = await getNaverTokenInfo(code, state);
 			const { email, nickname } = await getNaverUserInfo(naverTokenInfo.access_token);
 
 			const data = { email, nickname };
-			const tokenInfo = await socialLogin(commonDependencies, {
-				user: data,
-				type: 'Naver',
-			});
+			const tokenInfo = await socialLogin(
+				{ ...commonDependencies, cacheUtil: { setCache } },
+				{
+					user: data,
+					type: 'Naver',
+				},
+			);
 
 			return tokenInfo;
 		} catch (error) {

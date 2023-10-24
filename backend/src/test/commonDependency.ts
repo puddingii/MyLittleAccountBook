@@ -41,15 +41,15 @@ export const jwtUtil = {
 		return 'access token';
 	},
 	createRefreshToken() {
-		return 'access token';
+		return 'refresh token';
 	},
 	decodeToken<T>(token: string): T | null {
 		return {} as T;
 	},
-	isExpiredTokenTrue(token?: string | undefined) {
+	isExpiredTokenTrue(token?: string | undefined): token is undefined {
 		return true;
 	},
-	isExpiredTokenFalse(token?: string | undefined) {
+	isExpiredTokenFalse(token?: string | undefined): token is undefined {
 		return false;
 	},
 	verifyAll(info: { refreshToken: string; accessToken: string }) {

@@ -48,7 +48,7 @@ export type TSocialLogin = {
 	dependency: {
 		jwtUtil: Pick<TJwtUtil, 'createAccessToken' | 'createRefreshToken'>;
 		errorUtil: Pick<TErrorUtil, 'convertErrorToCustomError'>;
-		cacheUtil: Pick<TCacheUtil, 'setCache'>;
+		cacheUtil: Pick<TCacheUtil, 'setCache' | 'getCache' | 'deleteCache'>;
 		repository: {
 			findOneSocialUserInfo: typeof findOneSocialUserInfo;
 			createSocialUser: typeof createSocialUser;
