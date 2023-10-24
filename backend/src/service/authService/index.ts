@@ -98,7 +98,7 @@ export const emailLogin =
 			return {
 				refreshToken,
 				accessToken,
-				accountBookId: (user.groups ?? [])[0].accountBookId,
+				accountBookId: (user.groups ?? [])[0]?.accountBookId,
 			};
 		} catch (error) {
 			const customError = convertErrorToCustomError(error, {
@@ -167,7 +167,7 @@ export const socialLogin = async (
 
 	let accountBookId: number;
 	if (user) {
-		accountBookId = (user.groups ?? [])[0].accountBookId;
+		accountBookId = (user.groups ?? [])[0]?.accountBookId;
 	} else {
 		const { accountBookId: newAccountBookId, newUser } = await createSocialUser({
 			userInfo: info.user,
