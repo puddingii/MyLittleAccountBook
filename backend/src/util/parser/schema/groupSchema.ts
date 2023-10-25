@@ -8,7 +8,7 @@ const getList = zod.object({
 
 const addGroupUser = zod.object({
 	body: zod.object({
-		userEmail: zod.string(),
+		userEmail: zod.string().email('이메일 유형이 아닙니다.'),
 		userType: zod.enum(['observer', 'writer', 'manager']),
 		accountBookId: zod.number(),
 		accessHistory: zod.string().optional(),
@@ -17,7 +17,7 @@ const addGroupUser = zod.object({
 
 const updateGroupUser = zod.object({
 	body: zod.object({
-		userEmail: zod.string(),
+		userEmail: zod.string().email('이메일 유형이 아닙니다.'),
 		userType: zod.enum(['observer', 'writer', 'manager']),
 		accountBookId: zod.number(),
 		accessHistory: zod.string().optional(),
