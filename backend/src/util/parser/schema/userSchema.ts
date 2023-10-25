@@ -2,7 +2,7 @@ import * as zod from 'zod';
 
 const getUser = zod.object({
 	query: zod.object({
-		email: zod.string().optional(),
+		email: zod.string().email('이메일 유형이 아닙니다.').optional(),
 		nickname: zod.string().optional(),
 	}),
 });
