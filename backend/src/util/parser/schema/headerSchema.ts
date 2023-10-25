@@ -13,7 +13,7 @@ const postAccountBook = zod.object({
 		content: zod.string().optional(),
 		invitedUserList: zod.array(
 			zod.object({
-				email: zod.string(),
+				email: zod.string().email('이메일 유형이 아닙니다.'),
 				type: zod.enum(['manager', 'writer', 'observer'], {
 					required_error: '초대한 유저별 타입이 누락되었습니다.',
 					invalid_type_error: '알 수 없는 유저 권한이 있습니다.',
