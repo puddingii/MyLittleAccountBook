@@ -7,7 +7,7 @@ import { ParseParams } from 'zod';
 import schema from '@/util/parser/schema';
 import zParser from '@/util/parser';
 
-describe('Group Service Test', function () {
+describe('User Zod Schema Test', function () {
 	const userSchema = schema.user;
 
 	describe('#getUser', function () {
@@ -22,7 +22,7 @@ describe('Group Service Test', function () {
 		>;
 
 		beforeEach(function () {
-			spyZParser = sinon.spy(schema.user.getUser, 'parseAsync');
+			spyZParser = sinon.spy(userSchema.getUser, 'parseAsync');
 		});
 
 		it('Check correct', async function () {
@@ -100,7 +100,7 @@ describe('Group Service Test', function () {
 		>;
 
 		beforeEach(function () {
-			spyZParser = sinon.spy(schema.user.patchUser, 'parseAsync');
+			spyZParser = sinon.spy(userSchema.patchUser, 'parseAsync');
 		});
 
 		it('Check correct', async function () {
