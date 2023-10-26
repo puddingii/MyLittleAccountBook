@@ -91,14 +91,14 @@ const publicOptionalColumn = {
 	value: publicColumn.value.optional(),
 	type: publicColumn.type.optional(),
 	content: publicColumn.content,
+	gabId: zod.number(),
+	accountBookId: zod.number(),
 };
 
 const patchNotFixedColumn = zod.object({
 	...publicOptionalColumn,
 	writeType: notFixedColumn.writeType,
 	spendingAndIncomeDate: notFixedColumn.spendingAndIncomeDate.optional(),
-	gabId: zod.number(),
-	accountBookId: zod.number(),
 });
 
 const patchFixedColumn = zod.object({
@@ -112,8 +112,6 @@ const patchFixedColumn = zod.object({
 		})
 		.optional(),
 	needToUpdateDate: fixedColumn.needToUpdateDate.optional(),
-	gabId: zod.number(),
-	accountBookId: zod.number(),
 });
 
 const patchColumn = zod
@@ -123,7 +121,7 @@ const patchColumn = zod
 			/** Fixed에서 cycleType, cycleTime 수정 시 둘 다 포함되어야 함 */
 			if (
 				data.writeType === COLUMN_WRITE_TYPE.FIXED &&
-				(!data.cycleType || !data.cycleTime)
+				((!data.cycleType && data.cycleTime) || (data.cycleType && !data.cycleTime))
 			) {
 				return false;
 			}
@@ -192,6 +190,8 @@ export type TGetCategoryQuery = zod.infer<typeof getCategory>;
 export type TPostFixedColumnQuery = zod.infer<typeof postFixedColumn>;
 export type TPostNotFixedColumnQuery = zod.infer<typeof postNotFixedColumn>;
 export type TPostColumnQuery = zod.infer<typeof postColumn>;
+export type TPatchFixedColumnQuery = zod.infer<typeof patchFixedColumn>;
+export type TPatchNotFixedColumnQuery = zod.infer<typeof patchNotFixedColumn>;
 export type TPatchColumnQuery = zod.infer<typeof patchColumn>;
 export type TGetColumnListQuery = zod.infer<typeof getColumnList>;
 export type TDeleteColumnQuery = zod.infer<typeof deleteColumn>;
