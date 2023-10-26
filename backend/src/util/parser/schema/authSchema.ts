@@ -35,7 +35,9 @@ const naverLogin = zod.object({
 
 const emailLogin = zod.object({
 	body: zod.object({
-		email: zod.string({ required_error: '이메일 정보가 누락되었습니다.' }),
+		email: zod
+			.string({ required_error: '이메일 정보가 누락되었습니다.' })
+			.email('이메일 형식이 아닙니다.'),
 		password: zod.string({ required_error: '패스워드 정보가 누락되었습니다.' }),
 	}),
 });
@@ -45,6 +47,7 @@ const join = zod.object({
 		email: zod
 			.string({ required_error: '이메일 정보가 누락되었습니다.' })
 			.trim()
+			.email('이메일 형식이 아닙니다.')
 			.max(255, '입력할 수 있는 길이를 넘었습니다.'),
 		password: zod
 			.string({ required_error: '패스워드 정보가 누락되었습니다.' })
