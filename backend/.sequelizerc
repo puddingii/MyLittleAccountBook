@@ -1,0 +1,13 @@
+require('@babel/register')({
+	configFile: './.babelrc',
+	extensions: ['.js', '.ts'],
+});
+
+const path = require('path');
+
+module.exports = {
+	config: path.resolve('./src/config', 'mysql.json'),
+	'models-path': path.resolve('./src', 'model'),
+	'seeders-path': path.resolve('./src', 'seeder'),
+	'migrations-path': path.resolve('./src', 'migration'),
+};

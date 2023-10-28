@@ -5,6 +5,8 @@ const envPath =
 	process.env.NODE_ENV === 'development' ? '../../.env.local' : '../../.env';
 dotenv.config({ path: path.resolve(__dirname, envPath) });
 
+const dbNameInfo = { production: '', development: '_dev', test: '_test' };
+
 export default {
 	nodeEnv: process.env.NODE_ENV ?? '',
 	loggerMode: process.env.LOGGER_MODE ?? 'prod',
@@ -27,7 +29,10 @@ export default {
 		host: process.env.MYSQL_HOST ?? '',
 		username: process.env.MYSQL_USERNAME ?? '',
 		pw: process.env.MYSQL_PW ?? '',
-		databaseName: process.env.MYSQL_DATABASENAME ?? '',
+		databaseName:
+			`${process.env.MYSQL_DATABASENAME}${
+				dbNameInfo[process.env.NODE_ENV as 'development' | 'production' | 'test']
+			}` ?? '',
 	},
 	redis: {
 		host: process.env.REDIS_HOST ?? '',

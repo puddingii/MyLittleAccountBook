@@ -9,9 +9,9 @@
 		"test": "cross-env NODE_ENV=production mocha",
 		"dev:start": "cross-env NODE_ENV=development nodemon --config ./nodemon.json src/index.ts",
 		"dev:tscheck": "tsc-watch",
-		"dev:test": "cross-env NODE_ENV=development mocha",
+		"dev:test": "cross-env NODE_ENV=test mocha",
 		"w": "node ./tsconfig-paths-bootstrap.js",
-		"coverage": "nyc --reporter=text mocha"
+		"coverage": "cross-env NODE_ENV=test nyc --reporter=text mocha"
 	},
 	"author": "",
 	"license": "MIT",
@@ -39,6 +39,12 @@
 		"zod": "^3.21.4"
 	},
 	"devDependencies": {
+		"@babel/core": "^7.23.2",
+		"@babel/plugin-transform-runtime": "^7.23.2",
+		"@babel/preset-env": "^7.23.2",
+		"@babel/preset-typescript": "^7.23.2",
+		"@babel/register": "^7.22.15",
+		"@babel/runtime": "^7.23.2",
 		"@istanbuljs/nyc-config-typescript": "^1.0.2",
 		"@types/bcrypt": "^5.0.0",
 		"@types/cookie-parser": "^1.4.3",
@@ -64,6 +70,7 @@
 		"nodemon": "^3.0.1",
 		"nyc": "^15.1.0",
 		"prettier": "^3.0.0",
+		"sequelize-cli": "^6.6.1",
 		"sinon": "^16.1.0",
 		"ts-node": "^10.9.1",
 		"tsc-watch": "^6.0.4",

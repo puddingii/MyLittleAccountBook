@@ -10,12 +10,16 @@ import { TModelInfo } from '@/interface/model';
 
 const { databaseName, host, pw, username } = secret.mysql;
 
+const logging =
+	secret.nodeEnv === 'test'
+		? false
+		: (msg: string) => {
+				logger.info(msg, ['Mysql']);
+		  };
 const sequelize = new Sequelize(databaseName, username, pw, {
 	host: host,
 	dialect: 'mysql',
-	logging: msg => {
-		logger.info(msg, ['Mysql']);
-	},
+	logging,
 });
 
 const getModelList = async () => {
@@ -41,7 +45,7 @@ const getModelList = async () => {
 
 export const sync = async () => {
 	try {
-		const syncOptions = secret.nodeEnv === 'production' ? {} : {};
+		const syncOptions = secret.nodeEnv === 'test' ? { force: true } : {};
 		const modelInfo = await getModelList();
 
 		modelInfo.associateList.forEach(associate => associate(modelInfo.modelList));
