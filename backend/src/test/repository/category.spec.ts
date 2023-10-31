@@ -16,7 +16,7 @@ import {
 	UpdateOptions,
 } from 'sequelize';
 
-/** Service */
+/** Repository */
 import {
 	createCategory,
 	createDefaultCategory,

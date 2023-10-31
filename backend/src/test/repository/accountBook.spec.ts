@@ -5,7 +5,7 @@ import { AssertionError, deepStrictEqual, fail } from 'assert';
 import sinon from 'sinon';
 import { CreateOptions, FindOptions, Model, Optional, UpdateOptions } from 'sequelize';
 
-/** Service */
+/** Repository */
 import {
 	createAccountBook,
 	findOneAccountBook,
