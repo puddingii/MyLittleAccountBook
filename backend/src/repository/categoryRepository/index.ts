@@ -201,7 +201,7 @@ export const deleteChildCategoryList =
 	(dependencies: TDeleteChildCategoryList['dependency']) =>
 	async (
 		info: TDeleteChildCategoryList['param'][0],
-		transaction: TDeleteChildCategoryList['param'][1],
+		transaction?: TDeleteChildCategoryList['param'][1],
 	) => {
 		const {
 			CategoryModel,
