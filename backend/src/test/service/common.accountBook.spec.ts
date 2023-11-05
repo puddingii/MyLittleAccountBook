@@ -8,7 +8,7 @@ import dayjs from 'dayjs';
 import { errorUtil } from '../commonDependency';
 import { findRecursiveCategoryList } from '@/repository/categoryRepository/dependency';
 import { findAllNotFixedColumn } from '@/repository/groupAccountBookRepository/dependency';
-import { findAllFixedColumn } from '@/repository/cronGroupAccountBookRepository/dependency';
+import { findAllFixedColumnBasedGroup } from '@/repository/cronGroupAccountBookRepository/dependency';
 
 /** Service */
 import {
@@ -456,11 +456,17 @@ describe('Common AccountBook Service Test', function () {
 			isActivated: true,
 		};
 
-		const repository = { findAllFixedColumn: findAllFixedColumn };
-		let stubFindAllFixedColumn = sinon.stub(repository, 'findAllFixedColumn');
+		const repository = { findAllFixedColumnBasedGroup };
+		let stubFindAllFixedColumnBasedGroup = sinon.stub(
+			repository,
+			'findAllFixedColumnBasedGroup',
+		);
 
 		beforeEach(function () {
-			stubFindAllFixedColumn = sinon.stub(repository, 'findAllFixedColumn');
+			stubFindAllFixedColumnBasedGroup = sinon.stub(
+				repository,
+				'findAllFixedColumnBasedGroup',
+			);
 		});
 
 		it('Check function parameters', async function () {
@@ -473,7 +479,7 @@ describe('Common AccountBook Service Test', function () {
 			const cgab = new CronGroupAccountBookModel(cgabInfo);
 			group.crongroupaccountbooks = [cgab];
 
-			stubFindAllFixedColumn.resolves([group]);
+			stubFindAllFixedColumnBasedGroup.resolves([group]);
 
 			const injectedFunc = getFixedColumnList({
 				...common,
@@ -484,7 +490,7 @@ describe('Common AccountBook Service Test', function () {
 				const info = { accountBookId: 1, endDate: '2022-02-03', startDate: '2022-02-01' };
 				await injectedFunc(info, categoryList);
 
-				sinon.assert.calledWith(stubFindAllFixedColumn, {
+				sinon.assert.calledWith(stubFindAllFixedColumnBasedGroup, {
 					accountBookId: info.accountBookId,
 					endDate: dayjs(info.endDate).toDate(),
 					startDate: dayjs(info.startDate).toDate(),
@@ -504,7 +510,7 @@ describe('Common AccountBook Service Test', function () {
 			const cgab = new CronGroupAccountBookModel(cgabInfo);
 			group.crongroupaccountbooks = [cgab];
 
-			stubFindAllFixedColumn.resolves([group]);
+			stubFindAllFixedColumnBasedGroup.resolves([group]);
 
 			const injectedFunc = getFixedColumnList({
 				...common,
@@ -515,7 +521,7 @@ describe('Common AccountBook Service Test', function () {
 				const info = { accountBookId: 1, endDate: '2022-02-03' };
 				await injectedFunc(info, categoryList);
 
-				sinon.assert.calledWith(stubFindAllFixedColumn, {
+				sinon.assert.calledWith(stubFindAllFixedColumnBasedGroup, {
 					accountBookId: info.accountBookId,
 				});
 			} catch (err) {
@@ -533,7 +539,7 @@ describe('Common AccountBook Service Test', function () {
 			const cgab = new CronGroupAccountBookModel(cgabInfo);
 			group.crongroupaccountbooks = [cgab];
 
-			stubFindAllFixedColumn.resolves([group]);
+			stubFindAllFixedColumnBasedGroup.resolves([group]);
 
 			const injectedFunc = getFixedColumnList({
 				...common,
@@ -569,7 +575,7 @@ describe('Common AccountBook Service Test', function () {
 			const cgab = new CronGroupAccountBookModel(cgabInfo);
 			group.crongroupaccountbooks = [cgab];
 
-			stubFindAllFixedColumn.resolves([group]);
+			stubFindAllFixedColumnBasedGroup.resolves([group]);
 
 			const injectedFunc = getFixedColumnList({
 				...common,
@@ -615,7 +621,7 @@ describe('Common AccountBook Service Test', function () {
 			group2.users = userInfo2;
 			group2.crongroupaccountbooks = [cgab];
 
-			stubFindAllFixedColumn.resolves([group, group2]);
+			stubFindAllFixedColumnBasedGroup.resolves([group, group2]);
 
 			const injectedFunc = getFixedColumnList({
 				...common,

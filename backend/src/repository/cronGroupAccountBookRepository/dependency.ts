@@ -19,7 +19,7 @@ export const findGAB = Logic.findGAB({
 	errorUtil: { convertErrorToCustomError },
 });
 
-export const findAllFixedColumn = Logic.findAllFixedColumn({
+export const findAllFixedColumnBasedGroup = Logic.findAllFixedColumnBasedGroup({
 	CronGroupAccountBookModel,
 	GroupModel,
 	UserModel,

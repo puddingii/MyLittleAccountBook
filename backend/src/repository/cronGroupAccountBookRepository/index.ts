@@ -67,7 +67,7 @@ export const findGAB =
 		}
 	};
 
-export const findAllFixedColumn =
+export const findAllFixedColumnBasedGroup =
 	(dependencies: TFindAllFixedColumn['dependency']) =>
 	async (info: TFindAllFixedColumn['param']) => {
 		const {

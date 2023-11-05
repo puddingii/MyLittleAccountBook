@@ -3,7 +3,7 @@ import * as Logic from '.';
 /** Repository */
 import { findRecursiveCategoryList } from '@/repository/categoryRepository/dependency';
 import { findAllNotFixedColumn } from '@/repository/groupAccountBookRepository/dependency';
-import { findAllFixedColumn } from '@/repository/cronGroupAccountBookRepository/dependency';
+import { findAllFixedColumnBasedGroup } from '@/repository/cronGroupAccountBookRepository/dependency';
 
 /** Util */
 import { convertErrorToCustomError } from '@/util/error';
@@ -20,5 +20,5 @@ export const getNotFixedColumnList = Logic.getNotFixedColumnList({
 
 export const getFixedColumnList = Logic.getFixedColumnList({
 	errorUtil: { convertErrorToCustomError },
-	repository: { findAllFixedColumn },
+	repository: { findAllFixedColumnBasedGroup },
 });

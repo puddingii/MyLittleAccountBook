@@ -105,7 +105,7 @@ export const getFixedColumnList =
 	) => {
 		const {
 			errorUtil: { convertErrorToCustomError },
-			repository: { findAllFixedColumn },
+			repository: { findAllFixedColumnBasedGroup },
 		} = dependencies;
 
 		try {
@@ -118,7 +118,7 @@ export const getFixedColumnList =
 					  }
 					: {};
 
-			const list = await findAllFixedColumn({
+			const list = await findAllFixedColumnBasedGroup({
 				accountBookId,
 				...dateInfo,
 			});

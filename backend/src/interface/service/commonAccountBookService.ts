@@ -1,7 +1,7 @@
 /** Repository */
 import { findRecursiveCategoryList } from '@/repository/categoryRepository/dependency';
 import { findAllNotFixedColumn } from '@/repository/groupAccountBookRepository/dependency';
-import { findAllFixedColumn } from '@/repository/cronGroupAccountBookRepository/dependency';
+import { findAllFixedColumnBasedGroup } from '@/repository/cronGroupAccountBookRepository/dependency';
 
 /** Util */
 import { TErrorUtil } from '../util';
@@ -46,7 +46,7 @@ export type TGetFixedColumnList = {
 	dependency: {
 		errorUtil: Pick<TErrorUtil, 'convertErrorToCustomError'>;
 		repository: {
-			findAllFixedColumn: typeof findAllFixedColumn;
+			findAllFixedColumnBasedGroup: typeof findAllFixedColumnBasedGroup;
 		};
 	};
 	param: [
