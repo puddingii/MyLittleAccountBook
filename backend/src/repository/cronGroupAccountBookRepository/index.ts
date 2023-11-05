@@ -3,7 +3,8 @@ import { Op } from 'sequelize';
 import {
 	TCreateNewColumn,
 	TDeleteColumn,
-	TFindAllFixedColumn,
+	TFindAllFixedColumnBasedCron,
+	TFindAllFixedColumnBasedGroup,
 	TFindGAB,
 	TUpdateColumn,
 } from '@/interface/repository/cronGroupAccountBookRepository';
@@ -68,8 +69,8 @@ export const findGAB =
 	};
 
 export const findAllFixedColumnBasedGroup =
-	(dependencies: TFindAllFixedColumn['dependency']) =>
-	async (info: TFindAllFixedColumn['param']) => {
+	(dependencies: TFindAllFixedColumnBasedGroup['dependency']) =>
+	async (info: TFindAllFixedColumnBasedGroup['param']) => {
 		const {
 			CronGroupAccountBookModel,
 			GroupModel,
@@ -104,6 +105,38 @@ export const findAllFixedColumnBasedGroup =
 						attributes: ['nickname'],
 					},
 				],
+				subQuery: false,
+			});
+
+			return columnList;
+		} catch (error) {
+			const customError = convertErrorToCustomError(error, {
+				trace: 'Repository',
+				code: 400,
+			});
+			throw customError;
+		}
+	};
+
+export const findAllFixedColumnBasedCron =
+	(dependencies: TFindAllFixedColumnBasedCron['dependency']) =>
+	async (info: TFindAllFixedColumnBasedCron['param']) => {
+		const {
+			CronGroupAccountBookModel,
+			errorUtil: { convertErrorToCustomError },
+		} = dependencies;
+
+		try {
+			const { endDate, startDate, ...condition } = info;
+			let dateCondition = {};
+			if (endDate && startDate) {
+				dateCondition = {
+					needToUpdateDate: { [Op.between]: [startDate, endDate] },
+				};
+			}
+
+			const columnList = await CronGroupAccountBookModel.findAll({
+				where: { ...condition, ...dateCondition },
 				subQuery: false,
 			});
 

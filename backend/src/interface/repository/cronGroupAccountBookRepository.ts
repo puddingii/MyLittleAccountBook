@@ -26,7 +26,7 @@ export type TFindGAB = {
 	param: [gabInfo: Partial<TColumnInfo>, options?: { isIncludeGroup: boolean }];
 };
 
-export type TFindAllFixedColumn = {
+export type TFindAllFixedColumnBasedGroup = {
 	dependency: {
 		errorUtil: Pick<TErrorUtil, 'convertErrorToCustomError'>;
 		CronGroupAccountBookModel: typeof CronGroupAccountBookModel;
@@ -35,6 +35,19 @@ export type TFindAllFixedColumn = {
 	};
 	param: {
 		accountBookId: number;
+		startDate?: Date;
+		endDate?: Date;
+	};
+};
+
+export type TFindAllFixedColumnBasedCron = {
+	dependency: {
+		errorUtil: Pick<TErrorUtil, 'convertErrorToCustomError'>;
+		CronGroupAccountBookModel: typeof CronGroupAccountBookModel;
+	};
+	param: {
+		groupId?: number;
+		id?: number;
 		startDate?: Date;
 		endDate?: Date;
 	};

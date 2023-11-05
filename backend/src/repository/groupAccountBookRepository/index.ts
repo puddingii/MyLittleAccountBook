@@ -101,7 +101,7 @@ export const createNewColumn =
 		try {
 			const newColumn = await GroupAccountBookModel.create(columnInfo);
 
-			return newColumn.id;
+			return newColumn;
 		} catch (error) {
 			const customError = convertErrorToCustomError(error, {
 				trace: 'Repository',

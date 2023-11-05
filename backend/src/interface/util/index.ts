@@ -1,4 +1,4 @@
-import { convertErrorToCustomError } from '@/util/error';
+import { convertErrorToCustomError, filterPromiseSettledResultList } from '@/util/error';
 import { CustomError } from '@/util/error/class';
 
 import {
@@ -14,6 +14,7 @@ import { isAdminUser, canUserWrite } from '@/util/validation/user';
 
 export type TErrorUtil = {
 	convertErrorToCustomError: typeof convertErrorToCustomError;
+	filterPromiseSettledResultList: typeof filterPromiseSettledResultList;
 	CustomError: typeof CustomError;
 };
 

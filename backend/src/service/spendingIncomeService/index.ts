@@ -67,13 +67,13 @@ export const createNewNotFixedColumn =
 				throw new Error('글쓰기 권한이 없는 사용자 입니다.');
 			}
 
-			const newId = await createNewNFColumn({
+			const newColumn = await createNewNFColumn({
 				groupId: group.id,
 				spendingAndIncomeDate: dayjs(spendingAndIncomeDate).toDate(),
 				...columnInfo,
 			});
 
-			return newId;
+			return newColumn.id;
 		} catch (error) {
 			const customError = convertErrorToCustomError(error, {
 				trace: 'Service',

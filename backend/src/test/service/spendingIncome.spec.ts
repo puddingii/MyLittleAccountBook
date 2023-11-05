@@ -271,7 +271,13 @@ describe('SpendingIncome Service Test', function () {
 
 		it('Check owner user and correct value is passed to function', async function () {
 			stubFindGroup.resolves(new GroupModel({ ...defaultGroupInfo }));
-			stubCreateNewNFColumn.resolves(1);
+			stubCreateNewNFColumn.resolves(
+				new GroupAccountBookModel({
+					id: 1,
+					...defaultColumnInfo,
+					spendingAndIncomeDate: new Date(defaultColumnInfo.spendingAndIncomeDate),
+				}),
+			);
 
 			const injectedFunc = createNewNotFixedColumn({
 				...common,
@@ -304,7 +310,13 @@ describe('SpendingIncome Service Test', function () {
 			stubFindGroup.resolves(
 				new GroupModel({ ...defaultGroupInfo, userType: 'manager' }),
 			);
-			stubCreateNewNFColumn.resolves(1);
+			stubCreateNewNFColumn.resolves(
+				new GroupAccountBookModel({
+					id: 1,
+					...defaultColumnInfo,
+					spendingAndIncomeDate: new Date(defaultColumnInfo.spendingAndIncomeDate),
+				}),
+			);
 
 			const injectedFunc = createNewNotFixedColumn({
 				...common,
@@ -325,7 +337,13 @@ describe('SpendingIncome Service Test', function () {
 
 		it('Check writer user', async function () {
 			stubFindGroup.resolves(new GroupModel({ ...defaultGroupInfo, userType: 'writer' }));
-			stubCreateNewNFColumn.resolves(1);
+			stubCreateNewNFColumn.resolves(
+				new GroupAccountBookModel({
+					id: 1,
+					...defaultColumnInfo,
+					spendingAndIncomeDate: new Date(defaultColumnInfo.spendingAndIncomeDate),
+				}),
+			);
 
 			const injectedFunc = createNewNotFixedColumn({
 				...common,
@@ -348,7 +366,13 @@ describe('SpendingIncome Service Test', function () {
 			stubFindGroup.resolves(
 				new GroupModel({ ...defaultGroupInfo, userType: 'observer' }),
 			);
-			stubCreateNewNFColumn.resolves(1);
+			stubCreateNewNFColumn.resolves(
+				new GroupAccountBookModel({
+					id: 1,
+					...defaultColumnInfo,
+					spendingAndIncomeDate: new Date(defaultColumnInfo.spendingAndIncomeDate),
+				}),
+			);
 
 			const injectedFunc = createNewNotFixedColumn({
 				...common,
@@ -370,7 +394,13 @@ describe('SpendingIncome Service Test', function () {
 
 		it('Check not existing group', async function () {
 			stubFindGroup.resolves(null);
-			stubCreateNewNFColumn.resolves(1);
+			stubCreateNewNFColumn.resolves(
+				new GroupAccountBookModel({
+					id: 1,
+					...defaultColumnInfo,
+					spendingAndIncomeDate: new Date(defaultColumnInfo.spendingAndIncomeDate),
+				}),
+			);
 
 			const injectedFunc = createNewNotFixedColumn({
 				...common,
@@ -392,7 +422,13 @@ describe('SpendingIncome Service Test', function () {
 
 		it('If findGroup is error', async function () {
 			stubFindGroup.rejects(new Error('findGroup error'));
-			stubCreateNewNFColumn.resolves(1);
+			stubCreateNewNFColumn.resolves(
+				new GroupAccountBookModel({
+					id: 1,
+					...defaultColumnInfo,
+					spendingAndIncomeDate: new Date(defaultColumnInfo.spendingAndIncomeDate),
+				}),
+			);
 
 			const injectedFunc = createNewNotFixedColumn({
 				...common,

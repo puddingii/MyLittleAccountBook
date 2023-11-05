@@ -26,6 +26,11 @@ export const findAllFixedColumnBasedGroup = Logic.findAllFixedColumnBasedGroup({
 	errorUtil: { convertErrorToCustomError },
 });
 
+export const findAllFixedColumnBasedCron = Logic.findAllFixedColumnBasedCron({
+	CronGroupAccountBookModel,
+	errorUtil: { convertErrorToCustomError },
+});
+
 export const updateColumn = Logic.updateColumn({
 	errorUtil: { convertErrorToCustomError },
 });
