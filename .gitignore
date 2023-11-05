@@ -132,3 +132,4 @@ dist
 build
 .DS_Store
 mysql.json
+*.dump.sql

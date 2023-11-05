@@ -26,9 +26,11 @@ export default {
 
 	/** DB key */
 	mysql: {
+		dumpPath: process.env.MYSQL_DUMP_PATH ?? '',
 		host: process.env.MYSQL_HOST ?? '',
 		username: process.env.MYSQL_USERNAME ?? '',
 		pw: process.env.MYSQL_PW ?? '',
+		cmdPw: process.env.MYSQL_COMMAND_PW ?? '',
 		databaseName:
 			`${process.env.MYSQL_DATABASENAME}${
 				dbNameInfo[process.env.NODE_ENV as 'development' | 'production' | 'test']

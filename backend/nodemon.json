@@ -2,7 +2,8 @@
 	"verbose": true,
 	"ignore": [
 		"*.test.ts",
-		"node_modules"
+		"node_modules",
+		"*.dump.sql"
 	],
 	"execMap": {
 		"ts": "ts-node -r tsconfig-paths/register"

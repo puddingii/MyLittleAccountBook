@@ -59,3 +59,23 @@ export const convertErrorToCustomError = (
 		context,
 	});
 };
+
+export const filterPromiseSettledResultList = <T>(
+	resultList: Array<PromiseSettledResult<T>>,
+) => {
+	return resultList.reduce(
+		(acc, result) => {
+			if (result.status === 'fulfilled') {
+				acc.fulfilledList.push(result);
+			} else {
+				acc.rejectedList.push(result as PromiseRejectedResult);
+			}
+
+			return acc;
+		},
+		{ fulfilledList: [], rejectedList: [] } as {
+			fulfilledList: Array<PromiseFulfilledResult<T>>;
+			rejectedList: Array<PromiseRejectedResult>;
+		},
+	);
+};

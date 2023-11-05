@@ -14,14 +14,16 @@ export const calculateNextCycle = (
 	cycleTime: number,
 	cycleType: TCycleType,
 ) => {
+	/** '특정 일'의 경우 */
 	if (cycleType === 'sd') {
 		const curDate = dayjs(date);
-		if (curDate.date() >= cycleTime) {
-			curDate.set('month', curDate.month() + 1);
-		}
-		return curDate.set('date', cycleTime).toDate();
+		return curDate
+			.set('month', curDate.month() + 1)
+			.set('date', cycleTime)
+			.toDate();
 	}
 
+	/** 'n일 마다'의 경우 */
 	return dayjs(date)
 		.add(CYCLE_TYPE_MAPPER[cycleType] * cycleTime, 'day')
 		.toDate();
