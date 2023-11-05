@@ -19,12 +19,14 @@ export const updateFixedAllColumn =
 		} = dependencies;
 
 		try {
-			const dumpName = `cron${Math.round(Date.now() / 1000)}.dump.sql`;
-			const dumpPath = path.resolve(__dirname, `../dump/${dumpName}`);
-			await execsync(
-				`${secret.mysql.dumpPath} -u ${secret.mysql.username} -p${secret.mysql.cmdPw} ${secret.mysql.databaseName} crongroupaccountbooks groupaccountbooks > ${dumpPath}`,
-				{},
-			);
+			if (secret.nodeEnv === 'development') {
+				const dumpName = `cron${Math.round(Date.now() / 1000)}.dump.sql`;
+				const dumpPath = path.resolve(__dirname, `../dump/${dumpName}`);
+				await execsync(
+					`${secret.mysql.dumpPath} -u ${secret.mysql.username} -p${secret.mysql.cmdPw} ${secret.mysql.databaseName} crongroupaccountbooks groupaccountbooks > ${dumpPath}`,
+					{},
+				);
+			}
 
 			const curDate = dayjs().tz();
 			const beforeDate = curDate.subtract(1, 'd');
@@ -35,7 +37,6 @@ export const updateFixedAllColumn =
 				startDate: beforeDate.toDate(),
 			});
 
-			console.log(list, curDate.toDate(), beforeDate.toDate());
 			/** 변동 테이블에 저장 */
 			const promiseList = list.map(column => {
 				const {
