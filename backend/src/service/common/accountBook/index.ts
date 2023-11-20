@@ -1,12 +1,22 @@
 import dayjs from 'dayjs';
+import { curry, flat, map, memoize, pipe, toArray } from '@fxts/core';
 
 /** Interface */
-import { TGet } from '@/interface/api/response/accountBookResponse';
 import {
+	TCategory,
 	TGetCategory,
 	TGetFixedColumnList,
 	TGetNotFixedColumnList,
 } from '@/interface/service/commonAccountBookService';
+
+const findByType = curry(
+	<T>(list: Array<Record<string, T>>, type: string, value: unknown) => {
+		return list.find(info => info[type] === value);
+	},
+);
+
+const getMemoizedFindCategoryFunction = (categoryList: TCategory[]) =>
+	pipe(findByType(categoryList, 'childId'), memoize);
 
 export const getCategory =
 	(dependencies: TGetCategory['dependency']) =>
@@ -64,27 +74,31 @@ export const getNotFixedColumnList =
 				startDate: dayjs(startDate).toDate(),
 			});
 
-			const historyList = list.reduce(
-				(acc, column) => {
+			const memoizedFindCategory = getMemoizedFindCategoryFunction(categoryList);
+
+			const historyList = pipe(
+				list,
+				map(column => {
 					const nickname = column.users?.nickname ?? '';
-					const gabInfo = (column.groupaccountbooks ?? []).map((gab, idx) => {
+					return (column.groupaccountbooks ?? []).map((gab, idx) => {
+						const category = memoizedFindCategory(gab.categoryId) as
+							| TCategory
+							| undefined;
+
 						return {
 							id: idx,
 							gabId: gab.id,
 							nickname,
-							category:
-								categoryList.find(category => category.childId === gab.categoryId)
-									?.categoryNamePath ?? '',
+							category: category?.categoryNamePath ?? '',
 							type: gab.type,
 							spendingAndIncomeDate: gab.spendingAndIncomeDate,
 							value: gab.value,
 							content: gab.content,
 						};
 					});
-					acc.push(...gabInfo);
-					return acc;
-				},
-				[] as TGet['data']['history']['notFixedList'],
+				}),
+				flat,
+				toArray,
 			);
 
 			return historyList;
@@ -123,17 +137,22 @@ export const getFixedColumnList =
 				...dateInfo,
 			});
 
-			const historyList = list.reduce(
-				(acc, column) => {
+			const memoizedFindCategory = getMemoizedFindCategoryFunction(categoryList);
+
+			const historyList = pipe(
+				list,
+				map(column => {
 					const nickname = column.users?.nickname ?? '';
-					const gabInfo = (column.crongroupaccountbooks ?? []).map((gab, idx) => {
+					return (column.crongroupaccountbooks ?? []).map((gab, idx) => {
+						const category = memoizedFindCategory(gab.categoryId) as
+							| TCategory
+							| undefined;
+
 						return {
 							id: idx,
 							gabId: gab.id,
 							nickname,
-							category:
-								categoryList.find(category => category.childId === gab.categoryId)
-									?.categoryNamePath ?? '',
+							category: category?.categoryNamePath ?? '',
 							type: gab.type,
 							cycleType: gab.cycleType,
 							cycleTime: gab.cycleTime,
@@ -142,10 +161,9 @@ export const getFixedColumnList =
 							content: gab.content,
 						};
 					});
-					acc.push(...gabInfo);
-					return acc;
-				},
-				[] as TGet['data']['history']['fixedList'],
+				}),
+				flat,
+				toArray,
 			);
 
 			return historyList;
