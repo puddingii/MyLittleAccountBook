@@ -29,7 +29,7 @@ router.get('/', verifyToken, async (req, res) => {
 			data: result,
 			message: '',
 			status: 'success',
-		} as TGetSummary);
+		} satisfies TGetSummary);
 	} catch (error) {
 		const { message, traceList, code } = convertErrorToCustomError(error, {
 			trace: 'Router',

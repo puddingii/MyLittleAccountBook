@@ -38,9 +38,11 @@ router.post('/social/google', async (req, res) => {
 
 		const tokenInfo = await googleLogin({ code, state });
 
-		return res
-			.status(200)
-			.json({ data: tokenInfo, message: '', status: 'success' } as TGetSocialGoogle);
+		return res.status(200).json({
+			data: tokenInfo,
+			message: '',
+			status: 'success',
+		} satisfies TGetSocialGoogle);
 	} catch (error) {
 		const { message, traceList, code } = convertErrorToCustomError(error, {
 			trace: 'Router',
@@ -64,9 +66,11 @@ router.post('/social/naver', async (req, res) => {
 
 		const tokenInfo = await naverLogin({ code, state });
 
-		return res
-			.status(200)
-			.json({ data: tokenInfo, message: '', status: 'success' } as TGetSocialNaver);
+		return res.status(200).json({
+			data: tokenInfo,
+			message: '',
+			status: 'success',
+		} satisfies TGetSocialNaver);
 	} catch (error) {
 		const { message, traceList, code } = convertErrorToCustomError(error, {
 			trace: 'Router',
@@ -87,7 +91,7 @@ router.get('/social', async (req, res) => {
 
 		return res
 			.status(200)
-			.json({ data: { location }, message: '', status: 'success' } as TGetSocial);
+			.json({ data: { location }, message: '', status: 'success' } satisfies TGetSocial);
 	} catch (error) {
 		const { message, traceList, code } = convertErrorToCustomError(error, {
 			trace: 'Router',
@@ -109,7 +113,7 @@ router.post('/email', async (req, res) => {
 
 		return res
 			.status(200)
-			.json({ data: tokenInfo, message: '', status: 'success' } as TPostEmail);
+			.json({ data: tokenInfo, message: '', status: 'success' } satisfies TPostEmail);
 	} catch (error) {
 		const { message, traceList, code } = convertErrorToCustomError(error, {
 			trace: 'Router',
@@ -131,7 +135,7 @@ router.post('/join', async (req, res) => {
 
 		return res
 			.status(201)
-			.json({ data: {}, message: '', status: 'success' } as TPostJoin);
+			.json({ data: {}, message: '', status: 'success' } satisfies TPostJoin);
 	} catch (error) {
 		const { message, traceList, code } = convertErrorToCustomError(error, {
 			trace: 'Router',
@@ -159,7 +163,7 @@ router.get('/token', async (req, res) => {
 			data: { accessToken: newAccessToken },
 			message: '',
 			status: 'success',
-		} as TGetToken);
+		} satisfies TGetToken);
 	} catch (error) {
 		const { message, traceList, code } = convertErrorToCustomError(error, {
 			trace: 'Router',
@@ -188,7 +192,7 @@ router.delete('/token', async (req, res) => {
 			data: {},
 			message: '',
 			status: 'success',
-		} as TDeleteToken);
+		} satisfies TDeleteToken);
 	} catch (error) {
 		const { message, traceList, code } = convertErrorToCustomError(error, {
 			trace: 'Router',

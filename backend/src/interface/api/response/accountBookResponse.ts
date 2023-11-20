@@ -4,6 +4,7 @@ import CronGroupAccountBookModel from '@/model/cronGroupAccountBook';
 import GroupAccountBookModel from '@/model/groupAccountBook';
 
 export type TPostColumn = TResponseType<{ newId: number }>;
+export type TPatchColumn = TResponseType<{}>;
 export type TDeleteColumn = TResponseType<{}>;
 
 type TNotFixedList = Array<{

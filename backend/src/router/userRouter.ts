@@ -28,7 +28,7 @@ router.get('/', verifyToken, async (req, res) => {
 			data: result,
 			message: '',
 			status: 'success',
-		} as TGet);
+		} satisfies TGet);
 	} catch (error) {
 		const { message, traceList, code } = convertErrorToCustomError(error, {
 			trace: 'Router',
@@ -59,7 +59,7 @@ router.patch('/', verifyToken, async (req, res) => {
 			data: result,
 			message: '',
 			status: 'success',
-		} as TPatch);
+		} satisfies TPatch);
 	} catch (error) {
 		const { message, traceList, code } = convertErrorToCustomError(error, {
 			trace: 'Router',

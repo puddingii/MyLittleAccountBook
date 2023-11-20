@@ -44,7 +44,7 @@ router.get('/', verifyToken, async (req, res) => {
 			data: accountBookInfo,
 			message: '',
 			status: 'success',
-		} as TGetAccountBook);
+		} satisfies TGetAccountBook);
 	} catch (error) {
 		const { message, traceList, code } = convertErrorToCustomError(error, {
 			trace: 'Router',
@@ -69,7 +69,7 @@ router.post('/', verifyToken, async (req, res) => {
 			data: { accountBookId },
 			message: '',
 			status: 'success',
-		} as TPostAccountBook);
+		} satisfies TPostAccountBook);
 	} catch (error) {
 		const { message, traceList, code } = convertErrorToCustomError(error, {
 			trace: 'Router',
@@ -94,7 +94,7 @@ router.patch('/', verifyToken, async (req, res) => {
 			data: {},
 			message: '',
 			status: 'success',
-		} as TPatchAccountBook);
+		} satisfies TPatchAccountBook);
 	} catch (error) {
 		const { message, traceList, code } = convertErrorToCustomError(error, {
 			trace: 'Router',

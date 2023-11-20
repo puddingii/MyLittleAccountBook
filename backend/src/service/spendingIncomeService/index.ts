@@ -247,7 +247,10 @@ export const getDefaultInfo =
 			const notFixedList = await getNotFixedColumnList(info, categoryList);
 			const fixedList = await getFixedColumnList({ accountBookId }, categoryList);
 
-			return { history: { notFixedList, fixedList }, categoryList } as TGet['data'];
+			return {
+				history: { notFixedList, fixedList },
+				categoryList,
+			} satisfies TGet['data'];
 		} catch (error) {
 			const customError = convertErrorToCustomError(error, {
 				trace: 'Service',

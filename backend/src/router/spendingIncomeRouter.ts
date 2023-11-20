@@ -21,6 +21,7 @@ import {
 	TDeleteColumn,
 	TGet,
 	TPostColumn,
+	TPatchColumn,
 } from '@/interface/api/response/accountBookResponse';
 
 const router = express.Router();
@@ -48,7 +49,7 @@ router.post('/column', verifyToken, async (req, res) => {
 
 		return res
 			.status(200)
-			.json({ data: { newId }, message: '', status: 'success' } as TPostColumn);
+			.json({ data: { newId }, message: '', status: 'success' } satisfies TPostColumn);
 	} catch (error) {
 		const { message, traceList, code } = convertErrorToCustomError(error, {
 			trace: 'Router',
@@ -86,7 +87,7 @@ router.patch('/column', verifyToken, async (req, res) => {
 
 		return res
 			.status(200)
-			.json({ data: {}, message: '', status: 'success' } as TPostColumn);
+			.json({ data: {}, message: '', status: 'success' } satisfies TPatchColumn);
 	} catch (error) {
 		const { message, traceList, code } = convertErrorToCustomError(error, {
 			trace: 'Router',
@@ -119,7 +120,7 @@ router.delete('/column', verifyToken, async (req, res) => {
 
 		return res
 			.status(200)
-			.json({ data: {}, message: '', status: 'success' } as TDeleteColumn);
+			.json({ data: {}, message: '', status: 'success' } satisfies TDeleteColumn);
 	} catch (error) {
 		const { message, traceList, code } = convertErrorToCustomError(error, {
 			trace: 'Router',
@@ -147,7 +148,7 @@ router.get('/', verifyToken, async (req, res) => {
 			data: result,
 			message: '',
 			status: 'success',
-		} as TGet);
+		} satisfies TGet);
 	} catch (error) {
 		const { message, traceList, code } = convertErrorToCustomError(error, {
 			trace: 'Router',

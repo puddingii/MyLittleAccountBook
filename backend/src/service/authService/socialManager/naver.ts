@@ -84,12 +84,12 @@ export const getUserInfo = async (code: string) => {
 			method: 'GET',
 		});
 
-		const userInfo = await response.json();
+		const userInfo = (await response.json()) as INaverSocialInfo['UserInfo'];
 		if (!response.ok) {
 			throw new CustomError(response.statusText, { code: response.status });
 		}
 
-		return userInfo as INaverSocialInfo['UserInfo'];
+		return userInfo;
 	} catch (error) {
 		const customError = convertErrorToCustomError(error, { trace: 'NaverManager' });
 		throw customError;

@@ -40,7 +40,7 @@ router.get('/list', verifyToken, async (req, res) => {
 			data: groupList,
 			message: '',
 			status: 'success',
-		} as TGetList);
+		} satisfies TGetList);
 	} catch (error) {
 		const { message, traceList, code } = convertErrorToCustomError(error, {
 			trace: 'Router',
@@ -67,7 +67,7 @@ router.get('/validate', verifyToken, async (req, res) => {
 			data: info,
 			message: '',
 			status: 'success',
-		} as TGetValidate);
+		} satisfies TGetValidate);
 	} catch (error) {
 		const { message, traceList, code } = convertErrorToCustomError(error, {
 			trace: 'Router',
@@ -97,7 +97,7 @@ router.post('/', verifyToken, async (req, res) => {
 			data: newGroup,
 			message: '',
 			status: 'success',
-		} as TPost);
+		} satisfies TPost);
 	} catch (error) {
 		const { message, traceList, code } = convertErrorToCustomError(error, {
 			trace: 'Router',
@@ -127,7 +127,7 @@ router.patch('/', verifyToken, async (req, res) => {
 			data: {},
 			message: '',
 			status: 'success',
-		} as TPatch);
+		} satisfies TPatch);
 	} catch (error) {
 		const { message, traceList, code } = convertErrorToCustomError(error, {
 			trace: 'Router',
@@ -155,7 +155,7 @@ router.delete('/', verifyToken, async (req, res) => {
 			data: {},
 			message: '',
 			status: 'success',
-		} as TDelete);
+		} satisfies TDelete);
 	} catch (error) {
 		const { message, traceList, code } = convertErrorToCustomError(error, {
 			trace: 'Router',

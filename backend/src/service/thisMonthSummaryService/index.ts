@@ -81,7 +81,7 @@ export const getDefaultInfo =
 				notFixedSpendingList,
 				fixedIncomeList,
 				fixedSpendingList,
-			} as TGetSummary['data'];
+			} satisfies TGetSummary['data'];
 		} catch (error) {
 			const customError = convertErrorToCustomError(error, {
 				trace: 'Service',

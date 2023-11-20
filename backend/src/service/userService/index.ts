@@ -30,7 +30,7 @@ export const getUserInfo =
 				email: userInfo.email,
 				nickname: userInfo.nickname,
 				socialType,
-			} as TGet['data'];
+			} satisfies TGet['data'];
 		} catch (error) {
 			const customError = convertErrorToCustomError(error, {
 				trace: 'Service',

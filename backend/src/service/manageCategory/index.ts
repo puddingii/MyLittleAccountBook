@@ -2,7 +2,7 @@
 import { Transaction } from 'sequelize';
 
 /** Interface */
-import { TCategoryMap } from '@/interface/api/response/manageCategoryResponse';
+import { TCategoryMap, TPost } from '@/interface/api/response/manageCategoryResponse';
 import {
 	TAddCategory,
 	TDeleteCategory,
@@ -131,10 +131,7 @@ export const addCategory =
 			});
 			const transaction = await sequelize.transaction({ autocommit: false });
 			try {
-				let result: {
-					id: number;
-					childList?: Array<{ id: number; parentId?: number; name: string }>;
-				};
+				let result: TPost['data'];
 
 				if (isParentIdNumber(categoryInfo)) {
 					result = await addSubCategory(categoryInfo, {
