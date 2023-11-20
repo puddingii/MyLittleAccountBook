@@ -1,6 +1,7 @@
 import { Sequelize } from 'sequelize';
 import fs from 'fs';
 import path from 'path';
+import { concurrent, filter, map, pipe, toArray, toAsync } from '@fxts/core';
 
 import { logger } from '@/util';
 import secret from '@/config/secret';
@@ -24,15 +25,21 @@ const sequelize = new Sequelize(databaseName, username, pw, {
 
 const getModelList = async () => {
 	const fileList = fs.readdirSync(path.resolve(__dirname, '../model'));
-	const filteredFileList = fileList.filter(
-		file => file.endsWith('.js') || file.endsWith('.ts'),
+
+	const modelfileList = await pipe(
+		fileList,
+		filter(name => name.endsWith('.js') || name.endsWith('.ts')),
+		toAsync,
+		map(name => import(`@/model/${name}`)),
+		concurrent(fileList.length),
+		toArray,
 	);
 
-	const importList = filteredFileList.map(fileName => import(`@/model/${fileName}`));
-	const modelInfoList = await Promise.all(importList);
-
-	const associateList = modelInfoList.map(modelInfo => modelInfo.associate);
-	const modelList: TModelInfo = modelInfoList.reduce((acc, cur) => {
+	const associateList = pipe(
+		modelfileList,
+		map(modelfile => modelfile.associate),
+	);
+	const modelList: TModelInfo = modelfileList.reduce((acc, cur) => {
 		const key = cur.default.name;
 		return { ...acc, [key]: cur.default };
 	}, {});
@@ -48,7 +55,9 @@ export const sync = async () => {
 		const syncOptions = secret.nodeEnv === 'test' ? { force: true } : {};
 		const modelInfo = await getModelList();
 
-		modelInfo.associateList.forEach(associate => associate(modelInfo.modelList));
+		for (const associate of modelInfo.associateList) {
+			associate(modelInfo.modelList);
+		}
 
 		await sequelize.authenticate();
 		await sequelize.sync(syncOptions);

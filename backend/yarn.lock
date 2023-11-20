@@ -1050,6 +1050,13 @@
   resolved "https://registry.yarnpkg.com/@eslint/js/-/js-8.44.0.tgz#961a5903c74139390478bdc808bcde3fc45ab7af"
   integrity sha512-Ag+9YM4ocKQx9AarydN0KY2j0ErMHNIocPDrVo8zAE44xLTjEtz81OdR68/cydGtk6m6jDb5Za3r2useMzYmSw==
 
+"@fxts/core@^0.23.0":
+  version "0.23.0"
+  resolved "https://registry.yarnpkg.com/@fxts/core/-/core-0.23.0.tgz#bf2499683e6fdcc6300567d6fdb512b6ea033cab"
+  integrity sha512-/ni8WQvuOVgdny34mxdzG2uXBnK3+iakU6rIatoXgBTFw0SceKQ4Seqp2UMJlr3WXf5Lcf7GZSsyiujlh9suHg==
+  dependencies:
+    tslib "^2.6.0"
+
 "@humanwhocodes/config-array@^0.11.10":
   version "0.11.10"
   resolved "https://registry.yarnpkg.com/@humanwhocodes/config-array/-/config-array-0.11.10.tgz#5a3ffe32cc9306365fb3fd572596cd602d5e12d2"

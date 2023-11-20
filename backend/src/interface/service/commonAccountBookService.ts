@@ -6,6 +6,14 @@ import { findAllFixedColumnBasedGroup } from '@/repository/cronGroupAccountBookR
 /** Util */
 import { TErrorUtil } from '../util';
 
+export type TCategory = {
+	parentId: number | undefined;
+	childId: number;
+	parentName: string;
+	categoryNamePath: string;
+	categoryIdPath: string;
+};
+
 export type TGetCategory = {
 	dependency: {
 		errorUtil: Pick<TErrorUtil, 'convertErrorToCustomError'>;
@@ -14,15 +22,7 @@ export type TGetCategory = {
 		};
 	};
 	param: [accountBookId: number, depth: { start: number; end: number }];
-	returnType: Promise<
-		{
-			parentId: number | undefined;
-			childId: number;
-			parentName: string;
-			categoryNamePath: string;
-			categoryIdPath: string;
-		}[]
-	>;
+	returnType: Promise<TCategory[]>;
 };
 
 export type TGetNotFixedColumnList = {

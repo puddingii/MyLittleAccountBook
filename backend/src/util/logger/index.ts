@@ -35,7 +35,7 @@ const getProdModeLogger = () => {
 			timestamp({
 				format: 'YYYY-MM-DD HH:mm:ss',
 			}),
-			label({ label: 'Local Server', message: true }),
+			label({ label: 'LocalServer', message: true }),
 			prettyPrint(),
 		])
 		.build();
@@ -83,7 +83,7 @@ const getFullModeLogger = () => {
 			timestamp({
 				format: 'YYYY-MM-DD HH:mm:ss',
 			}),
-			label({ label: 'Local Server', message: true }),
+			label({ label: 'LocalServer', message: true }),
 			prettyPrint(),
 		])
 		.build();
