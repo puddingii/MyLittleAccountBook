@@ -57,7 +57,7 @@ export const getDefaultInfo =
 	async (info: TGetDefaultInfo['param']) => {
 		const {
 			errorUtil: { convertErrorToCustomError },
-			service: { getCategory, getFixedColumnList, getNotFixedColumnList },
+			service: { getCategory, getAllTypeColumnList },
 		} = dependencies;
 
 		try {
@@ -69,12 +69,11 @@ export const getDefaultInfo =
 			};
 			const categoryList = await getCategory(accountBookId, { start: 2, end: 2 });
 
-			const notFixedList = await getNotFixedColumnList(findOptions, categoryList);
-			const fixedList = await getFixedColumnList(findOptions, categoryList);
+			const { fgab, nfgab } = await getAllTypeColumnList(findOptions, categoryList);
 			const { incomeList: notFixedIncomeList, spendingList: notFixedSpendingList } =
-				filterListByTypeAndDate(notFixedList, 'spendingAndIncomeDate');
+				filterListByTypeAndDate(nfgab, 'spendingAndIncomeDate');
 			const { incomeList: fixedIncomeList, spendingList: fixedSpendingList } =
-				filterListByType(fixedList);
+				filterListByType(fgab);
 
 			return {
 				notFixedIncomeList,

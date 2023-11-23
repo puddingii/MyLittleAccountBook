@@ -2,6 +2,8 @@ import * as Logic from '.';
 
 /** Model */
 import GroupModel from '@/model/group';
+import CronGroupAccountBookModel from '@/model/cronGroupAccountBook';
+import GroupAccountBookModel from '@/model/groupAccountBook';
 import UserModel from '@/model/user';
 
 /** Util */
@@ -36,4 +38,12 @@ export const updateGroup = Logic.updateGroup({
 export const deleteGroup = Logic.deleteGroup({
 	errorUtil: { convertErrorToCustomError },
 	GroupModel,
+});
+
+export const findAllColumn = Logic.findAllColumn({
+	errorUtil: { convertErrorToCustomError },
+	CronGroupAccountBookModel,
+	GroupAccountBookModel,
+	GroupModel,
+	UserModel,
 });

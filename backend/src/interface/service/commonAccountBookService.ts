@@ -2,6 +2,7 @@
 import { findRecursiveCategoryList } from '@/repository/categoryRepository/dependency';
 import { findAllNotFixedColumn } from '@/repository/groupAccountBookRepository/dependency';
 import { findAllFixedColumnBasedGroup } from '@/repository/cronGroupAccountBookRepository/dependency';
+import { findAllColumn } from '@/repository/groupRepository/dependency';
 
 /** Util */
 import { TErrorUtil } from '../util';
@@ -47,6 +48,23 @@ export type TGetFixedColumnList = {
 		errorUtil: Pick<TErrorUtil, 'convertErrorToCustomError'>;
 		repository: {
 			findAllFixedColumnBasedGroup: typeof findAllFixedColumnBasedGroup;
+		};
+	};
+	param: [
+		info: {
+			accountBookId: number;
+			startDate?: string;
+			endDate?: string;
+		},
+		categoryList: Awaited<TGetCategory['returnType']>,
+	];
+};
+
+export type TGetColumnList = {
+	dependency: {
+		errorUtil: Pick<TErrorUtil, 'convertErrorToCustomError'>;
+		repository: {
+			findAllColumn: typeof findAllColumn;
 		};
 	};
 	param: [

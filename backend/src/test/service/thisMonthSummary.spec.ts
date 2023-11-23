@@ -7,8 +7,7 @@ import dayjs from 'dayjs';
 import { errorUtil } from '../commonDependency';
 import { getDefaultInfo } from '@/service/thisMonthSummaryService';
 import {
-	getFixedColumnList,
-	getNotFixedColumnList,
+	getAllTypeColumnList,
 	getCategory,
 } from '@/service/common/accountBook/dependency';
 
@@ -18,10 +17,9 @@ describe('ThisMonthSummary Service Test', function () {
 	};
 
 	describe('#getDefaultInfo', function () {
-		const service = { getCategory, getNotFixedColumnList, getFixedColumnList };
+		const service = { getCategory, getAllTypeColumnList };
 		let stubGetCategory = sinon.stub(service, 'getCategory');
-		let stubGetNotFixedColumnList = sinon.stub(service, 'getNotFixedColumnList');
-		let stubGetFixedColumnList = sinon.stub(service, 'getFixedColumnList');
+		let stubGetAllTypeColumnList = sinon.stub(service, 'getAllTypeColumnList');
 
 		const curDate = new Date();
 		const nextDate = new Date();
@@ -118,6 +116,7 @@ describe('ThisMonthSummary Service Test', function () {
 				content: '',
 			},
 		];
+		const columnListInfo = { fgab: fixedColumnList, nfgab: notFixedColumnList };
 		const parentCategory = [
 			{
 				parentId: 1,
@@ -137,14 +136,12 @@ describe('ThisMonthSummary Service Test', function () {
 
 		beforeEach(function () {
 			stubGetCategory = sinon.stub(service, 'getCategory');
-			stubGetNotFixedColumnList = sinon.stub(service, 'getNotFixedColumnList');
-			stubGetFixedColumnList = sinon.stub(service, 'getFixedColumnList');
+			stubGetAllTypeColumnList = sinon.stub(service, 'getAllTypeColumnList');
 		});
 
 		it('Check function parameters', async function () {
 			stubGetCategory.resolves([...parentCategory]);
-			stubGetNotFixedColumnList.resolves(notFixedColumnList);
-			stubGetFixedColumnList.resolves(fixedColumnList);
+			stubGetAllTypeColumnList.resolves(columnListInfo);
 
 			const injectedFunc = getDefaultInfo({
 				...common,
@@ -162,12 +159,7 @@ describe('ThisMonthSummary Service Test', function () {
 
 				sinon.assert.calledWith(stubGetCategory, 1, { start: 2, end: 2 });
 				sinon.assert.calledWith(
-					stubGetNotFixedColumnList,
-					{ accountBookId: 1, ...thisMonthInfo },
-					parentCategory,
-				);
-				sinon.assert.calledWith(
-					stubGetFixedColumnList,
+					stubGetAllTypeColumnList,
 					{ accountBookId: 1, ...thisMonthInfo },
 					parentCategory,
 				);
@@ -178,8 +170,7 @@ describe('ThisMonthSummary Service Test', function () {
 
 		it('Check filtering', async function () {
 			stubGetCategory.resolves([...parentCategory]);
-			stubGetNotFixedColumnList.resolves(notFixedColumnList);
-			stubGetFixedColumnList.resolves(fixedColumnList);
+			stubGetAllTypeColumnList.resolves(columnListInfo);
 
 			const injectedFunc = getDefaultInfo({
 				...common,
@@ -203,8 +194,7 @@ describe('ThisMonthSummary Service Test', function () {
 		it('If getCategory function throw error', async function () {
 			const errorMessage = 'getCategory error';
 			stubGetCategory.rejects(new Error(errorMessage));
-			stubGetNotFixedColumnList.resolves(notFixedColumnList);
-			stubGetFixedColumnList.resolves(fixedColumnList);
+			stubGetAllTypeColumnList.resolves(columnListInfo);
 
 			const injectedFunc = getDefaultInfo({
 				...common,
@@ -217,33 +207,7 @@ describe('ThisMonthSummary Service Test', function () {
 				if (err instanceof errorUtil.CustomError) {
 					equal(err.message, errorMessage);
 					sinon.assert.callCount(stubGetCategory, 1);
-					sinon.assert.callCount(stubGetFixedColumnList, 0);
-					sinon.assert.callCount(stubGetNotFixedColumnList, 0);
-					return;
-				}
-				fail(err as Error);
-			}
-		});
-
-		it('If getNotFixedColumnList function throw error', async function () {
-			const errorMessage = 'getCategory error';
-			stubGetCategory.resolves([...parentCategory]);
-			stubGetNotFixedColumnList.rejects(new Error(errorMessage));
-			stubGetFixedColumnList.resolves(fixedColumnList);
-
-			const injectedFunc = getDefaultInfo({
-				...common,
-				service,
-			});
-
-			try {
-				await injectedFunc({ accountBookId: 1 });
-			} catch (err) {
-				if (err instanceof errorUtil.CustomError) {
-					equal(err.message, errorMessage);
-					sinon.assert.callCount(stubGetCategory, 1);
-					sinon.assert.callCount(stubGetFixedColumnList, 0);
-					sinon.assert.callCount(stubGetNotFixedColumnList, 1);
+					sinon.assert.callCount(stubGetAllTypeColumnList, 0);
 					return;
 				}
 				fail(err as Error);
@@ -253,8 +217,7 @@ describe('ThisMonthSummary Service Test', function () {
 		it('If getFixedColumnList function throw error', async function () {
 			const errorMessage = 'getCategory error';
 			stubGetCategory.resolves([...parentCategory]);
-			stubGetNotFixedColumnList.resolves(notFixedColumnList);
-			stubGetFixedColumnList.rejects(new Error(errorMessage));
+			stubGetAllTypeColumnList.rejects(new Error(errorMessage));
 
 			const injectedFunc = getDefaultInfo({
 				...common,
@@ -267,8 +230,7 @@ describe('ThisMonthSummary Service Test', function () {
 				if (err instanceof errorUtil.CustomError) {
 					equal(err.message, errorMessage);
 					sinon.assert.callCount(stubGetCategory, 1);
-					sinon.assert.callCount(stubGetFixedColumnList, 1);
-					sinon.assert.callCount(stubGetNotFixedColumnList, 1);
+					sinon.assert.callCount(stubGetAllTypeColumnList, 1);
 					return;
 				}
 				fail(err as Error);

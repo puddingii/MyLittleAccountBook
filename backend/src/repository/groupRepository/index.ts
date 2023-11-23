@@ -1,7 +1,10 @@
+import { Op } from 'sequelize';
+
 import {
 	TCreateGroup,
 	TCreateGroupList,
 	TDeleteGroup,
+	TFindAllColumn,
 	TFindGroup,
 	TFindGroupList,
 	TUpdateGroup,
@@ -142,6 +145,64 @@ export const deleteGroup =
 			const deleteCount = await GroupModel.destroy({ where: info, transaction });
 
 			return deleteCount;
+		} catch (error) {
+			const customError = convertErrorToCustomError(error, {
+				trace: 'Repository',
+				code: 400,
+			});
+			throw customError;
+		}
+	};
+
+const getCondition = (type: string, date: Date[]) => {
+	return { where: { [type]: { [Op.between]: date } } };
+};
+
+export const findAllColumn =
+	(dependencies: TFindAllColumn['dependency']) =>
+	async (info: TFindAllColumn['param']) => {
+		const {
+			GroupAccountBookModel,
+			CronGroupAccountBookModel,
+			GroupModel,
+			UserModel,
+			errorUtil: { convertErrorToCustomError },
+		} = dependencies;
+
+		try {
+			const { accountBookId, endDate, startDate } = info;
+			const isValidatedDate = endDate && startDate;
+
+			const columnList = await GroupModel.findAll({
+				where: { accountBookId },
+				include: [
+					{
+						model: GroupAccountBookModel,
+						as: 'groupaccountbooks',
+						required: true,
+						...(isValidatedDate
+							? getCondition('spendingAndIncomeDate', [startDate, endDate])
+							: {}),
+					},
+					{
+						model: CronGroupAccountBookModel,
+						as: 'crongroupaccountbooks',
+						required: true,
+						...(isValidatedDate
+							? getCondition('needToUpdateDate', [startDate, endDate])
+							: {}),
+					},
+					{
+						model: UserModel,
+						as: 'users',
+						required: true,
+						attributes: ['nickname'],
+					},
+				],
+				subQuery: false,
+			});
+
+			return columnList;
 		} catch (error) {
 			const customError = convertErrorToCustomError(error, {
 				trace: 'Repository',

@@ -1,10 +1,20 @@
 import dayjs from 'dayjs';
-import { curry, flat, map, memoize, pipe, toArray } from '@fxts/core';
+import {
+	curry,
+	flatMap,
+	map,
+	memoize,
+	pick,
+	pipe,
+	toArray,
+	zipWithIndex,
+} from '@fxts/core';
 
 /** Interface */
 import {
 	TCategory,
 	TGetCategory,
+	TGetColumnList,
 	TGetFixedColumnList,
 	TGetNotFixedColumnList,
 } from '@/interface/service/commonAccountBookService';
@@ -15,8 +25,31 @@ const findByType = curry(
 	},
 );
 
-const getMemoizedFindCategoryFunction = (categoryList: TCategory[]) =>
-	pipe(findByType(categoryList, 'childId'), memoize);
+const findCategoryByChildId = (categoryList: TCategory[]) =>
+	pipe('childId', findByType(categoryList), memoize);
+
+const getHistory = <T extends object, R>(
+	nickname: string,
+	findCategory: ReturnType<typeof findCategoryByChildId>,
+	gabMapper: (obj: T) => R,
+	list: T[],
+) =>
+	pipe(
+		list,
+		zipWithIndex,
+		map(([idx, gab]) => {
+			pipe(gab, findCategory, pick('categoryNamePath'));
+			const category = (pipe(gab, findCategory)?.categoryNamePath ?? '') as string;
+			const gabInfo = gabMapper(gab);
+			return {
+				id: idx,
+				nickname,
+				category,
+				...gabInfo,
+			};
+		}),
+		toArray,
+	);
 
 export const getCategory =
 	(dependencies: TGetCategory['dependency']) =>
@@ -74,30 +107,27 @@ export const getNotFixedColumnList =
 				startDate: dayjs(startDate).toDate(),
 			});
 
-			const memoizedFindCategory = getMemoizedFindCategoryFunction(categoryList);
+			const findCategory = findCategoryByChildId(categoryList);
 
 			const historyList = pipe(
 				list,
-				map(column => {
+				flatMap(column => {
 					const nickname = column.users?.nickname ?? '';
-					return (column.groupaccountbooks ?? []).map((gab, idx) => {
-						const category = memoizedFindCategory(gab.categoryId) as
-							| TCategory
-							| undefined;
+					const gabList = column.groupaccountbooks ?? [];
 
-						return {
-							id: idx,
+					return getHistory(
+						nickname,
+						findCategory,
+						gab => ({
 							gabId: gab.id,
-							nickname,
-							category: category?.categoryNamePath ?? '',
 							type: gab.type,
 							spendingAndIncomeDate: gab.spendingAndIncomeDate,
 							value: gab.value,
 							content: gab.content,
-						};
-					});
+						}),
+						gabList,
+					);
 				}),
-				flat,
 				toArray,
 			);
 
@@ -137,36 +167,107 @@ export const getFixedColumnList =
 				...dateInfo,
 			});
 
-			const memoizedFindCategory = getMemoizedFindCategoryFunction(categoryList);
+			const findCategory = findCategoryByChildId(categoryList);
 
 			const historyList = pipe(
 				list,
-				map(column => {
+				flatMap(column => {
 					const nickname = column.users?.nickname ?? '';
-					return (column.crongroupaccountbooks ?? []).map((gab, idx) => {
-						const category = memoizedFindCategory(gab.categoryId) as
-							| TCategory
-							| undefined;
+					const cgabList = column.crongroupaccountbooks ?? [];
 
-						return {
-							id: idx,
+					return getHistory(
+						nickname,
+						findCategory,
+						gab => ({
 							gabId: gab.id,
-							nickname,
-							category: category?.categoryNamePath ?? '',
 							type: gab.type,
 							cycleType: gab.cycleType,
 							cycleTime: gab.cycleTime,
 							needToUpdateDate: gab.needToUpdateDate,
 							value: gab.value,
 							content: gab.content,
-						};
-					});
+						}),
+						cgabList,
+					);
 				}),
-				flat,
 				toArray,
 			);
 
 			return historyList;
+		} catch (error) {
+			const customError = convertErrorToCustomError(error, {
+				trace: 'Service',
+				code: 400,
+			});
+			throw customError;
+		}
+	};
+
+export const getAllTypeColumnList =
+	(dependencies: TGetColumnList['dependency']) =>
+	async (info: TGetColumnList['param'][0], categoryList: TGetColumnList['param'][1]) => {
+		const {
+			errorUtil: { convertErrorToCustomError },
+			repository: { findAllColumn },
+		} = dependencies;
+
+		try {
+			const { accountBookId, endDate, startDate } = info;
+			const dateInfo =
+				startDate && endDate
+					? {
+							endDate: dayjs(endDate).toDate(),
+							startDate: dayjs(startDate).toDate(),
+					  }
+					: {};
+
+			const list = await findAllColumn({
+				accountBookId,
+				...dateInfo,
+			});
+
+			const findCategory = findCategoryByChildId(categoryList);
+
+			const historyList = pipe(
+				list,
+				flatMap(column => {
+					const nickname = column.users?.nickname ?? '';
+					const gabList = column.groupaccountbooks ?? [];
+					const cgabList = column.crongroupaccountbooks ?? [];
+
+					const nfgab = getHistory(
+						nickname,
+						findCategory,
+						gab => ({
+							gabId: gab.id,
+							type: gab.type,
+							spendingAndIncomeDate: gab.spendingAndIncomeDate,
+							value: gab.value,
+							content: gab.content,
+						}),
+						gabList,
+					);
+					const fgab = getHistory(
+						nickname,
+						findCategory,
+						gab => ({
+							gabId: gab.id,
+							type: gab.type,
+							cycleType: gab.cycleType,
+							cycleTime: gab.cycleTime,
+							needToUpdateDate: gab.needToUpdateDate,
+							value: gab.value,
+							content: gab.content,
+						}),
+						cgabList,
+					);
+
+					return { nfgab, fgab };
+				}),
+				toArray,
+			);
+
+			return historyList[0];
 		} catch (error) {
 			const customError = convertErrorToCustomError(error, {
 				trace: 'Service',

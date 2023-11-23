@@ -3,6 +3,8 @@ import { Transaction } from 'sequelize';
 /** Model */
 import GroupModel from '@/model/group';
 import UserModel from '@/model/user';
+import CronGroupAccountBookModel from '@/model/cronGroupAccountBook';
+import GroupAccountBookModel from '@/model/groupAccountBook';
 
 /** Util */
 import { TErrorUtil } from '../util';
@@ -84,4 +86,19 @@ export type TDeleteGroup = {
 		GroupModel: typeof GroupModel;
 	};
 	param: [info: { id: number; accountBookId: number }, transaction: Transaction];
+};
+
+export type TFindAllColumn = {
+	dependency: {
+		errorUtil: Pick<TErrorUtil, 'convertErrorToCustomError'>;
+		GroupModel: typeof GroupModel;
+		CronGroupAccountBookModel: typeof CronGroupAccountBookModel;
+		GroupAccountBookModel: typeof GroupAccountBookModel;
+		UserModel: typeof UserModel;
+	};
+	param: {
+		accountBookId: number;
+		startDate?: Date;
+		endDate?: Date;
+	};
 };

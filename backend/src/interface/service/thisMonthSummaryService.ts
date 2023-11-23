@@ -1,8 +1,7 @@
 /** Service */
 import {
 	getCategory,
-	getFixedColumnList,
-	getNotFixedColumnList,
+	getAllTypeColumnList,
 } from '@/service/common/accountBook/dependency';
 
 /** ETC */
@@ -13,8 +12,7 @@ export type TGetDefaultInfo = {
 		errorUtil: Pick<TErrorUtil, 'convertErrorToCustomError'>;
 		service: {
 			getCategory: typeof getCategory;
-			getFixedColumnList: typeof getFixedColumnList;
-			getNotFixedColumnList: typeof getNotFixedColumnList;
+			getAllTypeColumnList: typeof getAllTypeColumnList;
 		};
 	};
 	param: { accountBookId: number };
