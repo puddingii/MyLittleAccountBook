@@ -24,13 +24,14 @@ const sequelize = new Sequelize(databaseName, username, pw, {
 });
 
 const getModelList = async () => {
-	const fileList = fs.readdirSync(path.resolve(__dirname, '../model'));
+	const modelFolderPath = path.resolve(__dirname, '../model');
+	const fileList = fs.readdirSync(modelFolderPath);
 
 	const modelfileList = await pipe(
 		fileList,
 		filter(name => name.endsWith('.js') || name.endsWith('.ts')),
 		toAsync,
-		map(name => import(`@/model/${name}`)),
+		map(name => import(`${modelFolderPath}/${name}`)),
 		concurrent(fileList.length),
 		toArray,
 	);
