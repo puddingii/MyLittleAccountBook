@@ -8,6 +8,7 @@ import UserModel from '@/model/user';
 import OAuthUserModel from '@/model/oauthUser';
 
 import { convertErrorToCustomError } from '@/util/error';
+import { getCurrentDate } from '@/util/date';
 import defaultCategory from '@/json/defaultCategory.json';
 import sequelize from '@/loader/mysql';
 
@@ -17,6 +18,7 @@ export const createSocialUser = Logic.createSocialUser({
 	defaultCategory,
 	UserModel,
 	errorUtil: { convertErrorToCustomError },
+	dateUtil: { getCurrentDate },
 	sequelize,
 });
 
@@ -26,6 +28,7 @@ export const createEmailUser = Logic.createEmailUser({
 	defaultCategory,
 	UserModel,
 	errorUtil: { convertErrorToCustomError },
+	dateUtil: { getCurrentDate },
 });
 
 export const findOneUser = Logic.findOneUser({

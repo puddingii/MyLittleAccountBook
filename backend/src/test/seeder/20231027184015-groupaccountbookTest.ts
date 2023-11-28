@@ -1,8 +1,9 @@
+import dayjs from 'dayjs';
 import { QueryInterface } from 'sequelize';
 
 export default {
 	async migrate(queryInterface: QueryInterface) {
-		const date = new Date();
+		const date = dayjs().toDate();
 		const list = Array.from({ length: 14000 }, (_, idx) => {
 			const groupId = Math.round(idx / 3) + 1;
 			return {

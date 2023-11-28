@@ -9,6 +9,7 @@ import { findAllColumn } from '@/repository/groupRepository/dependency';
 /** Util */
 import { convertErrorToCustomError } from '@/util/error';
 import { getRecursiveCategoryCache, setRecursiveCategoryCache } from '@/util/cache/v2';
+import { toDate } from '@/util/date';
 
 export const getCategory = Logic.getCategory({
 	errorUtil: { convertErrorToCustomError },
@@ -18,15 +19,18 @@ export const getCategory = Logic.getCategory({
 
 export const getNotFixedColumnList = Logic.getNotFixedColumnList({
 	errorUtil: { convertErrorToCustomError },
+	dateUtil: { toDate },
 	repository: { findAllNotFixedColumn },
 });
 
 export const getFixedColumnList = Logic.getFixedColumnList({
 	errorUtil: { convertErrorToCustomError },
+	dateUtil: { toDate },
 	repository: { findAllFixedColumnBasedGroup },
 });
 
 export const getAllTypeColumnList = Logic.getAllTypeColumnList({
 	errorUtil: { convertErrorToCustomError },
+	dateUtil: { toDate },
 	repository: { findAllColumn },
 });

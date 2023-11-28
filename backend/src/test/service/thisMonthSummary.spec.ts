@@ -2,9 +2,10 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { equal, fail } from 'assert';
 import sinon from 'sinon';
+import { pipe } from '@fxts/core';
 
-import dayjs from 'dayjs';
 import { errorUtil } from '../commonDependency';
+import dateUtil from '@/util/date';
 import { getDefaultInfo } from '@/service/thisMonthSummaryService';
 import {
 	getAllTypeColumnList,
@@ -14,6 +15,7 @@ import {
 describe('ThisMonthSummary Service Test', function () {
 	const common = {
 		errorUtil: { convertErrorToCustomError: errorUtil.convertErrorToCustomError },
+		dateUtil,
 	};
 
 	describe('#getDefaultInfo', function () {
@@ -21,9 +23,12 @@ describe('ThisMonthSummary Service Test', function () {
 		let stubGetCategory = sinon.stub(service, 'getCategory');
 		let stubGetAllTypeColumnList = sinon.stub(service, 'getAllTypeColumnList');
 
-		const curDate = new Date();
-		const nextDate = new Date();
-		nextDate.setDate(curDate.getDate() + 1);
+		const curDate = dateUtil.getCurrentDate();
+		const nextDate = pipe(
+			dateUtil.getCurrentDate(),
+			dateUtil.addDate('day', 1),
+			dateUtil.toDate,
+		);
 		const fixedColumnList = [
 			{
 				id: 1,
@@ -153,8 +158,18 @@ describe('ThisMonthSummary Service Test', function () {
 					accountBookId: 1,
 				});
 				const thisMonthInfo = {
-					startDate: dayjs().startOf('month').toDate().toString(),
-					endDate: dayjs().endOf('month').toDate().toString(),
+					startDate: pipe(
+						dateUtil.getCurrentDate(),
+						dateUtil.getFirstDayOfMonth,
+						dateUtil.toDate,
+						dateUtil.toString,
+					),
+					endDate: pipe(
+						dateUtil.getCurrentDate(),
+						dateUtil.getEndDayOfMonth,
+						dateUtil.toDate,
+						dateUtil.toString,
+					),
 				};
 
 				sinon.assert.calledWith(stubGetCategory, 1, { start: 2, end: 2 });

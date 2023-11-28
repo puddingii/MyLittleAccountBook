@@ -1,11 +1,11 @@
 import express, { Request } from 'express';
-import dayjs from 'dayjs';
 
 /** Util */
 import zParser from '@/util/parser';
 import zodSchema from '@/util/parser/schema';
 import { logger } from '@/util';
 import { convertErrorToCustomError } from '@/util/error';
+import { toDate } from '@/util/date';
 
 /** Middleware & Service */
 import { verifyToken } from '@/middleware/authentication';
@@ -86,7 +86,7 @@ router.post('/', verifyToken, async (req, res) => {
 		} = await zParser(zodSchema.group.addGroupUser, req);
 
 		const paramInfo = accessHistory
-			? { ...groupInfo, accessHistory: dayjs(accessHistory).toDate() }
+			? { ...groupInfo, accessHistory: toDate(accessHistory) }
 			: { ...groupInfo };
 		const newGroup = await addGroup({
 			myEmail: (req.user as Exclude<Request['user'], undefined>).email,
@@ -116,7 +116,7 @@ router.patch('/', verifyToken, async (req, res) => {
 		} = await zParser(zodSchema.group.updateGroupUser, req);
 
 		const paramInfo = accessHistory
-			? { ...groupInfo, accessHistory: dayjs(accessHistory).toDate() }
+			? { ...groupInfo, accessHistory: toDate(accessHistory) }
 			: { ...groupInfo };
 		await updateGroupInfo({
 			myEmail: (req.user as Exclude<Request['user'], undefined>).email,

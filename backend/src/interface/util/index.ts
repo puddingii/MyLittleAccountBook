@@ -1,5 +1,6 @@
 import { convertErrorToCustomError, filterPromiseSettledResultList } from '@/util/error';
 import { CustomError } from '@/util/error/class';
+import DateUtil from '@/util/date';
 
 import {
 	createAccessToken,
@@ -16,6 +17,8 @@ export type TErrorUtil = {
 	filterPromiseSettledResultList: typeof filterPromiseSettledResultList;
 	CustomError: typeof CustomError;
 };
+
+export type TDateUtil = typeof DateUtil;
 
 export type TCacheUtil = {
 	/** time 기본값은 600 */

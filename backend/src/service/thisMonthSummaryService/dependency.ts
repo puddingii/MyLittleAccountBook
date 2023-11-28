@@ -5,8 +5,16 @@ import { getCategory, getAllTypeColumnList } from '../common/accountBook/depende
 
 /** Util */
 import { convertErrorToCustomError } from '@/util/error';
+import {
+	getCurrentDate,
+	getEndDayOfMonth,
+	getFirstDayOfMonth,
+	toDate,
+	toString,
+} from '@/util/date';
 
 export const getDefaultInfo = Logic.getDefaultInfo({
 	errorUtil: { convertErrorToCustomError },
+	dateUtil: { getCurrentDate, getEndDayOfMonth, getFirstDayOfMonth, toDate, toString },
 	service: { getCategory, getAllTypeColumnList },
 });

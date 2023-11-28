@@ -1,6 +1,5 @@
 import { Op } from 'sequelize';
 import bcrypt from 'bcrypt';
-import dayjs from 'dayjs';
 
 /** Interfaces */
 import { TSocialType } from '@/interface/auth';
@@ -22,7 +21,12 @@ const createAccountBookAndGroup =
 		newUser: TCreateAccountBookAndGroup['param'][0],
 		transaction?: TCreateAccountBookAndGroup['param'][1],
 	) => {
-		const { AccountBookModel, CategoryModel, defaultCategory } = dependencies;
+		const {
+			dateUtil: { getCurrentDate },
+			AccountBookModel,
+			CategoryModel,
+			defaultCategory,
+		} = dependencies;
 
 		const newAccountBook = await AccountBookModel.create(
 			{
@@ -35,7 +39,7 @@ const createAccountBookAndGroup =
 			{
 				userEmail: newUser.email,
 				userType: 'owner',
-				accessHistory: dayjs().toDate(),
+				accessHistory: getCurrentDate(),
 			},
 			{ transaction },
 		);
@@ -78,6 +82,7 @@ export const createSocialUser =
 			CategoryModel,
 			defaultCategory,
 			errorUtil: { convertErrorToCustomError },
+			dateUtil,
 			UserModel,
 			sequelize,
 		} = dependencies;
@@ -92,6 +97,7 @@ export const createSocialUser =
 					AccountBookModel,
 					CategoryModel,
 					defaultCategory,
+					dateUtil,
 				})(newUser, transaction);
 
 				await transaction.commit();
@@ -119,6 +125,7 @@ export const createEmailUser =
 			CategoryModel,
 			defaultCategory,
 			errorUtil: { convertErrorToCustomError },
+			dateUtil,
 			UserModel,
 		} = dependencies;
 
@@ -141,6 +148,7 @@ export const createEmailUser =
 				AccountBookModel,
 				CategoryModel,
 				defaultCategory,
+				dateUtil,
 			})(newUser);
 
 			return { accountBookId: accountBook.id };

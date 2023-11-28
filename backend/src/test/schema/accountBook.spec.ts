@@ -3,8 +3,10 @@
 import { fail } from 'assert';
 import sinon from 'sinon';
 import { ParseParams } from 'zod';
+import { pipe } from '@fxts/core';
 
 import schema from '@/util/parser/schema';
+import dateUtil from '@/util/date';
 import zParser from '@/util/parser';
 import {
 	TDeleteColumnQuery,
@@ -89,10 +91,11 @@ describe('AccountBook Zod Schema Test', function () {
 			[data: unknown, params?: Partial<ParseParams> | undefined],
 			Promise<TPostColumnQuery>
 		>;
-		const curDate = new Date().toISOString();
-		const nextDatee = new Date();
-		nextDatee.setDate(nextDatee.getDate() + 1);
-		const nextDate = nextDatee.toISOString();
+		const curDate = dateUtil.getCurrentDate();
+		const nextDate = pipe(
+			dateUtil.getCurrentDate(),
+			dateUtil.addDate('day', 1),
+		).toISOString();
 
 		beforeEach(function () {
 			spyZParser = sinon.spy(accountBookSchema.postColumn, 'parseAsync');
@@ -379,10 +382,12 @@ describe('AccountBook Zod Schema Test', function () {
 			[data: unknown, params?: Partial<ParseParams> | undefined],
 			Promise<TPatchColumnQuery>
 		>;
-		const curDate = new Date().toISOString();
-		const nextDatee = new Date();
-		nextDatee.setDate(nextDatee.getDate() + 1);
-		const nextDate = nextDatee.toISOString();
+
+		const curDate = dateUtil.getCurrentDate();
+		const nextDate = pipe(
+			dateUtil.getCurrentDate(),
+			dateUtil.addDate('day', 1),
+		).toISOString();
 
 		beforeEach(function () {
 			spyZParser = sinon.spy(accountBookSchema.patchColumn, 'parseAsync');

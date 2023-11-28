@@ -1,5 +1,6 @@
 /** Library */
 import dayjs from 'dayjs';
+import { pipe } from '@fxts/core';
 
 /** Interface */
 import { TGetSummary } from '@/interface/api/response/accountBookResponse';
@@ -57,6 +58,13 @@ export const getDefaultInfo =
 	async (info: TGetDefaultInfo['param']) => {
 		const {
 			errorUtil: { convertErrorToCustomError },
+			dateUtil: {
+				getCurrentDate,
+				getFirstDayOfMonth,
+				getEndDayOfMonth,
+				toDate,
+				toString,
+			},
 			service: { getCategory, getAllTypeColumnList },
 		} = dependencies;
 
@@ -64,8 +72,8 @@ export const getDefaultInfo =
 			const { accountBookId } = info;
 			const findOptions = {
 				...info,
-				startDate: dayjs().startOf('month').toDate().toString(),
-				endDate: dayjs().endOf('month').toDate().toString(),
+				startDate: pipe(getCurrentDate(), getFirstDayOfMonth, toDate, toString),
+				endDate: pipe(getCurrentDate(), getEndDayOfMonth, toDate, toString),
 			};
 			const categoryList = await getCategory(accountBookId, { start: 2, end: 2 });
 

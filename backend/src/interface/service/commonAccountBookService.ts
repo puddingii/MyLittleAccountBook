@@ -5,7 +5,7 @@ import { findAllFixedColumnBasedGroup } from '@/repository/cronGroupAccountBookR
 import { findAllColumn } from '@/repository/groupRepository/dependency';
 
 /** Util */
-import { TCacheUtil, TErrorUtil } from '../util';
+import { TCacheUtil, TDateUtil, TErrorUtil } from '../util';
 
 export type TCategory = {
 	parentId: number | undefined;
@@ -30,6 +30,7 @@ export type TGetCategory = {
 export type TGetNotFixedColumnList = {
 	dependency: {
 		errorUtil: Pick<TErrorUtil, 'convertErrorToCustomError'>;
+		dateUtil: Pick<TDateUtil, 'toDate'>;
 		repository: {
 			findAllNotFixedColumn: typeof findAllNotFixedColumn;
 		};
@@ -47,6 +48,7 @@ export type TGetNotFixedColumnList = {
 export type TGetFixedColumnList = {
 	dependency: {
 		errorUtil: Pick<TErrorUtil, 'convertErrorToCustomError'>;
+		dateUtil: Pick<TDateUtil, 'toDate'>;
 		repository: {
 			findAllFixedColumnBasedGroup: typeof findAllFixedColumnBasedGroup;
 		};
@@ -64,6 +66,7 @@ export type TGetFixedColumnList = {
 export type TGetColumnList = {
 	dependency: {
 		errorUtil: Pick<TErrorUtil, 'convertErrorToCustomError'>;
+		dateUtil: Pick<TDateUtil, 'toDate'>;
 		repository: {
 			findAllColumn: typeof findAllColumn;
 		};

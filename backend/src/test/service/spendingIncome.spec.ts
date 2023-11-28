@@ -2,9 +2,9 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { AssertionError, equal, fail, ok } from 'assert';
 import sinon from 'sinon';
+import { pipe } from '@fxts/core';
 
 /** Service */
-import dayjs from 'dayjs';
 import {
 	createNewFixedColumn,
 	createNewNotFixedColumn,
@@ -17,6 +17,7 @@ import {
 
 /** Dependency */
 import { errorUtil } from '../commonDependency';
+import dateUtil from '@/util/date';
 import {
 	getFixedColumnList,
 	getNotFixedColumnList,
@@ -47,6 +48,7 @@ describe('SpendingIncome Service Test', function () {
 		errorUtil: {
 			convertErrorToCustomError: errorUtil.convertErrorToCustomError,
 		},
+		dateUtil,
 	};
 
 	describe('#createNewFixedColumn', function () {
@@ -98,7 +100,7 @@ describe('SpendingIncome Service Test', function () {
 					cycleTime: defaultColumnInfo.cycleTime,
 					cycleType: defaultColumnInfo.cycleType,
 					groupId: defaultGroupInfo.id,
-					needToUpdateDate: dayjs(defaultColumnInfo.needToUpdateDate).toDate(),
+					needToUpdateDate: dateUtil.toDate(defaultColumnInfo.needToUpdateDate),
 					type: defaultColumnInfo.type,
 					value: defaultColumnInfo.value,
 				});
@@ -275,7 +277,7 @@ describe('SpendingIncome Service Test', function () {
 				new GroupAccountBookModel({
 					id: 1,
 					...defaultColumnInfo,
-					spendingAndIncomeDate: new Date(defaultColumnInfo.spendingAndIncomeDate),
+					spendingAndIncomeDate: dateUtil.toDate(defaultColumnInfo.spendingAndIncomeDate),
 				}),
 			);
 
@@ -295,7 +297,7 @@ describe('SpendingIncome Service Test', function () {
 					categoryId: defaultColumnInfo.categoryId,
 					content: defaultColumnInfo.content,
 					groupId: defaultGroupInfo.id,
-					spendingAndIncomeDate: dayjs(defaultColumnInfo.spendingAndIncomeDate).toDate(),
+					spendingAndIncomeDate: dateUtil.toDate(defaultColumnInfo.spendingAndIncomeDate),
 					type: defaultColumnInfo.type,
 					value: defaultColumnInfo.value,
 				});
@@ -314,7 +316,7 @@ describe('SpendingIncome Service Test', function () {
 				new GroupAccountBookModel({
 					id: 1,
 					...defaultColumnInfo,
-					spendingAndIncomeDate: new Date(defaultColumnInfo.spendingAndIncomeDate),
+					spendingAndIncomeDate: dateUtil.toDate(defaultColumnInfo.spendingAndIncomeDate),
 				}),
 			);
 
@@ -341,7 +343,7 @@ describe('SpendingIncome Service Test', function () {
 				new GroupAccountBookModel({
 					id: 1,
 					...defaultColumnInfo,
-					spendingAndIncomeDate: new Date(defaultColumnInfo.spendingAndIncomeDate),
+					spendingAndIncomeDate: dateUtil.toDate(defaultColumnInfo.spendingAndIncomeDate),
 				}),
 			);
 
@@ -370,7 +372,7 @@ describe('SpendingIncome Service Test', function () {
 				new GroupAccountBookModel({
 					id: 1,
 					...defaultColumnInfo,
-					spendingAndIncomeDate: new Date(defaultColumnInfo.spendingAndIncomeDate),
+					spendingAndIncomeDate: dateUtil.toDate(defaultColumnInfo.spendingAndIncomeDate),
 				}),
 			);
 
@@ -398,7 +400,7 @@ describe('SpendingIncome Service Test', function () {
 				new GroupAccountBookModel({
 					id: 1,
 					...defaultColumnInfo,
-					spendingAndIncomeDate: new Date(defaultColumnInfo.spendingAndIncomeDate),
+					spendingAndIncomeDate: dateUtil.toDate(defaultColumnInfo.spendingAndIncomeDate),
 				}),
 			);
 
@@ -426,7 +428,7 @@ describe('SpendingIncome Service Test', function () {
 				new GroupAccountBookModel({
 					id: 1,
 					...defaultColumnInfo,
-					spendingAndIncomeDate: new Date(defaultColumnInfo.spendingAndIncomeDate),
+					spendingAndIncomeDate: dateUtil.toDate(defaultColumnInfo.spendingAndIncomeDate),
 				}),
 			);
 
@@ -482,7 +484,7 @@ describe('SpendingIncome Service Test', function () {
 			categoryId: 1,
 			cycleTime: 10,
 			cycleType: 'd' as const,
-			needToUpdateDate: new Date(),
+			needToUpdateDate: dateUtil.getCurrentDate(),
 			type: 'income' as const,
 			value: 100,
 			content: '내용',
@@ -515,6 +517,7 @@ describe('SpendingIncome Service Test', function () {
 
 			const injectedFunc = updateFixedColumn({
 				errorUtil: { ...common.errorUtil, CustomError: errorUtil.CustomError },
+				dateUtil: common.dateUtil,
 				service,
 				repository,
 			});
@@ -530,7 +533,7 @@ describe('SpendingIncome Service Test', function () {
 				sinon.assert.calledWith(stubFindFixedGAB, { id: 1 }, { isIncludeGroup: true });
 				sinon.assert.calledWith(stubUpdateFColumn, cgabJoinGroup, {
 					...defaultColumnInfo,
-					needToUpdateDate: dayjs('2022-02-02').toDate(),
+					needToUpdateDate: dateUtil.toDate('2022-02-02'),
 				});
 				sinon.assert.calledWith(stubCheckAdminGroupUser, {
 					userEmail: requestUserInfo.userEmail,
@@ -548,6 +551,7 @@ describe('SpendingIncome Service Test', function () {
 
 			const injectedFunc = updateFixedColumn({
 				errorUtil: { ...common.errorUtil, CustomError: errorUtil.CustomError },
+				dateUtil: common.dateUtil,
 				service,
 				repository,
 			});
@@ -582,6 +586,7 @@ describe('SpendingIncome Service Test', function () {
 
 			const injectedFunc = updateFixedColumn({
 				errorUtil: { ...common.errorUtil, CustomError: errorUtil.CustomError },
+				dateUtil: common.dateUtil,
 				service,
 				repository,
 			});
@@ -619,6 +624,7 @@ describe('SpendingIncome Service Test', function () {
 
 			const injectedFunc = updateFixedColumn({
 				errorUtil: { ...common.errorUtil, CustomError: errorUtil.CustomError },
+				dateUtil: common.dateUtil,
 				service,
 				repository,
 			});
@@ -652,6 +658,7 @@ describe('SpendingIncome Service Test', function () {
 
 			const injectedFunc = updateFixedColumn({
 				errorUtil: { ...common.errorUtil, CustomError: errorUtil.CustomError },
+				dateUtil: common.dateUtil,
 				service,
 				repository,
 			});
@@ -686,6 +693,7 @@ describe('SpendingIncome Service Test', function () {
 
 			const injectedFunc = updateFixedColumn({
 				errorUtil: { ...common.errorUtil, CustomError: errorUtil.CustomError },
+				dateUtil: common.dateUtil,
 				service,
 				repository,
 			});
@@ -722,7 +730,7 @@ describe('SpendingIncome Service Test', function () {
 		const defaultColumnInfo = {
 			accountBookId: 1,
 			categoryId: 1,
-			spendingAndIncomeDate: new Date(),
+			spendingAndIncomeDate: dateUtil.getCurrentDate(),
 			type: 'income' as const,
 			value: 100,
 			content: '내용',
@@ -755,6 +763,7 @@ describe('SpendingIncome Service Test', function () {
 
 			const injectedFunc = updateNotFixedColumn({
 				errorUtil: { ...common.errorUtil, CustomError: errorUtil.CustomError },
+				dateUtil: common.dateUtil,
 				service,
 				repository,
 			});
@@ -770,7 +779,7 @@ describe('SpendingIncome Service Test', function () {
 				sinon.assert.calledWith(stubFindNotFixedGAB, { id: 1 }, { isIncludeGroup: true });
 				sinon.assert.calledWith(stubUpdateNFColumn, gabJoinGroup, {
 					...defaultColumnInfo,
-					spendingAndIncomeDate: dayjs('2022-02-02').toDate(),
+					spendingAndIncomeDate: dateUtil.toDate('2022-02-02'),
 				});
 				sinon.assert.calledWith(stubCheckAdminGroupUser, {
 					userEmail: requestUserInfo.userEmail,
@@ -788,6 +797,7 @@ describe('SpendingIncome Service Test', function () {
 
 			const injectedFunc = updateNotFixedColumn({
 				errorUtil: { ...common.errorUtil, CustomError: errorUtil.CustomError },
+				dateUtil: common.dateUtil,
 				service,
 				repository,
 			});
@@ -822,6 +832,7 @@ describe('SpendingIncome Service Test', function () {
 
 			const injectedFunc = updateNotFixedColumn({
 				errorUtil: { ...common.errorUtil, CustomError: errorUtil.CustomError },
+				dateUtil: common.dateUtil,
 				service,
 				repository,
 			});
@@ -860,6 +871,7 @@ describe('SpendingIncome Service Test', function () {
 
 			const injectedFunc = updateNotFixedColumn({
 				errorUtil: { ...common.errorUtil, CustomError: errorUtil.CustomError },
+				dateUtil: common.dateUtil,
 				service,
 				repository,
 			});
@@ -891,6 +903,7 @@ describe('SpendingIncome Service Test', function () {
 
 			const injectedFunc = updateNotFixedColumn({
 				errorUtil: { ...common.errorUtil, CustomError: errorUtil.CustomError },
+				dateUtil: common.dateUtil,
 				service,
 				repository,
 			});
@@ -925,6 +938,7 @@ describe('SpendingIncome Service Test', function () {
 
 			const injectedFunc = updateNotFixedColumn({
 				errorUtil: { ...common.errorUtil, CustomError: errorUtil.CustomError },
+				dateUtil: common.dateUtil,
 				service,
 				repository,
 			});
@@ -964,7 +978,7 @@ describe('SpendingIncome Service Test', function () {
 			categoryId: 1,
 			cycleTime: 10,
 			cycleType: 'd' as const,
-			needToUpdateDate: new Date(),
+			needToUpdateDate: dateUtil.getCurrentDate(),
 			type: 'income' as const,
 			value: 100,
 			content: '내용',
@@ -1190,7 +1204,7 @@ describe('SpendingIncome Service Test', function () {
 		const defaultColumnInfo = {
 			accountBookId: 1,
 			categoryId: 1,
-			spendingAndIncomeDate: new Date(),
+			spendingAndIncomeDate: dateUtil.getCurrentDate(),
 			type: 'income' as const,
 			value: 100,
 			content: '내용',
@@ -1411,9 +1425,12 @@ describe('SpendingIncome Service Test', function () {
 	});
 
 	describe('#getDefaultInfo', function () {
-		const curDate = new Date();
-		const nextDate = new Date();
-		nextDate.setDate(curDate.getDate() + 1);
+		const curDate = dateUtil.getCurrentDate();
+		const nextDate = pipe(
+			dateUtil.getCurrentDate(),
+			dateUtil.addDate('day', 1),
+			dateUtil.toDate,
+		);
 		const fixedColumnList = [
 			{
 				id: 1,

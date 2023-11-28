@@ -2,9 +2,9 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { equal, fail } from 'assert';
 import sinon from 'sinon';
-import dayjs from 'dayjs';
 
 /** Dependency */
+import dateUtil from '@/util/date';
 import { cacheUtil, errorUtil } from '../commonDependency';
 import { findRecursiveCategoryList } from '@/repository/categoryRepository/dependency';
 import { findAllNotFixedColumn } from '@/repository/groupAccountBookRepository/dependency';
@@ -79,7 +79,7 @@ export const testResult = {
 				type: 'income',
 				cycleType: 'sd',
 				cycleTime: 1,
-				needToUpdateDate: new Date(),
+				needToUpdateDate: dateUtil.getCurrentDate(),
 				value: 3,
 				content: '',
 			},
@@ -91,7 +91,7 @@ export const testResult = {
 				type: 'spending',
 				cycleType: 'd',
 				cycleTime: 3,
-				needToUpdateDate: new Date(),
+				needToUpdateDate: dateUtil.getCurrentDate(),
 				value: 30,
 				content: 'a',
 			},
@@ -108,7 +108,7 @@ export const testResult = {
 				nickname: '사용자 닉네임',
 				category: '부모 > 자식',
 				type: 'income',
-				spendingAndIncomeDate: new Date(),
+				spendingAndIncomeDate: dateUtil.getCurrentDate(),
 				value: 3,
 				content: '',
 			},
@@ -118,7 +118,7 @@ export const testResult = {
 				nickname: '사용자 닉네임',
 				category: '부모 > 자식2',
 				type: 'spending',
-				spendingAndIncomeDate: new Date(),
+				spendingAndIncomeDate: dateUtil.getCurrentDate(),
 				value: 3,
 				content: '',
 			},
@@ -130,6 +130,7 @@ describe('Common AccountBook Service Test', function () {
 	const common = {
 		errorUtil: { convertErrorToCustomError: errorUtil.convertErrorToCustomError },
 		cacheUtil: { getCache: cacheUtil.getNullCache, setCache: cacheUtil.setCache },
+		dateUtil,
 	};
 
 	describe('#getCategory', function () {
@@ -256,7 +257,7 @@ describe('Common AccountBook Service Test', function () {
 				id: 1,
 				groupId: 1,
 				type: 'income' as const,
-				spendingAndIncomeDate: new Date(),
+				spendingAndIncomeDate: dateUtil.getCurrentDate(),
 				value: 122,
 				content: 'asd',
 				categoryId: 6,
@@ -283,8 +284,8 @@ describe('Common AccountBook Service Test', function () {
 
 				sinon.assert.calledWith(stubFindAllNotFixedColumn, {
 					accountBookId: info.accountBookId,
-					endDate: dayjs(info.endDate).toDate(),
-					startDate: dayjs(info.startDate).toDate(),
+					endDate: dateUtil.toDate(info.endDate),
+					startDate: dateUtil.toDate(info.startDate),
 				});
 			} catch (err) {
 				fail(err as Error);
@@ -296,7 +297,7 @@ describe('Common AccountBook Service Test', function () {
 				id: 1,
 				groupId: 1,
 				type: 'income' as const,
-				spendingAndIncomeDate: new Date(),
+				spendingAndIncomeDate: dateUtil.getCurrentDate(),
 				value: 122,
 				content: 'asd',
 				categoryId: 6,
@@ -345,7 +346,7 @@ describe('Common AccountBook Service Test', function () {
 				id: 1,
 				groupId: group.id,
 				type: 'income',
-				spendingAndIncomeDate: new Date(),
+				spendingAndIncomeDate: dateUtil.getCurrentDate(),
 				value: 122,
 				content: 'asd',
 				categoryId: 6,
@@ -396,7 +397,7 @@ describe('Common AccountBook Service Test', function () {
 				id: 1,
 				groupId: group.id,
 				type: 'income',
-				spendingAndIncomeDate: new Date(),
+				spendingAndIncomeDate: dateUtil.getCurrentDate(),
 				value: 122,
 				content: 'asd',
 				categoryId: 6,
@@ -447,7 +448,7 @@ describe('Common AccountBook Service Test', function () {
 		const cgabInfo = {
 			cycleTime: 1,
 			cycleType: 'd' as const,
-			needToUpdateDate: new Date(),
+			needToUpdateDate: dateUtil.getCurrentDate(),
 			type: 'income' as const,
 			value: 22,
 			content: '213',
@@ -493,8 +494,8 @@ describe('Common AccountBook Service Test', function () {
 
 				sinon.assert.calledWith(stubFindAllFixedColumnBasedGroup, {
 					accountBookId: info.accountBookId,
-					endDate: dayjs(info.endDate).toDate(),
-					startDate: dayjs(info.startDate).toDate(),
+					endDate: dateUtil.toDate(info.endDate),
+					startDate: dateUtil.toDate(info.startDate),
 				});
 			} catch (err) {
 				fail(err as Error);

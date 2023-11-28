@@ -1,5 +1,6 @@
-import dayjs from 'dayjs';
 import * as zod from 'zod';
+
+import { getCurrentDate, isGreater } from '@/util/date';
 
 const getCategory = zod.object({
 	query: zod.object({
@@ -70,13 +71,7 @@ const postColumn = zod
 	.refine(
 		data => {
 			if (data.writeType === COLUMN_WRITE_TYPE.FIXED) {
-				const { needToUpdateDate } = data;
-				const needToUpdateDateDayjs = dayjs(needToUpdateDate);
-				const curDayjs = dayjs();
-				return (
-					!needToUpdateDateDayjs.isSame(curDayjs, 'day') &&
-					needToUpdateDateDayjs.isAfter(curDayjs, 'day')
-				);
+				return isGreater(data.needToUpdateDate, getCurrentDate());
 			}
 			return true;
 		},
@@ -149,13 +144,7 @@ const patchColumn = zod
 	.refine(
 		data => {
 			if (data.writeType === COLUMN_WRITE_TYPE.FIXED && data.needToUpdateDate) {
-				const { needToUpdateDate } = data;
-				const needToUpdateDateDayjs = dayjs(needToUpdateDate);
-				const curDayjs = dayjs();
-				return (
-					!needToUpdateDateDayjs.isSame(curDayjs, 'day') &&
-					needToUpdateDateDayjs.isAfter(curDayjs, 'day')
-				);
+				return isGreater(data.needToUpdateDate, getCurrentDate());
 			}
 			return true;
 		},

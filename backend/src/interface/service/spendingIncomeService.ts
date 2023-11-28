@@ -22,7 +22,7 @@ import {
 import { checkAdminGroupUser } from '@/service/common/user/dependency';
 
 /** Util */
-import { TErrorUtil } from '../util';
+import { TDateUtil, TErrorUtil } from '../util';
 
 /** ETC */
 import { TCycleType } from '@/interface/user';
@@ -30,6 +30,7 @@ import { TCycleType } from '@/interface/user';
 export type TCreateNewFixedColumn = {
 	dependency: {
 		errorUtil: Pick<TErrorUtil, 'convertErrorToCustomError'>;
+		dateUtil: Pick<TDateUtil, 'toDate'>;
 		repository: {
 			findGroup: typeof findGroup;
 			createNewFColumn: typeof createNewFColumn;
@@ -51,6 +52,7 @@ export type TCreateNewFixedColumn = {
 export type TCreateNewNotFixedColumn = {
 	dependency: {
 		errorUtil: Pick<TErrorUtil, 'convertErrorToCustomError'>;
+		dateUtil: Pick<TDateUtil, 'toDate'>;
 		repository: {
 			findGroup: typeof findGroup;
 			createNewNFColumn: typeof createNewNFColumn;
@@ -71,6 +73,7 @@ export type TUpdateFixedColumn = {
 	dependency: {
 		errorUtil: Pick<TErrorUtil, 'convertErrorToCustomError' | 'CustomError'>;
 		service: { checkAdminGroupUser: typeof checkAdminGroupUser };
+		dateUtil: Pick<TDateUtil, 'toDate'>;
 		repository: {
 			findFixedGAB: typeof findFixedGAB;
 			updateFColumn: typeof updateFColumn;
@@ -92,6 +95,7 @@ export type TUpdateFixedColumn = {
 export type TUpdateNotFixedColumn = {
 	dependency: {
 		errorUtil: Pick<TErrorUtil, 'convertErrorToCustomError' | 'CustomError'>;
+		dateUtil: Pick<TDateUtil, 'toDate'>;
 		service: { checkAdminGroupUser: typeof checkAdminGroupUser };
 		repository: {
 			findNotFixedGAB: typeof findNotFixedGAB;

@@ -1,6 +1,3 @@
-/** Library */
-import dayjs from 'dayjs';
-
 /** Interface */
 import { TGet } from '@/interface/api/response/accountBookResponse';
 import {
@@ -18,6 +15,7 @@ export const createNewFixedColumn =
 	async (info: TCreateNewFixedColumn['param']) => {
 		const {
 			errorUtil: { convertErrorToCustomError },
+			dateUtil: { toDate },
 			repository: { createNewFColumn, findGroup },
 		} = dependencies;
 
@@ -34,7 +32,7 @@ export const createNewFixedColumn =
 
 			const newId = await createNewFColumn({
 				groupId: group.id,
-				needToUpdateDate: dayjs(needToUpdateDate).toDate(),
+				needToUpdateDate: toDate(needToUpdateDate),
 				...columnInfo,
 			});
 
@@ -53,6 +51,7 @@ export const createNewNotFixedColumn =
 	async (info: TCreateNewNotFixedColumn['param']) => {
 		const {
 			errorUtil: { convertErrorToCustomError },
+			dateUtil: { toDate },
 			repository: { createNewNFColumn, findGroup },
 		} = dependencies;
 
@@ -69,7 +68,7 @@ export const createNewNotFixedColumn =
 
 			const newColumn = await createNewNFColumn({
 				groupId: group.id,
-				spendingAndIncomeDate: dayjs(spendingAndIncomeDate).toDate(),
+				spendingAndIncomeDate: toDate(spendingAndIncomeDate),
 				...columnInfo,
 			});
 
@@ -88,6 +87,7 @@ export const updateFixedColumn =
 	async (info: TUpdateFixedColumn['param']) => {
 		const {
 			errorUtil: { convertErrorToCustomError, CustomError },
+			dateUtil: { toDate },
 			service: { checkAdminGroupUser },
 			repository: { findFixedGAB, updateFColumn },
 		} = dependencies;
@@ -111,7 +111,7 @@ export const updateFixedColumn =
 			}
 
 			await updateFColumn(cgab, {
-				needToUpdateDate: dayjs(needToUpdateDate).toDate(),
+				needToUpdateDate: toDate(needToUpdateDate),
 				...columnInfo,
 			});
 		} catch (error) {
@@ -128,6 +128,7 @@ export const updateNotFixedColumn =
 	async (info: TUpdateNotFixedColumn['param']) => {
 		const {
 			errorUtil: { convertErrorToCustomError, CustomError },
+			dateUtil: { toDate },
 			service: { checkAdminGroupUser },
 			repository: { findNotFixedGAB, updateNFColumn },
 		} = dependencies;
@@ -149,7 +150,7 @@ export const updateNotFixedColumn =
 
 			await updateNFColumn(gab, {
 				...columnInfo,
-				spendingAndIncomeDate: dayjs(spendingAndIncomeDate).toDate(),
+				spendingAndIncomeDate: toDate(spendingAndIncomeDate),
 			});
 		} catch (error) {
 			const customError = convertErrorToCustomError(error, {

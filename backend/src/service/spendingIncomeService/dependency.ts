@@ -26,25 +26,30 @@ import {
 /** Util */
 import { convertErrorToCustomError } from '@/util/error';
 import { CustomError } from '@/util/error/class';
+import { toDate } from '@/util/date';
 
 export const createNewFixedColumn = Logic.createNewFixedColumn({
 	errorUtil: { convertErrorToCustomError },
+	dateUtil: { toDate },
 	repository: { createNewFColumn, findGroup },
 });
 
 export const createNewNotFixedColumn = Logic.createNewNotFixedColumn({
 	errorUtil: { convertErrorToCustomError },
+	dateUtil: { toDate },
 	repository: { createNewNFColumn, findGroup },
 });
 
 export const updateFixedColumn = Logic.updateFixedColumn({
 	errorUtil: { convertErrorToCustomError, CustomError },
+	dateUtil: { toDate },
 	service: { checkAdminGroupUser },
 	repository: { findFixedGAB, updateFColumn },
 });
 
 export const updateNotFixedColumn = Logic.updateNotFixedColumn({
 	errorUtil: { convertErrorToCustomError, CustomError },
+	dateUtil: { toDate },
 	service: { checkAdminGroupUser },
 	repository: { findNotFixedGAB, updateNFColumn },
 });

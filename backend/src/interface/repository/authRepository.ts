@@ -8,7 +8,7 @@ import UserModel from '@/model/user';
 import OAuthUserModel from '@/model/oauthUser';
 
 /** Util */
-import { TErrorUtil } from '../util';
+import { TDateUtil, TErrorUtil } from '../util';
 
 /** ETC */
 import defaultCategory from '@/json/defaultCategory.json';
@@ -18,6 +18,7 @@ import { TUserInfo } from '../user';
 
 export type TCreateAccountBookAndGroup = {
 	dependency: {
+		dateUtil: Pick<TDateUtil, 'getCurrentDate'>;
 		AccountBookModel: typeof AccountBookModel;
 		CategoryModel: typeof CategoryModel;
 		defaultCategory: typeof defaultCategory;
@@ -27,6 +28,7 @@ export type TCreateAccountBookAndGroup = {
 
 export type TCreateSocialUser = {
 	dependency: {
+		dateUtil: Pick<TDateUtil, 'getCurrentDate'>;
 		errorUtil: Pick<TErrorUtil, 'convertErrorToCustomError'>;
 		AccountBookModel: typeof AccountBookModel;
 		CategoryModel: typeof CategoryModel;
@@ -39,6 +41,7 @@ export type TCreateSocialUser = {
 
 export type TCreateEmailUser = {
 	dependency: {
+		dateUtil: Pick<TDateUtil, 'getCurrentDate'>;
 		errorUtil: Pick<TErrorUtil, 'convertErrorToCustomError'>;
 		AccountBookModel: typeof AccountBookModel;
 		CategoryModel: typeof CategoryModel;

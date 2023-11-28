@@ -1,4 +1,3 @@
-import dayjs from 'dayjs';
 import { curry, flatMap, map, memoize, pipe, toArray, zipWithIndex } from '@fxts/core';
 
 /** Interface */
@@ -122,6 +121,7 @@ export const getNotFixedColumnList =
 	) => {
 		const {
 			errorUtil: { convertErrorToCustomError },
+			dateUtil: { toDate },
 			repository: { findAllNotFixedColumn },
 		} = dependencies;
 
@@ -130,8 +130,8 @@ export const getNotFixedColumnList =
 
 			const list = await findAllNotFixedColumn({
 				accountBookId,
-				endDate: dayjs(endDate).toDate(),
-				startDate: dayjs(startDate).toDate(),
+				endDate: toDate(endDate),
+				startDate: toDate(startDate),
 			});
 
 			const findCategory = findCategoryByChildId(categoryList);
@@ -177,6 +177,7 @@ export const getFixedColumnList =
 	) => {
 		const {
 			errorUtil: { convertErrorToCustomError },
+			dateUtil: { toDate },
 			repository: { findAllFixedColumnBasedGroup },
 		} = dependencies;
 
@@ -185,8 +186,8 @@ export const getFixedColumnList =
 			const dateInfo =
 				startDate && endDate
 					? {
-							endDate: dayjs(endDate).toDate(),
-							startDate: dayjs(startDate).toDate(),
+							endDate: toDate(endDate),
+							startDate: toDate(startDate),
 					  }
 					: {};
 
@@ -237,6 +238,7 @@ export const getAllTypeColumnList =
 	async (info: TGetColumnList['param'][0], categoryList: TGetColumnList['param'][1]) => {
 		const {
 			errorUtil: { convertErrorToCustomError },
+			dateUtil: { toDate },
 			repository: { findAllColumn },
 		} = dependencies;
 
@@ -245,8 +247,8 @@ export const getAllTypeColumnList =
 			const dateInfo =
 				startDate && endDate
 					? {
-							endDate: dayjs(endDate).toDate(),
-							startDate: dayjs(startDate).toDate(),
+							endDate: toDate(endDate),
+							startDate: toDate(startDate),
 					  }
 					: {};
 
