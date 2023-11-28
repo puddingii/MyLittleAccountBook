@@ -5,7 +5,7 @@ import sinon from 'sinon';
 import dayjs from 'dayjs';
 
 /** Dependency */
-import { errorUtil } from '../commonDependency';
+import { cacheUtil, errorUtil } from '../commonDependency';
 import { findRecursiveCategoryList } from '@/repository/categoryRepository/dependency';
 import { findAllNotFixedColumn } from '@/repository/groupAccountBookRepository/dependency';
 import { findAllFixedColumnBasedGroup } from '@/repository/cronGroupAccountBookRepository/dependency';
@@ -129,6 +129,7 @@ export const testResult = {
 describe('Common AccountBook Service Test', function () {
 	const common = {
 		errorUtil: { convertErrorToCustomError: errorUtil.convertErrorToCustomError },
+		cacheUtil: { getCache: cacheUtil.getNullCache, setCache: cacheUtil.setCache },
 	};
 
 	describe('#getCategory', function () {

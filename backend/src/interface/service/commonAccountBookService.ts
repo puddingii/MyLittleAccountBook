@@ -5,7 +5,7 @@ import { findAllFixedColumnBasedGroup } from '@/repository/cronGroupAccountBookR
 import { findAllColumn } from '@/repository/groupRepository/dependency';
 
 /** Util */
-import { TErrorUtil } from '../util';
+import { TCacheUtil, TErrorUtil } from '../util';
 
 export type TCategory = {
 	parentId: number | undefined;
@@ -21,6 +21,7 @@ export type TGetCategory = {
 		repository: {
 			findRecursiveCategoryList: typeof findRecursiveCategoryList;
 		};
+		cacheUtil: Pick<TCacheUtil, 'getCache' | 'setCache'>;
 	};
 	param: [accountBookId: number, depth: { start: number; end: number }];
 	returnType: Promise<TCategory[]>;

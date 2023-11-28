@@ -23,7 +23,7 @@ export const cacheUtil = {
 		return Promise.resolve<void>(undefined);
 	},
 	deleteCache(key: string | Array<string>) {
-		return Promise.resolve<void>(undefined);
+		return Promise.resolve<number>(1);
 	},
 	getCacheA(key: string) {
 		return Promise.resolve<string>('A');
@@ -32,7 +32,7 @@ export const cacheUtil = {
 		return Promise.resolve<string>('B');
 	},
 	getNullCache(key: string) {
-		return Promise.resolve<void>(undefined);
+		return Promise.resolve<null>(null);
 	},
 };
 
