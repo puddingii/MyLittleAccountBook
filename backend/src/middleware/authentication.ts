@@ -5,7 +5,11 @@ import { logger } from '@/util';
 import { convertErrorToCustomError } from '@/util/error';
 import { decodeToken, isExpiredToken } from '@/util/jwt';
 import zParser from '@/util/parser';
-import { deleteCache, getCache } from '@/util/cache';
+import {
+	deleteRefreshTokenCache as deleteCache,
+	getRefreshTokenCache as getCache,
+} from '@/util/cache/v2';
+
 import { TDecodedAccessTokenInfo } from '@/interface/auth';
 
 export const verifyToken = async (req: Request, res: Response, next: NextFunction) => {

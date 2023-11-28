@@ -10,13 +10,20 @@ import {
 
 /** Util */
 import { convertErrorToCustomError } from '@/util/error';
-import { deleteCache, getCache, setCache } from '@/util/cache';
 import {
 	createRefreshToken,
 	createAccessToken,
 	decodeToken,
 	isExpiredToken,
 } from '@/util/jwt';
+import {
+	deleteRefreshTokenCache,
+	deleteSocialLoginStateCache,
+	getRefreshTokenCache,
+	getSocialLoginStateCache,
+	setRefreshTokenCache,
+	setSocialLoginStateCache,
+} from '@/util/cache/v2';
 
 export const emailJoin = Logic.emailJoin({
 	errorUtil: { convertErrorToCustomError },
@@ -25,38 +32,46 @@ export const emailJoin = Logic.emailJoin({
 
 export const emailLogin = Logic.emailLogin({
 	errorUtil: { convertErrorToCustomError },
-	cacheUtil: { setCache },
+	cacheUtil: { setCache: setRefreshTokenCache },
 	jwtUtil: { createAccessToken, createRefreshToken },
 	repository: { findOneUser },
 });
 
 export const getSocialLoginLocation = Logic.getSocialLoginLocation({
 	errorUtil: { convertErrorToCustomError },
-	cacheUtil: { setCache },
+	cacheUtil: { setCache: setSocialLoginStateCache },
 });
 
 export const googleLogin = Logic.googleLogin({
 	errorUtil: { convertErrorToCustomError },
-	cacheUtil: { setCache, getCache, deleteCache },
+	cacheUtil: {
+		setCache: setRefreshTokenCache,
+		getCache: getSocialLoginStateCache,
+		deleteCache: deleteSocialLoginStateCache,
+	},
 	jwtUtil: { createAccessToken, createRefreshToken },
 	repository: { createSocialUser, findOneSocialUserInfo },
 });
 
 export const naverLogin = Logic.naverLogin({
 	errorUtil: { convertErrorToCustomError },
-	cacheUtil: { setCache, getCache, deleteCache },
+	cacheUtil: {
+		setCache: setRefreshTokenCache,
+		getCache: getSocialLoginStateCache,
+		deleteCache: deleteSocialLoginStateCache,
+	},
 	jwtUtil: { createAccessToken, createRefreshToken },
 	repository: { createSocialUser, findOneSocialUserInfo },
 });
 
 export const refreshToken = Logic.refreshToken({
 	errorUtil: { convertErrorToCustomError },
-	cacheUtil: { deleteCache, getCache },
+	cacheUtil: { deleteCache: deleteRefreshTokenCache, getCache: getRefreshTokenCache },
 	jwtUtil: { createAccessToken, decodeToken, isExpiredToken },
 });
 
 export const deleteToken = Logic.deleteToken({
 	errorUtil: { convertErrorToCustomError },
-	cacheUtil: { deleteCache, getCache },
+	cacheUtil: { deleteCache: deleteRefreshTokenCache, getCache: getRefreshTokenCache },
 	jwtUtil: { decodeToken },
 });

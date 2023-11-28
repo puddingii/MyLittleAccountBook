@@ -2,7 +2,10 @@ import jwt from 'jsonwebtoken';
 
 import secret from '@/config/secret';
 import { TDecodedAccessTokenInfo } from '@/interface/auth';
-import { deleteCache, getCache } from '../cache';
+import {
+	deleteRefreshTokenCache as deleteCache,
+	getRefreshTokenCache as getCache,
+} from '../cache/v2';
 
 const {
 	express: { jwtSecureKey, jwtAccessTokenTime, jwtRefreshTokenTime },

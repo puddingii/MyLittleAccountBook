@@ -7,7 +7,7 @@ import { findUserInfo, updateUserInfo } from '@/repository/userRepository/depend
 import { convertErrorToCustomError } from '@/util/error';
 import { CustomError } from '@/util/error/class';
 import { createAccessToken, createRefreshToken, verifyAll } from '@/util/jwt';
-import { setCache } from '@/util/cache';
+import { setRefreshTokenCache } from '@/util/cache/v2';
 
 export const getUserInfo = Logic.getUserInfo({
 	errorUtil: { convertErrorToCustomError },
@@ -16,7 +16,7 @@ export const getUserInfo = Logic.getUserInfo({
 
 export const updateUserInfoAndRefreshToken = Logic.updateUserInfoAndRefreshToken({
 	errorUtil: { convertErrorToCustomError, CustomError },
-	cacheUtil: { setCache },
+	cacheUtil: { setCache: setRefreshTokenCache },
 	jwtUtil: { createAccessToken, createRefreshToken, verifyAll },
 	repository: { updateUserInfo },
 });
