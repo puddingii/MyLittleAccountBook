@@ -9,7 +9,6 @@ import {
 	isExpiredToken,
 } from '@/util/jwt';
 
-import { setCache, deleteCache, getCache } from '@/util/cache';
 import { isAdminUser, canUserWrite } from '@/util/validation/user';
 
 export type TErrorUtil = {
@@ -19,9 +18,16 @@ export type TErrorUtil = {
 };
 
 export type TCacheUtil = {
-	setCache: typeof setCache;
-	deleteCache: typeof deleteCache;
-	getCache: typeof getCache;
+	/** time 기본값은 600 */
+	setCache: (
+		key: string,
+		value: number | string | Buffer,
+		time?: number,
+	) => Promise<void>;
+	/** 캐시 삭제 */
+	deleteCache: (key: string | Array<string>) => Promise<number>;
+	/** 캐싱된 Key를 기준으로 Value 리턴 */
+	getCache: (key: string) => Promise<string | null>;
 };
 
 export type TJwtUtil = {
