@@ -17,7 +17,7 @@ import CategoryModel from '@/model/category';
 import GroupModel from '@/model/group';
 
 /** Dependency */
-import { errorUtil } from '../commonDependency';
+import { cacheUtil, errorUtil } from '../commonDependency';
 import sequelize from '@/loader/mysql';
 import { findGAB as findFGAB } from '@/repository/cronGroupAccountBookRepository/dependency';
 import { findGAB } from '@/repository/groupAccountBookRepository/dependency';
@@ -37,6 +37,9 @@ describe('ManageCategory Service Test', function () {
 	const common = {
 		errorUtil: {
 			convertErrorToCustomError: errorUtil.convertErrorToCustomError,
+		},
+		cacheUtil: {
+			deleteCache: cacheUtil.deleteCache,
 		},
 	};
 	const database = { sequelize };

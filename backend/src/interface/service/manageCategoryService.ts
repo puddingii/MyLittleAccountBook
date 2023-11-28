@@ -13,7 +13,7 @@ import { findGAB } from '@/repository/groupAccountBookRepository/dependency';
 import { checkAdminGroupUser } from '@/service/common/user/dependency';
 
 /** ETC */
-import { TErrorUtil } from '../util';
+import { TCacheUtil, TErrorUtil } from '../util';
 import sequelize from '@/loader/mysql';
 
 export type TGetCategoryList = {
@@ -29,6 +29,7 @@ export type TGetCategoryList = {
 export type TAddCategory = {
 	dependency: {
 		errorUtil: Pick<TErrorUtil, 'convertErrorToCustomError'>;
+		cacheUtil: Pick<TCacheUtil, 'deleteCache'>;
 		sequelize: typeof sequelize;
 		service: { checkAdminGroupUser: typeof checkAdminGroupUser };
 		repository: {
@@ -47,6 +48,7 @@ export type TAddCategory = {
 export type TUpdateCategoryInfo = {
 	dependency: {
 		errorUtil: Pick<TErrorUtil, 'convertErrorToCustomError'>;
+		cacheUtil: Pick<TCacheUtil, 'deleteCache'>;
 		service: { checkAdminGroupUser: typeof checkAdminGroupUser };
 		repository: {
 			updateCategory: typeof updateCategory;
@@ -63,6 +65,7 @@ export type TUpdateCategoryInfo = {
 export type TDeleteCategory = {
 	dependency: {
 		errorUtil: Pick<TErrorUtil, 'convertErrorToCustomError'>;
+		cacheUtil: Pick<TCacheUtil, 'deleteCache'>;
 		service: { checkAdminGroupUser: typeof checkAdminGroupUser };
 		repository: {
 			findCategory: typeof findCategory;

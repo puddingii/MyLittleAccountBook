@@ -70,7 +70,7 @@ export const getCategory =
 		} = dependencies;
 
 		try {
-			const cacheKey = `${accountBookId}_${JSON.stringify(depth)}`;
+			const cacheKey = `${accountBookId}`;
 			const cachedJson = await getCache(cacheKey);
 
 			/** 캐싱된 데이터가 있을땐 그거 사용. 만약 카테고리 내용이 변경된 상황이 있다면 캐싱된 데이터가 없음 */

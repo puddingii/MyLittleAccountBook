@@ -16,6 +16,7 @@ import { checkAdminGroupUser } from '../common/user/dependency';
 /** Util */
 import sequelize from '@/loader/mysql';
 import { convertErrorToCustomError } from '@/util/error';
+import { deleteRecursiveCategoryCache } from '@/util/cache/v2';
 
 export const getCategoryList = Logic.getCategoryList({
 	errorUtil: { convertErrorToCustomError },
@@ -24,6 +25,7 @@ export const getCategoryList = Logic.getCategoryList({
 
 export const addCategory = Logic.addCategory({
 	errorUtil: { convertErrorToCustomError },
+	cacheUtil: { deleteCache: deleteRecursiveCategoryCache },
 	sequelize,
 	service: { checkAdminGroupUser },
 	repository: { createCategory, findCategory },
@@ -31,12 +33,14 @@ export const addCategory = Logic.addCategory({
 
 export const updateCategoryInfo = Logic.updateCategoryInfo({
 	errorUtil: { convertErrorToCustomError },
+	cacheUtil: { deleteCache: deleteRecursiveCategoryCache },
 	service: { checkAdminGroupUser },
 	repository: { updateCategory },
 });
 
 export const deleteCategory = Logic.deleteCategory({
 	errorUtil: { convertErrorToCustomError },
+	cacheUtil: { deleteCache: deleteRecursiveCategoryCache },
 	service: { checkAdminGroupUser },
 	repository: {
 		findCategory,

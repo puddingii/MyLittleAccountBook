@@ -117,6 +117,7 @@ export const addCategory =
 	(dependencies: TAddCategory['dependency']) => async (info: TAddCategory['param']) => {
 		const {
 			errorUtil: { convertErrorToCustomError },
+			cacheUtil: { deleteCache },
 			sequelize,
 			service: { checkAdminGroupUser },
 			repository: { createCategory, findCategory },
@@ -145,6 +146,7 @@ export const addCategory =
 
 				await transaction.commit();
 
+				await deleteCache(`${info.accountBookId}`);
 				return result;
 			} catch (error) {
 				await transaction.rollback();
@@ -164,6 +166,7 @@ export const updateCategoryInfo =
 	async (info: TUpdateCategoryInfo['param']) => {
 		const {
 			errorUtil: { convertErrorToCustomError },
+			cacheUtil: { deleteCache },
 			service: { checkAdminGroupUser },
 			repository: { updateCategory },
 		} = dependencies;
@@ -179,6 +182,7 @@ export const updateCategoryInfo =
 			if (countList[0] < 1) {
 				throw new Error('정상적으로 수정되지 않았습니다.');
 			}
+			await deleteCache(`${info.accountBookId}`);
 		} catch (error) {
 			const customError = convertErrorToCustomError(error, {
 				trace: 'Service',
@@ -193,6 +197,7 @@ export const deleteCategory =
 	async (info: TDeleteCategory['param']) => {
 		const {
 			errorUtil: { convertErrorToCustomError },
+			cacheUtil: { deleteCache },
 			service: { checkAdminGroupUser },
 			repository: { findCategory, findCategoryList, findFGAB, findGAB },
 		} = dependencies;
@@ -217,6 +222,7 @@ export const deleteCategory =
 				}
 
 				await category.destroy();
+				await deleteCache(`${accountBookId}`);
 
 				return 1;
 			}
@@ -230,6 +236,7 @@ export const deleteCategory =
 			}
 
 			await category.destroy();
+			await deleteCache(`${accountBookId}`);
 
 			return 1;
 		} catch (error) {
