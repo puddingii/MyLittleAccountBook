@@ -24,6 +24,14 @@ export default {
 		jwtAccessTokenTime: parseInt(process.env.JWT_ACCESS_TOKEN_TIME ?? '', 10),
 	},
 
+	/** Socket key */
+	socket: {
+		port: parseInt(process.env.SOCKET_PORT ?? '', 10),
+		corsOriginList: process.env.SOCKET_CORS_LIST?.split(',').map(
+			origin => new RegExp(origin),
+		),
+	},
+
 	/** DB key */
 	mysql: {
 		dumpPath: process.env.MYSQL_DUMP_PATH ?? '',
