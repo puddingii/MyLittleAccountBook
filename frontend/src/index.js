@@ -18,6 +18,7 @@ import App from './App';
 import reportWebVitals from './reportWebVitals';
 import { getCookie } from './utils/cookie';
 import { setAxiosToken } from './utils/axios';
+import { socket } from './socket';
 
 // ==============================|| MAIN - REACT DOM RENDER  ||============================== //
 
@@ -38,6 +39,8 @@ const queryClient = new QueryClient({
 		},
 	},
 });
+
+socket.connect();
 
 root.render(
 	<StrictMode>
