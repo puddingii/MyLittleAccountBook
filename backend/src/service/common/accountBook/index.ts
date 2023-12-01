@@ -298,7 +298,7 @@ export const getAllTypeColumnList =
 				toArray,
 			);
 
-			return historyList[0];
+			return historyList[0] ?? { nfgab: [], fgab: [] };
 		} catch (error) {
 			const customError = convertErrorToCustomError(error, {
 				trace: 'Service',
