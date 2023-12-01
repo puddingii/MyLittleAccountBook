@@ -42,6 +42,7 @@ import { checkAdminGroupUser } from '@/service/common/user/dependency';
 import GroupModel from '@/model/group';
 import CronGroupAccountBookModel from '@/model/cronGroupAccountBook';
 import GroupAccountBookModel from '@/model/groupAccountBook';
+import realtimeEvent from '@/util/pubsub/realtimeEvent';
 
 describe('SpendingIncome Service Test', function () {
 	const common = {
@@ -49,6 +50,7 @@ describe('SpendingIncome Service Test', function () {
 			convertErrorToCustomError: errorUtil.convertErrorToCustomError,
 		},
 		dateUtil,
+		eventEmitter: sinon.stub(realtimeEvent),
 	};
 
 	describe('#createNewFixedColumn', function () {

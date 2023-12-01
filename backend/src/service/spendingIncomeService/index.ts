@@ -53,6 +53,7 @@ export const createNewNotFixedColumn =
 			errorUtil: { convertErrorToCustomError },
 			dateUtil: { toDate },
 			repository: { createNewNFColumn, findGroup },
+			eventEmitter,
 		} = dependencies;
 
 		try {
@@ -71,6 +72,8 @@ export const createNewNotFixedColumn =
 				spendingAndIncomeDate: toDate(spendingAndIncomeDate),
 				...columnInfo,
 			});
+
+			eventEmitter.emit('create:nfgab', newColumn);
 
 			return newColumn.id;
 		} catch (error) {

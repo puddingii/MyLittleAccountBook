@@ -27,6 +27,7 @@ import {
 import { convertErrorToCustomError } from '@/util/error';
 import { CustomError } from '@/util/error/class';
 import { toDate } from '@/util/date';
+import realtimeEvent from '@/util/pubsub/realtimeEvent';
 
 export const createNewFixedColumn = Logic.createNewFixedColumn({
 	errorUtil: { convertErrorToCustomError },
@@ -38,6 +39,7 @@ export const createNewNotFixedColumn = Logic.createNewNotFixedColumn({
 	errorUtil: { convertErrorToCustomError },
 	dateUtil: { toDate },
 	repository: { createNewNFColumn, findGroup },
+	eventEmitter: realtimeEvent,
 });
 
 export const updateFixedColumn = Logic.updateFixedColumn({
