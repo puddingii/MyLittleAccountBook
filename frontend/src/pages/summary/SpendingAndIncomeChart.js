@@ -183,7 +183,7 @@ const SpendingAndIncomeChart = ({ notFixedIncomeList, notFixedSpendingList }) =>
 			<MainCard sx={{ mt: 1.75, maxHeight: '451px' }}>
 				<Stack spacing={1.5} sx={{ mb: -12 }}>
 					<Typography variant="h6" color="secondary">
-						가장 많은 수입총합 [
+						가장 많은 수입날짜 [
 						{dayjs()
 							.set('date', maxIncomeIdx + 1)
 							.format('MM/DD')}
@@ -193,7 +193,7 @@ const SpendingAndIncomeChart = ({ notFixedIncomeList, notFixedSpendingList }) =>
 						</Typography>
 					</Typography>
 					<Typography style={{ marginTop: '0px' }} variant="h6" color="secondary">
-						가장 많은 지출총합 [
+						가장 많은 지출날짜 [
 						{dayjs()
 							.set('date', maxSpendingIdx + 1)
 							.format('MM/DD')}

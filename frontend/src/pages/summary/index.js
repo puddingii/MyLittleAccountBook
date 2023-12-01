@@ -1,8 +1,8 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useParams } from 'react-router';
 
 // material-ui
-import { Button, Grid } from '@mui/material';
+import { Grid } from '@mui/material';
 
 // project import
 import FixedHistoryList from './FixedHistoryList';
@@ -11,20 +11,43 @@ import SpendingAndIncomeChart from './SpendingAndIncomeChart';
 
 import { useGetSummaryQuery } from 'queries/accountBook/accountBookQuery';
 import { getSocket } from 'socket/realtimeData';
+import dayjs from 'dayjs';
 
 // ==============================|| DASHBOARD - DEFAULT ||============================== //
 
 const ThisMonthSummary = () => {
 	const param = useParams();
 	const accountBookId = parseInt(param?.id ?? -1, 10);
+	const [notFixedIncomeList, setNotFixedIncomeList] = useState([]);
+	const [notFixedSpendingList, setNotFixedSpendingList] = useState([]);
+	const [fixedIncomeList, setFixedIncomeList] = useState([]);
+	const [fixedSpendingList, setFixedSpendingList] = useState([]);
 
-	const { data: response, refetch } = useGetSummaryQuery({
-		accountBookId,
-	});
-	const notFixedIncomeList = response?.data?.notFixedIncomeList ?? [];
-	const notFixedSpendingList = response?.data?.notFixedSpendingList ?? [];
-	const fixedIncomeList = response?.data?.fixedIncomeList ?? [];
-	const fixedSpendingList = response?.data?.fixedSpendingList ?? [];
+	const { refetch } = useGetSummaryQuery(
+		{
+			accountBookId,
+		},
+		{
+			onSuccess: response => {
+				setNotFixedIncomeList(response?.data?.notFixedIncomeList ?? []);
+				setNotFixedSpendingList(response?.data?.notFixedSpendingList ?? []);
+				setFixedIncomeList(response?.data?.fixedIncomeList ?? []);
+				setFixedSpendingList(response?.data?.fixedSpendingList ?? []);
+			},
+		},
+	);
+
+	const addNotFixedColumn = column => {
+		const curDate = dayjs(column.spendingAndIncomeDate).date() - 1;
+		const setter = column.type === 'income' ? setNotFixedIncomeList : setNotFixedSpendingList;
+
+		setter(columnList => {
+			const deepClone = JSON.parse(JSON.stringify(columnList));
+			deepClone[curDate].push(column);
+
+			return deepClone;
+		});
+	};
 
 	useEffect(() => {
 		refetch();
@@ -32,6 +55,9 @@ const ThisMonthSummary = () => {
 
 	useEffect(() => {
 		const socket = getSocket(accountBookId);
+		socket.on('create:nfgab', info => {
+			addNotFixedColumn(info);
+		});
 
 		socket.connect();
 
