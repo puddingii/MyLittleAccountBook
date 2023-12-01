@@ -1,7 +1,9 @@
-import { each, pipe } from '@fxts/core';
+import { each, entries, pipe } from '@fxts/core';
 import { Server } from 'socket.io';
 import { RedisClientType, createClient } from 'redis';
 import { createAdapter } from '@socket.io/redis-adapter';
+
+import socketInfo from '@/socket';
 
 import { logger } from '@/util';
 import { convertErrorToCustomError } from '@/util/error';
@@ -60,6 +62,17 @@ export const connect = async () => {
 	await Promise.all([pubClient.connect(), subClient.connect()]);
 
 	io.adapter(createAdapter(pubClient, subClient));
+	io.on('connection', () => {
+		pipe(
+			socketInfo,
+			entries,
+			each(([key, socket]) => {
+				const namespaceIo = socket.getIo(io);
+				socket.register(namespaceIo);
+				logger.info(`${key} namespace's handler is registed`, ['Socket']);
+			}),
+		);
+	});
 	io.listen(port);
 
 	logger.info('Socket server setting is done.', ['Socket']);

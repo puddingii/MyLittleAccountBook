@@ -1,3 +1,5 @@
+import { Server } from 'socket.io';
+
 /** Server -> Client */
 export interface ServerToClientEvents {}
 
@@ -12,3 +14,10 @@ export interface InterServerEvents {}
  * "socket.data"'s type
  */
 export interface SocketData {}
+
+export type TIo = Server<
+	ServerToClientEvents,
+	ClientToServerEvents,
+	InterServerEvents,
+	SocketData
+>;
