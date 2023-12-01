@@ -80,7 +80,13 @@ describe('SpendingIncome Service Test', function () {
 
 		it('Check owner user and correct value is passed to function', async function () {
 			stubFindGroup.resolves(new GroupModel({ ...defaultGroupInfo }));
-			stubCreateNewFColumn.resolves(1);
+			stubCreateNewFColumn.resolves(
+				new CronGroupAccountBookModel({
+					...defaultColumnInfo,
+					needToUpdateDate: dateUtil.toDate(defaultColumnInfo.needToUpdateDate),
+					id: 1,
+				}),
+			);
 
 			const injectedFunc = createNewFixedColumn({
 				...common,
@@ -115,7 +121,13 @@ describe('SpendingIncome Service Test', function () {
 			stubFindGroup.resolves(
 				new GroupModel({ ...defaultGroupInfo, userType: 'manager' }),
 			);
-			stubCreateNewFColumn.resolves(1);
+			stubCreateNewFColumn.resolves(
+				new CronGroupAccountBookModel({
+					...defaultColumnInfo,
+					needToUpdateDate: dateUtil.toDate(defaultColumnInfo.needToUpdateDate),
+					id: 1,
+				}),
+			);
 
 			const injectedFunc = createNewFixedColumn({
 				...common,
@@ -136,7 +148,13 @@ describe('SpendingIncome Service Test', function () {
 
 		it('Check writer user', async function () {
 			stubFindGroup.resolves(new GroupModel({ ...defaultGroupInfo, userType: 'writer' }));
-			stubCreateNewFColumn.resolves(1);
+			stubCreateNewFColumn.resolves(
+				new CronGroupAccountBookModel({
+					...defaultColumnInfo,
+					needToUpdateDate: dateUtil.toDate(defaultColumnInfo.needToUpdateDate),
+					id: 1,
+				}),
+			);
 
 			const injectedFunc = createNewFixedColumn({
 				...common,
@@ -159,7 +177,13 @@ describe('SpendingIncome Service Test', function () {
 			stubFindGroup.resolves(
 				new GroupModel({ ...defaultGroupInfo, userType: 'observer' }),
 			);
-			stubCreateNewFColumn.resolves(1);
+			stubCreateNewFColumn.resolves(
+				new CronGroupAccountBookModel({
+					...defaultColumnInfo,
+					needToUpdateDate: dateUtil.toDate(defaultColumnInfo.needToUpdateDate),
+					id: 1,
+				}),
+			);
 
 			const injectedFunc = createNewFixedColumn({
 				...common,
@@ -181,7 +205,13 @@ describe('SpendingIncome Service Test', function () {
 
 		it('Check not existing group', async function () {
 			stubFindGroup.resolves(null);
-			stubCreateNewFColumn.resolves(1);
+			stubCreateNewFColumn.resolves(
+				new CronGroupAccountBookModel({
+					...defaultColumnInfo,
+					needToUpdateDate: dateUtil.toDate(defaultColumnInfo.needToUpdateDate),
+					id: 1,
+				}),
+			);
 
 			const injectedFunc = createNewFixedColumn({
 				...common,
@@ -203,7 +233,13 @@ describe('SpendingIncome Service Test', function () {
 
 		it('If findGroup is error', async function () {
 			stubFindGroup.rejects(new Error('findGroup error'));
-			stubCreateNewFColumn.resolves(1);
+			stubCreateNewFColumn.resolves(
+				new CronGroupAccountBookModel({
+					...defaultColumnInfo,
+					needToUpdateDate: dateUtil.toDate(defaultColumnInfo.needToUpdateDate),
+					id: 1,
+				}),
+			);
 
 			const injectedFunc = createNewFixedColumn({
 				...common,

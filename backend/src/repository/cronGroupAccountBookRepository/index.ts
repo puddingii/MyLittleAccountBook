@@ -20,7 +20,7 @@ export const createNewColumn =
 		try {
 			const newColumn = await CronGroupAccountBookModel.create(columnInfo);
 
-			return newColumn.id;
+			return newColumn;
 		} catch (error) {
 			const customError = convertErrorToCustomError(error, {
 				trace: 'Repository',

@@ -30,13 +30,13 @@ export const createNewFixedColumn =
 				throw new Error('글쓰기 권한이 없는 사용자 입니다.');
 			}
 
-			const newId = await createNewFColumn({
+			const newColumn = await createNewFColumn({
 				groupId: group.id,
 				needToUpdateDate: toDate(needToUpdateDate),
 				...columnInfo,
 			});
 
-			return newId;
+			return newColumn.id;
 		} catch (error) {
 			const customError = convertErrorToCustomError(error, {
 				trace: 'Service',
