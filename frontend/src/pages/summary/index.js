@@ -2,7 +2,7 @@ import { useEffect } from 'react';
 import { useParams } from 'react-router';
 
 // material-ui
-import { Grid } from '@mui/material';
+import { Button, Grid } from '@mui/material';
 
 // project import
 import FixedHistoryList from './FixedHistoryList';
@@ -10,6 +10,7 @@ import AnalyticEcommerceList from './AnalyticEcommerceList';
 import SpendingAndIncomeChart from './SpendingAndIncomeChart';
 
 import { useGetSummaryQuery } from 'queries/accountBook/accountBookQuery';
+import { getSocket } from 'socket/realtimeData';
 
 // ==============================|| DASHBOARD - DEFAULT ||============================== //
 
@@ -28,6 +29,18 @@ const ThisMonthSummary = () => {
 	useEffect(() => {
 		refetch();
 	}, [refetch]);
+
+	useEffect(() => {
+		const socket = getSocket(accountBookId);
+
+		socket.connect();
+
+		return () => {
+			if (accountBookId && socket.active) {
+				socket.disconnect();
+			}
+		};
+	}, [accountBookId]);
 
 	return (
 		<Grid container rowSpacing={4.5} columnSpacing={2.75}>
