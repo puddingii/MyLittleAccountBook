@@ -27,7 +27,7 @@ import {
 import { convertErrorToCustomError } from '@/util/error';
 import { CustomError } from '@/util/error/class';
 import { toDate } from '@/util/date';
-import realtimeEvent from '@/util/pubsub/realtimeEvent';
+import realtimeEvent from '@/util/pubsub/realtimeEmitter';
 
 export const createNewFixedColumn = Logic.createNewFixedColumn({
 	errorUtil: { convertErrorToCustomError },

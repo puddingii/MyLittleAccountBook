@@ -2,8 +2,7 @@ import { each, entries, pipe } from '@fxts/core';
 import { Server } from 'socket.io';
 import { RedisClientType, createClient } from 'redis';
 import { createAdapter } from '@socket.io/redis-adapter';
-
-import socketInfo from '@/socket';
+import path from 'path';
 
 import { logger } from '@/util';
 import { convertErrorToCustomError } from '@/util/error';
@@ -31,7 +30,7 @@ const pubClient = createClient({
 });
 const subClient = pubClient.duplicate({ name: SUB_CLIENT_NAME });
 
-export const io = new Server<
+const io = new Server<
 	ServerToClientEvents,
 	ClientToServerEvents,
 	InterServerEvents,
@@ -61,19 +60,21 @@ export const connect = async () => {
 
 	await Promise.all([pubClient.connect(), subClient.connect()]);
 
+	const socketPath = path.resolve(__dirname, '../socket');
+	const socketInfo = (await import(socketPath)).default;
+
 	io.adapter(createAdapter(pubClient, subClient));
-	io.on('connection', () => {
-		pipe(
-			socketInfo,
-			entries,
-			each(([key, socket]) => {
-				const namespaceIo = socket.getIo(io);
-				socket.register(namespaceIo);
-				logger.info(`${key} namespace's handler is registed`, ['Socket']);
-			}),
-		);
-	});
+	pipe(
+		socketInfo,
+		entries,
+		each(([key, socket]) => {
+			socket.register(socket.io);
+			logger.info(`${key} namespace's handler is registed`, ['Socket']);
+		}),
+	);
 	io.listen(port);
 
 	logger.info('Socket server setting is done.', ['Socket']);
 };
+
+export default io;

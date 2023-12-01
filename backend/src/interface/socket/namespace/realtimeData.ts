@@ -5,16 +5,20 @@ import { TColumnInfo as TNFColumnInfo } from '@/interface/model/groupAccountBook
 export interface IRealtimeDataClientToServerEvents {}
 /** Server -> Client */
 export interface IRealtimeDataServerToClientEvents {
-	'create:fgab': (newColumn: TFColumnInfo) => void;
-	'create:nfgab': (newColumn: TNFColumnInfo) => void;
-	'update:fgab': Partial<Omit<TFColumnInfo, 'groupId'>> & {
-		id: number;
-	};
-	'update:nfgab': Partial<Omit<TNFColumnInfo, 'groupId'>> & {
-		id: number;
-	};
-	'delete:fgab': { id: number };
-	'delete:nfgab': { id: number };
+	'create:fgab': (newColumn: Omit<TFColumnInfo, 'groupId'>) => void;
+	'create:nfgab': (newColumn: Omit<TNFColumnInfo, 'groupId'>) => void;
+	'update:fgab': (
+		updatedColumn: Partial<Omit<TFColumnInfo, 'groupId'>> & {
+			id: number;
+		},
+	) => void;
+	'update:nfgab': (
+		updatedColumn: Partial<Omit<TNFColumnInfo, 'groupId'>> & {
+			id: number;
+		},
+	) => void;
+	'delete:fgab': (info: { id: number }) => void;
+	'delete:nfgab': (info: { id: number }) => void;
 }
 /** Server -> Server */
 export interface IRealtimeDataInterServerEvents {}

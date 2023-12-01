@@ -73,7 +73,7 @@ export const createNewNotFixedColumn =
 				...columnInfo,
 			});
 
-			eventEmitter.emit('create:nfgab', newColumn);
+			eventEmitter.emit('create:nfgab', { accountBookId, column: newColumn });
 
 			return newColumn.id;
 		} catch (error) {
