@@ -15,7 +15,7 @@ import CategoryModel from './category';
 import GroupModel from './group';
 
 import { TModelInfo } from '@/interface/model';
-import { TCycleType } from '@/interface/user';
+import { TColumnType, TCycleType } from '@/interface/user';
 
 export class CronGroupAccountBookModel extends Model<
 	InferAttributes<CronGroupAccountBookModel>,
@@ -32,7 +32,7 @@ export class CronGroupAccountBookModel extends Model<
 	declare id: CreationOptional<number>;
 	declare isActivated?: boolean;
 	declare needToUpdateDate: Date;
-	declare type: 'income' | 'spending';
+	declare type: TColumnType;
 	declare value: number;
 }
 

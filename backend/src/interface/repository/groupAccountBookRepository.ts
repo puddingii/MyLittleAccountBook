@@ -5,6 +5,7 @@ import UserModel from '@/model/user';
 
 /** Util */
 import { TErrorUtil } from '../util';
+import { TColumnInfo } from '../model/groupAccountBookRepository';
 
 export type TFindGAB = {
 	dependency: {
@@ -12,18 +13,7 @@ export type TFindGAB = {
 		GroupAccountBookModel: typeof GroupAccountBookModel;
 		GroupModel: typeof GroupModel;
 	};
-	param: [
-		gabInfo: Partial<{
-			id: number;
-			categoryId: number;
-			groupId: number;
-			type: 'income' | 'spending';
-			content: string;
-			spendingAndIncomeDate: Date;
-			value: number;
-		}>,
-		options?: { isIncludeGroup: boolean },
-	];
+	param: [gabInfo: Partial<TColumnInfo>, options?: { isIncludeGroup: boolean }];
 };
 
 export type TFindAllNotFixedColumn = {
@@ -45,14 +35,7 @@ export type TCreateNewColumn = {
 		errorUtil: Pick<TErrorUtil, 'convertErrorToCustomError'>;
 		GroupAccountBookModel: typeof GroupAccountBookModel;
 	};
-	param: {
-		categoryId: number;
-		spendingAndIncomeDate: Date;
-		value: number;
-		content?: string;
-		groupId: number;
-		type: 'income' | 'spending';
-	};
+	param: Omit<TColumnInfo, 'id'>;
 };
 
 export type TUpdateColumn = {
@@ -61,13 +44,7 @@ export type TUpdateColumn = {
 	};
 	param: [
 		column: GroupAccountBookModel,
-		columnInfo: {
-			categoryId?: number;
-			spendingAndIncomeDate?: Date;
-			value?: number;
-			content?: string;
-			type?: 'income' | 'spending';
-		},
+		columnInfo: Partial<Omit<TColumnInfo, 'id' | 'groupId'>>,
 	];
 };
 

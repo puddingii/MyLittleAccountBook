@@ -11,9 +11,10 @@ import {
 
 import sequelize from '@/loader/mysql';
 import CategoryModel from './category';
+import GroupModel from './group';
 
 import { TModelInfo } from '@/interface/model';
-import GroupModel from './group';
+import { TColumnType } from '@/interface/user';
 
 export class GroupAccountBookModel extends Model<
 	InferAttributes<GroupAccountBookModel>,
@@ -27,7 +28,7 @@ export class GroupAccountBookModel extends Model<
 	declare groups?: NonAttribute<GroupModel>;
 	declare id: CreationOptional<number>;
 	declare spendingAndIncomeDate: Date;
-	declare type: 'income' | 'spending';
+	declare type: TColumnType;
 	declare value: number;
 }
 

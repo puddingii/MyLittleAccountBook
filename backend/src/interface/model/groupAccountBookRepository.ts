@@ -1,4 +1,4 @@
-import { TColumnType, TCycleType } from '../user';
+import { TColumnType } from '../user';
 
 export type TColumnInfo = {
 	id: number;
@@ -6,8 +6,6 @@ export type TColumnInfo = {
 	value: number;
 	content?: string;
 	groupId: number;
-	cycleTime: number;
-	cycleType: TCycleType;
-	needToUpdateDate: Date;
+	spendingAndIncomeDate: Date;
 	type: TColumnType;
 };
