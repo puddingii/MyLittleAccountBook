@@ -21,11 +21,10 @@ import {
 } from '@/service/common/accountBook/dependency';
 import { checkAdminGroupUser } from '@/service/common/user/dependency';
 
-/** Util */
-import { TDateUtil, TErrorUtil } from '../util';
-
-/** ETC */
-import { TCycleType } from '@/interface/user';
+/** Interface */
+import { TDateUtil, TErrorUtil } from '@/interface/util';
+import { TColumnType, TCycleType } from '@/interface/user';
+import { TRealtimeEventEmitter } from '@/interface/pubsub/realtime';
 
 export type TCreateNewFixedColumn = {
 	dependency: {
@@ -40,7 +39,7 @@ export type TCreateNewFixedColumn = {
 		userEmail: string;
 		accountBookId: number;
 		value: number;
-		type: 'income' | 'spending';
+		type: TColumnType;
 		categoryId: number;
 		cycleTime: number;
 		cycleType: TCycleType;
@@ -53,6 +52,7 @@ export type TCreateNewNotFixedColumn = {
 	dependency: {
 		errorUtil: Pick<TErrorUtil, 'convertErrorToCustomError'>;
 		dateUtil: Pick<TDateUtil, 'toDate'>;
+		eventEmitter: TRealtimeEventEmitter;
 		repository: {
 			findGroup: typeof findGroup;
 			createNewNFColumn: typeof createNewNFColumn;
@@ -62,7 +62,7 @@ export type TCreateNewNotFixedColumn = {
 		userEmail: string;
 		accountBookId: number;
 		value: number;
-		type: 'income' | 'spending';
+		type: TColumnType;
 		categoryId: number;
 		content?: string | undefined;
 		spendingAndIncomeDate: string;
@@ -83,7 +83,7 @@ export type TUpdateFixedColumn = {
 		userEmail: string;
 		id: number;
 		value?: number;
-		type?: 'income' | 'spending';
+		type?: TColumnType;
 		categoryId?: number;
 		cycleTime?: number;
 		cycleType?: TCycleType;
@@ -106,7 +106,7 @@ export type TUpdateNotFixedColumn = {
 		userEmail: string;
 		id: number;
 		value?: number;
-		type?: 'income' | 'spending';
+		type?: TColumnType;
 		categoryId?: number;
 		content?: string | undefined;
 		spendingAndIncomeDate?: string;
