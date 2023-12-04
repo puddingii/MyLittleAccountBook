@@ -179,7 +179,7 @@ export const findAllColumn =
 					{
 						model: GroupAccountBookModel,
 						as: 'groupaccountbooks',
-						required: true,
+						required: false,
 						...(isValidatedDate
 							? getCondition('spendingAndIncomeDate', [startDate, endDate])
 							: {}),
@@ -187,7 +187,7 @@ export const findAllColumn =
 					{
 						model: CronGroupAccountBookModel,
 						as: 'crongroupaccountbooks',
-						required: true,
+						required: false,
 						...(isValidatedDate
 							? getCondition('needToUpdateDate', [startDate, endDate])
 							: {}),
