@@ -96,6 +96,46 @@ const ThisMonthSummary = () => {
 		[setFixedIncomeList, setFixedSpendingList],
 	);
 
+	const updateNotFixedColumn = useCallback(
+		updatedInfo => {
+			const result = findCategorys(findDeepCategory, notFixedIncomeList, notFixedSpendingList, updatedInfo.id);
+
+			if (result === -1) {
+				return;
+			}
+			const [x, y, num] = result;
+			const setter = num === 1 ? setNotFixedIncomeList : setNotFixedSpendingList;
+
+			setter(columnList => {
+				const deepClone = JSON.parse(JSON.stringify(columnList));
+				deepClone[x][y] = { ...deepClone[x][y], ...updatedInfo };
+
+				return deepClone;
+			});
+		},
+		[notFixedIncomeList, notFixedSpendingList],
+	);
+
+	const updateFixedColumn = useCallback(
+		updatedInfo => {
+			const result = findCategorys(findCategory, fixedIncomeList, fixedSpendingList, updatedInfo.id);
+
+			if (result === -1) {
+				return;
+			}
+			const [index, num] = result;
+			const setter = num === 1 ? setFixedIncomeList : setFixedSpendingList;
+
+			setter(columnList => {
+				const deepClone = [...columnList];
+				deepClone[index] = { ...deepClone[index], ...updatedInfo };
+
+				return deepClone;
+			});
+		},
+		[fixedIncomeList, fixedSpendingList],
+	);
+
 	const deleteNotFixedColumn = useCallback(
 		gabId => {
 			const result = findCategorys(findDeepCategory, notFixedIncomeList, notFixedSpendingList, gabId);
@@ -161,10 +201,10 @@ const ThisMonthSummary = () => {
 			addFixedColumn(info);
 		};
 		const updateNFHandler = info => {
-			console.log(info);
+			updateNotFixedColumn(info);
 		};
 		const updateFHandler = info => {
-			console.log(info);
+			updateFixedColumn(info);
 		};
 		const deleteNFHandler = info => {
 			deleteNotFixedColumn(info.id);
@@ -191,7 +231,15 @@ const ThisMonthSummary = () => {
 				socketRef.current.off('delete:fgab', deleteFHandler);
 			}
 		};
-	}, [socketRef, deleteNotFixedColumn, deleteFixedColumn, addNotFixedColumn, addFixedColumn]);
+	}, [
+		socketRef,
+		deleteNotFixedColumn,
+		deleteFixedColumn,
+		addNotFixedColumn,
+		addFixedColumn,
+		updateNotFixedColumn,
+		updateFixedColumn,
+	]);
 
 	return (
 		<Grid container rowSpacing={4.5} columnSpacing={2.75}>
