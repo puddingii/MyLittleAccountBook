@@ -49,6 +49,17 @@ const ThisMonthSummary = () => {
 		});
 	};
 
+	const addFixedColumn = column => {
+		const setter = column.type === 'income' ? setFixedIncomeList : setFixedSpendingList;
+
+		setter(columnList => {
+			const deepClone = [...columnList];
+			deepClone.push(column);
+
+			return deepClone;
+		});
+	};
+
 	useEffect(() => {
 		refetch();
 	}, [refetch]);
@@ -57,6 +68,9 @@ const ThisMonthSummary = () => {
 		const socket = getSocket(accountBookId);
 		socket.on('create:nfgab', info => {
 			addNotFixedColumn(info);
+		});
+		socket.on('create:fgab', info => {
+			addFixedColumn(info);
 		});
 
 		socket.connect();
