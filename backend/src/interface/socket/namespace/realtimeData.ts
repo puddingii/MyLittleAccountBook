@@ -18,13 +18,15 @@ export interface IRealtimeDataServerToClientEvents {
 		},
 	) => void;
 	'update:fgab': (
-		updatedColumn: Partial<Omit<TFColumnInfo, 'groupId'>> & {
+		updatedColumn: Partial<Omit<TFColumnInfo, 'groupId' | 'categoryId'>> & {
 			id: number;
+			category?: string;
 		},
 	) => void;
 	'update:nfgab': (
-		updatedColumn: Partial<Omit<TNFColumnInfo, 'groupId'>> & {
+		updatedColumn: Partial<Omit<TNFColumnInfo, 'groupId' | 'categoryId'>> & {
 			id: number;
+			category?: string;
 		},
 	) => void;
 	'delete:fgab': (info: { id: number }) => void;

@@ -111,6 +111,7 @@ export const updateFixedColumn =
 			dateUtil: { toDate },
 			service: { checkAdminGroupUser },
 			repository: { findFixedGAB, updateFColumn },
+			eventEmitter,
 		} = dependencies;
 
 		try {
@@ -131,9 +132,15 @@ export const updateFixedColumn =
 				});
 			}
 
-			await updateFColumn(cgab, {
+			const updateInfo = {
 				needToUpdateDate: toDate(needToUpdateDate),
 				...columnInfo,
+			};
+			await updateFColumn(cgab, updateInfo);
+
+			eventEmitter.emit('update:fgab', {
+				accountBookId: cgab.groups.accountBookId,
+				column: { id: cgab.id, ...updateInfo },
 			});
 		} catch (error) {
 			const customError = convertErrorToCustomError(error, {
@@ -152,6 +159,7 @@ export const updateNotFixedColumn =
 			dateUtil: { toDate },
 			service: { checkAdminGroupUser },
 			repository: { findNotFixedGAB, updateNFColumn },
+			eventEmitter,
 		} = dependencies;
 
 		try {
@@ -169,9 +177,15 @@ export const updateNotFixedColumn =
 				await checkAdminGroupUser({ userEmail, accountBookId: gab.groups.accountBookId });
 			}
 
-			await updateNFColumn(gab, {
+			const updateInfo = {
 				...columnInfo,
 				spendingAndIncomeDate: toDate(spendingAndIncomeDate),
+			};
+			await updateNFColumn(gab, updateInfo);
+
+			eventEmitter.emit('update:nfgab', {
+				accountBookId: gab.groups.accountBookId,
+				column: { id: gab.id, ...updateInfo },
 			});
 		} catch (error) {
 			const customError = convertErrorToCustomError(error, {
@@ -189,6 +203,7 @@ export const deleteFixedColumn =
 			errorUtil: { convertErrorToCustomError, CustomError },
 			service: { checkAdminGroupUser },
 			repository: { findFixedGAB, deleteFColumn },
+			eventEmitter,
 		} = dependencies;
 
 		try {
@@ -210,6 +225,11 @@ export const deleteFixedColumn =
 			}
 
 			await deleteFColumn(cgab);
+
+			eventEmitter.emit('delete:fgab', {
+				accountBookId: cgab.groups.accountBookId,
+				column: { id },
+			});
 		} catch (error) {
 			const customError = convertErrorToCustomError(error, {
 				trace: 'Service',
@@ -226,6 +246,7 @@ export const deleteNotFixedColumn =
 			errorUtil: { convertErrorToCustomError, CustomError },
 			service: { checkAdminGroupUser },
 			repository: { findNotFixedGAB, deleteNFColumn },
+			eventEmitter,
 		} = dependencies;
 
 		try {
@@ -244,6 +265,11 @@ export const deleteNotFixedColumn =
 			}
 
 			await deleteNFColumn(gab);
+
+			eventEmitter.emit('delete:nfgab', {
+				accountBookId: gab.groups.accountBookId,
+				column: { id },
+			});
 		} catch (error) {
 			const customError = convertErrorToCustomError(error, {
 				trace: 'Service',

@@ -77,6 +77,7 @@ export type TUpdateFixedColumn = {
 		errorUtil: Pick<TErrorUtil, 'convertErrorToCustomError' | 'CustomError'>;
 		service: { checkAdminGroupUser: typeof checkAdminGroupUser };
 		dateUtil: Pick<TDateUtil, 'toDate'>;
+		eventEmitter: TRealtimeEventEmitter;
 		repository: {
 			findFixedGAB: typeof findFixedGAB;
 			updateFColumn: typeof updateFColumn;
@@ -100,6 +101,7 @@ export type TUpdateNotFixedColumn = {
 		errorUtil: Pick<TErrorUtil, 'convertErrorToCustomError' | 'CustomError'>;
 		dateUtil: Pick<TDateUtil, 'toDate'>;
 		service: { checkAdminGroupUser: typeof checkAdminGroupUser };
+		eventEmitter: TRealtimeEventEmitter;
 		repository: {
 			findNotFixedGAB: typeof findNotFixedGAB;
 			updateNFColumn: typeof updateNFColumn;
@@ -120,6 +122,7 @@ export type TDeleteFixedColumn = {
 	dependency: {
 		errorUtil: Pick<TErrorUtil, 'convertErrorToCustomError' | 'CustomError'>;
 		service: { checkAdminGroupUser: typeof checkAdminGroupUser };
+		eventEmitter: TRealtimeEventEmitter;
 		repository: {
 			findFixedGAB: typeof findFixedGAB;
 			deleteFColumn: typeof deleteFColumn;
@@ -132,6 +135,7 @@ export type TDeleteNotFixedColumn = {
 	dependency: {
 		errorUtil: Pick<TErrorUtil, 'convertErrorToCustomError' | 'CustomError'>;
 		service: { checkAdminGroupUser: typeof checkAdminGroupUser };
+		eventEmitter: TRealtimeEventEmitter;
 		repository: {
 			findNotFixedGAB: typeof findNotFixedGAB;
 			deleteNFColumn: typeof deleteNFColumn;

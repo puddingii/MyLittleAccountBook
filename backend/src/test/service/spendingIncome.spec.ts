@@ -558,6 +558,7 @@ describe('SpendingIncome Service Test', function () {
 
 			const injectedFunc = updateFixedColumn({
 				errorUtil: { ...common.errorUtil, CustomError: errorUtil.CustomError },
+				eventEmitter: common.eventEmitter,
 				dateUtil: common.dateUtil,
 				service,
 				repository,
@@ -592,6 +593,7 @@ describe('SpendingIncome Service Test', function () {
 
 			const injectedFunc = updateFixedColumn({
 				errorUtil: { ...common.errorUtil, CustomError: errorUtil.CustomError },
+				eventEmitter: common.eventEmitter,
 				dateUtil: common.dateUtil,
 				service,
 				repository,
@@ -627,6 +629,7 @@ describe('SpendingIncome Service Test', function () {
 
 			const injectedFunc = updateFixedColumn({
 				errorUtil: { ...common.errorUtil, CustomError: errorUtil.CustomError },
+				eventEmitter: common.eventEmitter,
 				dateUtil: common.dateUtil,
 				service,
 				repository,
@@ -665,6 +668,7 @@ describe('SpendingIncome Service Test', function () {
 
 			const injectedFunc = updateFixedColumn({
 				errorUtil: { ...common.errorUtil, CustomError: errorUtil.CustomError },
+				eventEmitter: common.eventEmitter,
 				dateUtil: common.dateUtil,
 				service,
 				repository,
@@ -699,6 +703,7 @@ describe('SpendingIncome Service Test', function () {
 
 			const injectedFunc = updateFixedColumn({
 				errorUtil: { ...common.errorUtil, CustomError: errorUtil.CustomError },
+				eventEmitter: common.eventEmitter,
 				dateUtil: common.dateUtil,
 				service,
 				repository,
@@ -734,6 +739,7 @@ describe('SpendingIncome Service Test', function () {
 
 			const injectedFunc = updateFixedColumn({
 				errorUtil: { ...common.errorUtil, CustomError: errorUtil.CustomError },
+				eventEmitter: common.eventEmitter,
 				dateUtil: common.dateUtil,
 				service,
 				repository,
@@ -804,6 +810,7 @@ describe('SpendingIncome Service Test', function () {
 
 			const injectedFunc = updateNotFixedColumn({
 				errorUtil: { ...common.errorUtil, CustomError: errorUtil.CustomError },
+				eventEmitter: common.eventEmitter,
 				dateUtil: common.dateUtil,
 				service,
 				repository,
@@ -838,6 +845,7 @@ describe('SpendingIncome Service Test', function () {
 
 			const injectedFunc = updateNotFixedColumn({
 				errorUtil: { ...common.errorUtil, CustomError: errorUtil.CustomError },
+				eventEmitter: common.eventEmitter,
 				dateUtil: common.dateUtil,
 				service,
 				repository,
@@ -873,6 +881,7 @@ describe('SpendingIncome Service Test', function () {
 
 			const injectedFunc = updateNotFixedColumn({
 				errorUtil: { ...common.errorUtil, CustomError: errorUtil.CustomError },
+				eventEmitter: common.eventEmitter,
 				dateUtil: common.dateUtil,
 				service,
 				repository,
@@ -912,6 +921,7 @@ describe('SpendingIncome Service Test', function () {
 
 			const injectedFunc = updateNotFixedColumn({
 				errorUtil: { ...common.errorUtil, CustomError: errorUtil.CustomError },
+				eventEmitter: common.eventEmitter,
 				dateUtil: common.dateUtil,
 				service,
 				repository,
@@ -944,6 +954,7 @@ describe('SpendingIncome Service Test', function () {
 
 			const injectedFunc = updateNotFixedColumn({
 				errorUtil: { ...common.errorUtil, CustomError: errorUtil.CustomError },
+				eventEmitter: common.eventEmitter,
 				dateUtil: common.dateUtil,
 				service,
 				repository,
@@ -979,6 +990,7 @@ describe('SpendingIncome Service Test', function () {
 
 			const injectedFunc = updateNotFixedColumn({
 				errorUtil: { ...common.errorUtil, CustomError: errorUtil.CustomError },
+				eventEmitter: common.eventEmitter,
 				dateUtil: common.dateUtil,
 				service,
 				repository,
@@ -1052,6 +1064,7 @@ describe('SpendingIncome Service Test', function () {
 
 			const injectedFunc = deleteFixedColumn({
 				errorUtil: { ...common.errorUtil, CustomError: errorUtil.CustomError },
+				eventEmitter: common.eventEmitter,
 				service,
 				repository,
 			});
@@ -1077,6 +1090,7 @@ describe('SpendingIncome Service Test', function () {
 
 			const injectedFunc = deleteFixedColumn({
 				errorUtil: { ...common.errorUtil, CustomError: errorUtil.CustomError },
+				eventEmitter: common.eventEmitter,
 				service,
 				repository,
 			});
@@ -1110,6 +1124,7 @@ describe('SpendingIncome Service Test', function () {
 
 			const injectedFunc = deleteFixedColumn({
 				errorUtil: { ...common.errorUtil, CustomError: errorUtil.CustomError },
+				eventEmitter: common.eventEmitter,
 				service,
 				repository,
 			});
@@ -1146,6 +1161,7 @@ describe('SpendingIncome Service Test', function () {
 
 			const injectedFunc = deleteFixedColumn({
 				errorUtil: { ...common.errorUtil, CustomError: errorUtil.CustomError },
+				eventEmitter: common.eventEmitter,
 				service,
 				repository,
 			});
@@ -1176,6 +1192,7 @@ describe('SpendingIncome Service Test', function () {
 
 			const injectedFunc = deleteFixedColumn({
 				errorUtil: { ...common.errorUtil, CustomError: errorUtil.CustomError },
+				eventEmitter: common.eventEmitter,
 				service,
 				repository,
 			});
@@ -1209,6 +1226,7 @@ describe('SpendingIncome Service Test', function () {
 
 			const injectedFunc = deleteFixedColumn({
 				errorUtil: { ...common.errorUtil, CustomError: errorUtil.CustomError },
+				eventEmitter: common.eventEmitter,
 				service,
 				repository,
 			});
@@ -1278,6 +1296,7 @@ describe('SpendingIncome Service Test', function () {
 
 			const injectedFunc = deleteNotFixedColumn({
 				errorUtil: { ...common.errorUtil, CustomError: errorUtil.CustomError },
+				eventEmitter: common.eventEmitter,
 				service,
 				repository,
 			});
@@ -1307,6 +1326,7 @@ describe('SpendingIncome Service Test', function () {
 
 			const injectedFunc = deleteNotFixedColumn({
 				errorUtil: { ...common.errorUtil, CustomError: errorUtil.CustomError },
+				eventEmitter: common.eventEmitter,
 				service,
 				repository,
 			});
@@ -1340,6 +1360,7 @@ describe('SpendingIncome Service Test', function () {
 
 			const injectedFunc = deleteNotFixedColumn({
 				errorUtil: { ...common.errorUtil, CustomError: errorUtil.CustomError },
+				eventEmitter: common.eventEmitter,
 				service,
 				repository,
 			});
@@ -1376,6 +1397,7 @@ describe('SpendingIncome Service Test', function () {
 
 			const injectedFunc = deleteNotFixedColumn({
 				errorUtil: { ...common.errorUtil, CustomError: errorUtil.CustomError },
+				eventEmitter: common.eventEmitter,
 				service,
 				repository,
 			});
@@ -1406,6 +1428,7 @@ describe('SpendingIncome Service Test', function () {
 
 			const injectedFunc = deleteNotFixedColumn({
 				errorUtil: { ...common.errorUtil, CustomError: errorUtil.CustomError },
+				eventEmitter: common.eventEmitter,
 				service,
 				repository,
 			});
@@ -1439,6 +1462,7 @@ describe('SpendingIncome Service Test', function () {
 
 			const injectedFunc = deleteNotFixedColumn({
 				errorUtil: { ...common.errorUtil, CustomError: errorUtil.CustomError },
+				eventEmitter: common.eventEmitter,
 				service,
 				repository,
 			});

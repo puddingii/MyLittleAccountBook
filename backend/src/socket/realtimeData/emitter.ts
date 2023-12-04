@@ -6,6 +6,7 @@ import socketManager from '..';
 import { TRealtimeEvent } from '@/interface/pubsub/realtime';
 import { findByType } from '@/service/common/accountBook';
 import { TCategory } from '@/interface/service/commonAccountBookService';
+import { IRealtimeDataServerToClientEvents } from '@/interface/socket/namespace/realtimeData';
 
 const realtimeIo = socketManager.realtimeDataSocket.io;
 
@@ -19,6 +20,13 @@ const getRoom = (accountBookId: number, type?: 'broadcast' | 'in') => {
 	return realtimeIo[emitType](roomName);
 };
 
+const getCategoryName = (categoryList: TCategory[], categoryId: number) => {
+	return (
+		(findByType(categoryList, 'childId', categoryId) as Partial<TCategory>)
+			?.categoryNamePath ?? ''
+	);
+};
+
 const emitNewNFColumn = async (
 	info: { accountBookId: number; userNickname: string },
 	newColumn: TRealtimeEvent['create:nfgab']['column'],
@@ -28,9 +36,7 @@ const emitNewNFColumn = async (
 	const { accountBookId, userNickname } = info;
 
 	const categoryList = await getCategory(accountBookId);
-	const category =
-		(findByType(categoryList, 'childId', categoryId) as Partial<TCategory>)
-			?.categoryNamePath ?? '';
+	const category = getCategoryName(categoryList, categoryId);
 
 	getRoom(accountBookId, emitType).emit('create:nfgab', {
 		...rest,
@@ -44,13 +50,11 @@ const emitNewFColumn = async (
 	newColumn: TRealtimeEvent['create:fgab']['column'],
 	emitType?: 'broadcast' | 'in',
 ) => {
-	const { groupId, categoryId, ...rest } = newColumn.dataValues;
+	const { groupId, categoryId, isActivated, ...rest } = newColumn.dataValues;
 	const { accountBookId, userNickname } = info;
 
 	const categoryList = await getCategory(accountBookId);
-	const category =
-		(findByType(categoryList, 'childId', categoryId) as Partial<TCategory>)
-			?.categoryNamePath ?? '';
+	const category = getCategoryName(categoryList, categoryId);
 
 	getRoom(accountBookId, emitType).emit('create:fgab', {
 		...rest,
@@ -59,20 +63,38 @@ const emitNewFColumn = async (
 	});
 };
 
-const emitUpdateFColumn = (
+const emitUpdateFColumn = async (
 	accountBookId: number,
 	updatedColumn: TRealtimeEvent['update:fgab']['column'],
 	emitType?: 'broadcast' | 'in',
 ) => {
-	getRoom(accountBookId, emitType).emit('update:fgab', updatedColumn);
+	const { categoryId, ...rest } = updatedColumn;
+	const data: Parameters<IRealtimeDataServerToClientEvents['update:fgab']>[0] = rest;
+
+	if (categoryId) {
+		const categoryList = await getCategory(accountBookId);
+		const category = getCategoryName(categoryList, categoryId);
+		data.category = category;
+	}
+
+	getRoom(accountBookId, emitType).emit('update:fgab', data);
 };
 
-const emitUpdateNFColumn = (
+const emitUpdateNFColumn = async (
 	accountBookId: number,
 	updatedColumn: TRealtimeEvent['update:nfgab']['column'],
 	emitType?: 'broadcast' | 'in',
 ) => {
-	getRoom(accountBookId, emitType).emit('update:nfgab', updatedColumn);
+	const { categoryId, ...rest } = updatedColumn;
+	const data: Parameters<IRealtimeDataServerToClientEvents['update:nfgab']>[0] = rest;
+
+	if (categoryId) {
+		const categoryList = await getCategory(accountBookId);
+		const category = getCategoryName(categoryList, categoryId);
+		data.category = category;
+	}
+
+	getRoom(accountBookId, emitType).emit('update:nfgab', data);
 };
 
 const emitDeleteFColumn = (

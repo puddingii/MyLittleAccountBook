@@ -48,6 +48,7 @@ export const updateFixedColumn = Logic.updateFixedColumn({
 	dateUtil: { toDate },
 	service: { checkAdminGroupUser },
 	repository: { findFixedGAB, updateFColumn },
+	eventEmitter: realtimeEvent,
 });
 
 export const updateNotFixedColumn = Logic.updateNotFixedColumn({
@@ -55,18 +56,21 @@ export const updateNotFixedColumn = Logic.updateNotFixedColumn({
 	dateUtil: { toDate },
 	service: { checkAdminGroupUser },
 	repository: { findNotFixedGAB, updateNFColumn },
+	eventEmitter: realtimeEvent,
 });
 
 export const deleteFixedColumn = Logic.deleteFixedColumn({
 	errorUtil: { convertErrorToCustomError, CustomError },
 	service: { checkAdminGroupUser },
 	repository: { deleteFColumn, findFixedGAB },
+	eventEmitter: realtimeEvent,
 });
 
 export const deleteNotFixedColumn = Logic.deleteNotFixedColumn({
 	errorUtil: { convertErrorToCustomError, CustomError },
 	service: { checkAdminGroupUser },
 	repository: { deleteNFColumn, findNotFixedGAB },
+	eventEmitter: realtimeEvent,
 });
 
 export const getDefaultInfo = Logic.getDefaultInfo({
