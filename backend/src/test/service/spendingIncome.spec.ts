@@ -42,7 +42,7 @@ import { checkAdminGroupUser } from '@/service/common/user/dependency';
 import GroupModel from '@/model/group';
 import CronGroupAccountBookModel from '@/model/cronGroupAccountBook';
 import GroupAccountBookModel from '@/model/groupAccountBook';
-import realtimeEvent from '@/util/pubsub/realtimeEmitter';
+import realtimeEvent from '@/util/pubsub/realtimePubsub';
 
 describe('SpendingIncome Service Test', function () {
 	const common = {
