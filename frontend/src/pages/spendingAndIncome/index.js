@@ -50,15 +50,15 @@ const SpendingAndIncomeManageBoard = () => {
 
 	const addHistory = useCallback(
 		history => {
-			const setFunc = writeType === 'nf' ? setNotFixedHistoryList : setFixedHistoryList;
+			const setFunc = manageType === 'nf' ? setNotFixedHistoryList : setFixedHistoryList;
 			setFunc(beforeList => [...beforeList, { ...history, id: beforeList.length, nickname }]);
 		},
-		[writeType, nickname, setNotFixedHistoryList, setFixedHistoryList],
+		[manageType, nickname, setNotFixedHistoryList, setFixedHistoryList],
 	);
 
 	const updateColumn = useCallback(
 		(updatedHistory, isDelete) => {
-			const setFunc = writeType === 'nf' ? setNotFixedHistoryList : setFixedHistoryList;
+			const setFunc = manageType === 'nf' ? setNotFixedHistoryList : setFixedHistoryList;
 			const editColumn = copiedList => {
 				const idx = copiedList.findIndex(history => history.gabId === updatedHistory.gabId);
 				if (idx !== -1) {
@@ -76,7 +76,7 @@ const SpendingAndIncomeManageBoard = () => {
 				return isDelete ? deleteColumn(copiedList) : editColumn(copiedList);
 			});
 		},
-		[writeType, setNotFixedHistoryList, setFixedHistoryList],
+		[manageType, setNotFixedHistoryList, setFixedHistoryList],
 	);
 
 	const handleDate = async date => {
