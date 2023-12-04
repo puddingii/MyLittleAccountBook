@@ -13,7 +13,7 @@ import {
  * List가 Object형식의 데이터를 담고 있다면,
  * Object의 key값에 해당하는 데이터 가져오는 기능
  */
-const findByType = curry(
+export const findByType = curry(
 	<T>(list: Array<Record<string, T>>, type: string, value: unknown) => {
 		return list.find(info => info[type] === value);
 	},

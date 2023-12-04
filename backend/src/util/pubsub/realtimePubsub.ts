@@ -6,15 +6,15 @@ import { TRealtimeEvent } from '@/interface/pubsub/realtime';
 const eventEmitter = new TypeEmitter<TRealtimeEvent>();
 
 eventEmitter.on('create:fgab', function (info) {
-	const { accountBookId, column } = info;
+	const { accountBookId, userNickname, column } = info;
 
-	realtimeSocket.emitNewFColumn(accountBookId, column);
+	realtimeSocket.emitNewFColumn({ accountBookId, userNickname }, column);
 });
 
 eventEmitter.on('create:nfgab', function (info) {
-	const { accountBookId, column } = info;
+	const { accountBookId, userNickname, column } = info;
 
-	realtimeSocket.emitNewNFColumn(accountBookId, column);
+	realtimeSocket.emitNewNFColumn({ accountBookId, userNickname }, column);
 });
 
 eventEmitter.on('update:fgab', function (info) {

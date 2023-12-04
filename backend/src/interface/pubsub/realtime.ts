@@ -10,8 +10,8 @@ type TEventColumn<C> = {
 };
 
 export type TRealtimeEvent = {
-	'create:fgab': TEventColumn<CronGroupAccountBookModel>;
-	'create:nfgab': TEventColumn<GroupAccountBookModel>;
+	'create:fgab': TEventColumn<CronGroupAccountBookModel> & { userNickname: string };
+	'create:nfgab': TEventColumn<GroupAccountBookModel> & { userNickname: string };
 	'update:fgab': TEventColumn<
 		Partial<Omit<TFColumnInfo, 'groupId' | 'id'>> & {
 			id: number;

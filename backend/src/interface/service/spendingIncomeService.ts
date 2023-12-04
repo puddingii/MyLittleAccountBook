@@ -30,6 +30,7 @@ export type TCreateNewFixedColumn = {
 	dependency: {
 		errorUtil: Pick<TErrorUtil, 'convertErrorToCustomError'>;
 		dateUtil: Pick<TDateUtil, 'toDate'>;
+		eventEmitter: TRealtimeEventEmitter;
 		repository: {
 			findGroup: typeof findGroup;
 			createNewFColumn: typeof createNewFColumn;
@@ -37,6 +38,7 @@ export type TCreateNewFixedColumn = {
 	};
 	param: {
 		userEmail: string;
+		userNickname: string;
 		accountBookId: number;
 		value: number;
 		type: TColumnType;
@@ -60,6 +62,7 @@ export type TCreateNewNotFixedColumn = {
 	};
 	param: {
 		userEmail: string;
+		userNickname: string;
 		accountBookId: number;
 		value: number;
 		type: TColumnType;

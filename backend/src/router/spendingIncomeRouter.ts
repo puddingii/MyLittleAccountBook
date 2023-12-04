@@ -29,20 +29,23 @@ const router = express.Router();
 router.post('/column', verifyToken, async (req, res) => {
 	try {
 		const columnInfo = await zParser(zodSchema.accountBook.postColumn, req.body);
+		const userInfo = req.user as Exclude<Request['user'], undefined>;
 
 		let newId;
 		if (columnInfo.writeType === COLUMN_WRITE_TYPE.FIXED) {
 			const { category, ...columnData } = columnInfo;
 			newId = await createNewFixedColumn({
 				categoryId: category,
-				userEmail: (req.user as Exclude<Request['user'], undefined>).email,
+				userEmail: userInfo.email,
+				userNickname: userInfo.nickname,
 				...columnData,
 			});
 		} else {
 			const { category, ...columnData } = columnInfo;
 			newId = await createNewNotFixedColumn({
 				categoryId: category,
-				userEmail: (req.user as Exclude<Request['user'], undefined>).email,
+				userEmail: userInfo.email,
+				userNickname: userInfo.nickname,
 				...columnData,
 			});
 		}

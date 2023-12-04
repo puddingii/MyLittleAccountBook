@@ -96,7 +96,10 @@ describe('SpendingIncome Service Test', function () {
 			});
 
 			try {
-				const result = await injectedFunc({ ...defaultColumnInfo });
+				const result = await injectedFunc({
+					...defaultColumnInfo,
+					userNickname: 'test',
+				});
 
 				sinon.assert.calledWith(stubFindGroup, {
 					accountBookId: defaultColumnInfo.accountBookId,
@@ -137,7 +140,7 @@ describe('SpendingIncome Service Test', function () {
 			});
 
 			try {
-				const result = await injectedFunc({ ...defaultColumnInfo });
+				const result = await injectedFunc({ ...defaultColumnInfo, userNickname: 'test' });
 
 				sinon.assert.callCount(stubFindGroup, 1);
 				sinon.assert.callCount(stubCreateNewFColumn, 1);
@@ -164,7 +167,7 @@ describe('SpendingIncome Service Test', function () {
 			});
 
 			try {
-				const result = await injectedFunc({ ...defaultColumnInfo });
+				const result = await injectedFunc({ ...defaultColumnInfo, userNickname: 'test' });
 
 				sinon.assert.callCount(stubFindGroup, 1);
 				sinon.assert.callCount(stubCreateNewFColumn, 1);
@@ -193,7 +196,7 @@ describe('SpendingIncome Service Test', function () {
 			});
 
 			try {
-				await injectedFunc({ ...defaultColumnInfo });
+				await injectedFunc({ ...defaultColumnInfo, userNickname: 'test' });
 
 				fail('Expected to error that observer type is unauthorized user.');
 			} catch (err) {
@@ -221,7 +224,7 @@ describe('SpendingIncome Service Test', function () {
 			});
 
 			try {
-				await injectedFunc({ ...defaultColumnInfo });
+				await injectedFunc({ ...defaultColumnInfo, userNickname: 'test' });
 
 				fail('Expected to error that group is not found.');
 			} catch (err) {
@@ -249,7 +252,7 @@ describe('SpendingIncome Service Test', function () {
 			});
 
 			try {
-				await injectedFunc({ ...defaultColumnInfo });
+				await injectedFunc({ ...defaultColumnInfo, userNickname: 'test' });
 
 				fail('Expected to error that group is not found.');
 			} catch (err) {
@@ -271,7 +274,7 @@ describe('SpendingIncome Service Test', function () {
 			});
 
 			try {
-				await injectedFunc({ ...defaultColumnInfo });
+				await injectedFunc({ ...defaultColumnInfo, userNickname: 'test' });
 
 				fail('Expected to error that group is not found.');
 			} catch (err) {
@@ -325,7 +328,7 @@ describe('SpendingIncome Service Test', function () {
 			});
 
 			try {
-				const result = await injectedFunc({ ...defaultColumnInfo });
+				const result = await injectedFunc({ ...defaultColumnInfo, userNickname: 'test' });
 
 				sinon.assert.calledWith(stubFindGroup, {
 					accountBookId: defaultColumnInfo.accountBookId,
@@ -364,7 +367,7 @@ describe('SpendingIncome Service Test', function () {
 			});
 
 			try {
-				const result = await injectedFunc({ ...defaultColumnInfo });
+				const result = await injectedFunc({ ...defaultColumnInfo, userNickname: 'test' });
 
 				sinon.assert.callCount(stubFindGroup, 1);
 				sinon.assert.callCount(stubCreateNewNFColumn, 1);
@@ -391,7 +394,7 @@ describe('SpendingIncome Service Test', function () {
 			});
 
 			try {
-				const result = await injectedFunc({ ...defaultColumnInfo });
+				const result = await injectedFunc({ ...defaultColumnInfo, userNickname: 'test' });
 
 				sinon.assert.callCount(stubFindGroup, 1);
 				sinon.assert.callCount(stubCreateNewNFColumn, 1);
@@ -420,7 +423,7 @@ describe('SpendingIncome Service Test', function () {
 			});
 
 			try {
-				await injectedFunc({ ...defaultColumnInfo });
+				await injectedFunc({ ...defaultColumnInfo, userNickname: 'test' });
 
 				fail('Expected to error that observer type is unauthorized user.');
 			} catch (err) {
@@ -448,7 +451,7 @@ describe('SpendingIncome Service Test', function () {
 			});
 
 			try {
-				await injectedFunc({ ...defaultColumnInfo });
+				await injectedFunc({ ...defaultColumnInfo, userNickname: 'test' });
 
 				fail('Expected to error that group is not found.');
 			} catch (err) {
@@ -476,7 +479,7 @@ describe('SpendingIncome Service Test', function () {
 			});
 
 			try {
-				await injectedFunc({ ...defaultColumnInfo });
+				await injectedFunc({ ...defaultColumnInfo, userNickname: 'test' });
 
 				fail('Expected to error that group is not found.');
 			} catch (err) {
@@ -498,7 +501,7 @@ describe('SpendingIncome Service Test', function () {
 			});
 
 			try {
-				await injectedFunc({ ...defaultColumnInfo });
+				await injectedFunc({ ...defaultColumnInfo, userNickname: 'test' });
 
 				fail('Expected to error that group is not found.');
 			} catch (err) {

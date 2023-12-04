@@ -1,8 +1,11 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
+import { getCategory } from '@/service/common/accountBook/dependency';
 import { getRoomName } from '.';
 import socketManager from '..';
 
 import { TRealtimeEvent } from '@/interface/pubsub/realtime';
+import { findByType } from '@/service/common/accountBook';
+import { TCategory } from '@/interface/service/commonAccountBookService';
 
 const realtimeIo = socketManager.realtimeDataSocket.io;
 
@@ -16,24 +19,44 @@ const getRoom = (accountBookId: number, type?: 'broadcast' | 'in') => {
 	return realtimeIo[emitType](roomName);
 };
 
-const emitNewNFColumn = (
-	accountBookId: number,
+const emitNewNFColumn = async (
+	info: { accountBookId: number; userNickname: string },
 	newColumn: TRealtimeEvent['create:nfgab']['column'],
 	emitType?: 'broadcast' | 'in',
 ) => {
-	const { groupId, ...rest } = newColumn.dataValues;
+	const { groupId, categoryId, ...rest } = newColumn.dataValues;
+	const { accountBookId, userNickname } = info;
 
-	getRoom(accountBookId, emitType).emit('create:nfgab', rest);
+	const categoryList = await getCategory(accountBookId);
+	const category =
+		(findByType(categoryList, 'childId', categoryId) as Partial<TCategory>)
+			?.categoryNamePath ?? '';
+
+	getRoom(accountBookId, emitType).emit('create:nfgab', {
+		...rest,
+		category,
+		nickname: userNickname,
+	});
 };
 
-const emitNewFColumn = (
-	accountBookId: number,
+const emitNewFColumn = async (
+	info: { accountBookId: number; userNickname: string },
 	newColumn: TRealtimeEvent['create:fgab']['column'],
 	emitType?: 'broadcast' | 'in',
 ) => {
-	const { groupId, ...rest } = newColumn.dataValues;
+	const { groupId, categoryId, ...rest } = newColumn.dataValues;
+	const { accountBookId, userNickname } = info;
 
-	getRoom(accountBookId, emitType).emit('create:fgab', rest);
+	const categoryList = await getCategory(accountBookId);
+	const category =
+		(findByType(categoryList, 'childId', categoryId) as Partial<TCategory>)
+			?.categoryNamePath ?? '';
+
+	getRoom(accountBookId, emitType).emit('create:fgab', {
+		...rest,
+		category,
+		nickname: userNickname,
+	});
 };
 
 const emitUpdateFColumn = (

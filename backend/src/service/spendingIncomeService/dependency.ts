@@ -33,6 +33,7 @@ export const createNewFixedColumn = Logic.createNewFixedColumn({
 	errorUtil: { convertErrorToCustomError },
 	dateUtil: { toDate },
 	repository: { createNewFColumn, findGroup },
+	eventEmitter: realtimeEvent,
 });
 
 export const createNewNotFixedColumn = Logic.createNewNotFixedColumn({

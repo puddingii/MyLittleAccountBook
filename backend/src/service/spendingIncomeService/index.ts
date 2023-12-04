@@ -17,10 +17,12 @@ export const createNewFixedColumn =
 			errorUtil: { convertErrorToCustomError },
 			dateUtil: { toDate },
 			repository: { createNewFColumn, findGroup },
+			eventEmitter,
 		} = dependencies;
 
 		try {
-			const { accountBookId, userEmail, needToUpdateDate, ...columnInfo } = info;
+			const { accountBookId, userEmail, userNickname, needToUpdateDate, ...columnInfo } =
+				info;
 
 			const group = await findGroup({ accountBookId, userEmail });
 			if (!group) {
@@ -34,6 +36,12 @@ export const createNewFixedColumn =
 				groupId: group.id,
 				needToUpdateDate: toDate(needToUpdateDate),
 				...columnInfo,
+			});
+
+			eventEmitter.emit('create:fgab', {
+				accountBookId,
+				userNickname,
+				column: newColumn,
 			});
 
 			return newColumn.id;
@@ -57,7 +65,13 @@ export const createNewNotFixedColumn =
 		} = dependencies;
 
 		try {
-			const { accountBookId, userEmail, spendingAndIncomeDate, ...columnInfo } = info;
+			const {
+				accountBookId,
+				userEmail,
+				userNickname,
+				spendingAndIncomeDate,
+				...columnInfo
+			} = info;
 
 			const group = await findGroup({ accountBookId, userEmail });
 			if (!group) {
@@ -73,7 +87,11 @@ export const createNewNotFixedColumn =
 				...columnInfo,
 			});
 
-			eventEmitter.emit('create:nfgab', { accountBookId, column: newColumn });
+			eventEmitter.emit('create:nfgab', {
+				accountBookId,
+				userNickname,
+				column: newColumn,
+			});
 
 			return newColumn.id;
 		} catch (error) {
