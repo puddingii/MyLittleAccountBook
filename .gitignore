@@ -134,3 +134,5 @@ build
 mysql.json
 *.dump.sql
 .clinic
+docker/db/master/data
+docker/db/slave/data

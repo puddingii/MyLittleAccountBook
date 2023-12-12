@@ -13,3 +13,5 @@ services:
       dockerfile: Dockerfile.dev
     ports:
       - '3044:3044'
+  redis:
+    image: 'redis:7.2.3'

@@ -1,0 +1,62 @@
+name: 'mysql_replication_dev'
+
+services:
+  master:
+    image: mysql_image:master
+    user: root
+    build:
+      context: ./master
+      dockerfile: Dockerfile.dev
+    platform: linux/x86_64
+    environment:
+      - MYSQL_ROOT_PASSWORD=asd123!!!!
+      - MYSQL_USER=puddingii
+      - MYSQL_DATABASE=my_little_account_book_dev
+      - MYSQL_PASSWORD=asd123!!!!
+    ports:
+      - 13306:3306
+    volumes:
+      - master_data:/var/lib/mysql
+      - ./master/config/:/etc/mysql/conf.d
+    networks:
+      dock_net:
+        ipv4_address: 172.33.0.10
+    container_name: mysql_master
+    restart: always
+
+  slave1:
+    image: mysql_image:slave1
+    build:
+      context: ./slave
+      dockerfile: Dockerfile.dev
+    platform: linux/x86_64
+    user: root
+    ports:
+      - 13307:3306
+    environment:
+      - MYSQL_ROOT_PASSWORD=asd123!!!!
+      - MYSQL_USER=puddingii
+      - MYSQL_DATABASE=my_little_account_book_dev
+      - MYSQL_PASSWORD=asd123!!!!
+    volumes:
+      - slave_data:/var/lib/mysql
+      - ./slave/config/:/etc/mysql/conf.d
+    networks:
+      dock_net:
+        ipv4_address: 172.33.0.11
+    depends_on:
+      - master
+    container_name: mysql_slave_1
+
+volumes:
+  master_data:
+  slave_data:
+
+networks:
+  dock_net:
+networks:
+  dock_net:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.33.0.0/16

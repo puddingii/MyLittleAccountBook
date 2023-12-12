@@ -1,0 +1,8 @@
+[mysqld]
+default-time-zone='+9:00'
+default_authentication_plugin=mysql_native_password
+
+server-id=2
+log-bin=mysql-bin
+relay-log=relaylog
+log-slave_updates=1
