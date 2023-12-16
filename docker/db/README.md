@@ -48,12 +48,14 @@
 ``` bash
 cd docker/db
 docker-compose -f docker-compose.dev.yml up -d
+
+#optional... 만약 Replication 연결이 제대로 되지 않았을때 shell script 다시 한번 작동시켜보기
 bash entrypoint.sh
 ```
 
 ## 실행 후 체크리스트
 
-- 결과 창으로 설정이 제대로 되었는지 확인
+- Slave에서 `SHOW SLAVE STATUS`를 사용하여 Replication 확인
   - Slave_IO_Running: Yes
   - Slave_SQL_Running: Yes
   - Master_Host: master 호스트
