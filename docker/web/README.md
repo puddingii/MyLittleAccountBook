@@ -1,0 +1,56 @@
+# docker-conpose development
+
+## Frontend Environment
+
+```.env
+REACT_APP_VERSION = v1.1.2
+GENERATE_SOURCEMAP = false
+REACT_APP_BACKEND_API = http://localhost:3044
+REACT_APP_SOCKET_SERVER = http://localhost:3332
+```
+
+## Backend Environment
+
+```.env
+LOGGER_MODE=full
+PASSWORD_HASH_ROUND=5
+BASE_URL=http://localhost:3044
+FRONT_URL=http://localhost:3000
+CORS_LIST=http://localhost:3000,http://localhost:3044,https://app.swaggerhub.com
+
+EXPRESS_PORT=3044
+SESSION_KEY=alsdkfj@lkdsjfthis219alfk!
+JWT_SECURE_KEY=alsdkf2j@l4kdsjft23his219alfk231!
+JWT_ACCESS_TOKEN_TIME=3600
+JWT_REFRESH_TOKEN_TIME=1209600
+
+SOCKET_CORS_LIST=http://localhost:3000,http://localhost:3044,https://app.swaggerhub.com
+SOCKET_PORT=3332
+
+MYSQL_DUMP_PATH=mysqldump
+MYSQL_COMMAND_PW=asd123\!\!\!\!
+MYSQL_DATABASENAME=my_little_account_book
+MYSQL_MASTER_HOST=127.0.0.1
+MYSQL_MASTER_USERNAME=puddingii
+MYSQL_MASTER_PW=asd123!!!!
+MYSQL_MASTER_PORT=13306
+
+MYSQL_SLAVE1_HOST=127.0.0.1
+MYSQL_SLAVE1_USERNAME=puddingii
+MYSQL_SLAVE1_PW=asd123!!!!
+MYSQL_SLAVE1_PORT=13307
+
+MYSQL_USERNAME=root
+MYSQL_PW=asd123!!!!
+MYSQL_HOST=localhost
+
+REDIS_HOST=127.0.0.1
+REDIS_PORT=16379
+REDIS_PW=asd123!!!!
+
+GOOGLE_CLIENT_ID=
+GOOGLE_CLIENT_SECRET=
+NAVER_CLIENT_ID=
+NAVER_CLIENT_SECRET=
+
+```

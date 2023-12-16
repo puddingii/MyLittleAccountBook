@@ -8,6 +8,6 @@ FROM node:18-alpine
 WORKDIR /usr/index
 ENV TZ=Asia/Seoul
 COPY --from=module_installer /usr/index ./
-RUN chmod -R 777 /usr/app
+RUN chmod -R 777 /usr/index
 USER node
 CMD ["yarn", "dev:start"]

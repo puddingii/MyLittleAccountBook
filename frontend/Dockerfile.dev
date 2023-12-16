@@ -7,9 +7,6 @@ COPY . ./
 FROM node:16.13.1
 WORKDIR /usr/index
 COPY --from=module_installer /usr/index ./
-ENV NODE_ENV=development
-ENV REACT_APP_VERSION=v1.1.2
-ENV GENERATE_SOURCEMAP=false
 RUN chmod -R 777 /usr/index
 USER node
 EXPOSE 3000

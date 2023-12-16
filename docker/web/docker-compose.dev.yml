@@ -1,0 +1,32 @@
+name: 'web_dev'
+
+services:
+  backend:
+    build:
+      context: ${BASE_PATH}/backend
+      dockerfile: Dockerfile.dev
+    volumes:
+      - backend_log:/usr/index/logs
+      - backend_dump_sql:/usr/index/src/cron/dump
+    ports:
+      - '3044:3044'
+      - '3332:3332'
+
+  frontend:
+    build:
+      context: ${BASE_PATH}/frontend
+      dockerfile: Dockerfile.dev
+    environment:
+      NODE_ENV: development
+      REACT_APP_VERSION: v1.1.2
+      GENERATE_SOURCEMAP: false
+      REACT_APP_BACKEND_API: http://localhost:3044
+      REACT_APP_SOCKET_SERVER: http://localhost:3332
+    ports:
+      - '3000:3000'
+    depends_on:
+      - backend
+
+volumes:
+  backend_log:
+  backend_dump_sql:
