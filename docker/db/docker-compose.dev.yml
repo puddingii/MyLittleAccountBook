@@ -1,6 +1,23 @@
-name: 'mysql_replication_dev'
+name: 'database_dev'
 
 services:
+  cache:
+    image: redis_image:master
+    build:
+      context: ./cache
+      dockerfile: Dockerfile.dev
+    ports:
+      - 16379:6379
+    volumes:
+      - cache_data:/data
+      - ./cache/config/redis.dev.conf:/etc/redis/redis.conf
+    command: ["redis-server", "/etc/redis/redis.conf"]
+    networks:
+      dock_net:
+        ipv4_address: 172.33.0.9
+    container_name: redis_master
+    restart: always
+
   master:
     image: mysql_image:master
     user: root
@@ -51,6 +68,7 @@ services:
 volumes:
   master_data:
   slave_data:
+  cache_data:
 
 networks:
   dock_net:
