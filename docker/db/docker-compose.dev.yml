@@ -1,7 +1,7 @@
 name: 'database_dev'
 
 services:
-  cache:
+  redis_master:
     image: redis_image:master
     build:
       context: ./cache
@@ -22,7 +22,7 @@ services:
       timeout: 5s
       retries: 10
 
-  master:
+  mysql_master:
     image: mysql_image:master
     user: root
     build:
@@ -49,7 +49,7 @@ services:
       timeout: 20s
       retries: 10
 
-  slave1:
+  mysql_slave1:
     image: mysql_image:slave1
     build:
       context: ./slave
@@ -70,7 +70,7 @@ services:
       dock_net:
         ipv4_address: 172.33.0.11
     depends_on:
-      master:
+      mysql_master:
         condition: service_healthy
     container_name: mysql_slave_1
     healthcheck:

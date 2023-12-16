@@ -1,3 +1,5 @@
+#!/bin/bash
+
 MS_STATUS=`mysql -h host.docker.internal -u root -P 13306 -pasd123!!!! -e "SHOW MASTER STATUS"`
 CURRENT_LOG=`echo $MS_STATUS | awk '{print $6}'`
 CURRENT_POS=`echo $MS_STATUS | awk '{print $7}'`

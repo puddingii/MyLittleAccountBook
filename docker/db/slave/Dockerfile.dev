@@ -1,6 +1,1 @@
 FROM mysql:8.0.20
-
-ADD entrypoint.dev.sh /usr/local/bin
-RUN chmod 755 /usr/local/bin/entrypoint.dev.sh
-
-ENTRYPOINT ["/usr/local/bin/entrypoint.dev.sh"]

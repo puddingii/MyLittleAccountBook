@@ -48,9 +48,7 @@
 ``` bash
 cd docker/db
 docker-compose -f docker-compose.dev.yml up -d
-
-#optional... 만약 Replication 연결이 제대로 되지 않았을때 shell script 다시 한번 작동시켜보기
-bash entrypoint.sh
+bash entrypoint.dev.sh
 ```
 
 ## 실행 후 체크리스트
