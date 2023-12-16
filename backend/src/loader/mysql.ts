@@ -9,7 +9,7 @@ import { convertErrorToCustomError } from '@/util/error';
 
 import { TModelInfo } from '@/interface/model';
 
-const { databaseName, host, pw, username } = secret.mysql;
+const { databaseName, master, slave1 } = secret.mysql;
 
 const logging =
 	secret.nodeEnv === 'test'
@@ -17,9 +17,25 @@ const logging =
 		: (msg: string) => {
 				logger.info(msg, ['Mysql']);
 		  };
-const sequelize = new Sequelize(databaseName, username, pw, {
-	host: host,
+
+const sequelize = new Sequelize(databaseName, master.host, master.pw, {
 	dialect: 'mysql',
+	replication: {
+		read: [
+			{
+				host: slave1.host,
+				username: slave1.username,
+				password: slave1.pw,
+				port: slave1.port,
+			},
+		],
+		write: {
+			host: master.host,
+			username: master.username,
+			password: master.pw,
+			port: master.port,
+		},
+	},
 	logging,
 });
 

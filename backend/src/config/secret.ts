@@ -35,13 +35,27 @@ export default {
 	/** DB key */
 	mysql: {
 		dumpPath: process.env.MYSQL_DUMP_PATH ?? '',
+		master: {
+			host: process.env.MYSQL_MASTER_HOST ?? '',
+			username: process.env.MYSQL_MASTER_USERNAME ?? '',
+			pw: process.env.MYSQL_MASTER_PW ?? '',
+			port: process.env.MYSQL_MASTER_PORT ?? '',
+		},
+		slave1: {
+			host: process.env.MYSQL_SLAVE1_HOST ?? '',
+			username: process.env.MYSQL_SLAVE1_USERNAME ?? '',
+			pw: process.env.MYSQL_SLAVE1_PW ?? '',
+			port: process.env.MYSQL_SLAVE1_PORT ?? '',
+		},
 		host: process.env.MYSQL_HOST ?? '',
 		username: process.env.MYSQL_USERNAME ?? '',
 		pw: process.env.MYSQL_PW ?? '',
 		cmdPw: process.env.MYSQL_COMMAND_PW ?? '',
 		databaseName:
 			`${process.env.MYSQL_DATABASENAME}${
-				dbNameInfo[process.env.NODE_ENV as 'development' | 'production' | 'test']
+				dbNameInfo[
+					(process.env.NODE_ENV ?? 'development') as 'development' | 'production' | 'test'
+				]
 			}` ?? '',
 	},
 	redis: {
