@@ -297,8 +297,17 @@ export const getAllTypeColumnList =
 				}),
 				toArray,
 			);
+			const sumResult = historyList.reduce(
+				(acc, cur) => {
+					return {
+						nfgab: [...acc.nfgab, ...cur.nfgab],
+						fgab: [...acc.fgab, ...cur.fgab],
+					};
+				},
+				{ nfgab: [], fgab: [] },
+			);
 
-			return historyList[0] ?? { nfgab: [], fgab: [] };
+			return sumResult ?? { nfgab: [], fgab: [] };
 		} catch (error) {
 			const customError = convertErrorToCustomError(error, {
 				trace: 'Service',

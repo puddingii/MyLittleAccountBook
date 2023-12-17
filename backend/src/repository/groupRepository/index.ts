@@ -177,6 +177,12 @@ export const findAllColumn =
 				where: { accountBookId },
 				include: [
 					{
+						model: UserModel,
+						as: 'users',
+						required: true,
+						attributes: ['nickname'],
+					},
+					{
 						model: GroupAccountBookModel,
 						as: 'groupaccountbooks',
 						required: false,
@@ -191,12 +197,6 @@ export const findAllColumn =
 						...(isValidatedDate
 							? getCondition('needToUpdateDate', [startDate, endDate])
 							: {}),
-					},
-					{
-						model: UserModel,
-						as: 'users',
-						required: true,
-						attributes: ['nickname'],
 					},
 				],
 				subQuery: false,
