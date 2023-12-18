@@ -11,15 +11,17 @@ const startServer = async () => {
 
 		await loader({ app });
 
-		app.listen(secret.express.port, () =>
+		app.listen(secret.express.port, () => {
 			logger.info(
 				`Connected the express server: http://localhost:${secret.express.port}`,
 				['Main'],
-			),
-		);
+			);
+			process.send && process.send('ready');
+		});
 	} catch (error) {
 		const { message, traceList } = convertErrorToCustomError(error, { trace: 'Root' });
 		logger.error(message, traceList);
+		process.exit(1);
 	}
 };
 

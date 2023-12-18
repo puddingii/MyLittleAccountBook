@@ -5,12 +5,17 @@ services:
     build:
       context: ${BASE_PATH}/backend
       dockerfile: Dockerfile.dev
+    platform: linux/x86_64
     volumes:
       - backend_log:/usr/index/logs
       - backend_dump_sql:/usr/index/src/cron/dump
     ports:
       - '3044:3044'
+      - '3045:3045'
+      - '3046:3046'
       - '3332:3332'
+      - '3333:3333'
+      - '3334:3334'
 
   frontend:
     build:
