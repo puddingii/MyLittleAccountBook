@@ -184,10 +184,12 @@ const ThisMonthSummary = () => {
 		const socket = getSocket(accountBookId);
 		socketRef.current = socket;
 
-		socketRef.current.connect();
+		if (accountBookId) {
+			socketRef.current.connect();
+		}
 
 		return () => {
-			if (accountBookId && socketRef.current.active) {
+			if (accountBookId && socketRef.current?.active) {
 				socketRef.current.disconnect();
 			}
 		};
