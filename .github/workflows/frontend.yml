@@ -98,7 +98,7 @@ jobs:
       - name: Docker run
         run: |
           docker run -d \
-          -env-file ${{ secrets.FRONT_ENV_PATH }} \
+          --env-file ${{ secrets.FRONT_ENV_PATH }} \
           -v ${{ env.VOLUME_LOG }}:/usr/app/log \
           -p ${{ secrets.FRONT_PORT }}:${{ secrets.LOCAL_FRONT_PORT }} \
           --name ${{ secrets.FRONT_CONTAINER_NAME }} \
