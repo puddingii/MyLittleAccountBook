@@ -1,6 +1,6 @@
 FROM node:16.13.1 as react-builder
 WORKDIR /usr/index
-COPY ./package*.json ./jsconfig*.json ./yarn.lock ./
+COPY ./frontend/package*.json ./frontend/jsconfig*.json ./frontend/yarn.lock ./
 RUN yarn install --pure-lockfile
 COPY . ./
 RUN yarn build
