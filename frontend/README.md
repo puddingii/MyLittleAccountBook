@@ -7,7 +7,7 @@
 
 Document: <https://stormy-lighter-fb5.notion.site/Frontend-Document-0819d1fac9f84300a492930a49e562f9?pvs=4>
 
-### Name Derived From Nature
+## Name Derived From Nature
 
 Mantis Logo is inspired from the insect name - 'Mantises' as they have triangular heads with flexible Necks. Also, the name is derived from two popular UI frameworks, Material UI and Ant Design (M-Ant-is).
 
@@ -21,11 +21,7 @@ The [Pro version](https://mantisdashboard.io) of Mantis react template includes 
 
 ## Free Mantis React version
 
-### Preview
-
-- [Demo](https://mantisdashboard.io/free)
-
-#### Download
+### Download
 
 - [Download from GitHub](https://github.com/puddingii/MyLittleAccountBook)
 

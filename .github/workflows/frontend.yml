@@ -8,12 +8,10 @@ on:
 
 # 환경설정
 env:
-  DOCKER_IMAGE: ghcr.io/${{ github.actor }}/mlab-backimg
+  DOCKER_IMAGE: ghcr.io/${{ github.actor }}/mlab-frontimg
   VERSION: ${{ github.sha }}
-  NAME: mlab-back
-  BACKEND_LOG_VOLUME: backend_log
-  BACKEND_DUMPSQL_VOLUME: backend_dump_sql
-  BACKEND_SSL_VOLUME: letsencrypt
+  NAME: mlab-front
+  FRONTEND_LOG_VOLUME: frontend_log
 
 jobs:
   # 빌드 Job
@@ -99,7 +97,7 @@ jobs:
         run: |
           docker run -d \
           --env-file ${{ secrets.FRONT_ENV_PATH }} \
-          -v ${{ env.VOLUME_LOG }}:/usr/index/log \
+          -v ${{ env.FRONTEND_LOG_VOLUME }}:/usr/index/log \
           -p ${{ secrets.FRONT_PORT }}:${{ secrets.LOCAL_FRONT_PORT }} \
           --name ${{ secrets.FRONT_CONTAINER_NAME }} \
           --restart always ${{ env.DOCKER_IMAGE }}:latest
