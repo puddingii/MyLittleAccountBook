@@ -1,6 +1,6 @@
 FROM node:18-alpine as ts-compiler
 WORKDIR /usr/index
-COPY package*.json tsconfig*.json yarn.lock ./
+COPY ./backend/package*.json ./backend/tsconfig*.json ./backend/yarn.lock ./
 RUN yarn install --pure-lockfile
 COPY . ./
 RUN yarn build
