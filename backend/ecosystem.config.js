@@ -6,6 +6,8 @@ module.exports = [
 		listen_timeout: 10000,
 		env_production: {
 			NODE_ENV: 'production',
+			EXPRESS_PORT: '7501',
+			SOCKET_PORT: '7201',
 		},
 		env_development: {
 			NODE_ENV: 'development',
@@ -20,6 +22,8 @@ module.exports = [
 		listen_timeout: 10000,
 		env_production: {
 			NODE_ENV: 'production',
+			EXPRESS_PORT: '7502',
+			SOCKET_PORT: '7202',
 		},
 		env_development: {
 			NODE_ENV: 'development',
@@ -34,6 +38,8 @@ module.exports = [
 		listen_timeout: 10000,
 		env_production: {
 			NODE_ENV: 'production',
+			EXPRESS_PORT: '7503',
+			SOCKET_PORT: '7203',
 		},
 		env_development: {
 			NODE_ENV: 'development',

@@ -11,11 +11,11 @@ COPY --from=ts-compiler /usr/index/package*.json /usr/index/yarn.lock ./
 COPY --from=ts-compiler /usr/index/build ./build
 RUN yarn install --only=production --pure-lockfile
 
-FROM node:18-alpine
+FROM keymetrics/pm2:18-alpine
 WORKDIR /usr/index
 ENV TZ=Asia/Seoul
 ENV NODE_ENV=production
 COPY --from=ts-remover /usr/index ./
 RUN chmod -R 777 /usr/index
-USER node
-CMD ["npm", "run", "start"]
+
+CMD ["pm2-runtime", "start", "ecosystem.config.js", "--env", "production"]

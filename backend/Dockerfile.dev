@@ -1,13 +1,14 @@
-FROM node:18-alpine as module_installer
+FROM node:18-alpine as ts-compiler
 WORKDIR /usr/index
 COPY package*.json tsconfig*.json yarn.lock ./
 RUN yarn install --pure-lockfile
 COPY . ./
+RUN yarn build
 
-FROM node:18-alpine
+FROM keymetrics/pm2:18-alpine
 WORKDIR /usr/index
 ENV TZ=Asia/Seoul
-COPY --from=module_installer /usr/index ./
+COPY --from=ts-compiler /usr/index ./
 RUN chmod -R 777 /usr/index
-USER node
-CMD ["yarn", "dev:start"]
+
+CMD ["pm2-runtime", "start", "ecosystem.config.js", "--env", "development"]
