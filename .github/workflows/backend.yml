@@ -4,8 +4,7 @@ on:
   push:
     paths:
       - 'backend/**'
-    paths-ignore:
-      - 'backend/k6/**'
+      - '!backend/k6/**'
     branches: [main]
 
 # 환경설정
