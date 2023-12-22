@@ -47,7 +47,7 @@ yarn start
 - React Router for navigation routing.
 - Support for react-script.
 - Code splitting.
-- CSS-in-JS
+- CSS-in-JS.
 
 ## License
 
