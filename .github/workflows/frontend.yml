@@ -53,6 +53,12 @@ jobs:
           file: ./frontend/Dockerfile
           push: true
           tags: ${{ env.DOCKER_IMAGE }}:latest
+          build-args: FRONT_PORT=${{ secrets.FRONT_PORT }}
+        env:
+          REACT_APP_VERSION: ${{ secrets.FRONT_VERSION }}
+          GENERATE_SOURCEMAP: ${{ secrets.FRONT_SOURCEMAP }}
+          REACT_APP_BACKEND_API: ${{ secrets.FRONT_API }}
+          REACT_APP_SOCKET_SERVER: ${{ secrets.FRONT_SOCKET }}
 
   # 배포 Job
   deploy:
@@ -96,7 +102,6 @@ jobs:
       - name: Docker run
         run: |
           docker run -d \
-          --env-file ${{ secrets.FRONT_ENV_PATH }} \
           -v ${{ env.FRONTEND_LOG_VOLUME }}:/usr/index/log \
           -p ${{ secrets.FRONT_PORT }}:${{ secrets.LOCAL_FRONT_PORT }} \
           --name ${{ secrets.FRONT_CONTAINER_NAME }} \
