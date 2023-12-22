@@ -39,8 +39,6 @@ const queryClient = new QueryClient({
 	},
 });
 
-console.log(process.env.REACT_APP_BACKEND_API);
-
 root.render(
 	<StrictMode>
 		<RecoilRoot>

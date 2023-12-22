@@ -30,7 +30,7 @@ export const useRefreshAccessTokenQuery = ({ onSuccess, onError } = {}) => {
 		onSuccess: response => {
 			const { data } = response;
 			const newAccessToken = data?.accessToken;
-			const decodedData = jwtDecode(newAccessToken);
+			const decodedData = newAccessToken ? jwtDecode(newAccessToken) : null;
 			if (newAccessToken && decodedData) {
 				setToken({ accessToken: newAccessToken });
 				setUserState(beforeInfo => ({ ...beforeInfo, ...decodedData }));
