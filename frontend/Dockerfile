@@ -1,5 +1,10 @@
 FROM node:16.13.1 as react-builder
 WORKDIR /usr/index
+ENV REACT_APP_VERSION=$REACT_APP_VERSION
+ENV GENERATE_SOURCEMAP=$GENERATE_SOURCEMAP
+ENV REACT_APP_BACKEND_API=$REACT_APP_BACKEND_API
+ENV REACT_APP_SOCKET_SERVER=$REACT_APP_SOCKET_SERVER
+
 COPY ./frontend/package*.json ./frontend/jsconfig*.json ./frontend/yarn.lock ./
 RUN yarn install --pure-lockfile
 COPY ./frontend ./
