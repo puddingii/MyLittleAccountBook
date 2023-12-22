@@ -2,7 +2,7 @@ FROM node:18-alpine as ts-compiler
 WORKDIR /usr/index
 COPY ./backend/package*.json ./backend/tsconfig*.json ./backend/yarn.lock ./
 RUN yarn install --pure-lockfile
-COPY . ./
+COPY ./backend ./
 RUN yarn build
 
 FROM node:18-alpine as ts-remover
