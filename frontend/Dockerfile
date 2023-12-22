@@ -11,4 +11,4 @@ WORKDIR /usr/index
 COPY --from=react-builder /usr/index/build ./build
 RUN yarn global add serve
 USER node
-CMD ["serve", "-l", ${FRONT_PORT}, "-s", "build"]
+CMD serve -l ${FRONT_PORT} -s build
