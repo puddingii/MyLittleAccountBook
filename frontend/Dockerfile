@@ -7,6 +7,7 @@ RUN yarn build
 
 FROM node:16.13.1
 ARG FRONT_PORT
+ENV FRONT_PORT ${FRONT_PORT}
 WORKDIR /usr/index
 COPY --from=react-builder /usr/index/build ./build
 RUN yarn global add serve
