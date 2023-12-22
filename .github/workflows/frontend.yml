@@ -52,12 +52,12 @@ jobs:
           file: ./frontend/Dockerfile
           push: true
           tags: ${{ env.DOCKER_IMAGE }}:latest
-          build-args: |
-            FRONT_PORT=${{ secrets.FRONT_PORT }}
-            REACT_APP_VERSION=${{ secrets.FRONT_VERSION }}
-            GENERATE_SOURCEMAP=${{ secrets.FRONT_SOURCEMAP }}
-            REACT_APP_BACKEND_API=${{ secrets.FRONT_API }}
-            REACT_APP_SOCKET_SERVER=${{ secrets.FRONT_SOCKET }}
+          build-args:
+            - FRONT_PORT=${{ secrets.FRONT_PORT }}
+            - REACT_APP_VERSION=${{ secrets.FRONT_VERSION }}
+            - GENERATE_SOURCEMAP=${{ secrets.FRONT_SOURCEMAP }}
+            - REACT_APP_BACKEND_API=${{ secrets.FRONT_API }}
+            - REACT_APP_SOCKET_SERVER=${{ secrets.FRONT_SOCKET }}
 
   # 배포 Job
   deploy:
