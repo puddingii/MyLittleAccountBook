@@ -33,15 +33,15 @@ export const validateGroupUser =
 		}
 	};
 
-export const getGroupList =
+export const getGroupUserList =
 	(dependencies: TGetGroupList['dependency']) => async (info: TGetGroupList['param']) => {
 		const {
 			errorUtil: { convertErrorToCustomError },
-			repository: { findGroupList },
+			repository: { findGroupUserList },
 		} = dependencies;
 
 		try {
-			const groupList = await findGroupList(info);
+			const groupList = await findGroupUserList(info);
 
 			return groupList.map((group, index) => ({
 				index,

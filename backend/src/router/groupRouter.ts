@@ -12,7 +12,7 @@ import { verifyToken } from '@/middleware/authentication';
 import {
 	addGroup,
 	deleteGroupUser,
-	getGroupList,
+	getGroupUserList,
 	updateGroupInfo,
 	validateGroupUser,
 } from '@/service/groupService/dependency';
@@ -28,13 +28,15 @@ import {
 
 const router = express.Router();
 
-router.get('/list', verifyToken, async (req, res) => {
+router.get('/userlist', verifyToken, async (req, res) => {
 	try {
 		const {
 			query: { accountBookId },
 		} = await zParser(zodSchema.group.getList, req);
 
-		const groupList = await getGroupList({ accountBookId: parseInt(accountBookId, 10) });
+		const groupList = await getGroupUserList({
+			accountBookId: parseInt(accountBookId, 10),
+		});
 
 		return res.status(200).json({
 			data: groupList,

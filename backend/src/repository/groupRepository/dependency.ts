@@ -14,7 +14,7 @@ export const findGroup = Logic.findGroup({
 	GroupModel,
 });
 
-export const findGroupList = Logic.findGroupList({
+export const findGroupUserList = Logic.findGroupUserList({
 	errorUtil: { convertErrorToCustomError },
 	GroupModel,
 	UserModel,

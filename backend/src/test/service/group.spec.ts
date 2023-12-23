@@ -8,7 +8,7 @@ import {
 	createGroup,
 	deleteGroup,
 	findGroup,
-	findGroupList,
+	findGroupUserList,
 	updateGroup,
 } from '@/repository/groupRepository/dependency';
 import { findUserInfo } from '@/repository/userRepository/dependency';
@@ -16,7 +16,7 @@ import { errorUtil, validationUtil } from '../commonDependency';
 import {
 	addGroup,
 	deleteGroupUser,
-	getGroupList,
+	getGroupUserList,
 	updateGroupInfo,
 	validateGroupUser,
 } from '@/service/groupService';
@@ -113,9 +113,9 @@ describe('Group Service Test', function () {
 		});
 	});
 
-	describe('#getGroupList', function () {
-		const repository = { findGroupList };
-		let stubFindGroupList = sinon.stub(repository, 'findGroupList');
+	describe('#getGroupUserList', function () {
+		const repository = { findGroupUserList };
+		let stubFindGroupUserList = sinon.stub(repository, 'findGroupUserList');
 		const groupList = [
 			new GroupModel({
 				id: 1,
@@ -165,28 +165,28 @@ describe('Group Service Test', function () {
 		});
 
 		beforeEach(function () {
-			stubFindGroupList = sinon.stub(repository, 'findGroupList');
+			stubFindGroupUserList = sinon.stub(repository, 'findGroupUserList');
 		});
 
 		it('Check function parameters', async function () {
-			stubFindGroupList.resolves(joinedGroupList);
+			stubFindGroupUserList.resolves(joinedGroupList);
 
-			const injectedFunc = getGroupList({ ...common, repository });
+			const injectedFunc = getGroupUserList({ ...common, repository });
 
 			try {
 				await injectedFunc({ accountBookId: 1 });
 
-				sinon.assert.calledOnce(stubFindGroupList);
-				sinon.assert.calledWith(stubFindGroupList, { accountBookId: 1 });
+				sinon.assert.calledOnce(stubFindGroupUserList);
+				sinon.assert.calledWith(stubFindGroupUserList, { accountBookId: 1 });
 			} catch (err) {
 				fail(err as Error);
 			}
 		});
 
 		it('Check correct result', async function () {
-			stubFindGroupList.resolves(joinedGroupList);
+			stubFindGroupUserList.resolves(joinedGroupList);
 
-			const injectedFunc = getGroupList({ ...common, repository });
+			const injectedFunc = getGroupUserList({ ...common, repository });
 
 			try {
 				const result = await injectedFunc({ accountBookId: 1 });
@@ -204,9 +204,9 @@ describe('Group Service Test', function () {
 		});
 
 		it('Check empty list', async function () {
-			stubFindGroupList.resolves([]);
+			stubFindGroupUserList.resolves([]);
 
-			const injectedFunc = getGroupList({ ...common, repository });
+			const injectedFunc = getGroupUserList({ ...common, repository });
 
 			try {
 				const result = await injectedFunc({ accountBookId: 1 });
@@ -218,9 +218,9 @@ describe('Group Service Test', function () {
 		});
 
 		it('If DB join is ignored', async function () {
-			stubFindGroupList.resolves(groupList);
+			stubFindGroupUserList.resolves(groupList);
 
-			const injectedFunc = getGroupList({ ...common, repository });
+			const injectedFunc = getGroupUserList({ ...common, repository });
 
 			try {
 				const result = await injectedFunc({ accountBookId: 1 });
@@ -237,10 +237,10 @@ describe('Group Service Test', function () {
 			}
 		});
 
-		it('If findGroupList error', async function () {
-			stubFindGroupList.rejects(new Error('findGroupList error'));
+		it('If findGroupUserList error', async function () {
+			stubFindGroupUserList.rejects(new Error('findGroupUserList error'));
 
-			const injectedFunc = getGroupList({ ...common, repository });
+			const injectedFunc = getGroupUserList({ ...common, repository });
 
 			try {
 				await injectedFunc({ accountBookId: 1 });
@@ -250,7 +250,7 @@ describe('Group Service Test', function () {
 				if (err instanceof AssertionError) {
 					fail(err);
 				}
-				sinon.assert.calledOnce(stubFindGroupList);
+				sinon.assert.calledOnce(stubFindGroupUserList);
 			}
 		});
 	});

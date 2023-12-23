@@ -5,7 +5,7 @@ import {
 	createGroup,
 	deleteGroup,
 	findGroup,
-	findGroupList,
+	findGroupUserList,
 	updateGroup,
 } from '@/repository/groupRepository/dependency';
 import { findUserInfo } from '@/repository/userRepository/dependency';
@@ -20,9 +20,9 @@ export const validateGroupUser = Logic.validateGroupUser({
 	repository: { findGroup },
 });
 
-export const getGroupList = Logic.getGroupList({
+export const getGroupUserList = Logic.getGroupUserList({
 	errorUtil: { convertErrorToCustomError },
-	repository: { findGroupList },
+	repository: { findGroupUserList },
 });
 
 export const addGroup = Logic.addGroup({

@@ -6,7 +6,7 @@ import {
 	TDeleteGroup,
 	TFindAllColumn,
 	TFindGroup,
-	TFindGroupList,
+	TFindGroupUserList,
 	TUpdateGroup,
 } from '@/interface/repository/groupRepository';
 
@@ -31,9 +31,9 @@ export const findGroup =
 		}
 	};
 
-export const findGroupList =
-	(dependencies: TFindGroupList['dependency']) =>
-	async (info: TFindGroupList['param']) => {
+export const findGroupUserList =
+	(dependencies: TFindGroupUserList['dependency']) =>
+	async (info: TFindGroupUserList['param']) => {
 		const {
 			GroupModel,
 			UserModel,

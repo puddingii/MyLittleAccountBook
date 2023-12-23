@@ -23,7 +23,7 @@ export type TFindGroup = {
 	}>;
 };
 
-export type TFindGroupList = {
+export type TFindGroupUserList = {
 	dependency: {
 		errorUtil: Pick<TErrorUtil, 'convertErrorToCustomError'>;
 		GroupModel: typeof GroupModel;
