@@ -1,13 +1,13 @@
 FROM node:18-alpine as ts-compiler
 WORKDIR /usr/index
-COPY ./backend/package*.json ./backend/tsconfig*.json ./backend/yarn.lock ./backend/ecosystem.config.js ./
+COPY ./backend/package*.json ./backend/tsconfig*.json ./backend/yarn.lock ./
 RUN yarn install --pure-lockfile
 COPY ./backend ./
 RUN yarn build
 
 FROM node:18-alpine as ts-remover
 WORKDIR /usr/index
-COPY --from=ts-compiler /usr/index/package*.json /usr/index/yarn.lock ./
+COPY --from=ts-compiler /usr/index/package*.json /usr/index/yarn.lock /usr/index/ecosystem.config.js ./
 COPY --from=ts-compiler /usr/index/build ./build
 RUN yarn install --only=production --pure-lockfile
 
