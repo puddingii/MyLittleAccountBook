@@ -11,7 +11,6 @@ on:
 env:
   DOCKER_IMAGE: ghcr.io/${{ github.actor }}/mlab-backimg
   VERSION: ${{ github.sha }}
-  NAME: mlab-back
   BACKEND_LOG_VOLUME: backend_log
   BACKEND_DUMPSQL_VOLUME: backend_dump_sql
 
@@ -73,14 +72,14 @@ jobs:
       - name: Docker Check Existed Container
         id: docker-container-check-result
         run: |
-          echo "IS_EXISTED=$(docker container ls | grep ${{ env.NAME }})" >> $GITHUB_OUTPUT
+          echo "IS_EXISTED=$(docker container ls | grep ${{ secrets.BACK_CONTAINER_NAME }})" >> $GITHUB_OUTPUT
 
       # 기존 Container가 있는 경우 제거
       - name: Docker Remove Existed Container
-        if: ${{ contains(steps.docker-container-check-result.outputs.IS_EXISTED, env.NAME) == true }}
+        if: ${{ contains(steps.docker-container-check-result.outputs.IS_EXISTED, github.env.BACK_CONTAINER_NAME) == true }}
         run: |
-          docker stop ${{ env.NAME }}
-          docker rm ${{ env.NAME }}
+          docker stop ${{ secrets.BACK_CONTAINER_NAME }}
+          docker rm ${{ secrets.BACK_CONTAINER_NAME }}
 
       # 기존 Image 확인
       - name: Docker Check Existed Image
