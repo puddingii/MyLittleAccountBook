@@ -13,6 +13,7 @@ env:
   VERSION: ${{ github.sha }}
   BACKEND_LOG_VOLUME: backend_log
   BACKEND_DUMPSQL_VOLUME: backend_dump_sql
+  BACK_CONTAINER_NAME: mlab_back
 
 jobs:
   # 빌드 Job
@@ -72,20 +73,20 @@ jobs:
       - name: Docker Check Existed Container
         id: docker-container-check-result
         run: |
-          echo "IS_EXISTED=$(docker container ls | grep ${{ secrets.BACK_CONTAINER_NAME }})" >> $GITHUB_OUTPUT
+          echo "IS_EXISTED=$(docker container ls | grep ${{ env.BACK_CONTAINER_NAME }})" >> "$GITHUB_OUTPUT"
 
       # 기존 Container가 있는 경우 제거
       - name: Docker Remove Existed Container
-        if: ${{ contains(steps.docker-container-check-result.outputs.IS_EXISTED, github.env.BACK_CONTAINER_NAME) == true }}
+        if: ${{ contains(steps.docker-container-check-result.outputs.IS_EXISTED, env.BACK_CONTAINER_NAME) == true }}
         run: |
-          docker stop ${{ secrets.BACK_CONTAINER_NAME }}
-          docker rm ${{ secrets.BACK_CONTAINER_NAME }}
+          docker stop ${{ env.BACK_CONTAINER_NAME }}
+          docker rm ${{ env.BACK_CONTAINER_NAME }}
 
       # 기존 Image 확인
       - name: Docker Check Existed Image
         id: docker-image-check-result
         run: |
-          echo "IS_EXISTED=$(docker image ls | grep ${{ env.DOCKER_IMAGE }})" >> $GITHUB_OUTPUT
+          echo "IS_EXISTED=$(docker image ls | grep ${{ env.DOCKER_IMAGE }})" >> "$GITHUB_OUTPUT"
 
       # 기존 Image가 있는 경우 제거
       - name: Docker Remove Existed Image
@@ -107,5 +108,5 @@ jobs:
           -p ${{ secrets.SOCKET_PORT_1 }}:${{ secrets.LOCAL_SOCKET_PORT_1 }} \
           -p ${{ secrets.SOCKET_PORT_2 }}:${{ secrets.LOCAL_SOCKET_PORT_2 }} \
           -p ${{ secrets.SOCKET_PORT_3 }}:${{ secrets.LOCAL_SOCKET_PORT_3 }} \
-          --name ${{ secrets.BACK_CONTAINER_NAME }} \
+          --name ${{ env.BACK_CONTAINER_NAME }} \
           --restart always ${{ env.DOCKER_IMAGE }}:latest
