@@ -22,7 +22,6 @@ export const useUpdateUserMutation = () => {
 		onSuccess: response => {
 			const { data, status } = response;
 			if (status === 'success') {
-				console.log('?');
 				setToken({ accessToken: data.accessToken, refreshToken: data.refreshToken });
 				const decodedData = jwtDecode(data.accessToken);
 				setUserState(oldState => ({
