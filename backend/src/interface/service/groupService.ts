@@ -3,6 +3,7 @@ import {
 	createGroup,
 	deleteGroup,
 	findGroup,
+	findGroupAccountBookList,
 	findGroupUserList,
 	updateGroup,
 } from '@/repository/groupRepository/dependency';
@@ -22,7 +23,17 @@ export type TValidateGroupUser = {
 	param: { accountBookId: number; myEmail: string };
 };
 
-export type TGetGroupList = {
+export type TGetGroupAccountBookList = {
+	dependency: {
+		errorUtil: Pick<TErrorUtil, 'convertErrorToCustomError'>;
+		repository: {
+			findGroupAccountBookList: typeof findGroupAccountBookList;
+		};
+	};
+	param: { userEmail: string };
+};
+
+export type TGetGroupUserList = {
 	dependency: {
 		errorUtil: Pick<TErrorUtil, 'convertErrorToCustomError'>;
 		repository: {

@@ -6,6 +6,7 @@ import {
 	TDeleteGroup,
 	TFindAllColumn,
 	TFindGroup,
+	TFindGroupAccountBookList,
 	TFindGroupUserList,
 	TUpdateGroup,
 } from '@/interface/repository/groupRepository';
@@ -22,6 +23,35 @@ export const findGroup =
 			const groupInfo = await GroupModel.findOne({ where: groupParams });
 
 			return groupInfo;
+		} catch (error) {
+			const customError = convertErrorToCustomError(error, {
+				trace: 'Repository',
+				code: 500,
+			});
+			throw customError;
+		}
+	};
+
+export const findGroupAccountBookList =
+	(dependencies: TFindGroupAccountBookList['dependency']) =>
+	async (info: TFindGroupAccountBookList['param']) => {
+		const {
+			AccountBookModel,
+			GroupModel,
+			errorUtil: { convertErrorToCustomError },
+		} = dependencies;
+
+		try {
+			const groupList = await GroupModel.findAll({
+				where: info,
+				include: {
+					model: AccountBookModel,
+					as: 'accountbooks',
+					required: true,
+				},
+			});
+
+			return groupList;
 		} catch (error) {
 			const customError = convertErrorToCustomError(error, {
 				trace: 'Repository',

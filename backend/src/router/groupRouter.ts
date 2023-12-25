@@ -12,6 +12,7 @@ import { verifyToken } from '@/middleware/authentication';
 import {
 	addGroup,
 	deleteGroupUser,
+	getGroupAccountBookList,
 	getGroupUserList,
 	updateGroupInfo,
 	validateGroupUser,
@@ -20,6 +21,7 @@ import {
 /** Interface */
 import {
 	TDelete,
+	TGetAccountBookList,
 	TGetList,
 	TGetValidate,
 	TPatch,
@@ -27,6 +29,27 @@ import {
 } from '@/interface/api/response/groupResponse';
 
 const router = express.Router();
+
+router.get('/accountbooklist', verifyToken, async (req, res) => {
+	try {
+		const userEmail = (req.user as Exclude<Request['user'], undefined>).email;
+		const groupList = await getGroupAccountBookList({ userEmail });
+
+		return res.status(200).json({
+			data: groupList,
+			message: '',
+			status: 'success',
+		} satisfies TGetAccountBookList);
+	} catch (error) {
+		const { message, traceList, code } = convertErrorToCustomError(error, {
+			trace: 'Router',
+			code: 400,
+		});
+		logger.error(message, traceList);
+
+		return res.status(code).json({ data: {}, message, status: 'fail' });
+	}
+});
 
 router.get('/userlist', verifyToken, async (req, res) => {
 	try {

@@ -1,6 +1,7 @@
 import * as Logic from '.';
 
 /** Model */
+import AccountBookModel from '@/model/accountBook';
 import GroupModel from '@/model/group';
 import CronGroupAccountBookModel from '@/model/cronGroupAccountBook';
 import GroupAccountBookModel from '@/model/groupAccountBook';
@@ -12,6 +13,12 @@ import { convertErrorToCustomError } from '@/util/error';
 export const findGroup = Logic.findGroup({
 	errorUtil: { convertErrorToCustomError },
 	GroupModel,
+});
+
+export const findGroupAccountBookList = Logic.findGroupAccountBookList({
+	errorUtil: { convertErrorToCustomError },
+	GroupModel,
+	AccountBookModel,
 });
 
 export const findGroupUserList = Logic.findGroupUserList({

@@ -4,7 +4,8 @@
 import {
 	TAddGroup,
 	TDeleteGroupUser,
-	TGetGroupList,
+	TGetGroupAccountBookList,
+	TGetGroupUserList,
 	TUpdateGroupInfo,
 	TValidateGroupUser,
 } from '@/interface/service/groupService';
@@ -33,8 +34,36 @@ export const validateGroupUser =
 		}
 	};
 
+export const getGroupAccountBookList =
+	(dependencies: TGetGroupAccountBookList['dependency']) =>
+	async (info: TGetGroupAccountBookList['param']) => {
+		const {
+			errorUtil: { convertErrorToCustomError },
+			repository: { findGroupAccountBookList },
+		} = dependencies;
+
+		try {
+			const groupList = await findGroupAccountBookList(info);
+
+			return groupList
+				.filter(group => !!group.accountbooks)
+				.map(group => ({
+					accountBookId: group.accountbooks?.id ?? -1,
+					accountBookName: group.accountbooks?.title ?? '',
+					accountBookContent: group.accountbooks?.content ?? '',
+				}));
+		} catch (error) {
+			const customError = convertErrorToCustomError(error, {
+				trace: 'Service',
+				code: 400,
+			});
+			throw customError;
+		}
+	};
+
 export const getGroupUserList =
-	(dependencies: TGetGroupList['dependency']) => async (info: TGetGroupList['param']) => {
+	(dependencies: TGetGroupUserList['dependency']) =>
+	async (info: TGetGroupUserList['param']) => {
 		const {
 			errorUtil: { convertErrorToCustomError },
 			repository: { findGroupUserList },

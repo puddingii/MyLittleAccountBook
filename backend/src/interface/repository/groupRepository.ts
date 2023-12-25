@@ -1,6 +1,7 @@
 import { Transaction } from 'sequelize';
 
 /** Model */
+import AccountBookModel from '@/model/accountBook';
 import GroupModel from '@/model/group';
 import UserModel from '@/model/user';
 import CronGroupAccountBookModel from '@/model/cronGroupAccountBook';
@@ -21,6 +22,15 @@ export type TFindGroup = {
 		userType: string;
 		accessHistory: Date;
 	}>;
+};
+
+export type TFindGroupAccountBookList = {
+	dependency: {
+		errorUtil: Pick<TErrorUtil, 'convertErrorToCustomError'>;
+		AccountBookModel: typeof AccountBookModel;
+		GroupModel: typeof GroupModel;
+	};
+	param: { userEmail: string };
 };
 
 export type TFindGroupUserList = {

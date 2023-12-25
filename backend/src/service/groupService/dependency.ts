@@ -5,6 +5,7 @@ import {
 	createGroup,
 	deleteGroup,
 	findGroup,
+	findGroupAccountBookList,
 	findGroupUserList,
 	updateGroup,
 } from '@/repository/groupRepository/dependency';
@@ -18,6 +19,11 @@ import { isAdminUser } from '@/util/validation/user';
 export const validateGroupUser = Logic.validateGroupUser({
 	errorUtil: { convertErrorToCustomError },
 	repository: { findGroup },
+});
+
+export const getGroupAccountBookList = Logic.getGroupAccountBookList({
+	errorUtil: { convertErrorToCustomError },
+	repository: { findGroupAccountBookList },
 });
 
 export const getGroupUserList = Logic.getGroupUserList({
