@@ -39,7 +39,7 @@ export default {
 			host: process.env.MYSQL_MASTER_HOST ?? '',
 			username: process.env.MYSQL_MASTER_USERNAME ?? '',
 			pw: process.env.MYSQL_MASTER_PW ?? '',
-			port: process.env.MYSQL_MASTER_PORT ?? '',
+			port: parseInt(process.env.MYSQL_MASTER_PORT ?? '3306', 10),
 		},
 		slave1: {
 			host: process.env.MYSQL_SLAVE1_HOST ?? '',

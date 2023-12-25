@@ -20,6 +20,7 @@ const logging =
 
 const sequelize = new Sequelize(databaseName, master.username, master.pw, {
 	host: master.host,
+	port: master.port,
 	dialect: 'mysql',
 	logging,
 });
