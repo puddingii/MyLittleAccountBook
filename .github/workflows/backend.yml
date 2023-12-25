@@ -99,7 +99,7 @@ jobs:
         run: |
           docker run -d \
           --env-file ${{ secrets.BACK_ENV_PATH }} \
-          --network=${{ secrets.NETWORK }} \
+          --net host \
           -v ${{ env.BACKEND_LOG_VOLUME }}:/usr/index/logs \
           -v ${{ env.BACKEND_DUMPSQL_VOLUME }}:/usr/index/src/cron/dump \
           -p ${{ secrets.API_PORT_1 }}:${{ secrets.LOCAL_API_PORT_1 }} \
