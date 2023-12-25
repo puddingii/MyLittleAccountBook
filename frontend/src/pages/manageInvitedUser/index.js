@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 
 import SortTable from './InvitedUserTable';
 import InviteUserForm from './InviteUserForm';
-import { useGetGroupListQuery } from 'queries/group/groupQuery';
+import { useGetGroupUserListQuery } from 'queries/group/groupQuery';
 
 const ManageInvitedUser = () => {
 	const [snackbarInfo, setSnackbarInfo] = useState({ isOpen: false, message: '', severity: 'info' });
@@ -12,7 +12,7 @@ const ManageInvitedUser = () => {
 	const param = useParams();
 	const accountBookId = parseInt(param?.id ?? -1, 10);
 
-	const { refetch } = useGetGroupListQuery(
+	const { refetch } = useGetGroupUserListQuery(
 		{ accountBookId },
 		{
 			onSuccess: response => {

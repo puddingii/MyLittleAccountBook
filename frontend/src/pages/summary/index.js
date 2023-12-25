@@ -178,7 +178,7 @@ const ThisMonthSummary = () => {
 
 	useEffect(() => {
 		refetch();
-	}, [refetch]);
+	}, [refetch, accountBookId]);
 
 	useEffect(() => {
 		const socket = getSocket(accountBookId);
