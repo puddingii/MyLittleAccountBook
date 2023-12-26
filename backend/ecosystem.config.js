@@ -31,20 +31,20 @@ module.exports = [
 			SOCKET_PORT: '3333',
 		},
 	},
-	{
-		name: 'my_little_account_book_backend_3',
-		script: 'build/index.js',
-		wait_ready: true,
-		listen_timeout: 10000,
-		env_production: {
-			NODE_ENV: 'production',
-			EXPRESS_PORT: '7503',
-			SOCKET_PORT: '7204',
-		},
-		env_development: {
-			NODE_ENV: 'development',
-			EXPRESS_PORT: '3046',
-			SOCKET_PORT: '3334',
-		},
-	},
+	// {
+	// 	name: 'my_little_account_book_backend_3',
+	// 	script: 'build/index.js',
+	// 	wait_ready: true,
+	// 	listen_timeout: 10000,
+	// 	env_production: {
+	// 		NODE_ENV: 'production',
+	// 		EXPRESS_PORT: '7503',
+	// 		SOCKET_PORT: '7204',
+	// 	},
+	// 	env_development: {
+	// 		NODE_ENV: 'development',
+	// 		EXPRESS_PORT: '3046',
+	// 		SOCKET_PORT: '3334',
+	// 	},
+	// },
 ];

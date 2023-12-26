@@ -11,6 +11,7 @@ env:
   DOCKER_IMAGE: ghcr.io/${{ github.actor }}/mlab-frontimg
   VERSION: ${{ github.sha }}
   FRONTEND_LOG_VOLUME: frontend_log
+  FRONT_CONTAINER_NAME: mlab_front
 
 jobs:
   # 빌드 Job
@@ -76,14 +77,14 @@ jobs:
       - name: Docker Check Existed Container
         id: docker-container-check-result
         run: |
-          echo "IS_EXISTED=$(docker container ls | grep ${{ secrets.FRONT_CONTAINER_NAME }})" >> $GITHUB_OUTPUT
+          echo "IS_EXISTED=$(docker container ls | grep ${{ env.FRONT_CONTAINER_NAME }})" >> $GITHUB_OUTPUT
 
       # 기존 Container가 있는 경우 제거
       - name: Docker Remove Existed Container
-        if: ${{ contains(steps.docker-container-check-result.outputs.IS_EXISTED, github.env.FRONT_CONTAINER_NAME) == true }}
+        if: ${{ contains(steps.docker-container-check-result.outputs.IS_EXISTED, env.FRONT_CONTAINER_NAME) == true }}
         run: |
-          docker stop ${{ secrets.FRONT_CONTAINER_NAME }}
-          docker rm ${{ secrets.FRONT_CONTAINER_NAME }}
+          docker stop ${{ env.FRONT_CONTAINER_NAME }}
+          docker rm ${{ env.FRONT_CONTAINER_NAME }}
 
       # 기존 Image 확인
       - name: Docker Check Existed Image
@@ -103,5 +104,5 @@ jobs:
           docker run -d \
           -v ${{ env.FRONTEND_LOG_VOLUME }}:/usr/index/log \
           -p ${{ secrets.FRONT_PORT }}:${{ secrets.LOCAL_FRONT_PORT }} \
-          --name ${{ secrets.FRONT_CONTAINER_NAME }} \
+          --name ${{ env.FRONT_CONTAINER_NAME }} \
           --restart always ${{ env.DOCKER_IMAGE }}:latest

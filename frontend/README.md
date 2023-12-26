@@ -7,17 +7,7 @@
 
 Document: <https://stormy-lighter-fb5.notion.site/Frontend-Document-0819d1fac9f84300a492930a49e562f9?pvs=4>
 
-## Name Derived From Nature
-
-Mantis Logo is inspired from the insect name - 'Mantises' as they have triangular heads with flexible Necks. Also, the name is derived from two popular UI frameworks, Material UI and Ant Design (M-Ant-is).
-
-Mantis has Ant Design principal on top of the MAterial UI React component library.
-
-:star: :star: :star: Support us by giving star (Top right of this page) if you like the theme :star: :star: :star:
-
 ![mantis-free-react-dashboard-template.jpg](https://mantisdashboard.io/adv-banner-images/og-social-v1.1.0.png)
-
-The [Pro version](https://mantisdashboard.io) of Mantis react template includes features such as TypeScript, apps, authentication methods (i.e. JWT, Auth0, Firebase), advance components, form plugins, layouts, widgets, and more.
 
 ## Free Mantis React version
 
