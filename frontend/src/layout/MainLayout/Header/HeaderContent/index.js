@@ -2,7 +2,7 @@
 import { Box, useMediaQuery } from '@mui/material';
 
 // project import
-import GroupSelector from './GroupSelector';
+import GroupSelector from 'components/GroupSelector';
 import Profile from './Profile';
 import MobileSection from './MobileSection';
 
@@ -14,7 +14,7 @@ const HeaderContent = () => {
 
 	return (
 		<>
-			<GroupSelector matchesXs={matchesXs} />
+			<GroupSelector matchesXs={matchesXs} isWhiteMode={true} />
 			{matchesMd && <Box sx={{ width: '100%', ml: 1 }} />}
 
 			{!matchesMd && <Profile />}

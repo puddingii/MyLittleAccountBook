@@ -1,15 +1,13 @@
 # My Little Account Book Frontend
 
-
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Price](https://img.shields.io/badge/price-FREE-0098f7.svg)](https://github.com/codedthemes/mantis-free-react-admin-template/blob/main/LICENSE)
-[![GitHub package version](https://img.shields.io/github/package-json/v/codedthemes/mantis-free-react-admin-template)](https://github.com/codedthemes/mantis-free-react-admin-template/)
 
 Document: <https://stormy-lighter-fb5.notion.site/Frontend-Document-0819d1fac9f84300a492930a49e562f9?pvs=4>
 
-![mantis-free-react-dashboard-template.jpg](https://mantisdashboard.io/adv-banner-images/og-social-v1.1.0.png)
+![mantis-free-react-dashboard-template.jpg](https://puddingii.xyz/adbanner.png)
 
-## Free Mantis React version
+## Free React version
 
 ### Download
 
@@ -21,13 +19,10 @@ Clone from GitHub
 
 ```bash
 git clone https://github.com/puddingii/MyLittleAccountBook.git
+cd frontend
 yarn
 yarn start
 ```
-
-## Documentation
-
-[Mantis documentation](https://codedthemes.gitbook.io/mantis/) helps you out in all aspects from Installation to deployment.
 
 ## Technology stack
 

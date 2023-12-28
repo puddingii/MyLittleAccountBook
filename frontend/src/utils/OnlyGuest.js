@@ -9,13 +9,13 @@ import { getCookie } from './cookie';
 
 const OnlyGuest = ({ children }) => {
 	const navigate = useNavigate();
-	const { isError, isFetched } = useRefreshAccessTokenQuery();
+	const { isError } = useRefreshAccessTokenQuery();
 
 	useEffect(() => {
 		const token = getCookie('token');
 		const access = axios.defaults.headers.common.Authorization;
 
-		if (token && access && isFetched && !isError) {
+		if (token && access && !isError) {
 			navigate(-1);
 		}
 	}, []);
