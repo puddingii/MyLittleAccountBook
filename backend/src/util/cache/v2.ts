@@ -6,6 +6,7 @@ const cacheKeyInfo = {
 	REFRESH_TOKEN: 'refreshToken',
 	SOCIAL_LOGIN_STATE: 'socialLoginState',
 	REC_CATEGORY: 'recursiveCategory',
+	EMAIL_VERIFICATION_STATE: 'emailVerificationState',
 };
 type TCacheType = keyof typeof cacheKeyInfo;
 
@@ -21,6 +22,7 @@ const getCache = curry(async (type: TCacheType, key: string) => {
 export const getRefreshTokenCache = getCache('REFRESH_TOKEN');
 export const getSocialLoginStateCache = getCache('SOCIAL_LOGIN_STATE');
 export const getRecursiveCategoryCache = getCache('REC_CATEGORY');
+export const getEmailVerificationStateCache = getCache('EMAIL_VERIFICATION_STATE');
 
 /**
  * @param time Default 값은 600초
@@ -34,6 +36,7 @@ const setCache = curry(
 export const setRefreshTokenCache = setCache('REFRESH_TOKEN');
 export const setSocialLoginStateCache = setCache('SOCIAL_LOGIN_STATE');
 export const setRecursiveCategoryCache = setCache('REC_CATEGORY');
+export const setEmailVerificationStateCache = setCache('EMAIL_VERIFICATION_STATE');
 
 /** 캐시 삭제 */
 const deleteCache = curry(async (type: TCacheType, key: string | Array<string>) => {
@@ -53,3 +56,4 @@ const deleteCache = curry(async (type: TCacheType, key: string | Array<string>) 
 export const deleteRefreshTokenCache = deleteCache('REFRESH_TOKEN');
 export const deleteSocialLoginStateCache = deleteCache('SOCIAL_LOGIN_STATE');
 export const deleteRecursiveCategoryCache = deleteCache('REC_CATEGORY');
+export const deleteEmailVerificationStateCache = deleteCache('EMAIL_VERIFICATION_STATE');

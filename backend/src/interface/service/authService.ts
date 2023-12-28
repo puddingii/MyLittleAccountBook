@@ -9,10 +9,12 @@ import {
 /** Util */
 import { TErrorUtil, TCacheUtil, TJwtUtil } from '../util';
 import { TSocialType } from '../auth';
+import { TAuthEventEmitter } from '../pubsub/auth';
 
 export type TEmailJoin = {
 	dependency: {
 		errorUtil: Pick<TErrorUtil, 'convertErrorToCustomError'>;
+		eventEmitter: TAuthEventEmitter;
 		repository: {
 			createEmailUser: typeof createEmailUser;
 		};

@@ -75,4 +75,11 @@ export default {
 			secret: process.env.NAVER_CLIENT_SECRET ?? '',
 		},
 	},
+
+	/** Mail Auth */
+	mailer: {
+		host: process.env.MAILER_HOST,
+		user: process.env.MAILER_USER,
+		pw: process.env.MAILER_PW,
+	},
 };

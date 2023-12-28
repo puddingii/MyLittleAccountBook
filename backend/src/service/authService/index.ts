@@ -46,10 +46,13 @@ export const emailJoin =
 	(dependencies: TEmailJoin['dependency']) => async (userInfo: TEmailJoin['param']) => {
 		const {
 			errorUtil: { convertErrorToCustomError },
+			eventEmitter,
 			repository: { createEmailUser },
 		} = dependencies;
 		try {
 			const { accountBookId } = await createEmailUser(userInfo);
+
+			eventEmitter.emit('join', { email: userInfo.email, nickname: userInfo.nickname });
 
 			return { accountBookId };
 		} catch (error) {

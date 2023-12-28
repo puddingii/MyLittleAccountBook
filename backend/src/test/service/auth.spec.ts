@@ -33,6 +33,7 @@ import {
 } from '@/util/jwt';
 import { deleteCache, getCache } from '@/util/cache';
 import secret from '@/config/secret';
+import authEvent from '@/util/pubsub/authPubsub';
 
 /** Model */
 import UserModel from '@/model/user';
@@ -63,16 +64,22 @@ describe('Group Service Test', function () {
 				accountBookId: number;
 			}>
 		>;
+		let stubEventEmitter = sinon.stub(authEvent);
 
 		beforeEach(function () {
 			stubCreateEmailUser = sinon.stub(repository, 'createEmailUser');
+			stubEventEmitter = sinon.stub(authEvent);
 		});
 
 		it('Check function parameters', async function () {
 			stubCreateEmailUser.resolves({ accountBookId: 1 });
 			const userInfo = { email: 'test@naver.com', nickname: 'test', password: 'asdf' };
 
-			const injectedFunc = emailJoin({ ...common, repository });
+			const injectedFunc = emailJoin({
+				...common,
+				eventEmitter: stubEventEmitter,
+				repository,
+			});
 
 			try {
 				await injectedFunc(userInfo);
@@ -87,7 +94,11 @@ describe('Group Service Test', function () {
 		it('Check correct result', async function () {
 			stubCreateEmailUser.resolves({ accountBookId: 1 });
 
-			const injectedFunc = emailJoin({ ...common, repository });
+			const injectedFunc = emailJoin({
+				...common,
+				eventEmitter: stubEventEmitter,
+				repository,
+			});
 
 			try {
 				const result = await injectedFunc({
@@ -105,7 +116,11 @@ describe('Group Service Test', function () {
 		it('If createEmailUser error', async function () {
 			stubCreateEmailUser.rejects(new Error('createEmailUser error'));
 
-			const injectedFunc = emailJoin({ ...common, repository });
+			const injectedFunc = emailJoin({
+				...common,
+				eventEmitter: stubEventEmitter,
+				repository,
+			});
 
 			try {
 				await injectedFunc({
