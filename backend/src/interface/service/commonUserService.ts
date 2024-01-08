@@ -18,7 +18,7 @@ export type TCheckAdminGroupUser = {
 };
 export type TSendVerificationEmail = {
 	dependency: {
-		cacheUtil: Pick<TCacheUtil, 'setCache'>;
+		cacheUtil: Pick<TCacheUtil, 'setCache' | 'getCache'>;
 		mailUtil: Pick<TMailUtil, 'getBuilder' | 'getVerifyMailHTML'>;
 	};
 	param: {

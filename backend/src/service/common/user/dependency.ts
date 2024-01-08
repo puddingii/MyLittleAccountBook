@@ -2,7 +2,10 @@ import * as Logic from '.';
 
 /** Util */
 import { isAdminUser } from '@/util/validation/user';
-import { setEmailVerificationStateCache } from '@/util/cache/v2';
+import {
+	getEmailVerificationStateCache,
+	setEmailVerificationStateCache,
+} from '@/util/cache/v2';
 import { getBuilder } from '@/util/mail';
 import { getVerifyMailHTML } from '@/util/mail/html';
 
@@ -15,6 +18,9 @@ export const checkAdminGroupUser = Logic.checkAdminGroupUser({
 });
 
 export const sendVerificationEmail = Logic.sendVerificationEmail({
-	cacheUtil: { setCache: setEmailVerificationStateCache },
+	cacheUtil: {
+		setCache: setEmailVerificationStateCache,
+		getCache: getEmailVerificationStateCache,
+	},
 	mailUtil: { getBuilder: getBuilder, getVerifyMailHTML: getVerifyMailHTML },
 });

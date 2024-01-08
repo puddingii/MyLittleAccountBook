@@ -35,7 +35,7 @@ export const getVerifyMailHTML = (href: string, nickname: string) => {
     ${nickname}님 "나의 작은 가계부"에 가입해 주셔서 감사드립니다.<br />
     아래 <b style="color: ${STYLE.mainColor}">'메일 인증'</b> 버튼을 클릭하여 회원가입을 완료해
     주세요.<br />
-		아래의 메일 인증 링크는 10분간 유효하며 1일 5회 제한이 되어있습니다.
+		아래의 메일 인증 링크는 10분간 유효하며, 한번에 너무 많은 메일 요청을 보낼 시<br />일정시간 동안 인증이 제한이 될 수도 있습니다.<br />
     감사합니다.
   </p>
 

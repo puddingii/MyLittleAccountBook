@@ -37,17 +37,26 @@ export const sendVerificationEmail =
 	(dependencies: TSendVerificationEmail['dependency']) =>
 	async (info: TSendVerificationEmail['param']) => {
 		const {
-			cacheUtil: { setCache },
+			cacheUtil: { setCache, getCache },
 			mailUtil: { getBuilder, getVerifyMailHTML },
 		} = dependencies;
 		const { userEmail, userNickname } = info;
 
+		/** Check request count */
+		const cacheData = await getCache(userEmail);
+		const requestCount = cacheData ? parseInt(cacheData.at(-1) ?? '0', 10) : 0;
+		/** If many requests in a short period of time, restrict mail verification */
+		if (cacheData && requestCount >= 5) {
+			return false;
+		}
+
 		/** Get random state(Email verification, expire in 10min) */
 		const randomState = await nanoid(15);
-		const verifyEmailHref = `${secret.frontUrl}/verify?state=${randomState}`;
-		await setCache(userEmail, randomState, 600);
+		const state = `${randomState}${requestCount + 1}`;
+		await setCache(userEmail, state, 600);
 
 		/** Mail Send(Include random state) */
+		const verifyEmailHref = `${secret.frontUrl}/verify?state=${state}`;
 		const mailerBuilder = getBuilder();
 		const mailer = mailerBuilder
 			.setDefaultFromEmail()
@@ -56,4 +65,6 @@ export const sendVerificationEmail =
 			.build();
 
 		await mailer.sendMail();
+
+		return true;
 	};
