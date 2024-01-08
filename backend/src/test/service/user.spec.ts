@@ -16,7 +16,11 @@ import OAuthUserModel from '@/model/oauthUser';
 import { cacheUtil, errorUtil, jwtUtil } from '../commonDependency';
 
 describe('User Service Test', function () {
-	const userInfo = { email: 'test@naver.com', nickname: 'testNickname' };
+	const userInfo = {
+		email: 'test@naver.com',
+		nickname: 'testNickname',
+		isAuthenticated: true,
+	};
 
 	describe('#getUserInfo', function () {
 		const common = {
@@ -110,7 +114,11 @@ describe('User Service Test', function () {
 
 		it('params data !== result data', async function () {
 			stubFindUserInfo.resolves(
-				new UserModel({ email: 'test2@naver.com', nickname: 'test2Nickname' }),
+				new UserModel({
+					email: 'test2@naver.com',
+					nickname: 'test2Nickname',
+					isAuthenticated: true,
+				}),
 			);
 
 			const injectedFunc = getUserInfo({

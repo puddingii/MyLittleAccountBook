@@ -12,6 +12,9 @@ import {
 
 import { isAdminUser, canUserWrite } from '@/util/validation/user';
 
+import { getBuilder } from '@/util/mail';
+import { getVerifyMailHTML, getFindPWHTML } from '@/util/mail/html';
+
 export type TErrorUtil = {
 	convertErrorToCustomError: typeof convertErrorToCustomError;
 	filterPromiseSettledResultList: typeof filterPromiseSettledResultList;
@@ -44,4 +47,10 @@ export type TJwtUtil = {
 export type TValidationUtil = {
 	isAdminUser: typeof isAdminUser;
 	canUserWrite: typeof canUserWrite;
+};
+
+export type TMailUtil = {
+	getBuilder: typeof getBuilder;
+	getVerifyMailHTML: typeof getVerifyMailHTML;
+	getFindPWHTML: typeof getFindPWHTML;
 };

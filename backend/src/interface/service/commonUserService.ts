@@ -1,9 +1,10 @@
 /** Repository */
 import { findGroup } from '@/repository/groupRepository/dependency';
 
-import { TValidationUtil } from '../util';
+/** Util */
+import { TCacheUtil, TMailUtil, TValidationUtil } from '@/interface/util';
 
-export type TGetCategory = {
+export type TCheckAdminGroupUser = {
 	dependency: {
 		validationUtil: Pick<TValidationUtil, 'isAdminUser'>;
 		repository: {
@@ -13,5 +14,15 @@ export type TGetCategory = {
 	param: {
 		userEmail: string;
 		accountBookId: number;
+	};
+};
+export type TSendVerificationEmail = {
+	dependency: {
+		cacheUtil: Pick<TCacheUtil, 'setCache'>;
+		mailUtil: Pick<TMailUtil, 'getBuilder' | 'getVerifyMailHTML'>;
+	};
+	param: {
+		userEmail: string;
+		userNickname: string;
 	};
 };

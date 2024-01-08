@@ -33,7 +33,7 @@ import {
 } from '@/util/jwt';
 import { deleteCache, getCache } from '@/util/cache';
 import secret from '@/config/secret';
-import authEvent from '@/util/pubsub/authPubsub';
+import authEvent from '@/pubsub/authPubsub';
 
 /** Model */
 import UserModel from '@/model/user';
@@ -158,6 +158,7 @@ describe('Group Service Test', function () {
 			email: 'test@naver.com',
 			password: '',
 			nickname: 'test',
+			isAuthenticated: true,
 		};
 
 		before(function () {
@@ -289,7 +290,11 @@ describe('Group Service Test', function () {
 		});
 
 		it('If user password is undefined', async function () {
-			const user = new UserModel({ email: 'test@naver.com', nickname: 'test' });
+			const user = new UserModel({
+				email: 'test@naver.com',
+				nickname: 'test',
+				isAuthenticated: true,
+			});
 			const userGroup = new GroupModel({
 				userEmail: user.email,
 				userType: 'owner',
@@ -572,7 +577,11 @@ describe('Group Service Test', function () {
 		});
 
 		it('Check function parameters(oauth user is existed)', async function () {
-			const userInfo = { email: 'test@naver.com', nickname: 'test' };
+			const userInfo = {
+				email: 'test@naver.com',
+				nickname: 'test',
+				isAuthenticated: true,
+			};
 			const tokenInfo = { accessToken: 'access token', refreshToken: 'refresh token' };
 			const user = new UserModel(userInfo);
 			const oauth = new OAuthUserModel({ userEmail: user.email, type: 'Google' });
@@ -623,7 +632,11 @@ describe('Group Service Test', function () {
 		});
 
 		it('Check correct result(oauth user is existed)', async function () {
-			const userInfo = { email: 'test@naver.com', nickname: 'test' };
+			const userInfo = {
+				email: 'test@naver.com',
+				nickname: 'test',
+				isAuthenticated: true,
+			};
 			const tokenInfo = { accessToken: 'access token', refreshToken: 'refresh token' };
 			const user = new UserModel(userInfo);
 			const oauth = new OAuthUserModel({ userEmail: user.email, type: 'Google' });
@@ -667,7 +680,11 @@ describe('Group Service Test', function () {
 		});
 
 		it('Check correct result(oauth user is existed and group join info is not existed)', async function () {
-			const userInfo = { email: 'test@naver.com', nickname: 'test' };
+			const userInfo = {
+				email: 'test@naver.com',
+				nickname: 'test',
+				isAuthenticated: true,
+			};
 			const tokenInfo = { accessToken: 'access token', refreshToken: 'refresh token' };
 			const user = new UserModel(userInfo);
 			const oauth = new OAuthUserModel({ userEmail: user.email, type: 'Google' });
@@ -705,7 +722,11 @@ describe('Group Service Test', function () {
 		});
 
 		it('User is existed but user is not oauthuser', async function () {
-			const userInfo = { email: 'test@naver.com', nickname: 'test' };
+			const userInfo = {
+				email: 'test@naver.com',
+				nickname: 'test',
+				isAuthenticated: true,
+			};
 			const tokenInfo = { accessToken: 'access token', refreshToken: 'refresh token' };
 			const user = new UserModel(userInfo);
 			const group = new GroupModel({
@@ -749,7 +770,11 @@ describe('Group Service Test', function () {
 		});
 
 		it('Check function parameters(user is not existed)', async function () {
-			const userInfo = { email: 'test@naver.com', nickname: 'test' };
+			const userInfo = {
+				email: 'test@naver.com',
+				nickname: 'test',
+				isAuthenticated: true,
+			};
 			const tokenInfo = { accessToken: 'access token', refreshToken: 'refresh token' };
 			const user = new UserModel(userInfo);
 			const oauth = new OAuthUserModel({ userEmail: user.email, type: 'Google' });
@@ -801,7 +826,11 @@ describe('Group Service Test', function () {
 		});
 
 		it('Check correct result(user is not existed)', async function () {
-			const userInfo = { email: 'test@naver.com', nickname: 'test' };
+			const userInfo = {
+				email: 'test@naver.com',
+				nickname: 'test',
+				isAuthenticated: true,
+			};
 			const tokenInfo = { accessToken: 'access token', refreshToken: 'refresh token' };
 			const user = new UserModel(userInfo);
 			const oauth = new OAuthUserModel({ userEmail: user.email, type: 'Google' });
@@ -845,7 +874,11 @@ describe('Group Service Test', function () {
 		});
 
 		it('User is not existed and createSocialUser error', async function () {
-			const userInfo = { email: 'test@naver.com', nickname: 'test' };
+			const userInfo = {
+				email: 'test@naver.com',
+				nickname: 'test',
+				isAuthenticated: true,
+			};
 			const tokenInfo = { accessToken: 'access token', refreshToken: 'refresh token' };
 			const user = new UserModel(userInfo);
 			const oauth = new OAuthUserModel({ userEmail: user.email, type: 'Google' });

@@ -45,6 +45,7 @@ export class UserModel extends Model<
 	declare hasGroups: HasManyHasAssociationsMixin<GroupModel, number>;
 	declare hasOauthuser: HasManyHasAssociationMixin<OAuthUser, number>;
 	declare hasOauthusers: HasManyHasAssociationsMixin<OAuthUser, number>;
+	declare isAuthenticated: boolean;
 	declare nickname: string;
 	declare oauthusers?: NonAttribute<OAuthUser[]>;
 	declare password?: string;
@@ -71,6 +72,11 @@ UserModel.init(
 		password: {
 			type: DataTypes.STRING,
 			allowNull: true,
+		},
+		isAuthenticated: {
+			type: DataTypes.BOOLEAN,
+			defaultValue: false,
+			allowNull: false,
 		},
 		createdAt: DataTypes.DATE,
 		updatedAt: DataTypes.DATE,

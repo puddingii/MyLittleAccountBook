@@ -8,7 +8,10 @@ dotenv.config({ path: path.resolve(__dirname, envPath) });
 const dbNameInfo = { production: '', development: '_dev', test: '_test' };
 
 export default {
-	nodeEnv: process.env.NODE_ENV ?? '',
+	nodeEnv: (process.env.NODE_ENV ?? 'development') as
+		| 'production'
+		| 'development'
+		| 'test',
 	loggerMode: process.env.LOGGER_MODE ?? 'prod',
 	passwordHashRound: parseInt(process.env.PASSWORD_HASH_ROUND ?? '', 10),
 	baseUrl: process.env.BASE_URL ?? '',

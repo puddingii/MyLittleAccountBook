@@ -1,8 +1,18 @@
+/** Library */
+import { nanoid } from 'nanoid/async';
+
 /** Interface */
-import { TGetCategory } from '@/interface/service/commonUserService';
+import {
+	TCheckAdminGroupUser,
+	TSendVerificationEmail,
+} from '@/interface/service/commonUserService';
+
+/** ETC */
+import secret from '@/config/secret';
 
 export const checkAdminGroupUser =
-	(dependencies: TGetCategory['dependency']) => async (info: TGetCategory['param']) => {
+	(dependencies: TCheckAdminGroupUser['dependency']) =>
+	async (info: TCheckAdminGroupUser['param']) => {
 		const {
 			validationUtil: { isAdminUser },
 			repository: { findGroup },
@@ -17,8 +27,33 @@ export const checkAdminGroupUser =
 			throw new Error('현재 계정은 해당 그룹에 참여하지 않았습니다.');
 		}
 		if (!isAdminUser(myGroupInfo.userType)) {
-			throw new Error('관리 가능한 유저가 아닙니다.');
+			throw new Error('관리 가능한 계정이 아닙니다.');
 		}
 
 		return myGroupInfo;
+	};
+
+export const sendVerificationEmail =
+	(dependencies: TSendVerificationEmail['dependency']) =>
+	async (info: TSendVerificationEmail['param']) => {
+		const {
+			cacheUtil: { setCache },
+			mailUtil: { getBuilder, getVerifyMailHTML },
+		} = dependencies;
+		const { userEmail, userNickname } = info;
+
+		/** Get random state(Email verification, expire in 10min) */
+		const randomState = await nanoid(15);
+		const verifyEmailHref = `${secret.frontUrl}/verify?state=${randomState}`;
+		await setCache(userEmail, randomState, 600);
+
+		/** Mail Send(Include random state) */
+		const mailerBuilder = getBuilder();
+		const mailer = mailerBuilder
+			.setDefaultFromEmail()
+			.setDefaultMailOptions({ to: userEmail, subject: '나의 작은 가계부 메일인증' })
+			.setMailContent(getVerifyMailHTML(verifyEmailHref, userNickname))
+			.build();
+
+		await mailer.sendMail();
 	};

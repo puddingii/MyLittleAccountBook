@@ -55,7 +55,12 @@ const getModelList = async () => {
 
 export const sync = async () => {
 	try {
-		const syncOptions = secret.nodeEnv === 'test' ? { force: true } : {};
+		const syncType = {
+			test: { force: true },
+			development: { alter: true },
+			production: {},
+		};
+		const syncOptions = syncType[secret.nodeEnv] ?? {};
 		const modelInfo = await getModelList();
 
 		for (const associate of modelInfo.associateList) {

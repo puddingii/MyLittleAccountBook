@@ -388,10 +388,12 @@ describe('Common AccountBook Service Test', function () {
 			const userInfo = new UserModel({
 				email: 'test@naver.com',
 				nickname: 'testNickname',
+				isAuthenticated: true,
 			});
 			const userInfo2 = new UserModel({
 				email: 'test@naver.com',
 				nickname: 'testNickname2',
+				isAuthenticated: true,
 			});
 			const gabInfo = new GroupAccountBookModel({
 				id: 1,
@@ -612,10 +614,12 @@ describe('Common AccountBook Service Test', function () {
 			const userInfo = new UserModel({
 				email: 'test@naver.com',
 				nickname: 'testNickname',
+				isAuthenticated: true,
 			});
 			const userInfo2 = new UserModel({
 				email: 'test@naver.com',
 				nickname: 'testNickname2',
+				isAuthenticated: true,
 			});
 			const cgab = new CronGroupAccountBookModel(cgabInfo);
 			group.users = userInfo;

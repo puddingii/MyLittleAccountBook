@@ -24,7 +24,7 @@ import {
 	setRefreshTokenCache,
 	setSocialLoginStateCache,
 } from '@/util/cache/v2';
-import authEmitter from '@/util/pubsub/authPubsub';
+import authEmitter from '@/pubsub/authPubsub';
 
 export const emailJoin = Logic.emailJoin({
 	errorUtil: { convertErrorToCustomError },

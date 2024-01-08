@@ -91,7 +91,10 @@ export const createSocialUser =
 			const { socialType, userInfo } = info;
 			const transaction = await sequelize.transaction({ autocommit: false });
 			try {
-				const newUser = await UserModel.create(userInfo, { transaction });
+				const newUser = await UserModel.create(
+					{ ...userInfo, isAuthenticated: true },
+					{ transaction },
+				);
 				await newUser.createOauthuser({ type: socialType }, { transaction });
 				const { accountBook } = await createAccountBookAndGroup({
 					AccountBookModel,
@@ -137,7 +140,7 @@ export const createEmailUser =
 
 			const [newUser, created] = await UserModel.findOrCreate({
 				where: { email: userInfo.email },
-				defaults: { ...userInfo, password: hashedPassword },
+				defaults: { ...userInfo, password: hashedPassword, isAuthenticated: false },
 			});
 
 			if (!created) {

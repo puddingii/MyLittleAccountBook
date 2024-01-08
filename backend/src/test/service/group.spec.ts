@@ -159,7 +159,11 @@ describe('Group Service Test', function () {
 
 		before(function () {
 			joinedGroupList.map((group, idx) => {
-				group.users = new UserModel({ email: group.userEmail, nickname: `test${idx}` });
+				group.users = new UserModel({
+					email: group.userEmail,
+					nickname: `test${idx}`,
+					isAuthenticated: true,
+				});
 				return group;
 			});
 		});
@@ -275,7 +279,7 @@ describe('Group Service Test', function () {
 			stubFindGroup.resolves(new GroupModel({ userEmail: '', userType: 'owner' }));
 			stubCreateGroup.resolves(new GroupModel({ ...invitedUserInfo, id: 2 }));
 			stubFindUserInfo.resolves(
-				new UserModel({ email: 'test2@naver.com', nickname: 't' }),
+				new UserModel({ email: 'test2@naver.com', nickname: 't', isAuthenticated: true }),
 			);
 
 			const injectedFunc = addGroup({
@@ -312,7 +316,7 @@ describe('Group Service Test', function () {
 			stubFindGroup.resolves(new GroupModel({ userEmail: '', userType: 'owner' }));
 			stubCreateGroup.resolves(new GroupModel({ ...invitedUserInfo, id: 2 }));
 			stubFindUserInfo.resolves(
-				new UserModel({ email: 'test2@naver.com', nickname: 't' }),
+				new UserModel({ email: 'test2@naver.com', nickname: 't', isAuthenticated: true }),
 			);
 
 			const injectedFunc = addGroup({
@@ -343,7 +347,7 @@ describe('Group Service Test', function () {
 			stubFindGroup.resolves(null);
 			stubCreateGroup.resolves(new GroupModel({ ...invitedUserInfo, id: 2 }));
 			stubFindUserInfo.resolves(
-				new UserModel({ email: 'test2@naver.com', nickname: 't' }),
+				new UserModel({ email: 'test2@naver.com', nickname: 't', isAuthenticated: true }),
 			);
 
 			const injectedFunc = addGroup({
@@ -374,7 +378,7 @@ describe('Group Service Test', function () {
 			stubFindGroup.resolves(new GroupModel({ userEmail: '', userType: 'observer' }));
 			stubCreateGroup.resolves(new GroupModel({ ...invitedUserInfo, id: 2 }));
 			stubFindUserInfo.resolves(
-				new UserModel({ email: 'test2@naver.com', nickname: 't' }),
+				new UserModel({ email: 'test2@naver.com', nickname: 't', isAuthenticated: true }),
 			);
 
 			const injectedFunc = addGroup({
@@ -405,7 +409,7 @@ describe('Group Service Test', function () {
 			stubFindGroup.resolves(new GroupModel({ userEmail: '', userType: 'owner' }));
 			stubCreateGroup.rejects(new Error('createGroup error'));
 			stubFindUserInfo.resolves(
-				new UserModel({ email: 'test2@naver.com', nickname: 't' }),
+				new UserModel({ email: 'test2@naver.com', nickname: 't', isAuthenticated: true }),
 			);
 
 			const injectedFunc = addGroup({
