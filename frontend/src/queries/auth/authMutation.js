@@ -151,3 +151,43 @@ export const useLogoutMutation = () => {
 		},
 	});
 };
+
+/**
+ * @param {{ emailState: string; userEmail: string; }} info
+ */
+const verifyEmailFetcher = info =>
+	axios
+		.patch(QUERY_KEY.verifyEmail, info, {
+			withCredentials: true,
+		})
+		.then(({ data }) => data);
+
+export const useVerifyEmailMutation = () => {
+	const queryClient = useQueryClient();
+
+	return useMutation(verifyEmailFetcher, {
+		onSuccess: () => {
+			queryClient.invalidateQueries(QUERY_KEY.login);
+		},
+	});
+};
+
+/**
+ * @param {{ state: string; }} info
+ */
+const resendEmailVerificationFetcher = info =>
+	axios
+		.post(QUERY_KEY.resendEmail, info, {
+			withCredentials: true,
+		})
+		.then(({ data }) => data);
+
+export const useEmailVerficationMutation = () => {
+	const queryClient = useQueryClient();
+
+	return useMutation(resendEmailVerificationFetcher, {
+		onSuccess: () => {
+			queryClient.invalidateQueries(QUERY_KEY.login);
+		},
+	});
+};

@@ -6,6 +6,7 @@ import GuestGuardRoutes from './GuestGuardRoutes';
 import NotFound from 'pages/not-found';
 import SocialCallback from 'pages/authentication/SoicalCallback';
 import Home from 'pages/home';
+import VerificationEmail from 'pages/authentication/VerificationEmail';
 
 // ==============================|| ROUTING RENDER ||============================== //
 
@@ -20,6 +21,10 @@ export default function ThemeRoutes() {
 		{
 			path: '/',
 			children: [{ path: 'auth/social', element: <SocialCallback /> }],
+		},
+		{
+			path: '/',
+			children: [{ path: 'auth/email', element: <VerificationEmail /> }],
 		},
 		{
 			path: '*',
