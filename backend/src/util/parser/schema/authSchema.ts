@@ -72,11 +72,31 @@ const tokenInfo = zod.object({
 	}),
 });
 
+const verifyEmail = zod.object({
+	body: zod.object({
+		emailState: zod.string({
+			required_error: 'State 정보가 누락되었습니다. 이메일 인증 재요청 부탁드립니다.',
+		}),
+		userEmail: zod.string({
+			required_error: 'Email 정보가 누락되었습니다. 이메일 인증 재요청 부탁드립니다.',
+		}),
+	}),
+});
+
 export type TSocialQuery = zod.infer<typeof socialLogin>;
 export type TGoogleQuery = zod.infer<typeof googleLogin>;
 export type TNaverQuery = zod.infer<typeof naverLogin>;
 export type TEmailQuery = zod.infer<typeof emailLogin>;
 export type TTokenQuery = zod.infer<typeof tokenInfo>;
 export type TJoinQuery = zod.infer<typeof join>;
+export type TVerifyEmailQuery = zod.infer<typeof verifyEmail>;
 
-export default { socialLogin, emailLogin, googleLogin, naverLogin, tokenInfo, join };
+export default {
+	socialLogin,
+	emailLogin,
+	googleLogin,
+	naverLogin,
+	tokenInfo,
+	join,
+	verifyEmail,
+};

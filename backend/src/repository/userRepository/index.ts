@@ -38,8 +38,8 @@ export const updateUserInfo =
 		} = dependencies;
 
 		try {
-			const { email, nickname } = info;
-			const successCount = await UserModel.update({ nickname }, { where: { email } });
+			const { email, ...rest } = info;
+			const successCount = await UserModel.update(rest, { where: { email } });
 
 			return successCount;
 		} catch (error) {

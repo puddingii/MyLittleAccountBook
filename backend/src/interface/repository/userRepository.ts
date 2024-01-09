@@ -1,9 +1,12 @@
+import { InferAttributes } from 'sequelize';
+
 /** Model */
 import OAuthUserModel from '@/model/oauthUser';
 import UserModel from '@/model/user';
 
 /** Util */
 import { TErrorUtil } from '../util';
+import { RequiredPartial } from '..';
 
 export type TFindUserInfo = {
 	dependency: {
@@ -19,5 +22,5 @@ export type TUpdateUserInfo = {
 		errorUtil: Pick<TErrorUtil, 'convertErrorToCustomError'>;
 		UserModel: typeof UserModel;
 	};
-	param: { email: string; nickname: string };
+	param: RequiredPartial<InferAttributes<UserModel>, 'email'>;
 };

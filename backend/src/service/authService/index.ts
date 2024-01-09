@@ -20,7 +20,9 @@ import {
 	TEmailLogin,
 	TGetSocialLoginLocation,
 	TRefreshToken,
+	TResendVerificationEmail,
 	TSocialLogin,
+	TVerifyEmail,
 } from '@/interface/service/authService';
 
 /** Refresh Token - Access Token 의 유효성 검증 */
@@ -350,6 +352,82 @@ export const deleteToken =
 			if (refreshToken === cachedRefreshToken) {
 				await deleteCache(decodedData.email);
 			}
+		} catch (error) {
+			const customError = convertErrorToCustomError(error, {
+				trace: 'Service',
+				code: 400,
+			});
+			throw customError;
+		}
+	};
+
+/**
+ * @return 0-요청 카운트 초과, 1-정상
+ */
+export const resendVerificationEmail =
+	(dependencies: TResendVerificationEmail['dependency']) =>
+	async (info: TResendVerificationEmail['param']) => {
+		const {
+			errorUtil: { convertErrorToCustomError },
+			repository: { findOneUser },
+			service: { sendVerificationEmail },
+		} = dependencies;
+
+		try {
+			const user = await findOneUser({ email: info.userEmail });
+			if (!user) {
+				throw new Error('없는 계정입니다. 회원가입 후 이용해주세요.');
+			}
+			if (user.isAuthenticated) {
+				throw new Error('이미 인증된 유저입니다.');
+			}
+
+			const hasSendEmail = await sendVerificationEmail(info);
+
+			return {
+				code: Number(hasSendEmail),
+				message: hasSendEmail
+					? `"${info.userEmail}"에 인증 이메일이 발송되었습니다.`
+					: '최근에 너무 많은 요청을 하여, 잠시 인증이 제한되었습니다.',
+			};
+		} catch (error) {
+			const customError = convertErrorToCustomError(error, {
+				trace: 'Service',
+				code: 400,
+			});
+			throw customError;
+		}
+	};
+
+/**
+ * @return 1-정상, 2-인증문자 만료, 3-인증문자 비일치
+ */
+export const verifyEmail =
+	(dependencies: TVerifyEmail['dependency']) => async (info: TVerifyEmail['param']) => {
+		const {
+			errorUtil: { convertErrorToCustomError },
+			cacheUtil: { deleteCache, getCache },
+			repository: { updateUserInfo },
+		} = dependencies;
+
+		try {
+			const { userEmail, emailState } = info;
+
+			/** Check request count */
+			const cacheData = await getCache(userEmail);
+			if (!cacheData) {
+				/** 인증 문자 만료 */
+				return { code: 2 };
+			}
+			if (emailState !== cacheData) {
+				/** 인증 문자 비일치 */
+				return { code: 3 };
+			}
+			/** DB update 후 캐시 제거 */
+			await updateUserInfo({ email: info.userEmail, isAuthenticated: true });
+			await deleteCache(userEmail);
+
+			return { code: 1 };
 		} catch (error) {
 			const customError = convertErrorToCustomError(error, {
 				trace: 'Service',

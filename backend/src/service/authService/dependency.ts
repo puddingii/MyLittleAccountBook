@@ -1,5 +1,8 @@
 import * as Logic from '.';
 
+/** Service */
+import { sendVerificationEmail } from '@/service/common/user/dependency';
+
 /** Repository */
 import {
 	createEmailUser,
@@ -7,6 +10,7 @@ import {
 	findOneSocialUserInfo,
 	findOneUser,
 } from '@/repository/authRepository/dependency';
+import { updateUserInfo } from '@/repository/userRepository/dependency';
 
 /** Util */
 import { convertErrorToCustomError } from '@/util/error';
@@ -17,8 +21,10 @@ import {
 	isExpiredToken,
 } from '@/util/jwt';
 import {
+	deleteEmailVerificationStateCache,
 	deleteRefreshTokenCache,
 	deleteSocialLoginStateCache,
+	getEmailVerificationStateCache,
 	getRefreshTokenCache,
 	getSocialLoginStateCache,
 	setRefreshTokenCache,
@@ -76,4 +82,19 @@ export const deleteToken = Logic.deleteToken({
 	errorUtil: { convertErrorToCustomError },
 	cacheUtil: { deleteCache: deleteRefreshTokenCache, getCache: getRefreshTokenCache },
 	jwtUtil: { decodeToken },
+});
+
+export const resendVerificationEmail = Logic.resendVerificationEmail({
+	errorUtil: { convertErrorToCustomError },
+	repository: { findOneUser },
+	service: { sendVerificationEmail },
+});
+
+export const verifyEmail = Logic.verifyEmail({
+	errorUtil: { convertErrorToCustomError },
+	repository: { updateUserInfo },
+	cacheUtil: {
+		deleteCache: deleteEmailVerificationStateCache,
+		getCache: getEmailVerificationStateCache,
+	},
 });

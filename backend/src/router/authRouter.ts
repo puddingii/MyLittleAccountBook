@@ -1,4 +1,4 @@
-import express from 'express';
+import express, { Request } from 'express';
 
 import {
 	emailLogin,
@@ -8,7 +8,11 @@ import {
 	refreshToken,
 	emailJoin,
 	deleteToken,
+	resendVerificationEmail,
+	verifyEmail,
 } from '@/service/authService/dependency';
+import { verifyToken } from '@/middleware/authentication';
+
 import zParser from '@/util/parser';
 import zodSchema from '@/util/parser/schema';
 import { logger } from '@/util';
@@ -22,6 +26,8 @@ import {
 	TPostJoin,
 	TDeleteToken,
 	TGetSocial,
+	TVerifyemail,
+	TResendEmail,
 } from '@/interface/api/response/authResponse';
 
 const router = express.Router();
@@ -173,7 +179,7 @@ router.get('/token', async (req, res) => {
 
 		return res.status(code).json({
 			data: {},
-			message: '',
+			message,
 			status: 'fail',
 		});
 	}
@@ -202,7 +208,66 @@ router.delete('/token', async (req, res) => {
 
 		return res.status(code).json({
 			data: {},
+			message,
+			status: 'fail',
+		});
+	}
+});
+
+/** State값 및 유저 정보로 이메일 인증. */
+router.patch('/email/verify', async (req, res) => {
+	try {
+		const {
+			body: { emailState, userEmail },
+		} = await zParser(zodSchema.auth.verifyEmail, req);
+
+		const result = await verifyEmail({ userEmail, emailState });
+
+		return res.status(200).json({
+			data: { code: result.code },
 			message: '',
+			status: 'success',
+		} satisfies TVerifyemail);
+	} catch (error) {
+		const { message, traceList, code } = convertErrorToCustomError(error, {
+			trace: 'Router',
+			code: 400,
+		});
+		logger.error(message, traceList);
+
+		return res.status(code).json({
+			data: {},
+			message,
+			status: 'fail',
+		});
+	}
+});
+
+/** 인증되지 않는 유저에게 인증이메일 다시 보내기 */
+router.post('/email/resend', verifyToken, async (req, res) => {
+	try {
+		const { email, nickname } = req.user as Exclude<Request['user'], undefined>;
+
+		const result = await resendVerificationEmail({
+			userEmail: email,
+			userNickname: nickname,
+		});
+
+		return res.status(200).json({
+			data: { code: result.code },
+			message: result.message,
+			status: 'success',
+		} satisfies TResendEmail);
+	} catch (error) {
+		const { message, traceList, code } = convertErrorToCustomError(error, {
+			trace: 'Router',
+			code: 400,
+		});
+		logger.error(message, traceList);
+
+		return res.status(code).json({
+			data: {},
+			message,
 			status: 'fail',
 		});
 	}

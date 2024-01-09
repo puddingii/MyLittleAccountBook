@@ -56,7 +56,7 @@ export const sendVerificationEmail =
 		await setCache(userEmail, state, 600);
 
 		/** Mail Send(Include random state) */
-		const verifyEmailHref = `${secret.frontUrl}/verify?state=${state}`;
+		const verifyEmailHref = `${secret.frontUrl}/auth/email?state=${state}&email=${userEmail}`;
 		const mailerBuilder = getBuilder();
 		const mailer = mailerBuilder
 			.setDefaultFromEmail()
