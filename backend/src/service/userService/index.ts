@@ -10,7 +10,6 @@ import {
 /** Etc */
 import secret from '@/config/secret';
 
-/** FIXME Repo단계에서 온 데이터와 info값 대조 필요  */
 export const getUserInfo =
 	(dependencies: TGetUserInfo['dependency']) => async (info: TGetUserInfo['param']) => {
 		const {
@@ -30,6 +29,7 @@ export const getUserInfo =
 				email: userInfo.email,
 				nickname: userInfo.nickname,
 				socialType,
+				isAuthenticated: userInfo.isAuthenticated,
 			} satisfies TGet['data'];
 		} catch (error) {
 			const customError = convertErrorToCustomError(error, {
