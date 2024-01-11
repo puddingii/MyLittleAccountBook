@@ -173,7 +173,7 @@ export const useVerifyEmailMutation = () => {
 };
 
 /**
- * @param {{ state: string; }} info
+ * @param {} info
  */
 const resendEmailVerificationFetcher = info =>
 	axios
