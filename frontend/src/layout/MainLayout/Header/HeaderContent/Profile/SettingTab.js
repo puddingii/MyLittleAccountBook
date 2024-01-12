@@ -1,56 +1,69 @@
-import { useState } from 'react';
+import { Fragment, useMemo, useState } from 'react';
 
 // material-ui
 import { useTheme } from '@mui/material/styles';
 import { List, ListItemButton, ListItemIcon, ListItemText } from '@mui/material';
 
 // assets
-import { CommentOutlined, LockOutlined, QuestionCircleOutlined, UserOutlined, UnorderedListOutlined } from '@ant-design/icons';
+import { QuestionCircleOutlined } from '@ant-design/icons';
+
+import NoticeModal from './NoticeModal';
 
 // ==============================|| HEADER PROFILE - SETTING TAB ||============================== //
 
+const settingList = [{ title: '공지사항', icon: <QuestionCircleOutlined /> }];
+// <CommentOutlined />
+// <UnorderedListOutlined />
+
 const SettingTab = () => {
-  const theme = useTheme();
+	const theme = useTheme();
+	const [noticeModalInfo, setNoticeModalInfo] = useState({
+		name: 'noticeModal',
+		idx: 0,
+		isOpen: false,
+	});
+	const [selectedIndex, setSelectedIndex] = useState(-1);
 
-  const [selectedIndex, setSelectedIndex] = useState(0);
-  const handleListItemClick = (event, index) => {
-    setSelectedIndex(index);
-  };
+	const clickManager = useMemo(() => {
+		return [
+			() => {
+				setNoticeModalInfo(beforeInfo => ({ ...beforeInfo, isOpen: true }));
+			},
+		];
+	}, [setNoticeModalInfo]);
 
-  return (
-    <List component="nav" sx={{ p: 0, '& .MuiListItemIcon-root': { minWidth: 32, color: theme.palette.grey[500] } }}>
-      <ListItemButton selected={selectedIndex === 0} onClick={(event) => handleListItemClick(event, 0)}>
-        <ListItemIcon>
-          <QuestionCircleOutlined />
-        </ListItemIcon>
-        <ListItemText primary="Support" />
-      </ListItemButton>
-      <ListItemButton selected={selectedIndex === 1} onClick={(event) => handleListItemClick(event, 1)}>
-        <ListItemIcon>
-          <UserOutlined />
-        </ListItemIcon>
-        <ListItemText primary="Account Settings" />
-      </ListItemButton>
-      <ListItemButton selected={selectedIndex === 2} onClick={(event) => handleListItemClick(event, 2)}>
-        <ListItemIcon>
-          <LockOutlined />
-        </ListItemIcon>
-        <ListItemText primary="Privacy Center" />
-      </ListItemButton>
-      <ListItemButton selected={selectedIndex === 3} onClick={(event) => handleListItemClick(event, 3)}>
-        <ListItemIcon>
-          <CommentOutlined />
-        </ListItemIcon>
-        <ListItemText primary="Feedback" />
-      </ListItemButton>
-      <ListItemButton selected={selectedIndex === 4} onClick={(event) => handleListItemClick(event, 4)}>
-        <ListItemIcon>
-          <UnorderedListOutlined />
-        </ListItemIcon>
-        <ListItemText primary="History" />
-      </ListItemButton>
-    </List>
-  );
+	const handleListItemClick = (event, index) => {
+		setSelectedIndex(index);
+		clickManager[index]();
+	};
+
+	const handleCloseNoticeModal = () => {
+		setNoticeModalInfo(beforeInfo => ({ ...beforeInfo, isOpen: false }));
+		setNoticeModalInfo(before => ({ ...before, idx: before.idx + 1 }));
+		setSelectedIndex(-1);
+	};
+
+	return (
+		<Fragment>
+			<NoticeModal
+				key={`${noticeModalInfo.name}${noticeModalInfo.idx}`}
+				handleClose={handleCloseNoticeModal}
+				open={noticeModalInfo.isOpen}
+			/>
+			<List component="nav" sx={{ p: 0, '& .MuiListItemIcon-root': { minWidth: 32, color: theme.palette.grey[500] } }}>
+				{settingList.map((setting, idx) => (
+					<ListItemButton
+						key={setting.title}
+						selected={selectedIndex === idx}
+						onClick={event => handleListItemClick(event, idx)}
+					>
+						<ListItemIcon>{setting.icon}</ListItemIcon>
+						<ListItemText primary={setting.title} />
+					</ListItemButton>
+				))}
+			</List>
+		</Fragment>
+	);
 };
 
 export default SettingTab;
