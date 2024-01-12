@@ -44,7 +44,7 @@ const InviteUser = ({
 		},
 	);
 
-	const handleSubmit = async (values, { setErrors, setStatus, setSubmitting }) => {
+	const handleSubmit = async (values, { setErrors, setStatus, setSubmitting, resetForm }) => {
 		try {
 			if (userInfo.email === values.email) {
 				throw Error('자신을 추가할 수 없습니다.');
@@ -56,6 +56,7 @@ const InviteUser = ({
 			setStatus({ success: false });
 			setSubmitting(false);
 			setEmail(values.email);
+			resetForm({ values: { ...initialValue } });
 		} catch (error) {
 			setStatus({ success: false });
 			setErrors({ submit: error?.response?.data?.message ?? error.message });
@@ -112,7 +113,7 @@ const InviteUser = ({
 						</Grid>
 
 						<Divider style={{ marginTop: '20px' }} />
-						<SortTable rows={invitedUserList} setInvitedUserList={setInvitedUserList} />
+						<SortTable setEmail={setEmail} rows={invitedUserList} setInvitedUserList={setInvitedUserList} />
 						<Divider style={{ marginTop: '20px' }} />
 						<MiddleStepButtonGroup
 							{...stepButtonProps}

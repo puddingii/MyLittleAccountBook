@@ -51,7 +51,7 @@ AccessLevelPicker.propTypes = {
 	open: PropTypes.bool.isRequired,
 };
 
-const SortCheckTableBody = ({ page, visibleRows, rowsPerPage, rowCount, setInvitedUserList }) => {
+const SortCheckTableBody = ({ page, visibleRows, rowsPerPage, rowCount, setInvitedUserList, setEmail }) => {
 	const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - rowCount) : 0;
 	const [isOpenDialog, setIsOpenDialog] = useState(false);
 	const [curPointedIndex, setCurPointedIndex] = useState(-1);
@@ -77,6 +77,7 @@ const SortCheckTableBody = ({ page, visibleRows, rowsPerPage, rowCount, setInvit
 		setInvitedUserList(beforeList => {
 			return beforeList.filter(info => info.index !== index);
 		});
+		setEmail('');
 	};
 
 	return (
@@ -123,6 +124,7 @@ SortCheckTableBody.propTypes = {
 	rowsPerPage: PropTypes.number.isRequired,
 	rowCount: PropTypes.number.isRequired,
 	setInvitedUserList: PropTypes.func.isRequired,
+	setEmail: PropTypes.func.isRequired,
 };
 
 export default SortCheckTableBody;

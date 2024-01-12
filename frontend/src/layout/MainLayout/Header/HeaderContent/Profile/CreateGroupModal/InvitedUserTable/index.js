@@ -7,7 +7,7 @@ import SortCheckTableHead from './Header';
 import SortCheckTableBody from './Body';
 import { getComparator, stableSort } from 'utils/sort';
 
-const SortTable = ({ setInvitedUserList, rows }) => {
+const SortTable = ({ setInvitedUserList, setEmail, rows }) => {
 	const ROWS_PER_PAGE = 5;
 	const [order, setOrder] = useState('asc');
 	const [orderBy, setOrderBy] = useState('index');
@@ -42,6 +42,7 @@ const SortTable = ({ setInvitedUserList, rows }) => {
 							rowsPerPage={ROWS_PER_PAGE}
 							rowCount={rows.length}
 							setInvitedUserList={setInvitedUserList}
+							setEmail={setEmail}
 						/>
 					</Table>
 				</TableContainer>
@@ -62,6 +63,7 @@ const SortTable = ({ setInvitedUserList, rows }) => {
 
 SortTable.propTypes = {
 	setInvitedUserList: PropTypes.func.isRequired,
+	setEmail: PropTypes.func.isRequired,
 	rows: PropTypes.array.isRequired,
 };
 
