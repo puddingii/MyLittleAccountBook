@@ -51,6 +51,8 @@ export const associate = (model: TModelInfo) => {
 		targetKey: 'email',
 		foreignKey: 'userEmail',
 		as: 'users',
+		hooks: true,
+		onDelete: 'cascade',
 	});
 };
 

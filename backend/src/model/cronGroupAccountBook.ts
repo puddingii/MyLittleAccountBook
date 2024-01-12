@@ -89,11 +89,15 @@ export const associate = (model: TModelInfo) => {
 		targetKey: 'id',
 		foreignKey: 'groupId',
 		as: 'groups',
+		hooks: true,
+		onDelete: 'cascade',
 	});
 	CronGroupAccountBookModel.belongsTo(model.categorys, {
 		targetKey: 'id',
 		foreignKey: 'categoryId',
 		as: 'categorys',
+		hooks: true,
+		onDelete: 'cascade',
 	});
 };
 

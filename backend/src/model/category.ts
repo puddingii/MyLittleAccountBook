@@ -134,6 +134,8 @@ export const associate = (model: TModelInfo) => {
 		targetKey: 'id',
 		foreignKey: 'accountBookId',
 		as: 'accountbooks',
+		hooks: true,
+		onDelete: 'cascade',
 	});
 	CategoryModel.hasMany(model.groupaccountbooks, {
 		onDelete: 'cascade',
