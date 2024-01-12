@@ -6,6 +6,7 @@ import spendingIncomeRouter from '@/router/spendingIncomeRouter';
 import thisMonthSummaryRouter from '@/router/thisMonthSummaryRouter';
 import manageCategoryRouter from '@/router/manageCategoryRouter';
 import groupRouter from '@/router/groupRouter';
+import noticeRouter from '@/router/noticeRouter';
 
 export default (app: Express) => {
 	app.use('/user', userRouter);
@@ -15,4 +16,5 @@ export default (app: Express) => {
 	app.use('/accountbook/summary', thisMonthSummaryRouter);
 	app.use('/accountbook/category', manageCategoryRouter);
 	app.use('/group', groupRouter);
+	app.use('/notice', noticeRouter);
 };

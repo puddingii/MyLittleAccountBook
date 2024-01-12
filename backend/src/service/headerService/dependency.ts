@@ -4,6 +4,7 @@ import * as Logic from '.';
 import { createAccountBook } from '@/repository/accountBookRepository/dependency';
 import { createDefaultCategory } from '@/repository/categoryRepository/dependency';
 import { createGroupList } from '@/repository/groupRepository/dependency';
+import { findOneNotice, findNoticeList } from '@/repository/noticeRepository/dependency';
 
 /** Util */
 import { convertErrorToCustomError } from '@/util/error';
@@ -15,4 +16,14 @@ export const createAccountBookAndInviteUser = Logic.createAccountBookAndInviteUs
 	errorUtil: { convertErrorToCustomError },
 	sequelize,
 	repository: { createAccountBook, createDefaultCategory, createGroupList },
+});
+
+export const getNotice = Logic.getNotice({
+	errorUtil: { convertErrorToCustomError },
+	repository: { findOneNotice },
+});
+
+export const getNoticeList = Logic.getNoticeList({
+	errorUtil: { convertErrorToCustomError },
+	repository: { findNoticeList },
 });
