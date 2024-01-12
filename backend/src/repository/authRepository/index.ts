@@ -91,11 +91,18 @@ export const createSocialUser =
 			const { socialType, userInfo } = info;
 			const transaction = await sequelize.transaction({ autocommit: false });
 			try {
-				const newUser = await UserModel.create(
-					{ ...userInfo, isAuthenticated: true },
+				const newUser = await UserModel.create({ ...userInfo }, { transaction });
+				await newUser.createOauthuser({ type: socialType }, { transaction });
+				await newUser.createUserprivacy(
+					{
+						isAuthenticated: false,
+						isGroupInvitationOn: false,
+						isPublicUser: false,
+						userEmail: newUser.email,
+					},
 					{ transaction },
 				);
-				await newUser.createOauthuser({ type: socialType }, { transaction });
+
 				const { accountBook } = await createAccountBookAndGroup({
 					AccountBookModel,
 					CategoryModel,
@@ -130,6 +137,7 @@ export const createEmailUser =
 			errorUtil: { convertErrorToCustomError },
 			dateUtil,
 			UserModel,
+			sequelize,
 		} = dependencies;
 
 		try {
@@ -137,24 +145,40 @@ export const createEmailUser =
 				userInfo.password,
 				secret.passwordHashRound,
 			);
+			const transaction = await sequelize.transaction({ autocommit: false });
 
-			const [newUser, created] = await UserModel.findOrCreate({
-				where: { email: userInfo.email },
-				defaults: { ...userInfo, password: hashedPassword, isAuthenticated: false },
-			});
+			try {
+				const [newUser, created] = await UserModel.findOrCreate({
+					where: { email: userInfo.email },
+					defaults: { ...userInfo, password: hashedPassword },
+					transaction,
+				});
 
-			if (!created) {
-				throw new Error('해당 이메일로 생성된 계정이 있습니다.');
+				if (!created) {
+					throw new Error('해당 이메일로 생성된 계정이 있습니다.');
+				}
+				await newUser.createUserprivacy(
+					{
+						isAuthenticated: false,
+						isGroupInvitationOn: false,
+						isPublicUser: false,
+						userEmail: newUser.email,
+					},
+					{ transaction },
+				);
+
+				const { accountBook } = await createAccountBookAndGroup({
+					AccountBookModel,
+					CategoryModel,
+					defaultCategory,
+					dateUtil,
+				})(newUser, transaction);
+
+				return { accountBookId: accountBook.id };
+			} catch (error) {
+				await transaction.rollback();
+				throw error;
 			}
-
-			const { accountBook } = await createAccountBookAndGroup({
-				AccountBookModel,
-				CategoryModel,
-				defaultCategory,
-				dateUtil,
-			})(newUser);
-
-			return { accountBookId: accountBook.id };
 		} catch (error) {
 			const customError = convertErrorToCustomError(error, {
 				trace: 'Repository',

@@ -47,6 +47,7 @@ export type TCreateEmailUser = {
 		CategoryModel: typeof CategoryModel;
 		UserModel: typeof UserModel;
 		defaultCategory: typeof defaultCategory;
+		sequelize: typeof sequelize;
 	};
 	param: TUserInfo;
 };

@@ -29,6 +29,7 @@ export const createEmailUser = Logic.createEmailUser({
 	UserModel,
 	errorUtil: { convertErrorToCustomError },
 	dateUtil: { getCurrentDate },
+	sequelize,
 });
 
 export const findOneUser = Logic.findOneUser({
