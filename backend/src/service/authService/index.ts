@@ -369,15 +369,16 @@ export const resendVerificationEmail =
 	async (info: TResendVerificationEmail['param']) => {
 		const {
 			errorUtil: { convertErrorToCustomError },
-			repository: { findOneUser },
+			repository: { findUserPrivacy },
 			service: { sendVerificationEmail },
 		} = dependencies;
 
 		try {
-			const user = await findOneUser({ email: info.userEmail });
+			const user = await findUserPrivacy({ userEmail: info.userEmail });
 			if (!user) {
 				throw new Error('없는 계정입니다. 회원가입 후 이용해주세요.');
 			}
+
 			if (user.isAuthenticated) {
 				throw new Error('이미 인증된 유저입니다.');
 			}
@@ -407,7 +408,7 @@ export const verifyEmail =
 		const {
 			errorUtil: { convertErrorToCustomError },
 			cacheUtil: { deleteCache, getCache },
-			repository: { updateUserInfo },
+			repository: { updateUserPrivacy },
 		} = dependencies;
 
 		try {
@@ -423,8 +424,9 @@ export const verifyEmail =
 				/** 인증 문자 비일치 */
 				return { code: 3 };
 			}
+
 			/** DB update 후 캐시 제거 */
-			await updateUserInfo({ email: info.userEmail, isAuthenticated: true });
+			await updateUserPrivacy({ userEmail: info.userEmail, isAuthenticated: true });
 			await deleteCache(userEmail);
 
 			return { code: 1 };

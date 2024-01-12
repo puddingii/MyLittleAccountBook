@@ -8,7 +8,10 @@ import {
 	findOneSocialUserInfo,
 	findOneUser,
 } from '@/repository/authRepository/dependency';
-import { updateUserInfo } from '@/repository/userRepository/dependency';
+import {
+	findUserPrivacy,
+	updateUserPrivacy,
+} from '@/repository/userPrivacyRepository/dependency';
 
 /** Util */
 import { TErrorUtil, TCacheUtil, TJwtUtil } from '../util';
@@ -85,7 +88,7 @@ export type TResendVerificationEmail = {
 	dependency: {
 		errorUtil: Pick<TErrorUtil, 'convertErrorToCustomError'>;
 		repository: {
-			findOneUser: typeof findOneUser;
+			findUserPrivacy: typeof findUserPrivacy;
 		};
 		service: {
 			sendVerificationEmail: typeof sendVerificationEmail;
@@ -99,7 +102,7 @@ export type TVerifyEmail = {
 		errorUtil: Pick<TErrorUtil, 'convertErrorToCustomError'>;
 		cacheUtil: Pick<TCacheUtil, 'deleteCache' | 'getCache'>;
 		repository: {
-			updateUserInfo: typeof updateUserInfo;
+			updateUserPrivacy: typeof updateUserPrivacy;
 		};
 	};
 	param: {

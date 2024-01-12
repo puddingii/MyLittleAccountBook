@@ -12,6 +12,9 @@ import {
 	HasManyRemoveAssociationMixin,
 	HasManyRemoveAssociationsMixin,
 	HasManySetAssociationsMixin,
+	HasOneCreateAssociationMixin,
+	HasOneGetAssociationMixin,
+	HasOneSetAssociationMixin,
 	InferAttributes,
 	InferCreationAttributes,
 	Model,
@@ -20,6 +23,7 @@ import {
 
 import sequelize from '@/loader/mysql';
 import OAuthUser from './oauthUser';
+import UserPrivacy from './userPrivacy';
 import GroupModel from './group';
 
 import { TModelInfo } from '@/interface/model';
@@ -28,34 +32,37 @@ export class UserModel extends Model<
 	InferAttributes<UserModel>,
 	InferCreationAttributes<UserModel>
 > {
-	declare addGroup: HasManyAddAssociationMixin<GroupModel, number>;
-	declare addGroups: HasManyAddAssociationsMixin<GroupModel, number>;
-	declare addOauthuser: HasManyAddAssociationMixin<OAuthUser, number>;
-	declare addOauthusers: HasManyAddAssociationsMixin<OAuthUser, number>;
+	declare addGroup: HasManyAddAssociationMixin<GroupModel, GroupModel['id']>;
+	declare addGroups: HasManyAddAssociationsMixin<GroupModel, GroupModel['id']>;
+	declare addOauthuser: HasManyAddAssociationMixin<OAuthUser, OAuthUser['id']>;
+	declare addOauthusers: HasManyAddAssociationsMixin<OAuthUser, OAuthUser['id']>;
 	declare countGroups: HasManyCountAssociationsMixin;
 	declare countOauthusers: HasManyCountAssociationsMixin;
 	declare createdAt: CreationOptional<Date>;
 	declare createGroup: HasManyCreateAssociationMixin<GroupModel, 'userEmail'>;
 	declare createOauthuser: HasManyCreateAssociationMixin<OAuthUser, 'userEmail'>;
+	declare createUserprivacy: HasOneCreateAssociationMixin<UserPrivacy>;
 	declare email: string;
 	declare getGroups: HasManyGetAssociationsMixin<GroupModel>;
 	declare getOauthusers: HasManyGetAssociationsMixin<OAuthUser>;
+	declare getUserprivacy: HasOneGetAssociationMixin<UserPrivacy>;
 	declare groups?: NonAttribute<GroupModel[]>;
-	declare hasGroup: HasManyHasAssociationMixin<GroupModel, number>;
-	declare hasGroups: HasManyHasAssociationsMixin<GroupModel, number>;
-	declare hasOauthuser: HasManyHasAssociationMixin<OAuthUser, number>;
-	declare hasOauthusers: HasManyHasAssociationsMixin<OAuthUser, number>;
-	declare isAuthenticated: boolean;
+	declare hasGroup: HasManyHasAssociationMixin<GroupModel, GroupModel['id']>;
+	declare hasGroups: HasManyHasAssociationsMixin<GroupModel, GroupModel['id']>;
+	declare hasOauthuser: HasManyHasAssociationMixin<OAuthUser, OAuthUser['id']>;
+	declare hasOauthusers: HasManyHasAssociationsMixin<OAuthUser, OAuthUser['id']>;
 	declare nickname: string;
 	declare oauthusers?: NonAttribute<OAuthUser[]>;
 	declare password?: string;
-	declare removeGroup: HasManyRemoveAssociationMixin<GroupModel, number>;
-	declare removeGroups: HasManyRemoveAssociationsMixin<GroupModel, number>;
-	declare removeOauthuser: HasManyRemoveAssociationMixin<OAuthUser, number>;
-	declare removeOauthusers: HasManyRemoveAssociationsMixin<OAuthUser, number>;
-	declare setGroups: HasManySetAssociationsMixin<GroupModel, number>;
-	declare setOauthusers: HasManySetAssociationsMixin<OAuthUser, number>;
+	declare removeGroup: HasManyRemoveAssociationMixin<GroupModel, GroupModel['id']>;
+	declare removeGroups: HasManyRemoveAssociationsMixin<GroupModel, GroupModel['id']>;
+	declare removeOauthuser: HasManyRemoveAssociationMixin<OAuthUser, OAuthUser['id']>;
+	declare removeOauthusers: HasManyRemoveAssociationsMixin<OAuthUser, OAuthUser['id']>;
+	declare setGroups: HasManySetAssociationsMixin<GroupModel, GroupModel['id']>;
+	declare setOauthusers: HasManySetAssociationsMixin<OAuthUser, OAuthUser['id']>;
+	declare setUserprivacy: HasOneSetAssociationMixin<UserPrivacy, UserPrivacy['id']>;
 	declare updatedAt: CreationOptional<Date>;
+	declare userprivacy?: NonAttribute<UserPrivacy>;
 }
 
 UserModel.init(
@@ -73,11 +80,6 @@ UserModel.init(
 			type: DataTypes.STRING,
 			allowNull: true,
 		},
-		isAuthenticated: {
-			type: DataTypes.BOOLEAN,
-			defaultValue: false,
-			allowNull: false,
-		},
 		createdAt: DataTypes.DATE,
 		updatedAt: DataTypes.DATE,
 	},
@@ -89,6 +91,13 @@ export const associate = (model: TModelInfo) => {
 		onDelete: 'cascade',
 		hooks: true,
 		as: 'oauthusers',
+		foreignKey: { allowNull: false, name: 'userEmail' },
+		sourceKey: 'email',
+	});
+	UserModel.hasOne(model.userprivacys, {
+		onDelete: 'cascade',
+		hooks: true,
+		as: 'userprivacy',
 		foreignKey: { allowNull: false, name: 'userEmail' },
 		sourceKey: 'email',
 	});

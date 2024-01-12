@@ -25,11 +25,11 @@ export const getUserInfo =
 			}
 			const socialType = (userInfo.oauthusers ?? [])[0]?.type ?? '';
 
+			/** FIXME isAuthenticated사용하는 곳 수정해야함 */
 			return {
 				email: userInfo.email,
 				nickname: userInfo.nickname,
 				socialType,
-				isAuthenticated: userInfo.isAuthenticated,
 			} satisfies TGet['data'];
 		} catch (error) {
 			const customError = convertErrorToCustomError(error, {

@@ -10,7 +10,10 @@ import {
 	findOneSocialUserInfo,
 	findOneUser,
 } from '@/repository/authRepository/dependency';
-import { updateUserInfo } from '@/repository/userRepository/dependency';
+import {
+	findUserPrivacy,
+	updateUserPrivacy,
+} from '@/repository/userPrivacyRepository/dependency';
 
 /** Util */
 import { convertErrorToCustomError } from '@/util/error';
@@ -86,13 +89,13 @@ export const deleteToken = Logic.deleteToken({
 
 export const resendVerificationEmail = Logic.resendVerificationEmail({
 	errorUtil: { convertErrorToCustomError },
-	repository: { findOneUser },
+	repository: { findUserPrivacy },
 	service: { sendVerificationEmail },
 });
 
 export const verifyEmail = Logic.verifyEmail({
 	errorUtil: { convertErrorToCustomError },
-	repository: { updateUserInfo },
+	repository: { updateUserPrivacy },
 	cacheUtil: {
 		deleteCache: deleteEmailVerificationStateCache,
 		getCache: getEmailVerificationStateCache,

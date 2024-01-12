@@ -19,7 +19,6 @@ describe('User Service Test', function () {
 	const userInfo = {
 		email: 'test@naver.com',
 		nickname: 'testNickname',
-		isAuthenticated: true,
 	};
 
 	describe('#getUserInfo', function () {
@@ -117,7 +116,6 @@ describe('User Service Test', function () {
 				new UserModel({
 					email: 'test2@naver.com',
 					nickname: 'test2Nickname',
-					isAuthenticated: true,
 				}),
 			);
 

@@ -293,7 +293,6 @@ describe('Group Service Test', function () {
 			const user = new UserModel({
 				email: 'test@naver.com',
 				nickname: 'test',
-				isAuthenticated: true,
 			});
 			const userGroup = new GroupModel({
 				userEmail: user.email,
