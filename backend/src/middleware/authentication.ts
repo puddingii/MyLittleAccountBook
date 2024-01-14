@@ -10,9 +10,11 @@ import {
 	getRefreshTokenCache as getCache,
 } from '@/util/cache/v2';
 import { CustomError } from '@/util/error/class';
+import secret from '@/config/secret';
 
 import { TDecodedAccessTokenInfo } from '@/interface/auth';
 import { findUserPrivacy } from '@/repository/userPrivacyRepository/dependency';
+import { findUserInfo } from '@/repository/userRepository/dependency';
 
 export const verifyToken = async (req: Request, res: Response, next: NextFunction) => {
 	try {
@@ -75,6 +77,34 @@ export const checkEmailValidation = async (
 			throw new Error(
 				'로그인된 계정은 인증되지 않은 이메일입니다. 해당 서비스를 이용하기 위해 이메일 인증을 먼저 해주십시요.',
 			);
+		}
+
+		next();
+	} catch (error) {
+		const { message, traceList, code } = convertErrorToCustomError(error, {
+			trace: 'Middleware',
+			code: 401,
+		});
+		logger.error(message, traceList);
+		return res.status(code).send({ data: {}, status: 'fail', message });
+	}
+};
+
+/** 슈퍼 계정인지 확인(어드민 페이지 전용) */
+export const checkSuperUser = async (req: Request, res: Response, next: NextFunction) => {
+	try {
+		const myInfo = req.user;
+		if (!myInfo) {
+			throw new Error('로그인이 필요합니다');
+		}
+
+		const superAccount = await findUserInfo({ email: myInfo.email });
+		if (!superAccount) {
+			throw new Error('로그인이 필요합니다.');
+		}
+
+		if (superAccount.email !== secret.superUser) {
+			throw new CustomError('Forbidden', { code: 403 });
 		}
 
 		next();
