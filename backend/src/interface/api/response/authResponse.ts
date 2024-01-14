@@ -18,3 +18,4 @@ export type TDeleteToken = TResponseType<{}>;
 export type TPostJoin = TResponseType<{}>;
 export type TVerifyemail = TResponseType<{ code: number }>;
 export type TResendEmail = TResponseType<{ code: number }>;
+export type TValidateSuperadmin = TResponseType<{ isValid: boolean }>;

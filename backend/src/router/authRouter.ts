@@ -11,7 +11,7 @@ import {
 	resendVerificationEmail,
 	verifyEmail,
 } from '@/service/authService/dependency';
-import { verifyToken } from '@/middleware/authentication';
+import { checkSuperUser, verifyToken } from '@/middleware/authentication';
 
 import zParser from '@/util/parser';
 import zodSchema from '@/util/parser/schema';
@@ -28,6 +28,7 @@ import {
 	TGetSocial,
 	TVerifyemail,
 	TResendEmail,
+	TValidateSuperadmin,
 } from '@/interface/api/response/authResponse';
 
 const router = express.Router();
@@ -258,6 +259,29 @@ router.post('/email/resend', verifyToken, async (req, res) => {
 			message: result.message,
 			status: 'success',
 		} satisfies TResendEmail);
+	} catch (error) {
+		const { message, traceList, code } = convertErrorToCustomError(error, {
+			trace: 'Router',
+			code: 400,
+		});
+		logger.error(message, traceList);
+
+		return res.status(code).json({
+			data: {},
+			message,
+			status: 'fail',
+		});
+	}
+});
+
+/** 인증되지 않는 유저에게 인증이메일 다시 보내기 */
+router.get('/validate/superdmin', verifyToken, checkSuperUser, (req, res) => {
+	try {
+		return res.status(200).json({
+			data: { isValid: true },
+			message: '',
+			status: 'success',
+		} satisfies TValidateSuperadmin);
 	} catch (error) {
 		const { message, traceList, code } = convertErrorToCustomError(error, {
 			trace: 'Router',
