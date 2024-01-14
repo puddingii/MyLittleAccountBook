@@ -40,7 +40,7 @@ const GroupSelector = ({ matchesXs, boxStyle, isWhiteMode }) => {
 
 	const onChangeAccountBook = e => {
 		setMenuState(beforeState => ({ ...beforeState, openItem: [defaultId] }));
-		location.href = `/group/${e.target.value}/summary`;
+		window.location.href = `/group/${e.target.value}/summary`;
 	};
 
 	useEffect(() => {

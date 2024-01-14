@@ -18,7 +18,6 @@ const AppAppBar = () => {
 	const userInfo = useRecoilValue(userState);
 	const matchesXs = useMediaQuery(theme => theme.breakpoints.down('sm'));
 
-	console.log(userInfo);
 	return (
 		<div>
 			<AppBar position="fixed">

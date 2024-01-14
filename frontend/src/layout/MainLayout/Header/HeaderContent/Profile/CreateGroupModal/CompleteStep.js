@@ -4,7 +4,6 @@ import PropTypes from 'prop-types';
 
 import MiddleStepButtonGroup from './StepButtonGroup/MiddleStepButtonGroup';
 import { useCreateAccountBookMutation } from 'queries/accountBook/accountBookMutation';
-import { useNavigate } from 'react-router';
 
 const CompleteStep = ({
 	invitedUserList,
@@ -16,7 +15,6 @@ const CompleteStep = ({
 	...stepButtonProps
 }) => {
 	const { mutate } = useCreateAccountBookMutation();
-	const navigate = useNavigate();
 	const handleNext = async () => {
 		mutate(
 			{ invitedUserList, ...groupInfo },
@@ -25,7 +23,7 @@ const CompleteStep = ({
 					const {
 						data: { accountBookId },
 					} = response;
-					navigate(`/group/${accountBookId}/summary`);
+					window.location.href = `/group/${accountBookId}/summary`;
 					handleClose();
 				},
 				onError: error => {
