@@ -21,7 +21,6 @@ const emailLoginFetcher = userInfo =>
 export const useEmailLoginMutation = () => {
 	const queryClient = useQueryClient();
 	const setUserState = useSetRecoilState(userState);
-	const navigate = useNavigate();
 
 	return useMutation(emailLoginFetcher, {
 		onSuccess: response => {
@@ -35,7 +34,7 @@ export const useEmailLoginMutation = () => {
 					nickname: decodedData.nickname,
 					isLogin: true,
 				}));
-				navigate(`/group/${data.accountBookId}/summary`);
+				window.location.href = `/group/${data.accountBookId}/summary`;
 			}
 			queryClient.invalidateQueries(QUERY_KEY.login);
 		},
@@ -66,7 +65,7 @@ export const useSocialLoginMutation = type => {
 					nickname: decodedData.nickname,
 					isLogin: true,
 				}));
-				navigate(`/group/${data.accountBookId}/summary`);
+				window.location.href = `/group/${data.accountBookId}/summary`;
 			} else {
 				deleteToken('Authorization');
 				deleteToken('refresh');
