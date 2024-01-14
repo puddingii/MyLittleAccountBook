@@ -1,5 +1,8 @@
 /** Repository */
-import { findUserInfo, updateUserInfo } from '@/repository/userRepository/dependency';
+import {
+	findUserInfoWithPrivacyAndOAuth,
+	updateUserInfo,
+} from '@/repository/userRepository/dependency';
 
 /** ETC */
 import { TErrorUtil, TCacheUtil, TJwtUtil } from '../util';
@@ -8,10 +11,10 @@ export type TGetUserInfo = {
 	dependency: {
 		errorUtil: Pick<TErrorUtil, 'convertErrorToCustomError'>;
 		repository: {
-			findUserInfo: typeof findUserInfo;
+			findUserInfoWithPrivacyAndOAuth: typeof findUserInfoWithPrivacyAndOAuth;
 		};
 	};
-	param: Partial<{ email: string; nickname: string }>;
+	param: Partial<{ email: string; nickname: string }> & { myEmail: string };
 };
 
 export type TUpdateUserInfoAndRefreshToken = {

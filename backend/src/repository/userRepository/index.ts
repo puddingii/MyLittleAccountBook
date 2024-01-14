@@ -4,6 +4,7 @@ import {
 	TFindInviteEnableUserInfoList,
 	TFindUserInfo,
 	TFindUserInfoWithPrivacy,
+	TFindUserInfoWithPrivacyAndOAuth,
 	TUpdateUserInfo,
 } from '@/interface/repository/userRepository';
 
@@ -53,6 +54,41 @@ export const findUserInfoWithPrivacy =
 					as: 'userprivacy',
 					/** inner join */
 				},
+				subQuery: false,
+			});
+
+			return userInfo;
+		} catch (error) {
+			const customError = convertErrorToCustomError(error, {
+				trace: 'Repository',
+			});
+			throw customError;
+		}
+	};
+
+export const findUserInfoWithPrivacyAndOAuth =
+	(dependencies: TFindUserInfoWithPrivacyAndOAuth['dependency']) =>
+	async (info: TFindUserInfoWithPrivacyAndOAuth['param']) => {
+		const {
+			UserModel,
+			OAuthUserModel,
+			UserPrivacyModel,
+			errorUtil: { convertErrorToCustomError },
+		} = dependencies;
+
+		try {
+			const userInfo = await UserModel.findOne({
+				where: info,
+				include: [
+					{
+						model: UserPrivacyModel,
+						as: 'userprivacy',
+					},
+					{
+						model: OAuthUserModel,
+						as: 'oauthusers',
+					},
+				],
 				subQuery: false,
 			});
 

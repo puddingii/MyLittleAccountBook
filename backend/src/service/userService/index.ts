@@ -14,22 +14,37 @@ export const getUserInfo =
 	(dependencies: TGetUserInfo['dependency']) => async (info: TGetUserInfo['param']) => {
 		const {
 			errorUtil: { convertErrorToCustomError },
-			repository: { findUserInfo },
+			repository: { findUserInfoWithPrivacyAndOAuth },
 		} = dependencies;
 
 		try {
-			const userInfo = await findUserInfo(info);
+			const { myEmail, ...user } = info;
+			const userInfo = await findUserInfoWithPrivacyAndOAuth(user);
 
 			if (!userInfo) {
 				throw Error('이메일에 해당하는 유저를 찾을 수 없습니다.');
 			}
-			const socialType = (userInfo.oauthusers ?? [])[0]?.type ?? '';
 
-			/** FIXME isAuthenticated사용하는 곳 수정해야함 */
+			/** Group에서 찾는게 아닌 개별로 조회시 isPublicUser===true 조건이 붙어야 제대로 조회 가능 */
+			if (
+				userInfo.userprivacy &&
+				!userInfo.userprivacy.isPublicUser &&
+				myEmail !== userInfo.email
+			) {
+				throw Error('해당 계정은 비공개 계정입니다.');
+			}
+			const socialType = (userInfo.oauthusers ?? [])[0]?.type ?? '';
+			const isAuthenticated = userInfo.userprivacy?.isAuthenticated ?? false;
+			const isGroupInvitationOn = userInfo.userprivacy?.isGroupInvitationOn ?? false;
+			const isPublicUser = userInfo.userprivacy?.isPublicUser ?? false;
+
 			return {
 				email: userInfo.email,
 				nickname: userInfo.nickname,
 				socialType,
+				isAuthenticated,
+				isGroupInvitationOn,
+				isPublicUser,
 			} satisfies TGet['data'];
 		} catch (error) {
 			const customError = convertErrorToCustomError(error, {

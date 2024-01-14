@@ -7,33 +7,51 @@ import sinon from 'sinon';
 import { getUserInfo, updateUserInfoAndRefreshToken } from '@/service/userService';
 
 /** Dependency */
-import { findUserInfo, updateUserInfo } from '@/repository/userRepository/dependency';
+import {
+	findUserInfoWithPrivacyAndOAuth,
+	updateUserInfo,
+} from '@/repository/userRepository/dependency';
 
 /** Model */
 import UserModel from '@/model/user';
 import OAuthUserModel from '@/model/oauthUser';
 
 import { cacheUtil, errorUtil, jwtUtil } from '../commonDependency';
+import UserPrivacyModel from '@/model/userPrivacy';
 
 describe('User Service Test', function () {
 	const userInfo = {
 		email: 'test@naver.com',
 		nickname: 'testNickname',
+		myEmail: 'test@naver.com',
 	};
 
 	describe('#getUserInfo', function () {
 		const common = {
 			errorUtil: { convertErrorToCustomError: errorUtil.convertErrorToCustomError },
 		};
-		const repository = { findUserInfo };
-		let stubFindUserInfo = sinon.stub(repository, 'findUserInfo');
+		const repository = { findUserInfoWithPrivacyAndOAuth };
+		let stubFindUserInfoWithPrivacyAndOAuth = sinon.stub(
+			repository,
+			'findUserInfoWithPrivacyAndOAuth',
+		);
 
 		beforeEach(function () {
-			stubFindUserInfo = sinon.stub(repository, 'findUserInfo');
+			stubFindUserInfoWithPrivacyAndOAuth = sinon.stub(
+				repository,
+				'findUserInfoWithPrivacyAndOAuth',
+			);
 		});
 
 		it('Check function parameters', async function () {
-			stubFindUserInfo.resolves(new UserModel({ ...userInfo }));
+			const user = new UserModel({ ...userInfo });
+			user.userprivacy = new UserPrivacyModel({
+				isAuthenticated: true,
+				isGroupInvitationOn: true,
+				isPublicUser: true,
+				userEmail: user.email,
+			});
+			stubFindUserInfoWithPrivacyAndOAuth.resolves(user);
 
 			const injectedFunc = getUserInfo({
 				...common,
@@ -43,14 +61,21 @@ describe('User Service Test', function () {
 			try {
 				await injectedFunc({ ...userInfo });
 
-				sinon.assert.calledWith(stubFindUserInfo, { ...userInfo });
+				sinon.assert.calledWith(stubFindUserInfoWithPrivacyAndOAuth, { ...userInfo });
 			} catch (err) {
 				fail(err as Error);
 			}
 		});
 
 		it('Check correct Email User', async function () {
-			stubFindUserInfo.resolves(new UserModel({ ...userInfo }));
+			const user = new UserModel({ ...userInfo });
+			user.userprivacy = new UserPrivacyModel({
+				isAuthenticated: true,
+				isGroupInvitationOn: true,
+				isPublicUser: true,
+				userEmail: user.email,
+			});
+			stubFindUserInfoWithPrivacyAndOAuth.resolves(user);
 
 			const injectedFunc = getUserInfo({
 				...common,
@@ -73,8 +98,15 @@ describe('User Service Test', function () {
 				type: 'Google',
 				userEmail: userModel.email,
 			});
+			const privacyModel = new UserPrivacyModel({
+				isAuthenticated: true,
+				isGroupInvitationOn: true,
+				isPublicUser: true,
+				userEmail: userModel.email,
+			});
 			userModel.oauthusers = [oauthModel];
-			stubFindUserInfo.resolves(userModel);
+			userModel.userprivacy = privacyModel;
+			stubFindUserInfoWithPrivacyAndOAuth.resolves(userModel);
 
 			const injectedFunc = getUserInfo({
 				...common,
@@ -93,7 +125,7 @@ describe('User Service Test', function () {
 		});
 
 		it('Unknown User', async function () {
-			stubFindUserInfo.resolves(null);
+			stubFindUserInfoWithPrivacyAndOAuth.resolves(null);
 
 			const injectedFunc = getUserInfo({
 				...common,
@@ -112,7 +144,7 @@ describe('User Service Test', function () {
 		});
 
 		it('params data !== result data', async function () {
-			stubFindUserInfo.resolves(
+			stubFindUserInfoWithPrivacyAndOAuth.resolves(
 				new UserModel({
 					email: 'test2@naver.com',
 					nickname: 'test2Nickname',

@@ -20,6 +20,13 @@ export const findUserInfoWithPrivacy = Logic.findUserInfoWithPrivacy({
 	UserModel,
 });
 
+export const findUserInfoWithPrivacyAndOAuth = Logic.findUserInfoWithPrivacyAndOAuth({
+	errorUtil: { convertErrorToCustomError },
+	UserPrivacyModel,
+	UserModel,
+	OAuthUserModel,
+});
+
 export const findInviteEnableUserInfoList = Logic.findInviteEnableUserInfoList({
 	errorUtil: { convertErrorToCustomError },
 	UserPrivacyModel,

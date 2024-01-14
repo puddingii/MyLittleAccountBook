@@ -122,6 +122,10 @@ export const addGroup =
 				throw new Error('초대하려는 유저가 이메일 인증이 되지 않았습니다.');
 			}
 
+			if (!invitedUser.userprivacy.isPublicUser) {
+				throw new Error('해당 유저는 비공개 상태입니다.');
+			}
+
 			if (!invitedUser.userprivacy.isGroupInvitationOn) {
 				throw new Error('해당 유저는 그룹 초대를 거부한 상태입니다.');
 			}

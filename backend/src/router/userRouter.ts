@@ -21,8 +21,9 @@ const router = express.Router();
 router.get('/', verifyToken, async (req, res) => {
 	try {
 		const { query: info } = await zParser(zodSchema.user.getUser, req);
+		const myInfo = req.user as Exclude<Request['user'], undefined>;
 
-		const result = await getUserInfo(info);
+		const result = await getUserInfo({ ...info, myEmail: myInfo.email });
 
 		return res.status(200).json({
 			data: result,

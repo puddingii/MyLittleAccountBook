@@ -27,6 +27,16 @@ export type TFindUserInfoWithPrivacy = {
 	param: Partial<{ email: string; nickname: string }>;
 };
 
+export type TFindUserInfoWithPrivacyAndOAuth = {
+	dependency: {
+		errorUtil: Pick<TErrorUtil, 'convertErrorToCustomError'>;
+		UserModel: typeof UserModel;
+		UserPrivacyModel: typeof UserPrivacyModel;
+		OAuthUserModel: typeof OAuthUserModel;
+	};
+	param: Partial<{ email: string; nickname: string }>;
+};
+
 export type TFindInviteEnableUserInfoList = {
 	dependency: {
 		errorUtil: Pick<TErrorUtil, 'convertErrorToCustomError'>;

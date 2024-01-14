@@ -1,7 +1,10 @@
 import * as Logic from '.';
 
 /** Repository */
-import { findUserInfo, updateUserInfo } from '@/repository/userRepository/dependency';
+import {
+	findUserInfoWithPrivacyAndOAuth,
+	updateUserInfo,
+} from '@/repository/userRepository/dependency';
 
 /** Util */
 import { convertErrorToCustomError } from '@/util/error';
@@ -11,7 +14,7 @@ import { setRefreshTokenCache } from '@/util/cache/v2';
 
 export const getUserInfo = Logic.getUserInfo({
 	errorUtil: { convertErrorToCustomError },
-	repository: { findUserInfo },
+	repository: { findUserInfoWithPrivacyAndOAuth },
 });
 
 export const updateUserInfoAndRefreshToken = Logic.updateUserInfoAndRefreshToken({
