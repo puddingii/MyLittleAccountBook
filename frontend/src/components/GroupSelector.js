@@ -7,7 +7,7 @@ import { useRecoilState } from 'recoil';
 import { Box, FormControl, InputLabel, MenuItem, Select } from '@mui/material';
 
 import { useGetGroupAccountBookListQuery } from 'queries/group/groupQuery';
-import { deleteToken } from 'utils/auth';
+import { deleteToken, isExpiredToken } from 'utils/auth';
 import userState from 'recoil/user';
 import menuState from 'recoil/menu';
 
