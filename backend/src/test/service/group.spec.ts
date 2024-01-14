@@ -11,7 +11,7 @@ import {
 	findGroupUserList,
 	updateGroup,
 } from '@/repository/groupRepository/dependency';
-import { findUserInfo } from '@/repository/userRepository/dependency';
+import { findUserInfoWithPrivacy } from '@/repository/userRepository/dependency';
 import { errorUtil, validationUtil } from '../commonDependency';
 import {
 	addGroup,
@@ -259,10 +259,10 @@ describe('Group Service Test', function () {
 	});
 
 	describe('#addGroup', function () {
-		const repository = { createGroup, findGroup, findUserInfo };
+		const repository = { createGroup, findGroup, findUserInfoWithPrivacy };
 		let stubCreateGroup = sinon.stub(repository, 'createGroup');
 		let stubFindGroup = sinon.stub(repository, 'findGroup');
-		let stubFindUserInfo = sinon.stub(repository, 'findUserInfo');
+		let stubFindUserInfo = sinon.stub(repository, 'findUserInfoWithPrivacy');
 		const invitedUserInfo: { userEmail: string; userType: GroupModel['userType'] } = {
 			userEmail: 'test2@naver.com',
 			userType: 'observer' as const,
@@ -271,7 +271,7 @@ describe('Group Service Test', function () {
 		beforeEach(function () {
 			stubCreateGroup = sinon.stub(repository, 'createGroup');
 			stubFindGroup = sinon.stub(repository, 'findGroup');
-			stubFindUserInfo = sinon.stub(repository, 'findUserInfo');
+			stubFindUserInfo = sinon.stub(repository, 'findUserInfoWithPrivacy');
 		});
 
 		it('Check function parameters', async function () {
@@ -282,7 +282,7 @@ describe('Group Service Test', function () {
 			);
 
 			const injectedFunc = addGroup({
-				...common,
+				errorUtil: { ...common.errorUtil, CustomError: errorUtil.CustomError },
 				repository,
 				validationUtil: { isAdminUser: validationUtil.isAdminUserTrue },
 			});
@@ -319,7 +319,7 @@ describe('Group Service Test', function () {
 			);
 
 			const injectedFunc = addGroup({
-				...common,
+				errorUtil: { ...common.errorUtil, CustomError: errorUtil.CustomError },
 				repository,
 				validationUtil: { isAdminUser: validationUtil.isAdminUserTrue },
 			});
@@ -350,7 +350,7 @@ describe('Group Service Test', function () {
 			);
 
 			const injectedFunc = addGroup({
-				...common,
+				errorUtil: { ...common.errorUtil, CustomError: errorUtil.CustomError },
 				repository,
 				validationUtil: { isAdminUser: validationUtil.isAdminUserTrue },
 			});
@@ -381,7 +381,7 @@ describe('Group Service Test', function () {
 			);
 
 			const injectedFunc = addGroup({
-				...common,
+				errorUtil: { ...common.errorUtil, CustomError: errorUtil.CustomError },
 				repository,
 				validationUtil: { isAdminUser: validationUtil.isAdminUserFalse },
 			});
@@ -412,7 +412,7 @@ describe('Group Service Test', function () {
 			);
 
 			const injectedFunc = addGroup({
-				...common,
+				errorUtil: { ...common.errorUtil, CustomError: errorUtil.CustomError },
 				repository,
 				validationUtil: { isAdminUser: validationUtil.isAdminUserTrue },
 			});
@@ -441,7 +441,7 @@ describe('Group Service Test', function () {
 			stubFindUserInfo.resolves(null);
 
 			const injectedFunc = addGroup({
-				...common,
+				errorUtil: { ...common.errorUtil, CustomError: errorUtil.CustomError },
 				repository,
 				validationUtil: { isAdminUser: validationUtil.isAdminUserTrue },
 			});
@@ -468,7 +468,7 @@ describe('Group Service Test', function () {
 			stubFindUserInfo.rejects(new Error('findUserInfo error'));
 
 			const injectedFunc = addGroup({
-				...common,
+				errorUtil: { ...common.errorUtil, CustomError: errorUtil.CustomError },
 				repository,
 				validationUtil: { isAdminUser: validationUtil.isAdminUserTrue },
 			});

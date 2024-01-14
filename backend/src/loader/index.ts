@@ -5,7 +5,7 @@ import utc from 'dayjs/plugin/utc';
 
 /** Loaders */
 import expressLoader from './express';
-import { sync as syncMySQL } from './mysql';
+import sequelize, { sync as syncMySQL } from './mysql';
 import { connect as connectRedis } from './redis';
 import { connect as connectSocket } from './socket';
 
@@ -20,7 +20,7 @@ export default async ({ app }: { app: Express }): Promise<void> => {
 		dayjs.extend(timezone);
 		dayjs.tz.setDefault('Asia/Seoul');
 		await connectRedis();
-		await syncMySQL();
+		await syncMySQL(sequelize);
 		expressLoader(app);
 		await connectSocket();
 		await loadCron();

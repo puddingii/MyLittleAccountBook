@@ -17,8 +17,7 @@ import CategoryModel from '@/model/category';
 import GroupModel from '@/model/group';
 
 /** Dependency */
-import { cacheUtil, errorUtil } from '../commonDependency';
-import sequelize from '@/loader/mysql';
+import { cacheUtil, errorUtil, sequelize } from '../commonDependency';
 import { findGAB as findFGAB } from '@/repository/cronGroupAccountBookRepository/dependency';
 import { findGAB } from '@/repository/groupAccountBookRepository/dependency';
 import {

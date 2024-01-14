@@ -9,7 +9,7 @@ import {
 	findGroupUserList,
 	updateGroup,
 } from '@/repository/groupRepository/dependency';
-import { findUserInfo } from '@/repository/userRepository/dependency';
+import { findUserInfoWithPrivacy } from '@/repository/userRepository/dependency';
 
 /** Util */
 import { convertErrorToCustomError } from '@/util/error';
@@ -32,9 +32,9 @@ export const getGroupUserList = Logic.getGroupUserList({
 });
 
 export const addGroup = Logic.addGroup({
-	errorUtil: { convertErrorToCustomError },
+	errorUtil: { convertErrorToCustomError, CustomError },
 	validationUtil: { isAdminUser },
-	repository: { createGroup, findGroup, findUserInfo },
+	repository: { createGroup, findGroup, findUserInfoWithPrivacy },
 });
 
 export const updateGroupInfo = Logic.updateGroupInfo({

@@ -1,4 +1,5 @@
 /** Library */
+import { append, filter, map, pipe, toArray } from '@fxts/core';
 
 /** Interface */
 import {
@@ -8,13 +9,20 @@ import {
 } from '@/interface/service/headerService';
 import GroupModel from '@/model/group';
 
+const isEqualUser = (a: { email: string }, b: { email: string }) => a.email === b.email;
+
 export const createAccountBookAndInviteUser =
 	(dependencies: TCreateAccountBookAndInviteUser['dependency']) =>
 	async (info: TCreateAccountBookAndInviteUser['param']) => {
 		const {
 			errorUtil: { convertErrorToCustomError },
 			sequelize,
-			repository: { createAccountBook, createDefaultCategory, createGroupList },
+			repository: {
+				createAccountBook,
+				createDefaultCategory,
+				createGroupList,
+				findInviteEnableUserInfoList,
+			},
 		} = dependencies;
 
 		try {
@@ -25,26 +33,32 @@ export const createAccountBookAndInviteUser =
 				const newAccountBook = await createAccountBook({ title, content }, transaction);
 				await createDefaultCategory(newAccountBook.id, transaction);
 
-				const groupInfoList: Array<{
-					userType: GroupModel['userType'];
-					accountBookId: number;
-					userEmail: string;
-				}> = invitedUserList.map(invitedUser => {
-					if (invitedUser.type === 'owner') {
-						throw new Error('초대된 유저는 Owner가 될 수 없습니다.');
-					}
+				const filteredEmailList = pipe(
+					invitedUserList,
+					filter(user => user.type !== 'owner'),
+					map(user => ({ email: user.email })),
+					toArray,
+				);
 
-					return {
-						userType: invitedUser.type,
+				const enableUserList = await findInviteEnableUserInfoList(filteredEmailList);
+
+				const groupInfoList = pipe(
+					invitedUserList,
+					filter(invitedUser =>
+						enableUserList.find(enableUser => isEqualUser(enableUser, invitedUser)),
+					),
+					map(invitedUser => ({
+						userType: invitedUser.type as GroupModel['userType'],
 						accountBookId: newAccountBook.id,
 						userEmail: invitedUser.email,
-					};
-				});
-				groupInfoList.push({
-					userEmail: ownerEmail,
-					accountBookId: newAccountBook.id,
-					userType: 'owner',
-				});
+					})),
+					append({
+						userType: 'owner' as GroupModel['userType'],
+						accountBookId: newAccountBook.id,
+						userEmail: ownerEmail,
+					}),
+					toArray,
+				);
 
 				await createGroupList(groupInfoList, transaction);
 

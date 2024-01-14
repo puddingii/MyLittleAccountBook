@@ -91,9 +91,9 @@ export const getGroupUserList =
 export const addGroup =
 	(dependencies: TAddGroup['dependency']) => async (info: TAddGroup['param']) => {
 		const {
-			errorUtil: { convertErrorToCustomError },
+			errorUtil: { convertErrorToCustomError, CustomError },
 			validationUtil: { isAdminUser },
-			repository: { createGroup, findGroup, findUserInfo },
+			repository: { createGroup, findGroup, findUserInfoWithPrivacy },
 		} = dependencies;
 
 		try {
@@ -109,14 +109,30 @@ export const addGroup =
 				throw new Error('관리 가능한 유저가 아닙니다.');
 			}
 
+			const invitedUser = await findUserInfoWithPrivacy({ email: groupInfo.userEmail });
+			if (!invitedUser) {
+				throw new Error('없는 유저입니다.');
+			}
+
+			if (!invitedUser.userprivacy) {
+				throw new CustomError('DB Error(Join). 운영자에게 문의주세요.', { code: 500 });
+			}
+
+			if (!invitedUser.userprivacy.isAuthenticated) {
+				throw new Error('초대하려는 유저가 이메일 인증이 되지 않았습니다.');
+			}
+
+			if (!invitedUser.userprivacy.isGroupInvitationOn) {
+				throw new Error('해당 유저는 그룹 초대를 거부한 상태입니다.');
+			}
+
 			const group = await createGroup(groupInfo);
-			const userInfo = await findUserInfo({ email: group.userEmail });
 
 			return {
 				email: group.userEmail,
 				type: group.userType,
 				id: group.id,
-				nickname: userInfo?.nickname ?? '',
+				nickname: invitedUser.nickname ?? '',
 			};
 		} catch (error) {
 			const customError = convertErrorToCustomError(error, {

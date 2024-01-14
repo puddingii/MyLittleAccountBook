@@ -7,7 +7,7 @@ import {
 	findGroupUserList,
 	updateGroup,
 } from '@/repository/groupRepository/dependency';
-import { findUserInfo } from '@/repository/userRepository/dependency';
+import { findUserInfoWithPrivacy } from '@/repository/userRepository/dependency';
 
 /** ETC */
 import { TErrorUtil, TValidationUtil } from '../util';
@@ -45,12 +45,12 @@ export type TGetGroupUserList = {
 
 export type TAddGroup = {
 	dependency: {
-		errorUtil: Pick<TErrorUtil, 'convertErrorToCustomError'>;
+		errorUtil: Pick<TErrorUtil, 'convertErrorToCustomError' | 'CustomError'>;
 		validationUtil: Pick<TValidationUtil, 'isAdminUser'>;
 		repository: {
 			findGroup: typeof findGroup;
 			createGroup: typeof createGroup;
-			findUserInfo: typeof findUserInfo;
+			findUserInfoWithPrivacy: typeof findUserInfoWithPrivacy;
 		};
 	};
 	param: {

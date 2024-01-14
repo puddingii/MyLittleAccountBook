@@ -28,8 +28,7 @@ import {
 } from '@/repository/categoryRepository';
 
 /** Dependency */
-import { errorUtil } from '../commonDependency';
-import sequelize from '@/loader/mysql';
+import { errorUtil, sequelize } from '../commonDependency';
 import defaultCategory from '@/json/defaultCategory.json';
 
 /** Model */

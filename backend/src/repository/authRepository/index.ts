@@ -174,6 +174,8 @@ export const createEmailUser =
 					dateUtil,
 				})(newUser, transaction);
 
+				await transaction.commit();
+
 				return { accountBookId: accountBook.id };
 			} catch (error) {
 				await transaction.rollback();

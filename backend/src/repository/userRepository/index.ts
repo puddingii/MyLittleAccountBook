@@ -1,4 +1,11 @@
-import { TFindUserInfo, TUpdateUserInfo } from '@/interface/repository/userRepository';
+import { Op } from 'sequelize';
+
+import {
+	TFindInviteEnableUserInfoList,
+	TFindUserInfo,
+	TFindUserInfoWithPrivacy,
+	TUpdateUserInfo,
+} from '@/interface/repository/userRepository';
 
 /** Email로 찾을 것 */
 export const findUserInfo =
@@ -21,6 +28,70 @@ export const findUserInfo =
 			});
 
 			return userInfo;
+		} catch (error) {
+			const customError = convertErrorToCustomError(error, {
+				trace: 'Repository',
+			});
+			throw customError;
+		}
+	};
+
+export const findUserInfoWithPrivacy =
+	(dependencies: TFindUserInfoWithPrivacy['dependency']) =>
+	async (info: TFindUserInfoWithPrivacy['param']) => {
+		const {
+			UserModel,
+			UserPrivacyModel,
+			errorUtil: { convertErrorToCustomError },
+		} = dependencies;
+
+		try {
+			const userInfo = await UserModel.findOne({
+				where: info,
+				include: {
+					model: UserPrivacyModel,
+					as: 'userprivacy',
+					/** inner join */
+				},
+				subQuery: false,
+			});
+
+			return userInfo;
+		} catch (error) {
+			const customError = convertErrorToCustomError(error, {
+				trace: 'Repository',
+			});
+			throw customError;
+		}
+	};
+
+export const findInviteEnableUserInfoList =
+	(dependencies: TFindInviteEnableUserInfoList['dependency']) =>
+	async (
+		info: TFindInviteEnableUserInfoList['param'][0],
+		transaction?: TFindInviteEnableUserInfoList['param'][1],
+	) => {
+		const {
+			UserModel,
+			UserPrivacyModel,
+			errorUtil: { convertErrorToCustomError },
+		} = dependencies;
+
+		try {
+			const nameWhere = info.length ? { [Op.or]: info } : {};
+			const userList = await UserModel.findAll({
+				where: nameWhere,
+				include: {
+					model: UserPrivacyModel,
+					as: 'userprivacy',
+					required: true,
+					where: { isGroupInvitationOn: true, isAuthenticated: true },
+				},
+				subQuery: false,
+				transaction,
+			});
+
+			return userList;
 		} catch (error) {
 			const customError = convertErrorToCustomError(error, {
 				trace: 'Repository',

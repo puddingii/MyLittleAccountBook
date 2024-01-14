@@ -2,12 +2,13 @@
 import { createAccountBook } from '@/repository/accountBookRepository/dependency';
 import { createDefaultCategory } from '@/repository/categoryRepository/dependency';
 import { createGroupList } from '@/repository/groupRepository/dependency';
+import { findNoticeList, findOneNotice } from '@/repository/noticeRepository/dependency';
+import { findInviteEnableUserInfoList } from '@/repository/userRepository/dependency';
 
 /** ETC */
 import sequelize from '@/loader/mysql';
 import { TErrorUtil } from '../util';
 import GroupModel from '@/model/group';
-import { findNoticeList, findOneNotice } from '@/repository/noticeRepository/dependency';
 
 export type TCreateAccountBookAndInviteUser = {
 	dependency: {
@@ -17,6 +18,7 @@ export type TCreateAccountBookAndInviteUser = {
 			createAccountBook: typeof createAccountBook;
 			createDefaultCategory: typeof createDefaultCategory;
 			createGroupList: typeof createGroupList;
+			findInviteEnableUserInfoList: typeof findInviteEnableUserInfoList;
 		};
 	};
 	param: {

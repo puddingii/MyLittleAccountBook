@@ -4,19 +4,19 @@ import path from 'path';
 import { concurrent, filter, map, pipe, toArray, toAsync } from '@fxts/core';
 
 import { logger } from '@/util';
-import secret from '@/config/secret';
 import { convertErrorToCustomError } from '@/util/error';
+import secret from '@/config/secret';
 
 import { TModelInfo } from '@/interface/model';
 
 const { databaseName, master } = secret.mysql;
 
-const logging =
-	secret.nodeEnv === 'test'
-		? false
-		: (msg: string) => {
-				logger.info(msg, ['Mysql']);
-		  };
+const isTestEnvironment = secret.nodeEnv === 'test';
+const logging = isTestEnvironment
+	? false
+	: (msg: string) => {
+			logger.info(msg, ['Mysql']);
+	  };
 
 const sequelize = new Sequelize(databaseName, master.username, master.pw, {
 	host: master.host,
@@ -53,7 +53,7 @@ const getModelList = async () => {
 	};
 };
 
-export const sync = async () => {
+export const sync = async (sequelize: Sequelize) => {
 	try {
 		const syncType = {
 			test: { force: true },
@@ -78,7 +78,7 @@ export const sync = async () => {
 	}
 };
 
-export const closeConnection = async () => {
+export const closeConnection = async (sequelize: Sequelize) => {
 	try {
 		await sequelize.close();
 		logger.info('Connection has been closed successfully.', ['Mysql']);
