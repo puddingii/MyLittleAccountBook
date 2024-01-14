@@ -8,7 +8,7 @@ import { convertErrorToCustomError } from '@/util/error';
 import { toDate } from '@/util/date';
 
 /** Middleware & Service */
-import { verifyToken } from '@/middleware/authentication';
+import { checkEmailValidation, verifyToken } from '@/middleware/authentication';
 import {
 	addGroup,
 	deleteGroupUser,
@@ -104,7 +104,7 @@ router.get('/validate', verifyToken, async (req, res) => {
 	}
 });
 
-router.post('/', verifyToken, async (req, res) => {
+router.post('/', verifyToken, checkEmailValidation, async (req, res) => {
 	try {
 		const {
 			body: { accessHistory, ...groupInfo },
@@ -134,7 +134,7 @@ router.post('/', verifyToken, async (req, res) => {
 	}
 });
 
-router.patch('/', verifyToken, async (req, res) => {
+router.patch('/', verifyToken, checkEmailValidation, async (req, res) => {
 	try {
 		const {
 			body: { accessHistory, ...groupInfo },
@@ -164,7 +164,7 @@ router.patch('/', verifyToken, async (req, res) => {
 	}
 });
 
-router.delete('/', verifyToken, async (req, res) => {
+router.delete('/', verifyToken, checkEmailValidation, async (req, res) => {
 	try {
 		const {
 			query: { accountBookId, id },

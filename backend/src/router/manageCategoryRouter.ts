@@ -13,7 +13,7 @@ import {
 	getCategoryList,
 	updateCategoryInfo,
 } from '@/service/manageCategory/dependency';
-import { verifyToken } from '@/middleware/authentication';
+import { checkEmailValidation, verifyToken } from '@/middleware/authentication';
 
 /** Interface */
 import {
@@ -49,7 +49,7 @@ router.get('/', verifyToken, async (req, res) => {
 	}
 });
 
-router.post('/', verifyToken, async (req, res) => {
+router.post('/', verifyToken, checkEmailValidation, async (req, res) => {
 	try {
 		const { body: info } = await zParser(zodSchema.manageCategory.postCategory, req);
 
@@ -74,7 +74,7 @@ router.post('/', verifyToken, async (req, res) => {
 	}
 });
 
-router.patch('/', verifyToken, async (req, res) => {
+router.patch('/', verifyToken, checkEmailValidation, async (req, res) => {
 	try {
 		const { body: info } = await zParser(zodSchema.manageCategory.patchCategory, req);
 
@@ -99,7 +99,7 @@ router.patch('/', verifyToken, async (req, res) => {
 	}
 });
 
-router.delete('/', verifyToken, async (req, res) => {
+router.delete('/', verifyToken, checkEmailValidation, async (req, res) => {
 	try {
 		const {
 			query: { accountBookId, id },
