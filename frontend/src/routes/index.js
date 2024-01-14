@@ -1,7 +1,8 @@
 import { useRoutes } from 'react-router-dom';
 
 // project import
-import OnlyGuestMinimalRoutes from './OnlyGuestMinimalRoutes';
+import AuthRoutes from './AuthRoutes';
+import AdminRoutes from './AdminRoutes';
 import GuestGuardRoutes from './GuestGuardRoutes';
 import NotFound from 'pages/not-found';
 import SocialCallback from 'pages/authentication/SoicalCallback';
@@ -17,7 +18,8 @@ export default function ThemeRoutes() {
 			element: <Home />,
 		},
 		GuestGuardRoutes,
-		OnlyGuestMinimalRoutes,
+		AdminRoutes,
+		AuthRoutes,
 		{
 			path: '/',
 			children: [{ path: 'auth/social', element: <SocialCallback /> }],

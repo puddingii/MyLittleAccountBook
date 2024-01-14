@@ -71,3 +71,31 @@ export const useValidateGroupUserQuery = (info, { onSuccess, onError }) => {
 		},
 	});
 };
+
+const getValidateSuperAdminFetcher = info => {
+	const fetcher = () =>
+		axios.get(`${QUERY_KEY.validateSuperAdmin}?${info}`, { withCredentials: true }).then(({ data }) => data);
+
+	return fetcher;
+};
+
+/** @param {{}} info */
+export const useValidateSuperAdminQuery = (info, { onSuccess, onError }) => {
+	const params = new URLSearchParams(info);
+	const fetcher = getValidateSuperAdminFetcher(params.toString());
+
+	return useQuery(QUERY_KEY.validateSuperAdmin, fetcher, {
+		refetchOnMount: true,
+		refetchOnReconnect: true,
+		refetchOnWindowFocus: true,
+		refetchInterval: 55 * 60 * 1000,
+		staleTime: 55 * 60 * 1000,
+		retry: false,
+		onError: error => {
+			onError && onError(error);
+		},
+		onSuccess: response => {
+			onSuccess && onSuccess(response);
+		},
+	});
+};
