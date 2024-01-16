@@ -1,3 +1,4 @@
+/* eslint-disable no-mixed-spaces-and-tabs */
 import { lazy } from 'react';
 
 // project import
@@ -7,11 +8,16 @@ import SuperAdministratorGuard from 'utils/SuperAdministratorGuard';
 
 const ManageNotice = Loadable(lazy(() => import('pages/manageNotice')));
 
-const manageNoticePath = process.env.REACT_APP_MANAGE_NOTICE;
-const MANAGE_NOTICE = manageNoticePath && {
-	path: manageNoticePath,
-	element: <ManageNotice />,
-};
+const manageNoticePath = process.env.REACT_APP_MANAGE_NOTICE ?? '';
+const isNull = manageNoticePath === '';
+const MANAGE_NOTICE = isNull
+	? []
+	: [
+			{
+				path: manageNoticePath,
+				element: <ManageNotice />,
+			},
+	  ];
 
 const AdminRoutes = {
 	path: '/',
@@ -20,7 +26,7 @@ const AdminRoutes = {
 			<MinimalLayout />
 		</SuperAdministratorGuard>
 	),
-	children: [MANAGE_NOTICE],
+	children: [...MANAGE_NOTICE],
 };
 
 export default AdminRoutes;
