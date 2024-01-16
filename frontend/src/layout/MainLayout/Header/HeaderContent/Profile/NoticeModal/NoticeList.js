@@ -56,6 +56,7 @@ const NoticeList = ({ list, pageState, endOfPage, noticeState }) => {
 					},
 					overflow: 'auto',
 					maxHeight: '451px',
+					border: 'solid 1px #a6b8ff',
 				}}
 			>
 				{list.map((notice, idx) => (
