@@ -1,16 +1,16 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import { Dialect, Sequelize } from 'sequelize';
+import { Sequelize } from 'sequelize';
 
 import GroupModel from '@/model/group';
 import { CustomError } from '@/util/error/class';
 import { TContext } from '@/util/error/class/interface';
-import secret from '@/config/mysql.json';
+import secret from '@/config/secret';
 
-const { database, dialect, host, password, username } = secret.test;
+const { databaseName, host, pw, username } = secret.mysql;
 
-export const sequelize = new Sequelize(database, username, password, {
+export const sequelize = new Sequelize(databaseName, username, pw, {
 	host: host,
-	dialect: dialect as Dialect,
+	dialect: 'mysql',
 });
 
 export const errorUtil = {
