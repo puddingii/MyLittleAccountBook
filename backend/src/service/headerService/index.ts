@@ -4,9 +4,13 @@ import { append, filter, map, pipe, toArray } from '@fxts/core';
 /** Interface */
 import {
 	TCreateAccountBookAndInviteUser,
+	TCreateNewNotice,
+	TDeleteNotice,
 	TGetNotice,
 	TGetNoticeList,
+	TUpdateNotice,
 } from '@/interface/service/headerService';
+
 import GroupModel from '@/model/group';
 
 const isEqualUser = (a: { email: string }, b: { email: string }) => a.email === b.email;
@@ -113,6 +117,71 @@ export const getNoticeList =
 			const result = await findNoticeList(info);
 
 			return { count: result.count, list: result.rows };
+		} catch (error) {
+			const customError = convertErrorToCustomError(error, {
+				trace: 'Service',
+				code: 400,
+			});
+			throw customError;
+		}
+	};
+
+export const updateNotice =
+	(dependencies: TUpdateNotice['dependency']) => async (info: TUpdateNotice['param']) => {
+		const {
+			errorUtil: { convertErrorToCustomError },
+			repository: { updateNotice },
+			dateUtil: { getCurrentDate, toDate },
+		} = dependencies;
+
+		try {
+			const updatedCount = await updateNotice({
+				...info,
+				updatedAt: pipe(getCurrentDate(), toDate),
+			});
+
+			return { count: updatedCount };
+		} catch (error) {
+			const customError = convertErrorToCustomError(error, {
+				trace: 'Service',
+				code: 400,
+			});
+			throw customError;
+		}
+	};
+
+export const deleteNotice =
+	(dependencies: TDeleteNotice['dependency']) => async (info: TDeleteNotice['param']) => {
+		const {
+			errorUtil: { convertErrorToCustomError },
+			repository: { deleteNotice },
+		} = dependencies;
+
+		try {
+			const deletedCount = await deleteNotice(info);
+
+			return { count: deletedCount };
+		} catch (error) {
+			const customError = convertErrorToCustomError(error, {
+				trace: 'Service',
+				code: 400,
+			});
+			throw customError;
+		}
+	};
+
+export const createNewNotice =
+	(dependencies: TCreateNewNotice['dependency']) =>
+	async (info: TCreateNewNotice['param']) => {
+		const {
+			errorUtil: { convertErrorToCustomError },
+			repository: { createNotice },
+		} = dependencies;
+
+		try {
+			const { id, content, createdAt, isUpdateContent, title } = await createNotice(info);
+
+			return { id, content, isUpdateContent, createdAt, title };
 		} catch (error) {
 			const customError = convertErrorToCustomError(error, {
 				trace: 'Service',

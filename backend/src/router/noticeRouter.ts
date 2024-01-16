@@ -7,10 +7,23 @@ import { logger } from '@/util';
 import { convertErrorToCustomError } from '@/util/error';
 
 /** Middleware & Service */
-import { getNotice, getNoticeList } from '@/service/headerService/dependency';
+import {
+	createNewNotice,
+	deleteNotice,
+	getNotice,
+	getNoticeList,
+	updateNotice,
+} from '@/service/headerService/dependency';
+import { checkSuperUser, verifyToken } from '@/middleware/authentication';
 
 /** Interface */
-import { TGet, TGetList } from '@/interface/api/response/noticeResponse';
+import {
+	TDelete,
+	TGet,
+	TGetList,
+	TPatch,
+	TPost,
+} from '@/interface/api/response/noticeResponse';
 
 const router = express.Router();
 
@@ -58,6 +71,77 @@ router.get('/list', async (req, res) => {
 			message: '',
 			status: 'success',
 		} satisfies TGetList);
+	} catch (error) {
+		const { message, traceList, code } = convertErrorToCustomError(error, {
+			trace: 'Router',
+			code: 400,
+		});
+		logger.error(message, traceList);
+
+		return res.status(code).json({ data: {}, message, status: 'fail' });
+	}
+});
+
+/** Notice 생성 */
+router.post('/', verifyToken, checkSuperUser, async (req, res) => {
+	try {
+		const { body: info } = await zParser(zodSchema.header.postNotice, req);
+
+		const result = await createNewNotice(info);
+
+		return res.status(200).json({
+			data: result,
+			message: '',
+			status: 'success',
+		} satisfies TPost);
+	} catch (error) {
+		const { message, traceList, code } = convertErrorToCustomError(error, {
+			trace: 'Router',
+			code: 400,
+		});
+		logger.error(message, traceList);
+
+		return res.status(code).json({ data: {}, message, status: 'fail' });
+	}
+});
+
+/** Notice 업데이트 */
+router.patch('/', verifyToken, checkSuperUser, async (req, res) => {
+	try {
+		const { body: info } = await zParser(zodSchema.header.patchNotice, req);
+
+		const result = await updateNotice(info);
+
+		return res.status(200).json({
+			data: result,
+			message: '',
+			status: 'success',
+		} satisfies TPatch);
+	} catch (error) {
+		const { message, traceList, code } = convertErrorToCustomError(error, {
+			trace: 'Router',
+			code: 400,
+		});
+		logger.error(message, traceList);
+
+		return res.status(code).json({ data: {}, message, status: 'fail' });
+	}
+});
+
+/** Notice 삭제 */
+router.delete('/', verifyToken, checkSuperUser, async (req, res) => {
+	try {
+		const {
+			query: { id },
+		} = await zParser(zodSchema.header.deleteNotice, req);
+
+		const result = await deleteNotice({ id: parseInt(id ?? -1, 10) });
+
+		return res.status(200).json({
+			data: result,
+			message: '',
+			status: 'success',
+		} satisfies TDelete);
 	} catch (error) {
 		const { message, traceList, code } = convertErrorToCustomError(error, {
 			trace: 'Router',

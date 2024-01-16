@@ -44,11 +44,39 @@ const getNoticeList = zod.object({
 	}),
 });
 
+const postNotice = zod.object({
+	body: zod.object({
+		title: zod.string({ required_error: '공지 제목이 누락되었습니다.' }),
+		content: zod.string({ required_error: '공지 내용이 누락되었습니다.' }),
+		isUpdateContent: zod.boolean({
+			required_error: '공지or업데이트 여부가 누락되었습니다.',
+		}),
+	}),
+});
+
+const patchNotice = zod.object({
+	body: zod.object({
+		id: zod.number({ required_error: '수정할 공지 Id가 누락되었습니다.' }),
+		title: zod.string().optional(),
+		content: zod.string().optional(),
+		isUpdateContent: zod.boolean().optional(),
+	}),
+});
+
+const deleteNotice = zod.object({
+	query: zod.object({
+		id: zod.string({ required_error: '수정할 공지 Id가 누락되었습니다.' }),
+	}),
+});
+
 export type TGetAccountBookQuery = zod.infer<typeof getAccountBook>;
 export type TPostAccountBookQuery = zod.infer<typeof postAccountBook>;
 export type TPatchAccountBookQuery = zod.infer<typeof patchAccountBook>;
 export type TGetNotice = zod.infer<typeof getNotice>;
 export type TGetNoticeList = zod.infer<typeof getNoticeList>;
+export type TPostNotice = zod.infer<typeof postNotice>;
+export type TPatchNotice = zod.infer<typeof patchNotice>;
+export type TDeleteNotice = zod.infer<typeof deleteNotice>;
 
 export default {
 	getAccountBook,
@@ -56,4 +84,7 @@ export default {
 	patchAccountBook,
 	getNotice,
 	getNoticeList,
+	postNotice,
+	patchNotice,
+	deleteNotice,
 };
