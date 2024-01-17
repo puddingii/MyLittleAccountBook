@@ -1,4 +1,4 @@
-import { useMediaQuery } from '@mui/material';
+import { IconButton, useMediaQuery } from '@mui/material';
 import { useRecoilValue } from 'recoil';
 
 import Box from '@mui/material/Box';
@@ -7,6 +7,9 @@ import AppBar from '../components/AppBar';
 import Toolbar from '../components/Toolbar';
 import GroupSelector from 'components/GroupSelector';
 import userState from 'recoil/user';
+import { Fragment } from 'react';
+import { LogoutOutlined } from '@ant-design/icons';
+import { useLogoutMutation } from 'queries/auth/authMutation';
 
 const rightLink = {
 	fontSize: 16,
@@ -18,6 +21,12 @@ const AppAppBar = () => {
 	const userInfo = useRecoilValue(userState);
 	const matchesXs = useMediaQuery(theme => theme.breakpoints.down('sm'));
 
+	const { mutate: logoutMutate } = useLogoutMutation();
+
+	const handleLogout = async () => {
+		logoutMutate();
+	};
+
 	return (
 		<div>
 			<AppBar position="fixed">
@@ -27,11 +36,16 @@ const AppAppBar = () => {
 						{'나만의 작은 가계부'}
 					</Link>
 					{userInfo.isLogin ? (
-						<GroupSelector
-							matchesXs={matchesXs}
-							boxStyle={{ flex: 1, display: 'flex', justifyContent: 'flex-end' }}
-							isWhiteMode={false}
-						/>
+						<Fragment>
+							<GroupSelector
+								matchesXs={matchesXs}
+								boxStyle={{ flex: 1, display: 'flex', justifyContent: 'flex-end' }}
+								isWhiteMode={false}
+							/>
+							<IconButton size="medium" color="secondary" onClick={handleLogout}>
+								<LogoutOutlined />
+							</IconButton>
+						</Fragment>
 					) : (
 						<Box sx={{ flex: 1, display: 'flex', justifyContent: 'flex-end' }}>
 							<Link color="inherit" variant="h6" underline="none" href="/register" sx={rightLink}>

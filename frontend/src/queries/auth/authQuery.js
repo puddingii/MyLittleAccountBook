@@ -5,7 +5,7 @@ import jwtDecode from 'jwt-decode';
 
 import { QUERY_KEY } from './index';
 import userState from 'recoil/user';
-import { deleteToken, isExpiredToken, setToken } from 'utils/auth';
+import { deleteToken, setToken } from 'utils/auth';
 
 const refreshAccessTokenFetcher = () => axios.get(QUERY_KEY.token, { withCredentials: true }).then(({ data }) => data);
 
@@ -20,11 +20,9 @@ export const useRefreshAccessTokenQuery = ({ onSuccess, onError } = {}) => {
 		staleTime: 55 * 60 * 1000,
 		retry: false,
 		onError: error => {
-			if (isExpiredToken(error)) {
-				deleteToken('Authorization');
-				deleteToken('refresh');
-				setUserState(() => ({ email: '', isLogin: false, nickname: '' }));
-			}
+			deleteToken('Authorization');
+			deleteToken('refresh');
+			setUserState(() => ({ email: '', isLogin: false, nickname: '' }));
 			onError && onError(error);
 		},
 		onSuccess: response => {

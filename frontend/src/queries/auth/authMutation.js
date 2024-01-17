@@ -146,7 +146,7 @@ export const useLogoutMutation = () => {
 			deleteToken('refresh');
 			setUserInfo(() => ({ email: '', isLogin: false, nickname: '' }));
 			navigate('/login');
-			queryClient.invalidateQueries(QUERY_KEY.token);
+			queryClient.invalidateQueries(`${QUERY_KEY.token}delete`);
 		},
 	});
 };

@@ -1,24 +1,16 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import PropTypes from 'prop-types';
 import { useNavigate } from 'react-router';
-import { useEffect } from 'react';
-import axios from 'axios';
 
 import { useRefreshAccessTokenQuery } from 'queries/auth/authQuery';
-import { getCookie } from './cookie';
 
 const OnlyGuest = ({ children }) => {
 	const navigate = useNavigate();
-	const { isError } = useRefreshAccessTokenQuery();
-
-	useEffect(() => {
-		const token = getCookie('token');
-		const access = axios.defaults.headers.common.Authorization;
-
-		if (token && access && !isError) {
+	useRefreshAccessTokenQuery({
+		onSuccess: () => {
 			navigate(-1);
-		}
-	}, []);
+		},
+	});
 
 	return children || null;
 };

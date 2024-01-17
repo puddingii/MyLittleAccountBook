@@ -58,8 +58,16 @@ const NotFixedWriter = ({
 	const formInitialValue = { ...initialValue, ...customInitialValue };
 	const [autocompleteKey, setAutocompleteKey] = useState(1);
 
-	const categoryDefaultId = (categoryList ?? []).findIndex(category => category.childId === formInitialValue.category);
-	const defaultCategory = categoryDefaultId !== -1 ? categoryList[categoryDefaultId] : undefined;
+	const sortedCategoryList = categoryList.sort((categoryA, categoryB) => {
+		if (categoryA.parentName < categoryB.parentName) return -1;
+		if (categoryB.parentName < categoryA.parentName) return 1;
+		return 0;
+	});
+
+	const categoryDefaultId = (sortedCategoryList ?? []).findIndex(
+		category => category.childId === formInitialValue.category,
+	);
+	const defaultCategory = categoryDefaultId !== -1 ? sortedCategoryList[categoryDefaultId] : undefined;
 
 	const handleSubmit = async (values, { setErrors, setStatus, setSubmitting, resetForm }) => {
 		mutate(
@@ -138,16 +146,16 @@ const NotFixedWriter = ({
 									id="category"
 									key={autocompleteKey}
 									onInputChange={(event, newInputValue) => {
-										const idx = categoryList.findIndex(category => category.categoryNamePath === newInputValue);
+										const idx = sortedCategoryList.findIndex(category => category.categoryNamePath === newInputValue);
 										if (idx !== -1) {
-											setFieldValue('category', categoryList[idx].childId, true);
+											setFieldValue('category', sortedCategoryList[idx].childId, true);
 											handleChange(event);
 										} else {
 											setFieldValue('category', '', true);
 										}
 									}}
 									onBlur={handleBlur}
-									options={categoryList}
+									options={sortedCategoryList}
 									groupBy={category => category.parentName}
 									getOptionLabel={category => category.categoryNamePath}
 									isOptionEqualToValue={(options, values) => options.categoryIdPath === values.categoryIdPath}
