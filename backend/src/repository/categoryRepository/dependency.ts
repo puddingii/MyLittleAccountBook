@@ -43,3 +43,8 @@ export const deleteChildCategoryList = Logic.deleteChildCategoryList({
 	errorUtil: { convertErrorToCustomError },
 	CategoryModel,
 });
+
+export const deleteCategory = Logic.deleteCategory({
+	errorUtil: { convertErrorToCustomError },
+	CategoryModel,
+});

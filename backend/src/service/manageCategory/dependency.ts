@@ -6,6 +6,7 @@ import {
 	findCategory,
 	findCategoryList,
 	updateCategory,
+	deleteCategory as deleteCategoryRepo,
 } from '@/repository/categoryRepository/dependency';
 import { findGAB as findFGAB } from '@/repository/cronGroupAccountBookRepository/dependency';
 import { findGAB } from '@/repository/groupAccountBookRepository/dependency';
@@ -47,5 +48,6 @@ export const deleteCategory = Logic.deleteCategory({
 		findCategoryList,
 		findFGAB,
 		findGAB,
+		deleteCategory: deleteCategoryRepo,
 	},
 });

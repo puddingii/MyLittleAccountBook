@@ -1,4 +1,4 @@
-import { Transaction } from 'sequelize';
+import { InferAttributes, Transaction } from 'sequelize';
 
 /** Model */
 import sequelize from '@/loader/mysql';
@@ -88,4 +88,12 @@ export type TDeleteChildCategoryList = {
 		CategoryModel: typeof CategoryModel;
 	};
 	param: [info: { parentId: number; accountBookId: number }, transaction: Transaction];
+};
+
+export type TDeleteCategory = {
+	dependency: {
+		errorUtil: Pick<TErrorUtil, 'convertErrorToCustomError'>;
+		CategoryModel: typeof CategoryModel;
+	};
+	param: [info: Partial<InferAttributes<CategoryModel>>, transaction: Transaction];
 };
