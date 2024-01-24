@@ -51,12 +51,12 @@ export const getCategoryList =
 
 const addMainCategory = async (
 	info: { accountBookId: number; name: string },
-	options: {
+	dependencies: {
 		createCategory: TAddCategory['dependency']['repository']['createCategory'];
 		transaction: Transaction;
 	},
 ) => {
-	const { createCategory, transaction } = options;
+	const { createCategory, transaction } = dependencies;
 	const newMainCategory = await createCategory(info, transaction);
 	const newSubCategory = await createCategory(
 		{
@@ -81,13 +81,13 @@ const addMainCategory = async (
 
 const addSubCategory = async (
 	info: { accountBookId: number; name: string; parentId: number },
-	options: {
+	dependencies: {
 		createCategory: TAddCategory['dependency']['repository']['createCategory'];
 		findCategory: TAddCategory['dependency']['repository']['findCategory'];
 		transaction: Transaction;
 	},
 ) => {
-	const { createCategory, findCategory, transaction } = options;
+	const { createCategory, findCategory, transaction } = dependencies;
 	const { parentId, accountBookId } = info;
 	const mainCategory = await findCategory(
 		{ id: parentId, accountBookId },
