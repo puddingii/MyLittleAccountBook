@@ -1,4 +1,4 @@
-name: Unit test(Important Logic)
+name: Unit test Important Logic
 
 on:
   push:
