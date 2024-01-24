@@ -189,9 +189,9 @@ describe('Header Service Test', function () {
 					fail(err);
 				}
 				sinon.assert.calledOnce(stubCreateAccountBook);
-				sinon.assert.neverCalledWith(stubCreateDefaultCategory);
-				sinon.assert.neverCalledWith(stubCreateGroupList);
-				sinon.assert.neverCalledWith(stubFindInviteEnableUserInfoList);
+				sinon.assert.notCalled(stubCreateDefaultCategory);
+				sinon.assert.notCalled(stubCreateGroupList);
+				sinon.assert.notCalled(stubFindInviteEnableUserInfoList);
 			}
 		});
 
@@ -226,8 +226,8 @@ describe('Header Service Test', function () {
 				}
 				sinon.assert.calledOnce(stubCreateAccountBook);
 				sinon.assert.calledOnce(stubCreateDefaultCategory);
-				sinon.assert.neverCalledWith(stubCreateGroupList);
-				sinon.assert.neverCalledWith(stubFindInviteEnableUserInfoList);
+				sinon.assert.notCalled(stubCreateGroupList);
+				sinon.assert.notCalled(stubFindInviteEnableUserInfoList);
 			}
 		});
 
@@ -295,7 +295,7 @@ describe('Header Service Test', function () {
 				}
 				sinon.assert.calledOnce(stubCreateAccountBook);
 				sinon.assert.calledOnce(stubCreateDefaultCategory);
-				sinon.assert.neverCalledWith(stubCreateGroupList);
+				sinon.assert.notCalled(stubCreateGroupList);
 				sinon.assert.calledOnce(stubFindInviteEnableUserInfoList);
 			}
 		});

@@ -225,8 +225,8 @@ describe('ManageCategory Service Test', function () {
 					fail(err);
 				}
 				sinon.assert.calledOnce(stubCheckAdminGroupUser);
-				sinon.assert.neverCalledWith(stubFindCategory);
-				sinon.assert.neverCalledWith(stubCreateCategory);
+				sinon.assert.notCalled(stubFindCategory);
+				sinon.assert.notCalled(stubCreateCategory);
 			}
 		});
 
@@ -314,7 +314,7 @@ describe('ManageCategory Service Test', function () {
 				equal(result.id, newParentCategoryId);
 				sinon.assert.match((result.childList ?? [])[0], childCategoryInfo);
 				sinon.assert.calledOnce(stubCheckAdminGroupUser);
-				sinon.assert.neverCalledWith(stubFindCategory);
+				sinon.assert.notCalled(stubFindCategory);
 				sinon.assert.calledTwice(stubCreateCategory);
 			} catch (err) {
 				fail(err as Error);
@@ -359,7 +359,7 @@ describe('ManageCategory Service Test', function () {
 				equal(result.id, newParentCategoryId);
 				sinon.assert.match((result.childList ?? [])[0], childCategoryInfo);
 				sinon.assert.calledOnce(stubCheckAdminGroupUser);
-				sinon.assert.neverCalledWith(stubFindCategory);
+				sinon.assert.notCalled(stubFindCategory);
 				sinon.assert.calledTwice(stubCreateCategory);
 			} catch (err) {
 				fail(err as Error);
@@ -407,7 +407,7 @@ describe('ManageCategory Service Test', function () {
 					fail(err);
 				}
 				sinon.assert.calledOnce(stubCheckAdminGroupUser);
-				sinon.assert.neverCalledWith(stubFindCategory);
+				sinon.assert.notCalled(stubFindCategory);
 				sinon.assert.calledOnce(stubCreateCategory);
 			}
 		});
@@ -448,7 +448,7 @@ describe('ManageCategory Service Test', function () {
 					fail(err);
 				}
 				sinon.assert.calledOnce(stubCheckAdminGroupUser);
-				sinon.assert.neverCalledWith(stubFindCategory);
+				sinon.assert.notCalled(stubFindCategory);
 				sinon.assert.calledTwice(stubCreateCategory);
 			}
 		});
@@ -571,7 +571,7 @@ describe('ManageCategory Service Test', function () {
 				}
 				sinon.assert.calledOnce(stubCheckAdminGroupUser);
 				sinon.assert.calledOnce(stubFindCategory);
-				sinon.assert.neverCalledWith(stubCreateCategory);
+				sinon.assert.notCalled(stubCreateCategory);
 			}
 		});
 
@@ -608,7 +608,7 @@ describe('ManageCategory Service Test', function () {
 				}
 				sinon.assert.calledOnce(stubCheckAdminGroupUser);
 				sinon.assert.calledOnce(stubFindCategory);
-				sinon.assert.neverCalledWith(stubCreateCategory);
+				sinon.assert.notCalled(stubCreateCategory);
 			}
 		});
 
@@ -750,7 +750,7 @@ describe('ManageCategory Service Test', function () {
 					fail(err as Error);
 				}
 				sinon.assert.calledOnce(stubCheckAdminGroupUser);
-				sinon.assert.neverCalledWith(stubUpdateCategory);
+				sinon.assert.notCalled(stubUpdateCategory);
 			}
 		});
 
@@ -866,10 +866,10 @@ describe('ManageCategory Service Test', function () {
 					fail(err);
 				}
 				sinon.assert.calledOnce(stubCheckAdminGroupUser);
-				sinon.assert.neverCalledWith(stubFindCategory);
-				sinon.assert.neverCalledWith(stubFindCategoryList);
-				sinon.assert.neverCalledWith(stubFindFGAB);
-				sinon.assert.neverCalledWith(stubFindGAB);
+				sinon.assert.notCalled(stubFindCategory);
+				sinon.assert.notCalled(stubFindCategoryList);
+				sinon.assert.notCalled(stubFindFGAB);
+				sinon.assert.notCalled(stubFindGAB);
 			}
 		});
 
@@ -902,9 +902,9 @@ describe('ManageCategory Service Test', function () {
 				}
 				sinon.assert.calledOnce(stubCheckAdminGroupUser);
 				sinon.assert.calledOnce(stubFindCategory);
-				sinon.assert.neverCalledWith(stubFindCategoryList);
-				sinon.assert.neverCalledWith(stubFindFGAB);
-				sinon.assert.neverCalledWith(stubFindGAB);
+				sinon.assert.notCalled(stubFindCategoryList);
+				sinon.assert.notCalled(stubFindFGAB);
+				sinon.assert.notCalled(stubFindGAB);
 			}
 		});
 
@@ -966,8 +966,8 @@ describe('ManageCategory Service Test', function () {
 				sinon.assert.calledOnce(stubCheckAdminGroupUser);
 				sinon.assert.calledOnce(stubFindCategory);
 				sinon.assert.calledOnce(stubFindCategoryList);
-				sinon.assert.neverCalledWith(stubFindFGAB);
-				sinon.assert.neverCalledWith(stubFindGAB);
+				sinon.assert.notCalled(stubFindFGAB);
+				sinon.assert.notCalled(stubFindGAB);
 			} catch (err) {
 				fail(err as Error);
 			}
@@ -1003,8 +1003,8 @@ describe('ManageCategory Service Test', function () {
 				sinon.assert.calledOnce(stubCheckAdminGroupUser);
 				sinon.assert.calledOnce(stubFindCategory);
 				sinon.assert.calledOnce(stubFindCategoryList);
-				sinon.assert.neverCalledWith(stubFindFGAB);
-				sinon.assert.neverCalledWith(stubFindGAB);
+				sinon.assert.notCalled(stubFindFGAB);
+				sinon.assert.notCalled(stubFindGAB);
 			}
 		});
 
@@ -1072,7 +1072,7 @@ describe('ManageCategory Service Test', function () {
 
 				sinon.assert.calledOnce(stubCheckAdminGroupUser);
 				sinon.assert.calledOnce(stubFindCategory);
-				sinon.assert.neverCalledWith(stubFindCategoryList);
+				sinon.assert.notCalled(stubFindCategoryList);
 				sinon.assert.calledOnce(stubFindFGAB);
 				sinon.assert.calledOnce(stubFindGAB);
 			} catch (err) {
@@ -1111,10 +1111,10 @@ describe('ManageCategory Service Test', function () {
 
 				sinon.assert.calledOnce(stubCheckAdminGroupUser);
 				sinon.assert.calledOnce(stubFindCategory);
-				sinon.assert.neverCalledWith(stubFindCategoryList);
+				sinon.assert.notCalled(stubFindCategoryList);
 				sinon.assert.calledOnce(stubFindFGAB);
 				sinon.assert.calledOnce(stubFindGAB);
-				sinon.assert.neverCalledWith(stubDeleteCache);
+				sinon.assert.notCalled(stubDeleteCache);
 			} catch (err) {
 				fail(err as Error);
 			}
@@ -1150,9 +1150,9 @@ describe('ManageCategory Service Test', function () {
 				}
 				sinon.assert.calledOnce(stubCheckAdminGroupUser);
 				sinon.assert.calledOnce(stubFindCategory);
-				sinon.assert.neverCalledWith(stubFindCategoryList);
+				sinon.assert.notCalled(stubFindCategoryList);
 				sinon.assert.calledOnce(stubFindFGAB);
-				sinon.assert.neverCalledWith(stubFindGAB);
+				sinon.assert.notCalled(stubFindGAB);
 			}
 		});
 
@@ -1186,7 +1186,7 @@ describe('ManageCategory Service Test', function () {
 				}
 				sinon.assert.calledOnce(stubCheckAdminGroupUser);
 				sinon.assert.calledOnce(stubFindCategory);
-				sinon.assert.neverCalledWith(stubFindCategoryList);
+				sinon.assert.notCalled(stubFindCategoryList);
 				sinon.assert.calledOnce(stubFindFGAB);
 				sinon.assert.calledOnce(stubFindGAB);
 			}

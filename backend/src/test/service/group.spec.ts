@@ -421,8 +421,8 @@ describe('Group Service Test', function () {
 					fail(err);
 				}
 				sinon.assert.calledOnce(stubFindGroup);
-				sinon.assert.neverCalledWith(stubCreateGroup);
-				sinon.assert.neverCalledWith(stubFindUserInfoWithPrivacy);
+				sinon.assert.notCalled(stubCreateGroup);
+				sinon.assert.notCalled(stubFindUserInfoWithPrivacy);
 			}
 		});
 
@@ -456,8 +456,8 @@ describe('Group Service Test', function () {
 					fail(err);
 				}
 				sinon.assert.calledOnce(stubFindGroup);
-				sinon.assert.neverCalledWith(stubCreateGroup);
-				sinon.assert.neverCalledWith(stubFindUserInfoWithPrivacy);
+				sinon.assert.notCalled(stubCreateGroup);
+				sinon.assert.notCalled(stubFindUserInfoWithPrivacy);
 			}
 		});
 
@@ -520,7 +520,7 @@ describe('Group Service Test', function () {
 					fail(err);
 				}
 				sinon.assert.calledOnce(stubFindGroup);
-				sinon.assert.neverCalledWith(stubCreateGroup);
+				sinon.assert.notCalled(stubCreateGroup);
 				sinon.assert.calledOnce(stubFindUserInfoWithPrivacy);
 			}
 		});
@@ -549,7 +549,7 @@ describe('Group Service Test', function () {
 					fail(err);
 				}
 				sinon.assert.calledOnce(stubFindGroup);
-				sinon.assert.neverCalledWith(stubCreateGroup);
+				sinon.assert.notCalled(stubCreateGroup);
 				sinon.assert.calledOnce(stubFindUserInfoWithPrivacy);
 			}
 		});
@@ -647,7 +647,7 @@ describe('Group Service Test', function () {
 					fail(err);
 				}
 				sinon.assert.calledOnce(stubFindGroup);
-				sinon.assert.neverCalledWith(stubUpdateGroup);
+				sinon.assert.notCalled(stubUpdateGroup);
 			}
 		});
 
@@ -674,7 +674,7 @@ describe('Group Service Test', function () {
 					fail(err);
 				}
 				sinon.assert.calledOnce(stubFindGroup);
-				sinon.assert.neverCalledWith(stubUpdateGroup);
+				sinon.assert.notCalled(stubUpdateGroup);
 			}
 		});
 
@@ -821,7 +821,7 @@ describe('Group Service Test', function () {
 					fail(err);
 				}
 				sinon.assert.calledOnce(stubFindGroup);
-				sinon.assert.neverCalledWith(stubDeleteGroupUser);
+				sinon.assert.notCalled(stubDeleteGroupUser);
 			}
 		});
 
@@ -848,7 +848,7 @@ describe('Group Service Test', function () {
 					fail(err);
 				}
 				sinon.assert.calledOnce(stubFindGroup);
-				sinon.assert.neverCalledWith(stubDeleteGroupUser);
+				sinon.assert.notCalled(stubDeleteGroupUser);
 			}
 		});
 

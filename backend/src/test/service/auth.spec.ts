@@ -286,7 +286,7 @@ describe('Group Service Test', function () {
 					fail(err);
 				}
 				sinon.assert.calledOnce(stubFindOneUser);
-				sinon.assert.neverCalledWith(spyBcrypt);
+				sinon.assert.notCalled(spyBcrypt);
 			}
 		});
 
@@ -322,7 +322,7 @@ describe('Group Service Test', function () {
 					fail(err);
 				}
 				sinon.assert.calledOnce(stubFindOneUser);
-				sinon.assert.neverCalledWith(spyBcrypt);
+				sinon.assert.notCalled(spyBcrypt);
 			}
 		});
 
@@ -517,8 +517,8 @@ describe('Group Service Test', function () {
 				const result = await isValidatedState(cacheUtil);
 
 				equal(result, false);
-				sinon.assert.neverCalledWith(stubGetCache);
-				sinon.assert.neverCalledWith(stubDeleteCache);
+				sinon.assert.notCalled(stubGetCache);
+				sinon.assert.notCalled(stubDeleteCache);
 			} catch (err) {
 				fail(err as Error);
 			}
@@ -533,7 +533,7 @@ describe('Group Service Test', function () {
 
 				equal(result, false);
 				sinon.assert.calledOnce(stubGetCache);
-				sinon.assert.neverCalledWith(stubDeleteCache);
+				sinon.assert.notCalled(stubDeleteCache);
 			} catch (err) {
 				fail(err as Error);
 			}
@@ -667,7 +667,7 @@ describe('Group Service Test', function () {
 				);
 
 				sinon.assert.calledOnce(stubFindOneSocialUserInfo);
-				sinon.assert.neverCalledWith(stubCreateSocialUser);
+				sinon.assert.notCalled(stubCreateSocialUser);
 				sinon.assert.calledOnce(stubCreateAccessToken);
 				sinon.assert.calledOnce(stubCreateRefreshToken);
 				sinon.assert.calledOnce(stubSetCache);
@@ -708,7 +708,7 @@ describe('Group Service Test', function () {
 				);
 
 				sinon.assert.calledOnce(stubFindOneSocialUserInfo);
-				sinon.assert.neverCalledWith(stubCreateSocialUser);
+				sinon.assert.notCalled(stubCreateSocialUser);
 				sinon.assert.calledOnce(stubCreateAccessToken);
 				sinon.assert.calledOnce(stubCreateRefreshToken);
 				sinon.assert.calledOnce(stubSetCache);
@@ -758,10 +758,10 @@ describe('Group Service Test', function () {
 					fail(err);
 				}
 				sinon.assert.calledOnce(stubFindOneSocialUserInfo);
-				sinon.assert.neverCalledWith(stubCreateSocialUser);
-				sinon.assert.neverCalledWith(stubCreateAccessToken);
-				sinon.assert.neverCalledWith(stubCreateRefreshToken);
-				sinon.assert.neverCalledWith(stubSetCache);
+				sinon.assert.notCalled(stubCreateSocialUser);
+				sinon.assert.notCalled(stubCreateAccessToken);
+				sinon.assert.notCalled(stubCreateRefreshToken);
+				sinon.assert.notCalled(stubSetCache);
 			}
 		});
 
@@ -907,9 +907,9 @@ describe('Group Service Test', function () {
 				}
 				sinon.assert.calledOnce(stubFindOneSocialUserInfo);
 				sinon.assert.calledOnce(stubCreateSocialUser);
-				sinon.assert.neverCalledWith(stubCreateAccessToken);
-				sinon.assert.neverCalledWith(stubCreateRefreshToken);
-				sinon.assert.neverCalledWith(stubSetCache);
+				sinon.assert.notCalled(stubCreateAccessToken);
+				sinon.assert.notCalled(stubCreateRefreshToken);
+				sinon.assert.notCalled(stubSetCache);
 			}
 		});
 	});
@@ -1026,8 +1026,8 @@ describe('Group Service Test', function () {
 					fail(err);
 				}
 				sinon.assert.calledTwice(stubIsExpiredToken);
-				sinon.assert.neverCalledWith(stubDecodeToken);
-				sinon.assert.neverCalledWith(stubCreateAccessToken);
+				sinon.assert.notCalled(stubDecodeToken);
+				sinon.assert.notCalled(stubCreateAccessToken);
 			}
 		});
 
@@ -1088,7 +1088,7 @@ describe('Group Service Test', function () {
 				}
 				sinon.assert.calledTwice(stubIsExpiredToken);
 				sinon.assert.calledOnce(stubDecodeToken);
-				sinon.assert.neverCalledWith(stubCreateAccessToken);
+				sinon.assert.notCalled(stubCreateAccessToken);
 			}
 		});
 
@@ -1119,8 +1119,8 @@ describe('Group Service Test', function () {
 					fail(err);
 				}
 				sinon.assert.calledTwice(stubIsExpiredToken);
-				sinon.assert.neverCalledWith(stubDecodeToken);
-				sinon.assert.neverCalledWith(stubCreateAccessToken);
+				sinon.assert.notCalled(stubDecodeToken);
+				sinon.assert.notCalled(stubCreateAccessToken);
 			}
 		});
 
@@ -1152,7 +1152,7 @@ describe('Group Service Test', function () {
 				}
 				sinon.assert.calledTwice(stubIsExpiredToken);
 				sinon.assert.calledOnce(stubDecodeToken);
-				sinon.assert.neverCalledWith(stubCreateAccessToken);
+				sinon.assert.notCalled(stubCreateAccessToken);
 			}
 		});
 
@@ -1184,7 +1184,7 @@ describe('Group Service Test', function () {
 				}
 				sinon.assert.calledTwice(stubIsExpiredToken);
 				sinon.assert.calledOnce(stubDecodeToken);
-				sinon.assert.neverCalledWith(stubCreateAccessToken);
+				sinon.assert.notCalled(stubCreateAccessToken);
 			}
 		});
 
@@ -1216,7 +1216,7 @@ describe('Group Service Test', function () {
 				}
 				sinon.assert.calledTwice(stubIsExpiredToken);
 				sinon.assert.calledOnce(stubDecodeToken);
-				sinon.assert.neverCalledWith(stubCreateAccessToken);
+				sinon.assert.notCalled(stubCreateAccessToken);
 			}
 		});
 
@@ -1338,8 +1338,8 @@ describe('Group Service Test', function () {
 				});
 
 				sinon.assert.calledOnce(stubDecodeToken);
-				sinon.assert.neverCalledWith(stubGetCache);
-				sinon.assert.neverCalledWith(stubDeleteCache);
+				sinon.assert.notCalled(stubGetCache);
+				sinon.assert.notCalled(stubDeleteCache);
 			} catch (err) {
 				fail(err as Error);
 			}
@@ -1364,7 +1364,7 @@ describe('Group Service Test', function () {
 
 				sinon.assert.calledOnce(stubDecodeToken);
 				sinon.assert.calledOnce(stubGetCache);
-				sinon.assert.neverCalledWith(stubDeleteCache);
+				sinon.assert.notCalled(stubDeleteCache);
 			} catch (err) {
 				fail(err as Error);
 			}
