@@ -25,6 +25,11 @@ describe('User Service Test', function () {
 		nickname: 'testNickname',
 		myEmail: 'test@naver.com',
 	};
+	const privacy = {
+		isAuthenticated: true,
+		isGroupInvitationOn: true,
+		isPublicUser: true,
+	};
 
 	describe('#getUserInfo', function () {
 		const common = {
@@ -46,9 +51,7 @@ describe('User Service Test', function () {
 		it('Check function parameters', async function () {
 			const user = new UserModel({ ...userInfo });
 			user.userprivacy = new UserPrivacyModel({
-				isAuthenticated: true,
-				isGroupInvitationOn: true,
-				isPublicUser: true,
+				...privacy,
 				userEmail: user.email,
 			});
 			stubFindUserInfoWithPrivacyAndOAuth.resolves(user);
@@ -61,7 +64,10 @@ describe('User Service Test', function () {
 			try {
 				await injectedFunc({ ...userInfo });
 
-				sinon.assert.calledWith(stubFindUserInfoWithPrivacyAndOAuth, { ...userInfo });
+				sinon.assert.calledWith(stubFindUserInfoWithPrivacyAndOAuth, {
+					email: userInfo.email,
+					nickname: userInfo.nickname,
+				});
 			} catch (err) {
 				fail(err as Error);
 			}
@@ -70,9 +76,7 @@ describe('User Service Test', function () {
 		it('Check correct Email User', async function () {
 			const user = new UserModel({ ...userInfo });
 			user.userprivacy = new UserPrivacyModel({
-				isAuthenticated: true,
-				isGroupInvitationOn: true,
-				isPublicUser: true,
+				...privacy,
 				userEmail: user.email,
 			});
 			stubFindUserInfoWithPrivacyAndOAuth.resolves(user);
@@ -87,6 +91,9 @@ describe('User Service Test', function () {
 
 				equal(userInfo.email, result.email);
 				equal(userInfo.nickname, result.nickname);
+				equal(privacy.isAuthenticated, result.isAuthenticated);
+				equal(privacy.isGroupInvitationOn, result.isGroupInvitationOn);
+				equal(privacy.isPublicUser, result.isPublicUser);
 			} catch (err) {
 				fail(err as Error);
 			}
@@ -99,9 +106,7 @@ describe('User Service Test', function () {
 				userEmail: userModel.email,
 			});
 			const privacyModel = new UserPrivacyModel({
-				isAuthenticated: true,
-				isGroupInvitationOn: true,
-				isPublicUser: true,
+				...privacy,
 				userEmail: userModel.email,
 			});
 			userModel.oauthusers = [oauthModel];
@@ -118,6 +123,9 @@ describe('User Service Test', function () {
 
 				equal(userInfo.email, result.email);
 				equal(userInfo.nickname, result.nickname);
+				equal(privacy.isAuthenticated, result.isAuthenticated);
+				equal(privacy.isGroupInvitationOn, result.isGroupInvitationOn);
+				equal(privacy.isPublicUser, result.isPublicUser);
 				equal('Google', result.socialType);
 			} catch (err) {
 				fail(err as Error);
@@ -135,33 +143,6 @@ describe('User Service Test', function () {
 			try {
 				const result = await injectedFunc({ ...userInfo });
 				fail(`Result is expected to null: ${result}`);
-			} catch (err) {
-				if (err instanceof AssertionError) {
-					fail(err.message);
-				}
-				ok(true);
-			}
-		});
-
-		it('params data !== result data', async function () {
-			stubFindUserInfoWithPrivacyAndOAuth.resolves(
-				new UserModel({
-					email: 'test2@naver.com',
-					nickname: 'test2Nickname',
-				}),
-			);
-
-			const injectedFunc = getUserInfo({
-				...common,
-				repository,
-			});
-
-			try {
-				await injectedFunc({ ...userInfo });
-
-				fail(
-					`Repository or DB Error. The result does not match the user's nickname or email: ${8}`,
-				);
 			} catch (err) {
 				if (err instanceof AssertionError) {
 					fail(err.message);
@@ -205,7 +186,10 @@ describe('User Service Test', function () {
 					refreshToken: '',
 				});
 
-				sinon.assert.calledWith(stubUpdateUserInfo, { ...userInfo });
+				sinon.assert.calledWith(stubUpdateUserInfo, {
+					email: userInfo.email,
+					nickname: userInfo.nickname,
+				});
 			} catch (err) {
 				fail(err as Error);
 			}

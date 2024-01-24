@@ -34,6 +34,7 @@ import {
 import { deleteCache, getCache } from '@/util/cache';
 import secret from '@/config/secret';
 import authEvent from '@/pubsub/authPubsub';
+import TypeEmitter from '@/pubsub/class';
 
 /** Model */
 import UserModel from '@/model/user';
@@ -42,6 +43,7 @@ import OAuthUserModel from '@/model/oauthUser';
 
 /** Interface */
 import { TUserInfo } from '@/interface/user';
+import { TAuthEvent } from '@/interface/pubsub/auth';
 
 describe('Group Service Test', function () {
 	const common = {
@@ -64,7 +66,7 @@ describe('Group Service Test', function () {
 				accountBookId: number;
 			}>
 		>;
-		let stubEventEmitter = sinon.stub(authEvent);
+		let stubEventEmitter: sinon.SinonStubbedInstance<TypeEmitter<TAuthEvent>>;
 
 		beforeEach(function () {
 			stubCreateEmailUser = sinon.stub(repository, 'createEmailUser');
@@ -158,7 +160,6 @@ describe('Group Service Test', function () {
 			email: 'test@naver.com',
 			password: '',
 			nickname: 'test',
-			isAuthenticated: true,
 		};
 
 		before(function () {
@@ -579,7 +580,6 @@ describe('Group Service Test', function () {
 			const userInfo = {
 				email: 'test@naver.com',
 				nickname: 'test',
-				isAuthenticated: true,
 			};
 			const tokenInfo = { accessToken: 'access token', refreshToken: 'refresh token' };
 			const user = new UserModel(userInfo);
@@ -634,7 +634,6 @@ describe('Group Service Test', function () {
 			const userInfo = {
 				email: 'test@naver.com',
 				nickname: 'test',
-				isAuthenticated: true,
 			};
 			const tokenInfo = { accessToken: 'access token', refreshToken: 'refresh token' };
 			const user = new UserModel(userInfo);
@@ -682,7 +681,6 @@ describe('Group Service Test', function () {
 			const userInfo = {
 				email: 'test@naver.com',
 				nickname: 'test',
-				isAuthenticated: true,
 			};
 			const tokenInfo = { accessToken: 'access token', refreshToken: 'refresh token' };
 			const user = new UserModel(userInfo);
@@ -724,7 +722,6 @@ describe('Group Service Test', function () {
 			const userInfo = {
 				email: 'test@naver.com',
 				nickname: 'test',
-				isAuthenticated: true,
 			};
 			const tokenInfo = { accessToken: 'access token', refreshToken: 'refresh token' };
 			const user = new UserModel(userInfo);
@@ -772,7 +769,6 @@ describe('Group Service Test', function () {
 			const userInfo = {
 				email: 'test@naver.com',
 				nickname: 'test',
-				isAuthenticated: true,
 			};
 			const tokenInfo = { accessToken: 'access token', refreshToken: 'refresh token' };
 			const user = new UserModel(userInfo);
@@ -828,7 +824,6 @@ describe('Group Service Test', function () {
 			const userInfo = {
 				email: 'test@naver.com',
 				nickname: 'test',
-				isAuthenticated: true,
 			};
 			const tokenInfo = { accessToken: 'access token', refreshToken: 'refresh token' };
 			const user = new UserModel(userInfo);
@@ -876,7 +871,6 @@ describe('Group Service Test', function () {
 			const userInfo = {
 				email: 'test@naver.com',
 				nickname: 'test',
-				isAuthenticated: true,
 			};
 			const tokenInfo = { accessToken: 'access token', refreshToken: 'refresh token' };
 			const user = new UserModel(userInfo);

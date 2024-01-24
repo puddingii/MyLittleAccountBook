@@ -25,6 +25,7 @@ import {
 	findCategory,
 	findCategoryList,
 	updateCategory,
+	deleteCategory as deleteCategoryR,
 } from '@/repository/categoryRepository/dependency';
 import { checkAdminGroupUser } from '@/service/common/user/dependency';
 
@@ -819,12 +820,14 @@ describe('ManageCategory Service Test', function () {
 			findCategoryList,
 			findFGAB,
 			findGAB,
+			deleteCategory: deleteCategoryR,
 		};
 		let stubCheckAdminGroupUser = sinon.stub(service, 'checkAdminGroupUser');
 		let stubFindCategory = sinon.stub(repository, 'findCategory');
 		let stubFindCategoryList = sinon.stub(repository, 'findCategoryList');
 		let stubFindFGAB = sinon.stub(repository, 'findFGAB');
 		let stubFindGAB = sinon.stub(repository, 'findGAB');
+		let stubDeleteCategory = sinon.stub(repository, 'deleteCategory');
 
 		beforeEach(function () {
 			stubCheckAdminGroupUser = sinon.stub(service, 'checkAdminGroupUser');
@@ -832,6 +835,7 @@ describe('ManageCategory Service Test', function () {
 			stubFindCategoryList = sinon.stub(repository, 'findCategoryList');
 			stubFindFGAB = sinon.stub(repository, 'findFGAB');
 			stubFindGAB = sinon.stub(repository, 'findGAB');
+			stubDeleteCategory = sinon.stub(repository, 'deleteCategory');
 		});
 
 		it('If checkAdminGroupUser error', async function () {
@@ -843,6 +847,7 @@ describe('ManageCategory Service Test', function () {
 			stubFindCategoryList.resolves([]);
 			stubFindFGAB.resolves(undefined);
 			stubFindGAB.resolves(undefined);
+			stubDeleteCategory.resolves(1);
 
 			const injectedFunc = deleteCategory({
 				...common,
@@ -877,6 +882,7 @@ describe('ManageCategory Service Test', function () {
 			stubFindCategoryList.resolves([]);
 			stubFindFGAB.resolves(undefined);
 			stubFindGAB.resolves(undefined);
+			stubDeleteCategory.resolves(1);
 
 			const injectedFunc = deleteCategory({
 				...common,
@@ -911,6 +917,7 @@ describe('ManageCategory Service Test', function () {
 			stubFindCategoryList.resolves([]);
 			stubFindFGAB.resolves(undefined);
 			stubFindGAB.resolves(undefined);
+			stubDeleteCategory.resolves(1);
 
 			const injectedFunc = deleteCategory({
 				...common,
@@ -943,6 +950,7 @@ describe('ManageCategory Service Test', function () {
 			stubFindCategoryList.resolves([]);
 			stubFindFGAB.resolves(undefined);
 			stubFindGAB.resolves(undefined);
+			stubDeleteCategory.resolves(1);
 
 			const injectedFunc = deleteCategory({
 				...common,
@@ -974,6 +982,7 @@ describe('ManageCategory Service Test', function () {
 			stubFindCategoryList.resolves([new CategoryModel()]);
 			stubFindFGAB.resolves(undefined);
 			stubFindGAB.resolves(undefined);
+			stubDeleteCategory.resolves(1);
 
 			const injectedFunc = deleteCategory({
 				...common,
@@ -1011,6 +1020,7 @@ describe('ManageCategory Service Test', function () {
 			stubFindCategoryList.resolves([]);
 			stubFindFGAB.resolves(undefined);
 			stubFindGAB.resolves(undefined);
+			stubDeleteCategory.resolves(1);
 
 			const injectedFunc = deleteCategory({
 				...common,
@@ -1047,6 +1057,7 @@ describe('ManageCategory Service Test', function () {
 			stubFindCategoryList.resolves([]);
 			stubFindFGAB.resolves(undefined);
 			stubFindGAB.resolves(undefined);
+			stubDeleteCategory.resolves(1);
 
 			const injectedFunc = deleteCategory({
 				...common,
@@ -1070,17 +1081,18 @@ describe('ManageCategory Service Test', function () {
 		});
 
 		it('Check sub category with history(cgab) is existed', async function () {
+			const category = new CategoryModel({
+				name: '서브 카테고리',
+				accountBookId: 1,
+				parentId: 1,
+			});
+			category.destroy = async () => {};
 			stubCheckAdminGroupUser.resolves(new GroupModel());
-			stubFindCategory.resolves(
-				new CategoryModel({
-					name: '서브 카테고리',
-					accountBookId: 1,
-					parentId: 1,
-				}),
-			);
+			stubFindCategory.resolves(category);
 			stubFindCategoryList.resolves([]);
 			stubFindFGAB.resolves(new CronGroupAccountBookModel());
 			stubFindGAB.resolves(undefined);
+			stubDeleteCategory.resolves(1);
 
 			const injectedFunc = deleteCategory({
 				...common,
@@ -1116,6 +1128,7 @@ describe('ManageCategory Service Test', function () {
 			stubFindCategoryList.resolves([]);
 			stubFindFGAB.resolves(undefined);
 			stubFindGAB.resolves(new GroupAccountBookModel());
+			stubDeleteCategory.resolves(1);
 
 			const injectedFunc = deleteCategory({
 				...common,
