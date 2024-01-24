@@ -12,7 +12,7 @@ on:
 
 jobs:
   test:
-    name: Build
+    name: Test
     runs-on: ubuntu-latest
     defaults:
       run:
@@ -28,7 +28,7 @@ jobs:
       - name: Install dependencies & make test-coverage
         run: |
           yarn install --pure-lockfile
-          make test-coverage
+          mkdir test-coverage
 
       - name: Run test
         run: yarn coverage
