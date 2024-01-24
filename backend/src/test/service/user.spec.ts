@@ -33,7 +33,10 @@ describe('User Service Test', function () {
 
 	describe('#getUserInfo', function () {
 		const common = {
-			errorUtil: { convertErrorToCustomError: errorUtil.convertErrorToCustomError },
+			errorUtil: {
+				convertErrorToCustomError: errorUtil.convertErrorToCustomError,
+				CustomError: errorUtil.CustomError,
+			},
 		};
 		const repository = { findUserInfoWithPrivacyAndOAuth };
 		let stubFindUserInfoWithPrivacyAndOAuth = sinon.stub(
@@ -96,6 +99,76 @@ describe('User Service Test', function () {
 				equal(privacy.isPublicUser, result.isPublicUser);
 			} catch (err) {
 				fail(err as Error);
+			}
+		});
+
+		it('Database join error', async function () {
+			const user = new UserModel({ ...userInfo });
+			stubFindUserInfoWithPrivacyAndOAuth.resolves(user);
+
+			const injectedFunc = getUserInfo({
+				...common,
+				repository,
+			});
+
+			try {
+				await injectedFunc({ ...userInfo });
+
+				fail('Expected to error');
+			} catch (err) {
+				if (err instanceof AssertionError) {
+					fail(err);
+				}
+				sinon.assert.calledOnce(stubFindUserInfoWithPrivacyAndOAuth);
+			}
+		});
+
+		it('If isPublicUser value is false and my information', async function () {
+			const user = new UserModel({ ...userInfo });
+			user.userprivacy = new UserPrivacyModel({
+				...privacy,
+				isPublicUser: false,
+				userEmail: user.email,
+			});
+			stubFindUserInfoWithPrivacyAndOAuth.resolves(user);
+
+			const injectedFunc = getUserInfo({
+				...common,
+				repository,
+			});
+
+			try {
+				await injectedFunc({ ...userInfo });
+
+				sinon.assert.calledOnce(stubFindUserInfoWithPrivacyAndOAuth);
+			} catch (err) {
+				fail(err as Error);
+			}
+		});
+
+		it('If isPublicUser value is false and myEmail !== userInfo.email', async function () {
+			const user = new UserModel({ ...userInfo });
+			user.userprivacy = new UserPrivacyModel({
+				...privacy,
+				isPublicUser: false,
+				userEmail: user.email,
+			});
+			stubFindUserInfoWithPrivacyAndOAuth.resolves(user);
+
+			const injectedFunc = getUserInfo({
+				...common,
+				repository,
+			});
+
+			try {
+				await injectedFunc({ ...userInfo, myEmail: 'test2@naver.com' });
+
+				fail('Expected to error');
+			} catch (err) {
+				if (err instanceof AssertionError) {
+					fail(err);
+				}
+				sinon.assert.calledOnce(stubFindUserInfoWithPrivacyAndOAuth);
 			}
 		});
 

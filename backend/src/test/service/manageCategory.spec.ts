@@ -1080,6 +1080,46 @@ describe('ManageCategory Service Test', function () {
 			}
 		});
 
+		it('If deleteCategory return 0', async function () {
+			const cacheUtil = common.cacheUtil;
+			const stubDeleteCache = sinon.stub(cacheUtil, 'deleteCache');
+			stubCheckAdminGroupUser.resolves(new GroupModel());
+			stubFindCategory.resolves(
+				new CategoryModel({
+					name: '서브 카테고리',
+					accountBookId: 1,
+					parentId: 1,
+				}),
+			);
+			stubFindCategoryList.resolves([]);
+			stubFindFGAB.resolves(undefined);
+			stubFindGAB.resolves(undefined);
+			stubDeleteCategory.resolves(0);
+			stubDeleteCache.resolves();
+
+			const injectedFunc = deleteCategory({
+				...common,
+				...database,
+				repository,
+				service,
+				errorUtil,
+				cacheUtil,
+			});
+
+			try {
+				await injectedFunc({ accountBookId: 1, id: 1, myEmail: 'test@naver.com' });
+
+				sinon.assert.calledOnce(stubCheckAdminGroupUser);
+				sinon.assert.calledOnce(stubFindCategory);
+				sinon.assert.neverCalledWith(stubFindCategoryList);
+				sinon.assert.calledOnce(stubFindFGAB);
+				sinon.assert.calledOnce(stubFindGAB);
+				sinon.assert.neverCalledWith(stubDeleteCache);
+			} catch (err) {
+				fail(err as Error);
+			}
+		});
+
 		it('Check sub category with history(cgab) is existed', async function () {
 			const category = new CategoryModel({
 				name: '서브 카테고리',

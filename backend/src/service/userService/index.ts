@@ -13,7 +13,7 @@ import secret from '@/config/secret';
 export const getUserInfo =
 	(dependencies: TGetUserInfo['dependency']) => async (info: TGetUserInfo['param']) => {
 		const {
-			errorUtil: { convertErrorToCustomError },
+			errorUtil: { convertErrorToCustomError, CustomError },
 			repository: { findUserInfoWithPrivacyAndOAuth },
 		} = dependencies;
 
@@ -25,6 +25,10 @@ export const getUserInfo =
 				throw Error('이메일에 해당하는 유저를 찾을 수 없습니다.');
 			}
 
+			if (!userInfo.userprivacy) {
+				throw new CustomError('DB Error(Join). 운영자에게 문의주세요.', { code: 500 });
+			}
+
 			/** Group에서 찾는게 아닌 개별로 조회시 isPublicUser===true 조건이 붙어야 제대로 조회 가능 */
 			if (
 				userInfo.userprivacy &&
@@ -34,9 +38,9 @@ export const getUserInfo =
 				throw Error('해당 계정은 비공개 계정입니다.');
 			}
 			const socialType = (userInfo.oauthusers ?? [])[0]?.type ?? '';
-			const isAuthenticated = userInfo.userprivacy?.isAuthenticated ?? false;
-			const isGroupInvitationOn = userInfo.userprivacy?.isGroupInvitationOn ?? false;
-			const isPublicUser = userInfo.userprivacy?.isPublicUser ?? false;
+			const isAuthenticated = userInfo.userprivacy.isAuthenticated;
+			const isGroupInvitationOn = userInfo.userprivacy.isGroupInvitationOn;
+			const isPublicUser = userInfo.userprivacy.isPublicUser;
 
 			return {
 				email: userInfo.email,
