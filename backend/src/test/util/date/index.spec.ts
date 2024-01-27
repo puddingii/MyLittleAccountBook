@@ -11,7 +11,7 @@ describe('Date Util Test', function () {
 	const curDate = dayjs().toDate();
 
 	describe('#calculateNextCycle', function () {
-		it('Check function parameters', function () {
+		it('Check expected result', function () {
 			try {
 				const result = DateUtil.calculateNextCycle(curDate, 1, 'd');
 
