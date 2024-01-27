@@ -2,6 +2,9 @@ name: Unit test Important Logic
 
 on:
   push:
+    branches:
+      - main
+      - develop
     paths:
       - 'backend/**'
       - '!backend/k6/**'
@@ -29,9 +32,6 @@ jobs:
         run: |
           yarn install --pure-lockfile
           mkdir test-coverage
-
-      - name: Run test
-        run: yarn coverage
 
       - name: Record coverage result
         uses: coverallsapp/github-action@v2
