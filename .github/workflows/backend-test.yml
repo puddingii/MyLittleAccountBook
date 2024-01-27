@@ -37,10 +37,11 @@ jobs:
       - name: 'Record unit test result'
         uses: dorny/test-reporter@v1
         with:
-          artifact: 'test-results'
           name: 'Mocha test'
-          path: '*.json'
+          path: 'test-results.json'
+          fail-on-error: 'false'
           reporter: 'mocha-json'
+          token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Record coverage result
         uses: coverallsapp/github-action@v2
