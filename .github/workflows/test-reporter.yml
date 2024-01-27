@@ -1,7 +1,7 @@
 name: 'Test Report'
 on:
   workflow_run:
-    workflows: ['Unit test Important Logic']
+    workflows: [Unit test Important Logic]
     types:
       - completed
 permissions:
@@ -12,7 +12,7 @@ jobs:
   report:
     runs-on: ubuntu-latest
     steps:
-      - name: 'Record unit test result'
+      - name: Record unit test result
         uses: dorny/test-reporter@v1
         if: always()
         with:
