@@ -15,7 +15,7 @@ describe('Date Util Test', function () {
 			try {
 				const result = DateUtil.calculateNextCycle(curDate, 1, 'd');
 
-				/** FIXME 테스트용 일부러 틀려놓음 */
+				/** FIXME 테스트용 일부러 틀려놓음1 */
 				equal(curDate.getDate(), result.getDate());
 			} catch (err) {
 				fail(err as Error);
