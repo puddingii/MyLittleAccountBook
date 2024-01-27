@@ -1,0 +1,31 @@
+name: 'Test Report'
+on:
+  workflow_run:
+    workflows: ['Unit test Important Logic']
+    types:
+      - completed
+permissions:
+  contents: read
+  actions: read
+  checks: write
+jobs:
+  report:
+    runs-on: ubuntu-latest
+    steps:
+      - name: 'Record unit test result'
+        uses: dorny/test-reporter@v1
+        if: always()
+        with:
+          artifact: mocha-back-result
+          name: Mocha test
+          path: '*.json'
+          fail-on-error: 'false'
+          reporter: mocha-json
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Record coverage result
+        uses: coverallsapp/github-action@v2
+        if: always()
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          fail-on-error: false
