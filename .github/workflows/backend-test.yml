@@ -40,5 +40,5 @@ jobs:
         with:
           name: test-results
           path: |
-            mocha-back-result.json
-            coverage
+            backend/mocha-back-result.json
+            backend/coverage
