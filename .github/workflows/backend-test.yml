@@ -42,3 +42,30 @@ jobs:
           path: |
             backend/mocha-back-result.json
             backend/coverage
+
+  report:
+    if: always()
+    needs: test
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      actions: read
+      checks: write
+    steps:
+      - name: Record unit test result
+        uses: dorny/test-reporter@v1
+        if: always()
+        with:
+          artifact: mocha-back-result
+          name: Mocha test
+          path: '*.json'
+          fail-on-error: 'false'
+          reporter: mocha-json
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Record coverage result
+        uses: coverallsapp/github-action@v2
+        if: always()
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          fail-on-error: false
