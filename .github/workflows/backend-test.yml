@@ -39,7 +39,7 @@ jobs:
         if: always()
         with:
           name: 'Mocha test'
-          path: 'test-results.json'
+          path: './**/mocha-back-result.json'
           fail-on-error: 'false'
           reporter: 'mocha-json'
           token: ${{ secrets.GITHUB_TOKEN }}
