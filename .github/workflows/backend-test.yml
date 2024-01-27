@@ -63,9 +63,8 @@ jobs:
         uses: dorny/test-reporter@v1
         if: always()
         with:
-          artifact: test-results
           name: Mocha test
-          path: 'mocha-back-result.json'
+          path: 'test-results/mocha-back-result.json'
           fail-on-error: 'false'
           reporter: mocha-json
           token: ${{ secrets.GITHUB_TOKEN }}
