@@ -34,6 +34,14 @@ jobs:
       - name: Run test
         run: yarn coverage
 
+      - name: 'Record unit test result'
+        uses: dorny/test-reporter@v1
+        with:
+          artifact: 'test-results'
+          name: 'Mocha test'
+          path: '*.json'
+          reporter: 'mocha-json'
+
       - name: Record coverage result
         uses: coverallsapp/github-action@v2
         with:
