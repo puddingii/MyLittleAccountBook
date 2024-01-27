@@ -36,6 +36,7 @@ jobs:
 
       - name: 'Record unit test result'
         uses: dorny/test-reporter@v1
+        if: always()
         with:
           name: 'Mocha test'
           path: 'test-results.json'
@@ -45,6 +46,7 @@ jobs:
 
       - name: Record coverage result
         uses: coverallsapp/github-action@v2
+        if: always()
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           fail-on-error: false
