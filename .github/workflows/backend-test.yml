@@ -34,8 +34,9 @@ jobs:
       - name: Run test
         run: yarn coverage
 
-      - name: Upload test result
-        uses: actions/upload-artifact@v3 # upload test results
+      - name: test result
+        uses: actions/upload-artifact@v4 # upload test results
+        id: artifact-upload-step
         if: success() || failure() # run this step even if previous step failed
         with:
           name: test-results
@@ -52,13 +53,19 @@ jobs:
       actions: read
       checks: write
     steps:
+      - name: Download All Artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: test-results
+          merge-multiple: true
+
       - name: Record unit test result
         uses: dorny/test-reporter@v1
         if: always()
         with:
-          artifact: mocha-back-result
+          artifact: test-results
           name: Mocha test
-          path: '*.json'
+          path: 'mocha-back-result.json'
           fail-on-error: 'false'
           reporter: mocha-json
           token: ${{ secrets.GITHUB_TOKEN }}
