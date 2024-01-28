@@ -23,7 +23,7 @@ export const updateFixedAllColumn =
 				const dumpName = `cron${Math.round(Date.now() / 1000)}.dump.sql`;
 				const dumpPath = path.resolve(__dirname, `../dump/${dumpName}`);
 				await execsync(
-					`${secret.mysql.dumpPath} -u ${secret.mysql.username} -p${secret.mysql.cmdPw} ${secret.mysql.databaseName} crongroupaccountbooks groupaccountbooks > ${dumpPath}`,
+					`${secret.mysql.dumpPath} -u ${secret.mysql.local.username} -p${secret.mysql.cmdPw} ${secret.mysql.databaseName} crongroupaccountbooks groupaccountbooks > ${dumpPath}`,
 					{},
 				);
 			}
@@ -84,9 +84,9 @@ export const updateFixedAllColumn =
 			const updatePromiseList = filteredList.map(fixedColumnInfo => {
 				return fixedColumnInfo.update({
 					needToUpdateDate: calculateNextCycle(
-						fixedColumnInfo.needToUpdateDate,
 						fixedColumnInfo.cycleTime,
 						fixedColumnInfo.cycleType,
+						fixedColumnInfo.needToUpdateDate,
 					),
 				});
 			});

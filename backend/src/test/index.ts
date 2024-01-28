@@ -3,8 +3,12 @@ import sinon from 'sinon';
 import { exec } from 'child_process';
 import { promisify } from 'util';
 
-import { sequelize } from './commonDependency';
-import { sync, closeConnection, associateModel, getModelList } from '@/loader/mysql';
+import sequelize, {
+	sync,
+	closeConnection,
+	associateModel,
+	getModelList,
+} from '@/loader/mysql';
 
 const execsync = promisify(exec);
 

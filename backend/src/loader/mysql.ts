@@ -9,21 +9,27 @@ import secret from '@/config/secret';
 
 import { TModelInfo } from '@/interface/model';
 
-const { databaseName, master } = secret.mysql;
+const { databaseName, master, local } = secret.mysql;
 
 const isTestEnvironment = secret.nodeEnv === 'test';
+const sequelizeOptions = isTestEnvironment ? local : master;
 const logging = isTestEnvironment
 	? false
 	: (msg: string) => {
 			logger.info(msg, ['Mysql']);
 	  };
 
-const sequelize = new Sequelize(databaseName, master.username, master.pw, {
-	host: master.host,
-	port: master.port,
-	dialect: 'mysql',
-	logging,
-});
+const sequelize = new Sequelize(
+	databaseName,
+	sequelizeOptions.username,
+	sequelizeOptions.pw,
+	{
+		host: sequelizeOptions.host,
+		port: sequelizeOptions.port,
+		dialect: 'mysql',
+		logging,
+	},
+);
 
 export const getModelList = async () => {
 	const modelFolderPath = path.resolve(__dirname, '../model');

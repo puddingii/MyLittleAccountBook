@@ -1,17 +1,8 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import { Sequelize } from 'sequelize';
-
 import GroupModel from '@/model/group';
+
 import { CustomError } from '@/util/error/class';
 import { TContext } from '@/util/error/class/interface';
-import secret from '@/config/secret';
-
-const { databaseName, host, pw, username } = secret.mysql;
-
-export const sequelize = new Sequelize(databaseName, username, pw, {
-	host: host,
-	dialect: 'mysql',
-});
 
 export const errorUtil = {
 	convertErrorToCustomError: (
@@ -37,6 +28,12 @@ export const cacheUtil = {
 	},
 	getCacheA(key: string) {
 		return Promise.resolve<string>('A');
+	},
+	getCache3(key: string) {
+		return Promise.resolve<string>('3');
+	},
+	getCache5(key: string) {
+		return Promise.resolve<string>('5');
 	},
 	getCacheB(key: string) {
 		return Promise.resolve<string>('B');
