@@ -51,12 +51,12 @@ export const getCategoryList =
 
 const addMainCategory = async (
 	info: { accountBookId: number; name: string },
-	options: {
+	dependencies: {
 		createCategory: TAddCategory['dependency']['repository']['createCategory'];
 		transaction: Transaction;
 	},
 ) => {
-	const { createCategory, transaction } = options;
+	const { createCategory, transaction } = dependencies;
 	const newMainCategory = await createCategory(info, transaction);
 	const newSubCategory = await createCategory(
 		{
@@ -81,13 +81,13 @@ const addMainCategory = async (
 
 const addSubCategory = async (
 	info: { accountBookId: number; name: string; parentId: number },
-	options: {
+	dependencies: {
 		createCategory: TAddCategory['dependency']['repository']['createCategory'];
 		findCategory: TAddCategory['dependency']['repository']['findCategory'];
 		transaction: Transaction;
 	},
 ) => {
-	const { createCategory, findCategory, transaction } = options;
+	const { createCategory, findCategory, transaction } = dependencies;
 	const { parentId, accountBookId } = info;
 	const mainCategory = await findCategory(
 		{ id: parentId, accountBookId },
@@ -101,7 +101,7 @@ const addSubCategory = async (
 	return { id: newCategory.id };
 };
 
-const isParentIdNumber = (info: {
+const isParentCategory = (info: {
 	accountBookId: number;
 	name: string;
 	parentId?: number;
@@ -134,7 +134,7 @@ export const addCategory =
 			try {
 				let result: TPost['data'];
 
-				if (isParentIdNumber(categoryInfo)) {
+				if (isParentCategory(categoryInfo)) {
 					result = await addSubCategory(categoryInfo, {
 						transaction,
 						createCategory,
@@ -192,6 +192,44 @@ export const updateCategoryInfo =
 		}
 	};
 
+const checkChildConditionToDelete = async (
+	info: { parentId: number; accountBookId: number },
+	dependencies: {
+		findCategoryList: TDeleteCategory['dependency']['repository']['findCategoryList'];
+		transaction?: Transaction;
+	},
+) => {
+	const { accountBookId, parentId } = info;
+	const { findCategoryList } = dependencies;
+
+	const childList = await findCategoryList({ accountBookId, parentId });
+	// 부모 카테고리는 자식 카테고리들을 먼저 삭제해야 삭제 가능
+	if (childList.length > 0) {
+		throw new Error('서브 카테고리를 모두 제거 후, 메인 카테고리를 제거할 수 있습니다.');
+	}
+};
+
+const checkParentConditionToDelete = async (
+	info: { categoryId: number },
+	dependencies: {
+		findGAB: TDeleteCategory['dependency']['repository']['findGAB'];
+		findFGAB: TDeleteCategory['dependency']['repository']['findFGAB'];
+	},
+) => {
+	const { categoryId } = info;
+	const { findFGAB, findGAB } = dependencies;
+
+	const fgab = await findFGAB({ categoryId });
+	if (fgab) {
+		throw new Error('해당 카테고리를 사용하는 기록이 있습니다.');
+	}
+
+	const gab = await findGAB({ categoryId });
+	if (gab) {
+		throw new Error('해당 카테고리를 사용하는 기록이 있습니다.');
+	}
+};
+
 export const deleteCategory =
 	(dependencies: TDeleteCategory['dependency']) =>
 	async (info: TDeleteCategory['param']) => {
@@ -199,46 +237,37 @@ export const deleteCategory =
 			errorUtil: { convertErrorToCustomError },
 			cacheUtil: { deleteCache },
 			service: { checkAdminGroupUser },
-			repository: { findCategory, findCategoryList, findFGAB, findGAB },
+			repository: { findCategory, findCategoryList, findFGAB, findGAB, deleteCategory },
 		} = dependencies;
 
 		try {
 			const { accountBookId, id, myEmail } = info;
 			await checkAdminGroupUser({ userEmail: myEmail, accountBookId });
 
-			const category = await findCategory({ accountBookId, id });
+			const condition = { accountBookId, id };
+			const category = await findCategory(condition);
 			if (!category) {
 				throw new Error('해당 카테고리를 찾을 수 없습니다.');
 			}
 
-			if (typeof category.parentId === 'number') {
-				const fgab = await findFGAB({ categoryId: category.id });
-				if (fgab) {
-					throw new Error('해당 카테고리를 사용하는 기록이 있습니다.');
-				}
-				const gab = await findGAB({ categoryId: category.id });
-				if (gab) {
-					throw new Error('해당 카테고리를 사용하는 기록이 있습니다.');
-				}
-
-				await category.destroy();
-				await deleteCache(`${accountBookId}`);
-
-				return 1;
-			}
-
-			const childList = await findCategoryList({ accountBookId, parentId: id });
-			// 부모 카테고리는 자식 카테고리들을 먼저 삭제해야 삭제 가능
-			if (childList.length > 0) {
-				throw new Error(
-					'서브 카테고리를 모두 제거 후, 메인 카테고리를 제거할 수 있습니다.',
+			if (isParentCategory(category)) {
+				await checkParentConditionToDelete(
+					{ categoryId: category.id },
+					{ findFGAB, findGAB },
+				);
+			} else {
+				await checkChildConditionToDelete(
+					{ accountBookId, parentId: id },
+					{ findCategoryList },
 				);
 			}
 
-			await category.destroy();
-			await deleteCache(`${accountBookId}`);
+			const count = await deleteCategory(condition);
+			if (count) {
+				await deleteCache(`${accountBookId}`);
+			}
 
-			return 1;
+			return count;
 		} catch (error) {
 			const customError = convertErrorToCustomError(error, {
 				trace: 'Service',

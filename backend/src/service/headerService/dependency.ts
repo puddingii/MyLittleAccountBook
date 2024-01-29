@@ -15,7 +15,7 @@ import { findInviteEnableUserInfoList } from '@/repository/userRepository/depend
 
 /** Util */
 import { convertErrorToCustomError } from '@/util/error';
-import { getCurrentDate, toDate } from '@/util/date';
+import { getCurrentDate } from '@/util/date';
 
 /** ETC */
 import sequelize from '@/loader/mysql';
@@ -49,7 +49,7 @@ export const createNewNotice = Logic.createNewNotice({
 export const updateNotice = Logic.updateNotice({
 	errorUtil: { convertErrorToCustomError },
 	repository: { updateNotice: updateNt },
-	dateUtil: { toDate, getCurrentDate },
+	dateUtil: { getCurrentDate },
 });
 
 export const deleteNotice = Logic.deleteNotice({

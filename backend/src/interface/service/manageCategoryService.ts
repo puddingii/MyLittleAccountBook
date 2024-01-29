@@ -1,7 +1,7 @@
 /** Repository */
 import {
 	createCategory,
-	deleteChildCategoryList,
+	deleteCategory,
 	findCategory,
 	findCategoryList,
 	updateCategory,
@@ -72,6 +72,7 @@ export type TDeleteCategory = {
 			findFGAB: typeof findFGAB;
 			findGAB: typeof findGAB;
 			findCategoryList: typeof findCategoryList;
+			deleteCategory: typeof deleteCategory;
 		};
 	};
 	param: {

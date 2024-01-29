@@ -9,7 +9,7 @@ import { TErrorUtil, TCacheUtil, TJwtUtil } from '../util';
 
 export type TGetUserInfo = {
 	dependency: {
-		errorUtil: Pick<TErrorUtil, 'convertErrorToCustomError'>;
+		errorUtil: Pick<TErrorUtil, 'convertErrorToCustomError' | 'CustomError'>;
 		repository: {
 			findUserInfoWithPrivacyAndOAuth: typeof findUserInfoWithPrivacyAndOAuth;
 		};

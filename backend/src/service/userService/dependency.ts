@@ -13,7 +13,7 @@ import { createAccessToken, createRefreshToken, verifyAll } from '@/util/jwt';
 import { setRefreshTokenCache } from '@/util/cache/v2';
 
 export const getUserInfo = Logic.getUserInfo({
-	errorUtil: { convertErrorToCustomError },
+	errorUtil: { convertErrorToCustomError, CustomError },
 	repository: { findUserInfoWithPrivacyAndOAuth },
 });
 

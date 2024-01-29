@@ -4,6 +4,7 @@ on:
   push:
     paths:
       - 'frontend/**'
+      - '!frontend/**.md'
     branches: [main]
 
 # 환경설정

@@ -221,8 +221,8 @@ describe('ThisMonthSummary Service Test', function () {
 			} catch (err) {
 				if (err instanceof errorUtil.CustomError) {
 					equal(err.message, errorMessage);
-					sinon.assert.callCount(stubGetCategory, 1);
-					sinon.assert.callCount(stubGetAllTypeColumnList, 0);
+					sinon.assert.calledOnce(stubGetCategory);
+					sinon.assert.notCalled(stubGetAllTypeColumnList);
 					return;
 				}
 				fail(err as Error);
@@ -244,8 +244,8 @@ describe('ThisMonthSummary Service Test', function () {
 			} catch (err) {
 				if (err instanceof errorUtil.CustomError) {
 					equal(err.message, errorMessage);
-					sinon.assert.callCount(stubGetCategory, 1);
-					sinon.assert.callCount(stubGetAllTypeColumnList, 1);
+					sinon.assert.calledOnce(stubGetCategory);
+					sinon.assert.calledOnce(stubGetAllTypeColumnList);
 					return;
 				}
 				fail(err as Error);

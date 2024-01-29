@@ -1,7 +1,13 @@
-import dayjs from 'dayjs';
+import dayjs, { Dayjs } from 'dayjs';
 import { curry, map, pipe } from '@fxts/core';
 
-import { TCycleType, TEveryOfType, TDate } from '@/interface/user';
+import {
+	TCycleType,
+	TEveryOfType,
+	TDate,
+	TCycleInfo,
+	TCycleEInfo,
+} from '@/interface/user';
 
 const CYCLE_TYPE_MAPPER = {
 	d: 1,
@@ -89,7 +95,7 @@ export const getCycleDay = curry(
 export const isGreater = curry((a: TDate, b: TDate) => {
 	const [aDate, bDate] = pipe([a, b], map(coverDayjs));
 
-	return !aDate.isSame(bDate, 'day') && aDate.isAfter(bDate, 'day');
+	return !aDate.isSame(bDate) && aDate.isAfter(bDate);
 });
 
 /**
@@ -98,7 +104,7 @@ export const isGreater = curry((a: TDate, b: TDate) => {
 export const isGreaterOrEqual = curry((a: TDate, b: TDate) => {
 	const [aDate, bDate] = pipe([a, b], map(coverDayjs));
 
-	return aDate.isSame(bDate, 'day') && aDate.isAfter(bDate, 'day');
+	return aDate.isSame(bDate) || aDate.isAfter(bDate);
 });
 
 /**
@@ -107,7 +113,7 @@ export const isGreaterOrEqual = curry((a: TDate, b: TDate) => {
 export const isLess = curry((a: TDate, b: TDate) => {
 	const [aDate, bDate] = pipe([a, b], map(coverDayjs));
 
-	return !aDate.isSame(bDate, 'day') && aDate.isBefore(bDate, 'day');
+	return !aDate.isSame(bDate) && aDate.isBefore(bDate);
 });
 
 /**
@@ -116,34 +122,38 @@ export const isLess = curry((a: TDate, b: TDate) => {
 export const isLessOrEqual = curry((a: TDate, b: TDate) => {
 	const [aDate, bDate] = pipe([a, b], map(coverDayjs));
 
-	return aDate.isSame(bDate, 'day') && aDate.isBefore(bDate, 'day');
+	return aDate.isSame(bDate) || aDate.isBefore(bDate);
 });
 
+/** '특정 일'의 경우 계산 */
+export const calculateNextSD = curry(
+	({ cycleTime }: Omit<TCycleInfo, 'cycleType'>, date: Dayjs) =>
+		pipe(date, setDate('month', date.month() + 1), setDate('date', cycleTime)),
+);
+
+/** 'N일 마다'의 경우 계산 */
+export const calculateNextNotSD = curry(
+	({ cycleTime, cycleType }: TCycleEInfo, date: Dayjs) =>
+		pipe(date, addDate('day', getCycleDay(cycleType, cycleTime))),
+);
+
 /** 다음 업데이트될 날짜를 계산하는 함수 */
-export const calculateNextCycle = (
-	date: Date,
-	cycleTime: number,
-	cycleType: TCycleType,
-) => {
-	const curDate = coverDayjs(date);
+export const calculateNextCycle = curry(
+	(cycleTime: number, cycleType: TCycleType, date: Date) => {
+		if (cycleTime < 1) {
+			throw new Error('cycleTime에는 마이너스 값을 입력할 수 없습니다.');
+		}
+		const calculator = cycleType === 'sd' ? calculateNextSD : calculateNextNotSD;
 
-	/** '특정 일'의 경우 */
-	if (cycleType === 'sd') {
-		return pipe(
-			curDate,
-			setDate('month', curDate.month() + 1),
-			setDate('date', cycleTime),
-			toDate,
-		);
-	}
-
-	/** 'n일 마다'의 경우 */
-	return pipe(curDate, addDate('day', getCycleDay(cycleType, cycleTime)), toDate);
-};
+		return pipe(date, coverDayjs, calculator({ cycleTime, cycleType }), toDate);
+	},
+);
 
 export default {
 	addDate,
 	calculateNextCycle,
+	calculateNextNotSD,
+	calculateNextSD,
 	coverDayjs,
 	getCurrentDate,
 	getCycleDay,
@@ -153,4 +163,8 @@ export default {
 	subtractDate,
 	toDate,
 	toString,
+	isLess,
+	isLessOrEqual,
+	isGreater,
+	isGreaterOrEqual,
 };

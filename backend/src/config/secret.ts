@@ -1,8 +1,9 @@
 import dotenv from 'dotenv';
 import path from 'path';
 
-const envPath =
-	process.env.NODE_ENV === 'development' ? '../../.env.local' : '../../.env';
+const isDevMode =
+	process.env.NODE_ENV === 'development' || process.env.NODE_ENV === 'test';
+const envPath = isDevMode ? '../../.env.local' : '../../.env';
 dotenv.config({ path: path.resolve(__dirname, envPath) });
 
 const dbNameInfo = { production: '', development: '_dev', test: '_test' };
@@ -51,9 +52,12 @@ export default {
 			pw: process.env.MYSQL_SLAVE1_PW ?? '',
 			port: process.env.MYSQL_SLAVE1_PORT ?? '',
 		},
-		host: process.env.MYSQL_HOST ?? '',
-		username: process.env.MYSQL_USERNAME ?? '',
-		pw: process.env.MYSQL_PW ?? '',
+		local: {
+			host: process.env.MYSQL_HOST ?? '',
+			username: process.env.MYSQL_USERNAME ?? '',
+			pw: process.env.MYSQL_PW ?? '',
+			port: 3306,
+		},
 		cmdPw: process.env.MYSQL_COMMAND_PW ?? '',
 		databaseName:
 			`${process.env.MYSQL_DATABASENAME}${

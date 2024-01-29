@@ -5,6 +5,7 @@ on:
     paths:
       - 'backend/**'
       - '!backend/k6/**'
+      - '!backend/**.md'
     branches: [main]
 
 # 환경설정

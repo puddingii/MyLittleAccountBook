@@ -9,23 +9,29 @@ import secret from '@/config/secret';
 
 import { TModelInfo } from '@/interface/model';
 
-const { databaseName, master } = secret.mysql;
+const { databaseName, master, local } = secret.mysql;
 
 const isTestEnvironment = secret.nodeEnv === 'test';
+const sequelizeOptions = isTestEnvironment ? local : master;
 const logging = isTestEnvironment
 	? false
 	: (msg: string) => {
 			logger.info(msg, ['Mysql']);
 	  };
 
-const sequelize = new Sequelize(databaseName, master.username, master.pw, {
-	host: master.host,
-	port: master.port,
-	dialect: 'mysql',
-	logging,
-});
+const sequelize = new Sequelize(
+	databaseName,
+	sequelizeOptions.username,
+	sequelizeOptions.pw,
+	{
+		host: sequelizeOptions.host,
+		port: sequelizeOptions.port,
+		dialect: 'mysql',
+		logging,
+	},
+);
 
-const getModelList = async () => {
+export const getModelList = async () => {
 	const modelFolderPath = path.resolve(__dirname, '../model');
 	const fileList = fs.readdirSync(modelFolderPath);
 
@@ -53,22 +59,26 @@ const getModelList = async () => {
 	};
 };
 
+export const associateModel = (modelInfo: Awaited<ReturnType<typeof getModelList>>) => {
+	for (const associate of modelInfo.associateList) {
+		associate(modelInfo.modelList);
+	}
+};
+
 export const sync = async (sequelize: Sequelize) => {
 	try {
+		const modelInfo = await getModelList();
+		associateModel(modelInfo);
+
+		await sequelize.authenticate();
+
 		const syncType = {
 			test: { force: true },
 			development: { alter: true },
 			production: {},
 		};
-		const syncOptions = syncType[secret.nodeEnv] ?? {};
-		const modelInfo = await getModelList();
+		await sequelize.sync(syncType[secret.nodeEnv] ?? {});
 
-		for (const associate of modelInfo.associateList) {
-			associate(modelInfo.modelList);
-		}
-
-		await sequelize.authenticate();
-		await sequelize.sync(syncOptions);
 		logger.info('Connection has been established successfully.', ['Mysql']);
 	} catch (error) {
 		const customError = convertErrorToCustomError(error, {

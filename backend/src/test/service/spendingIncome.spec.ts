@@ -142,8 +142,8 @@ describe('SpendingIncome Service Test', function () {
 			try {
 				const result = await injectedFunc({ ...defaultColumnInfo, userNickname: 'test' });
 
-				sinon.assert.callCount(stubFindGroup, 1);
-				sinon.assert.callCount(stubCreateNewFColumn, 1);
+				sinon.assert.calledOnce(stubFindGroup);
+				sinon.assert.calledOnce(stubCreateNewFColumn);
 
 				equal(result, 1);
 			} catch (err) {
@@ -169,8 +169,8 @@ describe('SpendingIncome Service Test', function () {
 			try {
 				const result = await injectedFunc({ ...defaultColumnInfo, userNickname: 'test' });
 
-				sinon.assert.callCount(stubFindGroup, 1);
-				sinon.assert.callCount(stubCreateNewFColumn, 1);
+				sinon.assert.calledOnce(stubFindGroup);
+				sinon.assert.calledOnce(stubCreateNewFColumn);
 
 				equal(result, 1);
 			} catch (err) {
@@ -203,8 +203,8 @@ describe('SpendingIncome Service Test', function () {
 				if (err instanceof AssertionError) {
 					fail(err);
 				}
-				sinon.assert.callCount(stubFindGroup, 1);
-				sinon.assert.callCount(stubCreateNewFColumn, 0);
+				sinon.assert.calledOnce(stubFindGroup);
+				sinon.assert.notCalled(stubCreateNewFColumn);
 			}
 		});
 
@@ -231,8 +231,8 @@ describe('SpendingIncome Service Test', function () {
 				if (err instanceof AssertionError) {
 					return fail(err);
 				}
-				sinon.assert.callCount(stubFindGroup, 1);
-				sinon.assert.callCount(stubCreateNewFColumn, 0);
+				sinon.assert.calledOnce(stubFindGroup);
+				sinon.assert.notCalled(stubCreateNewFColumn);
 			}
 		});
 
@@ -259,8 +259,8 @@ describe('SpendingIncome Service Test', function () {
 				if (err instanceof AssertionError) {
 					return fail(err);
 				}
-				sinon.assert.callCount(stubFindGroup, 1);
-				sinon.assert.callCount(stubCreateNewFColumn, 0);
+				sinon.assert.calledOnce(stubFindGroup);
+				sinon.assert.notCalled(stubCreateNewFColumn);
 			}
 		});
 
@@ -281,8 +281,8 @@ describe('SpendingIncome Service Test', function () {
 				if (err instanceof AssertionError) {
 					return fail(err);
 				}
-				sinon.assert.callCount(stubFindGroup, 1);
-				sinon.assert.callCount(stubCreateNewFColumn, 1);
+				sinon.assert.calledOnce(stubFindGroup);
+				sinon.assert.calledOnce(stubCreateNewFColumn);
 			}
 		});
 	});
@@ -369,8 +369,8 @@ describe('SpendingIncome Service Test', function () {
 			try {
 				const result = await injectedFunc({ ...defaultColumnInfo, userNickname: 'test' });
 
-				sinon.assert.callCount(stubFindGroup, 1);
-				sinon.assert.callCount(stubCreateNewNFColumn, 1);
+				sinon.assert.calledOnce(stubFindGroup);
+				sinon.assert.calledOnce(stubCreateNewNFColumn);
 
 				equal(result, 1);
 			} catch (err) {
@@ -396,8 +396,8 @@ describe('SpendingIncome Service Test', function () {
 			try {
 				const result = await injectedFunc({ ...defaultColumnInfo, userNickname: 'test' });
 
-				sinon.assert.callCount(stubFindGroup, 1);
-				sinon.assert.callCount(stubCreateNewNFColumn, 1);
+				sinon.assert.calledOnce(stubFindGroup);
+				sinon.assert.calledOnce(stubCreateNewNFColumn);
 
 				equal(result, 1);
 			} catch (err) {
@@ -430,8 +430,8 @@ describe('SpendingIncome Service Test', function () {
 				if (err instanceof AssertionError) {
 					fail(err);
 				}
-				sinon.assert.callCount(stubFindGroup, 1);
-				sinon.assert.callCount(stubCreateNewNFColumn, 0);
+				sinon.assert.calledOnce(stubFindGroup);
+				sinon.assert.notCalled(stubCreateNewNFColumn);
 			}
 		});
 
@@ -458,8 +458,8 @@ describe('SpendingIncome Service Test', function () {
 				if (err instanceof AssertionError) {
 					fail(err);
 				}
-				sinon.assert.callCount(stubFindGroup, 1);
-				sinon.assert.callCount(stubCreateNewNFColumn, 0);
+				sinon.assert.calledOnce(stubFindGroup);
+				sinon.assert.notCalled(stubCreateNewNFColumn);
 			}
 		});
 
@@ -486,8 +486,8 @@ describe('SpendingIncome Service Test', function () {
 				if (err instanceof AssertionError) {
 					return fail(err);
 				}
-				sinon.assert.callCount(stubFindGroup, 1);
-				sinon.assert.callCount(stubCreateNewNFColumn, 0);
+				sinon.assert.calledOnce(stubFindGroup);
+				sinon.assert.notCalled(stubCreateNewNFColumn);
 			}
 		});
 
@@ -508,8 +508,8 @@ describe('SpendingIncome Service Test', function () {
 				if (err instanceof AssertionError) {
 					return fail(err);
 				}
-				sinon.assert.callCount(stubFindGroup, 1);
-				sinon.assert.callCount(stubCreateNewNFColumn, 1);
+				sinon.assert.calledOnce(stubFindGroup);
+				sinon.assert.calledOnce(stubCreateNewNFColumn);
 			}
 		});
 	});
@@ -612,9 +612,9 @@ describe('SpendingIncome Service Test', function () {
 				if (err instanceof AssertionError) {
 					fail(err);
 				}
-				sinon.assert.callCount(stubFindFixedGAB, 1);
-				sinon.assert.callCount(stubUpdateFColumn, 0);
-				sinon.assert.callCount(stubCheckAdminGroupUser, 0);
+				sinon.assert.calledOnce(stubFindFixedGAB);
+				sinon.assert.notCalled(stubUpdateFColumn);
+				sinon.assert.notCalled(stubCheckAdminGroupUser);
 			}
 		});
 
@@ -643,9 +643,9 @@ describe('SpendingIncome Service Test', function () {
 					needToUpdateDate: '2022-02-02',
 				});
 
-				sinon.assert.callCount(stubFindFixedGAB, 1);
-				sinon.assert.callCount(stubUpdateFColumn, 1);
-				sinon.assert.callCount(stubCheckAdminGroupUser, 0);
+				sinon.assert.calledOnce(stubFindFixedGAB);
+				sinon.assert.calledOnce(stubUpdateFColumn);
+				sinon.assert.notCalled(stubCheckAdminGroupUser);
 			} catch (err) {
 				fail(err as Error);
 			}
@@ -682,9 +682,9 @@ describe('SpendingIncome Service Test', function () {
 					needToUpdateDate: '2022-02-02',
 				});
 
-				sinon.assert.callCount(stubFindFixedGAB, 1);
-				sinon.assert.callCount(stubUpdateFColumn, 1);
-				sinon.assert.callCount(stubCheckAdminGroupUser, 1);
+				sinon.assert.calledOnce(stubFindFixedGAB);
+				sinon.assert.calledOnce(stubUpdateFColumn);
+				sinon.assert.calledOnce(stubCheckAdminGroupUser);
 
 				ok(true);
 			} catch (err) {
@@ -724,9 +724,9 @@ describe('SpendingIncome Service Test', function () {
 				if (err instanceof AssertionError) {
 					fail(err);
 				}
-				sinon.assert.callCount(stubFindFixedGAB, 1);
-				sinon.assert.callCount(stubUpdateFColumn, 0);
-				sinon.assert.callCount(stubCheckAdminGroupUser, 1);
+				sinon.assert.calledOnce(stubFindFixedGAB);
+				sinon.assert.notCalled(stubUpdateFColumn);
+				sinon.assert.calledOnce(stubCheckAdminGroupUser);
 			}
 		});
 
@@ -758,9 +758,9 @@ describe('SpendingIncome Service Test', function () {
 				);
 			} catch (err) {
 				if (err instanceof errorUtil.CustomError) {
-					sinon.assert.callCount(stubFindFixedGAB, 1);
-					sinon.assert.callCount(stubUpdateFColumn, 0);
-					sinon.assert.callCount(stubCheckAdminGroupUser, 0);
+					sinon.assert.calledOnce(stubFindFixedGAB);
+					sinon.assert.notCalled(stubUpdateFColumn);
+					sinon.assert.notCalled(stubCheckAdminGroupUser);
 					return;
 				}
 				fail(err as Error);
@@ -864,9 +864,9 @@ describe('SpendingIncome Service Test', function () {
 				if (err instanceof AssertionError) {
 					fail(err);
 				}
-				sinon.assert.callCount(stubFindNotFixedGAB, 1);
-				sinon.assert.callCount(stubUpdateNFColumn, 0);
-				sinon.assert.callCount(stubCheckAdminGroupUser, 0);
+				sinon.assert.calledOnce(stubFindNotFixedGAB);
+				sinon.assert.notCalled(stubUpdateNFColumn);
+				sinon.assert.notCalled(stubCheckAdminGroupUser);
 			}
 		});
 
@@ -895,9 +895,9 @@ describe('SpendingIncome Service Test', function () {
 					spendingAndIncomeDate: '2022-02-02',
 				});
 
-				sinon.assert.callCount(stubFindNotFixedGAB, 1);
-				sinon.assert.callCount(stubUpdateNFColumn, 1);
-				sinon.assert.callCount(stubCheckAdminGroupUser, 0);
+				sinon.assert.calledOnce(stubFindNotFixedGAB);
+				sinon.assert.calledOnce(stubUpdateNFColumn);
+				sinon.assert.notCalled(stubCheckAdminGroupUser);
 				ok(true);
 			} catch (err) {
 				fail(err as Error);
@@ -935,9 +935,9 @@ describe('SpendingIncome Service Test', function () {
 					spendingAndIncomeDate: '2022-02-02',
 				});
 
-				sinon.assert.callCount(stubFindNotFixedGAB, 1);
-				sinon.assert.callCount(stubUpdateNFColumn, 1);
-				sinon.assert.callCount(stubCheckAdminGroupUser, 1);
+				sinon.assert.calledOnce(stubFindNotFixedGAB);
+				sinon.assert.calledOnce(stubUpdateNFColumn);
+				sinon.assert.calledOnce(stubCheckAdminGroupUser);
 			} catch (err) {
 				fail(err as Error);
 			}
@@ -975,9 +975,9 @@ describe('SpendingIncome Service Test', function () {
 				if (err instanceof AssertionError) {
 					fail(err);
 				}
-				sinon.assert.callCount(stubFindNotFixedGAB, 1);
-				sinon.assert.callCount(stubUpdateNFColumn, 0);
-				sinon.assert.callCount(stubCheckAdminGroupUser, 1);
+				sinon.assert.calledOnce(stubFindNotFixedGAB);
+				sinon.assert.notCalled(stubUpdateNFColumn);
+				sinon.assert.calledOnce(stubCheckAdminGroupUser);
 			}
 		});
 
@@ -1009,9 +1009,9 @@ describe('SpendingIncome Service Test', function () {
 				);
 			} catch (err) {
 				if (err instanceof errorUtil.CustomError) {
-					sinon.assert.callCount(stubFindNotFixedGAB, 1);
-					sinon.assert.callCount(stubUpdateNFColumn, 0);
-					sinon.assert.callCount(stubCheckAdminGroupUser, 0);
+					sinon.assert.calledOnce(stubFindNotFixedGAB);
+					sinon.assert.notCalled(stubUpdateNFColumn);
+					sinon.assert.notCalled(stubCheckAdminGroupUser);
 					return;
 				}
 				fail(err as Error);
@@ -1107,9 +1107,9 @@ describe('SpendingIncome Service Test', function () {
 				if (err instanceof AssertionError) {
 					fail(err);
 				}
-				sinon.assert.callCount(stubFindFixedGAB, 1);
-				sinon.assert.callCount(stubDeleteFColumn, 0);
-				sinon.assert.callCount(stubCheckAdminGroupUser, 0);
+				sinon.assert.calledOnce(stubFindFixedGAB);
+				sinon.assert.notCalled(stubDeleteFColumn);
+				sinon.assert.notCalled(stubCheckAdminGroupUser);
 			}
 		});
 
@@ -1136,9 +1136,9 @@ describe('SpendingIncome Service Test', function () {
 					id: 1,
 				});
 
-				sinon.assert.callCount(stubFindFixedGAB, 1);
-				sinon.assert.callCount(stubDeleteFColumn, 1);
-				sinon.assert.callCount(stubCheckAdminGroupUser, 0);
+				sinon.assert.calledOnce(stubFindFixedGAB);
+				sinon.assert.calledOnce(stubDeleteFColumn);
+				sinon.assert.notCalled(stubCheckAdminGroupUser);
 			} catch (err) {
 				fail(err as Error);
 			}
@@ -1173,9 +1173,9 @@ describe('SpendingIncome Service Test', function () {
 					id: 1,
 				});
 
-				sinon.assert.callCount(stubFindFixedGAB, 1);
-				sinon.assert.callCount(stubDeleteFColumn, 1);
-				sinon.assert.callCount(stubCheckAdminGroupUser, 1);
+				sinon.assert.calledOnce(stubFindFixedGAB);
+				sinon.assert.calledOnce(stubDeleteFColumn);
+				sinon.assert.calledOnce(stubCheckAdminGroupUser);
 			} catch (err) {
 				fail(err as Error);
 			}
@@ -1211,9 +1211,9 @@ describe('SpendingIncome Service Test', function () {
 				if (err instanceof AssertionError) {
 					fail(err);
 				}
-				sinon.assert.callCount(stubFindFixedGAB, 1);
-				sinon.assert.callCount(stubDeleteFColumn, 0);
-				sinon.assert.callCount(stubCheckAdminGroupUser, 1);
+				sinon.assert.calledOnce(stubFindFixedGAB);
+				sinon.assert.notCalled(stubDeleteFColumn);
+				sinon.assert.calledOnce(stubCheckAdminGroupUser);
 			}
 		});
 
@@ -1243,9 +1243,9 @@ describe('SpendingIncome Service Test', function () {
 				);
 			} catch (err) {
 				if (err instanceof errorUtil.CustomError) {
-					sinon.assert.callCount(stubFindFixedGAB, 1);
-					sinon.assert.callCount(stubDeleteFColumn, 0);
-					sinon.assert.callCount(stubCheckAdminGroupUser, 0);
+					sinon.assert.calledOnce(stubFindFixedGAB);
+					sinon.assert.notCalled(stubDeleteFColumn);
+					sinon.assert.notCalled(stubCheckAdminGroupUser);
 					return;
 				}
 				fail(err as Error);
@@ -1343,9 +1343,9 @@ describe('SpendingIncome Service Test', function () {
 				if (err instanceof AssertionError) {
 					fail(err);
 				}
-				sinon.assert.callCount(stubFindNotFixedGAB, 1);
-				sinon.assert.callCount(stubDeleteNFColumn, 0);
-				sinon.assert.callCount(stubCheckAdminGroupUser, 0);
+				sinon.assert.calledOnce(stubFindNotFixedGAB);
+				sinon.assert.notCalled(stubDeleteNFColumn);
+				sinon.assert.notCalled(stubCheckAdminGroupUser);
 			}
 		});
 
@@ -1372,9 +1372,9 @@ describe('SpendingIncome Service Test', function () {
 					id: 1,
 				});
 
-				sinon.assert.callCount(stubFindNotFixedGAB, 1);
-				sinon.assert.callCount(stubDeleteNFColumn, 1);
-				sinon.assert.callCount(stubCheckAdminGroupUser, 0);
+				sinon.assert.calledOnce(stubFindNotFixedGAB);
+				sinon.assert.calledOnce(stubDeleteNFColumn);
+				sinon.assert.notCalled(stubCheckAdminGroupUser);
 			} catch (err) {
 				fail(err as Error);
 			}
@@ -1409,9 +1409,9 @@ describe('SpendingIncome Service Test', function () {
 					id: 1,
 				});
 
-				sinon.assert.callCount(stubFindNotFixedGAB, 1);
-				sinon.assert.callCount(stubDeleteNFColumn, 1);
-				sinon.assert.callCount(stubCheckAdminGroupUser, 1);
+				sinon.assert.calledOnce(stubFindNotFixedGAB);
+				sinon.assert.calledOnce(stubDeleteNFColumn);
+				sinon.assert.calledOnce(stubCheckAdminGroupUser);
 			} catch (err) {
 				fail(err as Error);
 			}
@@ -1447,9 +1447,9 @@ describe('SpendingIncome Service Test', function () {
 				if (err instanceof AssertionError) {
 					fail(err);
 				}
-				sinon.assert.callCount(stubFindNotFixedGAB, 1);
-				sinon.assert.callCount(stubDeleteNFColumn, 0);
-				sinon.assert.callCount(stubCheckAdminGroupUser, 1);
+				sinon.assert.calledOnce(stubFindNotFixedGAB);
+				sinon.assert.notCalled(stubDeleteNFColumn);
+				sinon.assert.calledOnce(stubCheckAdminGroupUser);
 			}
 		});
 
@@ -1479,9 +1479,9 @@ describe('SpendingIncome Service Test', function () {
 				);
 			} catch (err) {
 				if (err instanceof errorUtil.CustomError) {
-					sinon.assert.callCount(stubFindNotFixedGAB, 1);
-					sinon.assert.callCount(stubDeleteNFColumn, 0);
-					sinon.assert.callCount(stubCheckAdminGroupUser, 0);
+					sinon.assert.calledOnce(stubFindNotFixedGAB);
+					sinon.assert.notCalled(stubDeleteNFColumn);
+					sinon.assert.notCalled(stubCheckAdminGroupUser);
 					return;
 				}
 				fail(err as Error);
@@ -1702,9 +1702,9 @@ describe('SpendingIncome Service Test', function () {
 			} catch (err) {
 				if (err instanceof errorUtil.CustomError) {
 					equal(err.message, errorMessage);
-					sinon.assert.callCount(stubGetCategory, 1);
-					sinon.assert.callCount(stubGetFixedColumnList, 0);
-					sinon.assert.callCount(stubGetNotFixedColumnList, 0);
+					sinon.assert.calledOnce(stubGetCategory);
+					sinon.assert.notCalled(stubGetFixedColumnList);
+					sinon.assert.notCalled(stubGetNotFixedColumnList);
 					return;
 				}
 				fail(err as Error);
@@ -1733,9 +1733,9 @@ describe('SpendingIncome Service Test', function () {
 			} catch (err) {
 				if (err instanceof errorUtil.CustomError) {
 					equal(err.message, errorMessage);
-					sinon.assert.callCount(stubGetCategory, 1);
-					sinon.assert.callCount(stubGetFixedColumnList, 1);
-					sinon.assert.callCount(stubGetNotFixedColumnList, 1);
+					sinon.assert.calledOnce(stubGetCategory);
+					sinon.assert.calledOnce(stubGetFixedColumnList);
+					sinon.assert.calledOnce(stubGetNotFixedColumnList);
 					return;
 				}
 				fail(err as Error);
@@ -1764,9 +1764,9 @@ describe('SpendingIncome Service Test', function () {
 			} catch (err) {
 				if (err instanceof errorUtil.CustomError) {
 					equal(err.message, errorMessage);
-					sinon.assert.callCount(stubGetCategory, 1);
-					sinon.assert.callCount(stubGetFixedColumnList, 0);
-					sinon.assert.callCount(stubGetNotFixedColumnList, 1);
+					sinon.assert.calledOnce(stubGetCategory);
+					sinon.assert.notCalled(stubGetFixedColumnList);
+					sinon.assert.calledOnce(stubGetNotFixedColumnList);
 					return;
 				}
 				fail(err as Error);

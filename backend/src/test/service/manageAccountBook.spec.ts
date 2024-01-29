@@ -99,7 +99,7 @@ describe('ManageAccountBook Service Test', function () {
 					fail(err);
 				}
 				sinon.assert.calledOnce(stubFindGroup);
-				sinon.assert.neverCalledWith(stubFindOneAccountBook);
+				sinon.assert.notCalled(stubFindOneAccountBook);
 			}
 		});
 
@@ -216,7 +216,7 @@ describe('ManageAccountBook Service Test', function () {
 					fail(err);
 				}
 				sinon.assert.calledOnce(stubFindGroup);
-				sinon.assert.neverCalledWith(stubUpdateAccountBook);
+				sinon.assert.notCalled(stubUpdateAccountBook);
 			}
 		});
 
@@ -244,7 +244,7 @@ describe('ManageAccountBook Service Test', function () {
 					fail(err);
 				}
 				sinon.assert.calledOnce(stubFindGroup);
-				sinon.assert.neverCalledWith(stubUpdateAccountBook);
+				sinon.assert.notCalled(stubUpdateAccountBook);
 			}
 		});
 

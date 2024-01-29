@@ -17,7 +17,7 @@ import CategoryModel from '@/model/category';
 import GroupModel from '@/model/group';
 
 /** Dependency */
-import { cacheUtil, errorUtil, sequelize } from '../commonDependency';
+import { cacheUtil, errorUtil } from '../commonDependency';
 import { findGAB as findFGAB } from '@/repository/cronGroupAccountBookRepository/dependency';
 import { findGAB } from '@/repository/groupAccountBookRepository/dependency';
 import {
@@ -25,8 +25,10 @@ import {
 	findCategory,
 	findCategoryList,
 	updateCategory,
+	deleteCategory as deleteCategoryR,
 } from '@/repository/categoryRepository/dependency';
 import { checkAdminGroupUser } from '@/service/common/user/dependency';
+import sequelize from '@/loader/mysql';
 
 /** Model */
 import CronGroupAccountBookModel from '@/model/cronGroupAccountBook';
@@ -224,8 +226,8 @@ describe('ManageCategory Service Test', function () {
 					fail(err);
 				}
 				sinon.assert.calledOnce(stubCheckAdminGroupUser);
-				sinon.assert.neverCalledWith(stubFindCategory);
-				sinon.assert.neverCalledWith(stubCreateCategory);
+				sinon.assert.notCalled(stubFindCategory);
+				sinon.assert.notCalled(stubCreateCategory);
 			}
 		});
 
@@ -313,7 +315,7 @@ describe('ManageCategory Service Test', function () {
 				equal(result.id, newParentCategoryId);
 				sinon.assert.match((result.childList ?? [])[0], childCategoryInfo);
 				sinon.assert.calledOnce(stubCheckAdminGroupUser);
-				sinon.assert.neverCalledWith(stubFindCategory);
+				sinon.assert.notCalled(stubFindCategory);
 				sinon.assert.calledTwice(stubCreateCategory);
 			} catch (err) {
 				fail(err as Error);
@@ -358,7 +360,7 @@ describe('ManageCategory Service Test', function () {
 				equal(result.id, newParentCategoryId);
 				sinon.assert.match((result.childList ?? [])[0], childCategoryInfo);
 				sinon.assert.calledOnce(stubCheckAdminGroupUser);
-				sinon.assert.neverCalledWith(stubFindCategory);
+				sinon.assert.notCalled(stubFindCategory);
 				sinon.assert.calledTwice(stubCreateCategory);
 			} catch (err) {
 				fail(err as Error);
@@ -406,7 +408,7 @@ describe('ManageCategory Service Test', function () {
 					fail(err);
 				}
 				sinon.assert.calledOnce(stubCheckAdminGroupUser);
-				sinon.assert.neverCalledWith(stubFindCategory);
+				sinon.assert.notCalled(stubFindCategory);
 				sinon.assert.calledOnce(stubCreateCategory);
 			}
 		});
@@ -447,7 +449,7 @@ describe('ManageCategory Service Test', function () {
 					fail(err);
 				}
 				sinon.assert.calledOnce(stubCheckAdminGroupUser);
-				sinon.assert.neverCalledWith(stubFindCategory);
+				sinon.assert.notCalled(stubFindCategory);
 				sinon.assert.calledTwice(stubCreateCategory);
 			}
 		});
@@ -570,7 +572,7 @@ describe('ManageCategory Service Test', function () {
 				}
 				sinon.assert.calledOnce(stubCheckAdminGroupUser);
 				sinon.assert.calledOnce(stubFindCategory);
-				sinon.assert.neverCalledWith(stubCreateCategory);
+				sinon.assert.notCalled(stubCreateCategory);
 			}
 		});
 
@@ -607,7 +609,7 @@ describe('ManageCategory Service Test', function () {
 				}
 				sinon.assert.calledOnce(stubCheckAdminGroupUser);
 				sinon.assert.calledOnce(stubFindCategory);
-				sinon.assert.neverCalledWith(stubCreateCategory);
+				sinon.assert.notCalled(stubCreateCategory);
 			}
 		});
 
@@ -749,7 +751,7 @@ describe('ManageCategory Service Test', function () {
 					fail(err as Error);
 				}
 				sinon.assert.calledOnce(stubCheckAdminGroupUser);
-				sinon.assert.neverCalledWith(stubUpdateCategory);
+				sinon.assert.notCalled(stubUpdateCategory);
 			}
 		});
 
@@ -819,12 +821,14 @@ describe('ManageCategory Service Test', function () {
 			findCategoryList,
 			findFGAB,
 			findGAB,
+			deleteCategory: deleteCategoryR,
 		};
 		let stubCheckAdminGroupUser = sinon.stub(service, 'checkAdminGroupUser');
 		let stubFindCategory = sinon.stub(repository, 'findCategory');
 		let stubFindCategoryList = sinon.stub(repository, 'findCategoryList');
 		let stubFindFGAB = sinon.stub(repository, 'findFGAB');
 		let stubFindGAB = sinon.stub(repository, 'findGAB');
+		let stubDeleteCategory = sinon.stub(repository, 'deleteCategory');
 
 		beforeEach(function () {
 			stubCheckAdminGroupUser = sinon.stub(service, 'checkAdminGroupUser');
@@ -832,6 +836,7 @@ describe('ManageCategory Service Test', function () {
 			stubFindCategoryList = sinon.stub(repository, 'findCategoryList');
 			stubFindFGAB = sinon.stub(repository, 'findFGAB');
 			stubFindGAB = sinon.stub(repository, 'findGAB');
+			stubDeleteCategory = sinon.stub(repository, 'deleteCategory');
 		});
 
 		it('If checkAdminGroupUser error', async function () {
@@ -843,6 +848,7 @@ describe('ManageCategory Service Test', function () {
 			stubFindCategoryList.resolves([]);
 			stubFindFGAB.resolves(undefined);
 			stubFindGAB.resolves(undefined);
+			stubDeleteCategory.resolves(1);
 
 			const injectedFunc = deleteCategory({
 				...common,
@@ -861,10 +867,10 @@ describe('ManageCategory Service Test', function () {
 					fail(err);
 				}
 				sinon.assert.calledOnce(stubCheckAdminGroupUser);
-				sinon.assert.neverCalledWith(stubFindCategory);
-				sinon.assert.neverCalledWith(stubFindCategoryList);
-				sinon.assert.neverCalledWith(stubFindFGAB);
-				sinon.assert.neverCalledWith(stubFindGAB);
+				sinon.assert.notCalled(stubFindCategory);
+				sinon.assert.notCalled(stubFindCategoryList);
+				sinon.assert.notCalled(stubFindFGAB);
+				sinon.assert.notCalled(stubFindGAB);
 			}
 		});
 
@@ -877,6 +883,7 @@ describe('ManageCategory Service Test', function () {
 			stubFindCategoryList.resolves([]);
 			stubFindFGAB.resolves(undefined);
 			stubFindGAB.resolves(undefined);
+			stubDeleteCategory.resolves(1);
 
 			const injectedFunc = deleteCategory({
 				...common,
@@ -896,9 +903,9 @@ describe('ManageCategory Service Test', function () {
 				}
 				sinon.assert.calledOnce(stubCheckAdminGroupUser);
 				sinon.assert.calledOnce(stubFindCategory);
-				sinon.assert.neverCalledWith(stubFindCategoryList);
-				sinon.assert.neverCalledWith(stubFindFGAB);
-				sinon.assert.neverCalledWith(stubFindGAB);
+				sinon.assert.notCalled(stubFindCategoryList);
+				sinon.assert.notCalled(stubFindFGAB);
+				sinon.assert.notCalled(stubFindGAB);
 			}
 		});
 
@@ -911,6 +918,7 @@ describe('ManageCategory Service Test', function () {
 			stubFindCategoryList.resolves([]);
 			stubFindFGAB.resolves(undefined);
 			stubFindGAB.resolves(undefined);
+			stubDeleteCategory.resolves(1);
 
 			const injectedFunc = deleteCategory({
 				...common,
@@ -943,6 +951,7 @@ describe('ManageCategory Service Test', function () {
 			stubFindCategoryList.resolves([]);
 			stubFindFGAB.resolves(undefined);
 			stubFindGAB.resolves(undefined);
+			stubDeleteCategory.resolves(1);
 
 			const injectedFunc = deleteCategory({
 				...common,
@@ -958,8 +967,8 @@ describe('ManageCategory Service Test', function () {
 				sinon.assert.calledOnce(stubCheckAdminGroupUser);
 				sinon.assert.calledOnce(stubFindCategory);
 				sinon.assert.calledOnce(stubFindCategoryList);
-				sinon.assert.neverCalledWith(stubFindFGAB);
-				sinon.assert.neverCalledWith(stubFindGAB);
+				sinon.assert.notCalled(stubFindFGAB);
+				sinon.assert.notCalled(stubFindGAB);
 			} catch (err) {
 				fail(err as Error);
 			}
@@ -974,6 +983,7 @@ describe('ManageCategory Service Test', function () {
 			stubFindCategoryList.resolves([new CategoryModel()]);
 			stubFindFGAB.resolves(undefined);
 			stubFindGAB.resolves(undefined);
+			stubDeleteCategory.resolves(1);
 
 			const injectedFunc = deleteCategory({
 				...common,
@@ -994,8 +1004,8 @@ describe('ManageCategory Service Test', function () {
 				sinon.assert.calledOnce(stubCheckAdminGroupUser);
 				sinon.assert.calledOnce(stubFindCategory);
 				sinon.assert.calledOnce(stubFindCategoryList);
-				sinon.assert.neverCalledWith(stubFindFGAB);
-				sinon.assert.neverCalledWith(stubFindGAB);
+				sinon.assert.notCalled(stubFindFGAB);
+				sinon.assert.notCalled(stubFindGAB);
 			}
 		});
 
@@ -1011,6 +1021,7 @@ describe('ManageCategory Service Test', function () {
 			stubFindCategoryList.resolves([]);
 			stubFindFGAB.resolves(undefined);
 			stubFindGAB.resolves(undefined);
+			stubDeleteCategory.resolves(1);
 
 			const injectedFunc = deleteCategory({
 				...common,
@@ -1047,6 +1058,7 @@ describe('ManageCategory Service Test', function () {
 			stubFindCategoryList.resolves([]);
 			stubFindFGAB.resolves(undefined);
 			stubFindGAB.resolves(undefined);
+			stubDeleteCategory.resolves(1);
 
 			const injectedFunc = deleteCategory({
 				...common,
@@ -1061,7 +1073,7 @@ describe('ManageCategory Service Test', function () {
 
 				sinon.assert.calledOnce(stubCheckAdminGroupUser);
 				sinon.assert.calledOnce(stubFindCategory);
-				sinon.assert.neverCalledWith(stubFindCategoryList);
+				sinon.assert.notCalled(stubFindCategoryList);
 				sinon.assert.calledOnce(stubFindFGAB);
 				sinon.assert.calledOnce(stubFindGAB);
 			} catch (err) {
@@ -1069,7 +1081,9 @@ describe('ManageCategory Service Test', function () {
 			}
 		});
 
-		it('Check sub category with history(cgab) is existed', async function () {
+		it('If deleteCategory return 0', async function () {
+			const cacheUtil = common.cacheUtil;
+			const stubDeleteCache = sinon.stub(cacheUtil, 'deleteCache');
 			stubCheckAdminGroupUser.resolves(new GroupModel());
 			stubFindCategory.resolves(
 				new CategoryModel({
@@ -1079,8 +1093,47 @@ describe('ManageCategory Service Test', function () {
 				}),
 			);
 			stubFindCategoryList.resolves([]);
+			stubFindFGAB.resolves(undefined);
+			stubFindGAB.resolves(undefined);
+			stubDeleteCategory.resolves(0);
+			stubDeleteCache.resolves();
+
+			const injectedFunc = deleteCategory({
+				...common,
+				...database,
+				repository,
+				service,
+				errorUtil,
+				cacheUtil,
+			});
+
+			try {
+				await injectedFunc({ accountBookId: 1, id: 1, myEmail: 'test@naver.com' });
+
+				sinon.assert.calledOnce(stubCheckAdminGroupUser);
+				sinon.assert.calledOnce(stubFindCategory);
+				sinon.assert.notCalled(stubFindCategoryList);
+				sinon.assert.calledOnce(stubFindFGAB);
+				sinon.assert.calledOnce(stubFindGAB);
+				sinon.assert.notCalled(stubDeleteCache);
+			} catch (err) {
+				fail(err as Error);
+			}
+		});
+
+		it('Check sub category with history(cgab) is existed', async function () {
+			const category = new CategoryModel({
+				name: '서브 카테고리',
+				accountBookId: 1,
+				parentId: 1,
+			});
+			category.destroy = async () => {};
+			stubCheckAdminGroupUser.resolves(new GroupModel());
+			stubFindCategory.resolves(category);
+			stubFindCategoryList.resolves([]);
 			stubFindFGAB.resolves(new CronGroupAccountBookModel());
 			stubFindGAB.resolves(undefined);
+			stubDeleteCategory.resolves(1);
 
 			const injectedFunc = deleteCategory({
 				...common,
@@ -1098,9 +1151,9 @@ describe('ManageCategory Service Test', function () {
 				}
 				sinon.assert.calledOnce(stubCheckAdminGroupUser);
 				sinon.assert.calledOnce(stubFindCategory);
-				sinon.assert.neverCalledWith(stubFindCategoryList);
+				sinon.assert.notCalled(stubFindCategoryList);
 				sinon.assert.calledOnce(stubFindFGAB);
-				sinon.assert.neverCalledWith(stubFindGAB);
+				sinon.assert.notCalled(stubFindGAB);
 			}
 		});
 
@@ -1116,6 +1169,7 @@ describe('ManageCategory Service Test', function () {
 			stubFindCategoryList.resolves([]);
 			stubFindFGAB.resolves(undefined);
 			stubFindGAB.resolves(new GroupAccountBookModel());
+			stubDeleteCategory.resolves(1);
 
 			const injectedFunc = deleteCategory({
 				...common,
@@ -1133,7 +1187,7 @@ describe('ManageCategory Service Test', function () {
 				}
 				sinon.assert.calledOnce(stubCheckAdminGroupUser);
 				sinon.assert.calledOnce(stubFindCategory);
-				sinon.assert.neverCalledWith(stubFindCategoryList);
+				sinon.assert.notCalled(stubFindCategoryList);
 				sinon.assert.calledOnce(stubFindFGAB);
 				sinon.assert.calledOnce(stubFindGAB);
 			}

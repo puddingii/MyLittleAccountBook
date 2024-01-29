@@ -1,0 +1,58 @@
+name: Unit test Important Logic
+
+on:
+  push:
+    branches:
+      - main
+      - develop
+    paths:
+      - 'backend/**'
+      - '!backend/k6/**'
+      - '!backend/**.md'
+  pull_request:
+    paths:
+      - 'backend/**'
+      - '!backend/k6/**'
+
+permissions:
+  contents: read
+  actions: read
+  checks: write
+
+jobs:
+  test:
+    name: Test
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./backend
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 18
+
+      - name: Install dependencies
+        run: yarn install --pure-lockfile
+
+      - name: Run test
+        run: yarn coverage
+
+      - name: Record unit test result
+        uses: dorny/test-reporter@v1
+        if: always()
+        with:
+          name: Mocha test
+          path: 'backend/mocha-back-result.json'
+          fail-on-error: 'false'
+          reporter: mocha-json
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Record coverage result
+        uses: coverallsapp/github-action@v2
+        if: always()
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          fail-on-error: false

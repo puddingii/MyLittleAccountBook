@@ -4,6 +4,7 @@ import { TCategoryInfo } from '@/interface/model/categoryRepository';
 import {
 	TCreateCategory,
 	TCreateDefaultCategory,
+	TDeleteCategory,
 	TDeleteChildCategoryList,
 	TFindCategory,
 	TFindCategoryList,
@@ -202,6 +203,30 @@ export const deleteChildCategoryList =
 	async (
 		info: TDeleteChildCategoryList['param'][0],
 		transaction?: TDeleteChildCategoryList['param'][1],
+	) => {
+		const {
+			CategoryModel,
+			errorUtil: { convertErrorToCustomError },
+		} = dependencies;
+
+		try {
+			const count = await CategoryModel.destroy({ where: info, transaction });
+
+			return count;
+		} catch (error) {
+			const customError = convertErrorToCustomError(error, {
+				trace: 'Repository',
+				code: 500,
+			});
+			throw customError;
+		}
+	};
+
+export const deleteCategory =
+	(dependencies: TDeleteCategory['dependency']) =>
+	async (
+		info: TDeleteCategory['param'][0],
+		transaction?: TDeleteCategory['param'][1],
 	) => {
 		const {
 			CategoryModel,
