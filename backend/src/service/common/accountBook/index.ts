@@ -1,5 +1,7 @@
 import { curry, flatMap, map, memoize, pipe, toArray, zipWithIndex } from '@fxts/core';
 
+import GroupModel from '@/model/group';
+
 /** Interface */
 import {
 	TCategory,
@@ -34,16 +36,20 @@ const findCategoryByChildId = (categoryList: TCategory[]) =>
  * 카테고리 찾는 함수의 경우 캐싱처리가 가능한 함수 사용할 것
  */
 const getHistory = <T extends { categoryId?: number }, R>(
-	nickname: string,
-	findCategory: ReturnType<typeof findCategoryByChildId>,
-	gabMapper: (obj: T) => R,
-	list: T[],
-) =>
-	pipe(
+	dependencies: {
+		findCategory: ReturnType<typeof findCategoryByChildId>;
+		gabMapper: (obj: T) => R;
+	},
+	info: { nickname: string; list: T[] },
+) => {
+	const { findCategory, gabMapper } = dependencies;
+	const { list, nickname } = info;
+
+	return pipe(
 		list,
 		zipWithIndex,
 		map(([idx, gab]) => {
-			const categoryInfo = pipe(gab.categoryId, findCategory) ?? {};
+			const categoryInfo = findCategory(gab.categoryId);
 			const category = (categoryInfo?.categoryNamePath ?? '') as string;
 			const gabInfo = gabMapper(gab);
 			return {
@@ -55,6 +61,10 @@ const getHistory = <T extends { categoryId?: number }, R>(
 		}),
 		toArray,
 	);
+};
+
+/** GroupModel의 유저 정보(Join결과)에서 닉네임 가져오기 */
+const getGroupUserNickname = (group: GroupModel) => group.users?.nickname ?? '';
 
 /** Recursive처리된 카테고리 데이터 가져오기 */
 export const getCategory =
@@ -112,6 +122,34 @@ export const getCategory =
 		}
 	};
 
+/** 변동기록 매핑 */
+const mappingNotFixedHistory = (
+	dependencies: { findCategory: ReturnType<typeof findCategoryByChildId> },
+	info: { list: GroupModel[] },
+) =>
+	pipe(
+		info.list,
+		flatMap(column =>
+			getHistory(
+				{
+					findCategory: dependencies.findCategory,
+					gabMapper: gab => ({
+						gabId: gab.id,
+						type: gab.type,
+						spendingAndIncomeDate: gab.spendingAndIncomeDate,
+						value: gab.value,
+						content: gab.content,
+					}),
+				},
+				{
+					nickname: getGroupUserNickname(column),
+					list: column.groupaccountbooks ?? [],
+				},
+			),
+		),
+		toArray,
+	);
+
 /** 변동지출 내용 리스트 가져오기 */
 export const getNotFixedColumnList =
 	(dependencies: TGetNotFixedColumnList['dependency']) =>
@@ -135,28 +173,7 @@ export const getNotFixedColumnList =
 			});
 
 			const findCategory = findCategoryByChildId(categoryList);
-
-			const historyList = pipe(
-				list,
-				flatMap(column => {
-					const nickname = column.users?.nickname ?? '';
-					const gabList = column.groupaccountbooks ?? [];
-
-					return getHistory(
-						nickname,
-						findCategory,
-						gab => ({
-							gabId: gab.id,
-							type: gab.type,
-							spendingAndIncomeDate: gab.spendingAndIncomeDate,
-							value: gab.value,
-							content: gab.content,
-						}),
-						gabList,
-					);
-				}),
-				toArray,
-			);
+			const historyList = mappingNotFixedHistory({ findCategory }, { list });
 
 			return historyList;
 		} catch (error) {
@@ -167,6 +184,36 @@ export const getNotFixedColumnList =
 			throw customError;
 		}
 	};
+
+/** 고정기록 매핑 */
+const mappingFixedHistory = (
+	dependencies: { findCategory: ReturnType<typeof findCategoryByChildId> },
+	info: { list: GroupModel[] },
+) =>
+	pipe(
+		info.list,
+		flatMap(column =>
+			getHistory(
+				{
+					findCategory: dependencies.findCategory,
+					gabMapper: gab => ({
+						gabId: gab.id,
+						type: gab.type,
+						cycleType: gab.cycleType,
+						cycleTime: gab.cycleTime,
+						needToUpdateDate: gab.needToUpdateDate,
+						value: gab.value,
+						content: gab.content,
+					}),
+				},
+				{
+					nickname: getGroupUserNickname(column),
+					list: column.crongroupaccountbooks ?? [],
+				},
+			),
+		),
+		toArray,
+	);
 
 /** 고정지출 내용 리스트 가져오기 */
 export const getFixedColumnList =
@@ -198,29 +245,7 @@ export const getFixedColumnList =
 
 			const findCategory = findCategoryByChildId(categoryList);
 
-			const historyList = pipe(
-				list,
-				flatMap(column => {
-					const nickname = column.users?.nickname ?? '';
-					const cgabList = column.crongroupaccountbooks ?? [];
-
-					return getHistory(
-						nickname,
-						findCategory,
-						gab => ({
-							gabId: gab.id,
-							type: gab.type,
-							cycleType: gab.cycleType,
-							cycleTime: gab.cycleTime,
-							needToUpdateDate: gab.needToUpdateDate,
-							value: gab.value,
-							content: gab.content,
-						}),
-						cgabList,
-					);
-				}),
-				toArray,
-			);
+			const historyList = mappingFixedHistory({ findCategory }, { list });
 
 			return historyList;
 		} catch (error) {
@@ -259,55 +284,10 @@ export const getAllTypeColumnList =
 
 			const findCategory = findCategoryByChildId(categoryList);
 
-			const historyList = pipe(
-				list,
-				flatMap(column => {
-					const nickname = column.users?.nickname ?? '';
-					const gabList = column.groupaccountbooks ?? [];
-					const cgabList = column.crongroupaccountbooks ?? [];
+			const fgab = mappingFixedHistory({ findCategory }, { list });
+			const nfgab = mappingNotFixedHistory({ findCategory }, { list });
 
-					const nfgab = getHistory(
-						nickname,
-						findCategory,
-						gab => ({
-							gabId: gab.id,
-							type: gab.type,
-							spendingAndIncomeDate: gab.spendingAndIncomeDate,
-							value: gab.value,
-							content: gab.content,
-						}),
-						gabList,
-					);
-					const fgab = getHistory(
-						nickname,
-						findCategory,
-						gab => ({
-							gabId: gab.id,
-							type: gab.type,
-							cycleType: gab.cycleType,
-							cycleTime: gab.cycleTime,
-							needToUpdateDate: gab.needToUpdateDate,
-							value: gab.value,
-							content: gab.content,
-						}),
-						cgabList,
-					);
-
-					return { nfgab, fgab };
-				}),
-				toArray,
-			);
-			const sumResult = historyList.reduce(
-				(acc, cur) => {
-					return {
-						nfgab: [...acc.nfgab, ...cur.nfgab],
-						fgab: [...acc.fgab, ...cur.fgab],
-					};
-				},
-				{ nfgab: [], fgab: [] },
-			);
-
-			return sumResult ?? { nfgab: [], fgab: [] };
+			return { nfgab, fgab };
 		} catch (error) {
 			const customError = convertErrorToCustomError(error, {
 				trace: 'Service',

@@ -12,6 +12,7 @@ import {
 } from '@/interface/service/headerService';
 
 import GroupModel from '@/model/group';
+import NoticeModel from '@/model/notice';
 
 const isEqualUser = (a: { email: string }, b: { email: string }) => a.email === b.email;
 
@@ -82,6 +83,17 @@ export const createAccountBookAndInviteUser =
 		}
 	};
 
+const mappingNotice = (notice: NoticeModel) => {
+	return {
+		id: notice.id,
+		title: notice.title,
+		content: notice.content,
+		isUpdateContent: notice.isUpdateContent,
+		createdAt: notice.createdAt,
+		updatedAt: notice.updatedAt,
+	};
+};
+
 export const getNotice =
 	(dependencies: TGetNotice['dependency']) => async (info: TGetNotice['param']) => {
 		const {
@@ -95,7 +107,7 @@ export const getNotice =
 				throw new Error('삭제된 공지입니다.');
 			}
 
-			return notice;
+			return mappingNotice(notice);
 		} catch (error) {
 			const customError = convertErrorToCustomError(error, {
 				trace: 'Service',
@@ -116,7 +128,7 @@ export const getNoticeList =
 		try {
 			const result = await findNoticeList(info);
 
-			return { count: result.count, list: result.rows };
+			return { count: result.count, list: result.rows.map(mappingNotice) };
 		} catch (error) {
 			const customError = convertErrorToCustomError(error, {
 				trace: 'Service',
@@ -131,13 +143,13 @@ export const updateNotice =
 		const {
 			errorUtil: { convertErrorToCustomError },
 			repository: { updateNotice },
-			dateUtil: { getCurrentDate, toDate },
+			dateUtil: { getCurrentDate },
 		} = dependencies;
 
 		try {
 			const updatedCount = await updateNotice({
 				...info,
-				updatedAt: pipe(getCurrentDate(), toDate),
+				updatedAt: getCurrentDate(),
 			});
 
 			return { count: updatedCount };

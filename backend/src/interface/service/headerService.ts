@@ -82,7 +82,7 @@ export type TUpdateNotice = {
 		repository: {
 			updateNotice: typeof updateNotice;
 		};
-		dateUtil: Pick<TDateUtil, 'toDate' | 'getCurrentDate'>;
+		dateUtil: Pick<TDateUtil, 'getCurrentDate'>;
 	};
 	param: RequiredPartial<InferAttributes<NoticeModel>, 'id'>;
 };
