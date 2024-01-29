@@ -17,7 +17,7 @@ import CategoryModel from '@/model/category';
 import GroupModel from '@/model/group';
 
 /** Dependency */
-import { cacheUtil, errorUtil, sequelize } from '../commonDependency';
+import { cacheUtil, errorUtil } from '../commonDependency';
 import { findGAB as findFGAB } from '@/repository/cronGroupAccountBookRepository/dependency';
 import { findGAB } from '@/repository/groupAccountBookRepository/dependency';
 import {
@@ -28,6 +28,7 @@ import {
 	deleteCategory as deleteCategoryR,
 } from '@/repository/categoryRepository/dependency';
 import { checkAdminGroupUser } from '@/service/common/user/dependency';
+import sequelize from '@/loader/mysql';
 
 /** Model */
 import CronGroupAccountBookModel from '@/model/cronGroupAccountBook';
