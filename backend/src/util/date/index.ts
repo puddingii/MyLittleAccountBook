@@ -95,7 +95,7 @@ export const getCycleDay = curry(
 export const isGreater = curry((a: TDate, b: TDate) => {
 	const [aDate, bDate] = pipe([a, b], map(coverDayjs));
 
-	return !aDate.isSame(bDate, 'day') && aDate.isAfter(bDate, 'day');
+	return !aDate.isSame(bDate) && aDate.isAfter(bDate);
 });
 
 /**
@@ -104,7 +104,7 @@ export const isGreater = curry((a: TDate, b: TDate) => {
 export const isGreaterOrEqual = curry((a: TDate, b: TDate) => {
 	const [aDate, bDate] = pipe([a, b], map(coverDayjs));
 
-	return aDate.isSame(bDate, 'day') && aDate.isAfter(bDate, 'day');
+	return aDate.isSame(bDate) || aDate.isAfter(bDate);
 });
 
 /**
@@ -113,7 +113,7 @@ export const isGreaterOrEqual = curry((a: TDate, b: TDate) => {
 export const isLess = curry((a: TDate, b: TDate) => {
 	const [aDate, bDate] = pipe([a, b], map(coverDayjs));
 
-	return !aDate.isSame(bDate, 'day') && aDate.isBefore(bDate, 'day');
+	return !aDate.isSame(bDate) && aDate.isBefore(bDate);
 });
 
 /**
@@ -122,7 +122,7 @@ export const isLess = curry((a: TDate, b: TDate) => {
 export const isLessOrEqual = curry((a: TDate, b: TDate) => {
 	const [aDate, bDate] = pipe([a, b], map(coverDayjs));
 
-	return aDate.isSame(bDate, 'day') && aDate.isBefore(bDate, 'day');
+	return aDate.isSame(bDate) || aDate.isBefore(bDate);
 });
 
 /** '특정 일'의 경우 계산 */
@@ -138,15 +138,16 @@ export const calculateNextNotSD = curry(
 );
 
 /** 다음 업데이트될 날짜를 계산하는 함수 */
-export const calculateNextCycle = (
-	date: Date,
-	cycleTime: number,
-	cycleType: TCycleType,
-) => {
-	const calculator = cycleType === 'sd' ? calculateNextSD : calculateNextNotSD;
+export const calculateNextCycle = curry(
+	(cycleTime: number, cycleType: TCycleType, date: Date) => {
+		if (cycleTime < 1) {
+			throw new Error('cycleTime에는 마이너스 값을 입력할 수 없습니다.');
+		}
+		const calculator = cycleType === 'sd' ? calculateNextSD : calculateNextNotSD;
 
-	return pipe(date, coverDayjs, calculator({ cycleTime, cycleType }), toDate);
-};
+		return pipe(date, coverDayjs, calculator({ cycleTime, cycleType }), toDate);
+	},
+);
 
 export default {
 	addDate,
@@ -162,4 +163,8 @@ export default {
 	subtractDate,
 	toDate,
 	toString,
+	isLess,
+	isLessOrEqual,
+	isGreater,
+	isGreaterOrEqual,
 };
