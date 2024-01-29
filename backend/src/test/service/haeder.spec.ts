@@ -1,6 +1,6 @@
 /* eslint-disable import/no-extraneous-dependencies */
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import { AssertionError, deepEqual, equal, fail } from 'assert';
+import { AssertionError, deepStrictEqual, equal, fail } from 'assert';
 import sinon from 'sinon';
 import { Transaction, TransactionOptions } from 'sequelize';
 import dayjs from 'dayjs';
@@ -373,7 +373,7 @@ describe('Header Service Test', function () {
 				try {
 					const result = await injectedFunc({ id: 1 });
 
-					deepEqual(result, noticeInfo);
+					deepStrictEqual(result, noticeInfo);
 				} catch (err) {
 					fail(err as Error);
 				}
@@ -464,7 +464,7 @@ describe('Header Service Test', function () {
 				try {
 					const result = await injectedFunc({ page: 1, limit: 10 });
 
-					deepEqual(result, { list: noticeList, count: 3 });
+					deepStrictEqual(result, { list: noticeList, count: 3 });
 				} catch (err) {
 					fail(err as Error);
 				}
@@ -542,7 +542,7 @@ describe('Header Service Test', function () {
 				try {
 					const result = await injectedFunc({ id: 1, content: 'fixedContent' });
 
-					deepEqual(result, { count: [1] });
+					deepStrictEqual(result, { count: [1] });
 				} catch (err) {
 					fail(err as Error);
 				}
@@ -632,7 +632,7 @@ describe('Header Service Test', function () {
 				try {
 					const result = await injectedFunc({ id: 1 });
 
-					deepEqual(result, { count: 1 });
+					deepStrictEqual(result, { count: 1 });
 				} catch (err) {
 					fail(err as Error);
 				}
@@ -709,7 +709,7 @@ describe('Header Service Test', function () {
 						title: 'title1',
 					});
 
-					deepEqual(result, {
+					deepStrictEqual(result, {
 						id: 1,
 						title: 'title1',
 						content: 'content1',

@@ -1,6 +1,6 @@
 /* eslint-disable import/no-extraneous-dependencies */
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import { AssertionError, deepEqual, equal, fail } from 'assert';
+import { AssertionError, deepStrictEqual, equal, fail } from 'assert';
 import sinon from 'sinon';
 
 /** Dependency */
@@ -253,7 +253,7 @@ describe('Common AccountBook Service Test', function () {
 			try {
 				const result = await injectedFunc(1, { end: 3, start: 1 });
 
-				deepEqual(result, findRecursiveMappedDataList);
+				deepStrictEqual(result, findRecursiveMappedDataList);
 			} catch (err) {
 				fail(err as Error);
 			}

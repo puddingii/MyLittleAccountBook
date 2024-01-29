@@ -8,6 +8,7 @@ import {
 	createGroup,
 	deleteGroup,
 	findGroup,
+	findGroupAccountBookList,
 	findGroupUserList,
 	updateGroup,
 } from '@/repository/groupRepository/dependency';
@@ -16,6 +17,7 @@ import { errorUtil, validationUtil } from '../commonDependency';
 import {
 	addGroup,
 	deleteGroupUser,
+	getGroupAccountBookList,
 	getGroupUserList,
 	updateGroupInfo,
 	validateGroupUser,
@@ -25,6 +27,7 @@ import {
 import GroupModel from '@/model/group';
 import UserModel from '@/model/user';
 import UserPrivacyModel from '@/model/userPrivacy';
+import AccountBookModel from '@/model/accountBook';
 
 describe('Group Service Test', function () {
 	const common = {
@@ -110,6 +113,158 @@ describe('Group Service Test', function () {
 					fail(err);
 				}
 				sinon.assert.calledOnce(stubFindGroup);
+			}
+		});
+	});
+
+	describe('#getGroupAccountBookList', function () {
+		const repository = { findGroupAccountBookList };
+		let stubFindGroupAccountBookList = sinon.stub(repository, 'findGroupAccountBookList');
+		const groupList = [
+			new GroupModel({
+				id: 1,
+				userEmail: 'test@naver.com',
+				userType: 'owner',
+				accountBookId: 1,
+			}),
+			new GroupModel({
+				id: 2,
+				userEmail: 'test@naver.com',
+				userType: 'observer',
+				accountBookId: 2,
+			}),
+			new GroupModel({
+				id: 3,
+				userEmail: 'test@naver.com',
+				userType: 'writer',
+				accountBookId: 3,
+			}),
+		];
+		const joinedGroupList = [
+			new GroupModel({
+				id: 1,
+				userEmail: 'test@naver.com',
+				userType: 'owner',
+			}),
+			new GroupModel({
+				id: 2,
+				userEmail: 'test@naver.com',
+				userType: 'observer',
+			}),
+			new GroupModel({
+				id: 3,
+				userEmail: 'test@naver.com',
+				userType: 'writer',
+			}),
+		];
+		const mixedGroupList = [...groupList, ...joinedGroupList];
+
+		before(function () {
+			joinedGroupList.map((group, idx) => {
+				group.accountbooks = new AccountBookModel({
+					title: `title${idx}`,
+					content: `content${idx}`,
+					id: idx + 1,
+				});
+				group.accountBookId = idx + 1;
+				return group;
+			});
+		});
+
+		beforeEach(function () {
+			stubFindGroupAccountBookList = sinon.stub(repository, 'findGroupAccountBookList');
+		});
+
+		it('Check function parameters', async function () {
+			stubFindGroupAccountBookList.resolves(joinedGroupList);
+
+			const injectedFunc = getGroupAccountBookList({ ...common, repository });
+
+			try {
+				await injectedFunc({ userEmail: 'test@naver.com' });
+
+				sinon.assert.calledWith(stubFindGroupAccountBookList, {
+					userEmail: 'test@naver.com',
+				});
+			} catch (err) {
+				fail(err as Error);
+			}
+		});
+
+		it('Check correct result', async function () {
+			stubFindGroupAccountBookList.resolves(joinedGroupList);
+
+			const injectedFunc = getGroupAccountBookList({ ...common, repository });
+
+			try {
+				const result = await injectedFunc({ userEmail: 'test@naver.com' });
+
+				deepStrictEqual(result[0], {
+					accountBookId: joinedGroupList[0]?.accountbooks?.id,
+					accountBookName: joinedGroupList[0]?.accountbooks?.title,
+					accountBookContent: joinedGroupList[0]?.accountbooks?.content,
+				});
+			} catch (err) {
+				fail(err as Error);
+			}
+		});
+
+		it('Check empty list', async function () {
+			stubFindGroupAccountBookList.resolves([]);
+
+			const injectedFunc = getGroupAccountBookList({ ...common, repository });
+
+			try {
+				const result = await injectedFunc({ userEmail: 'test@naver.com' });
+
+				equal(result.length, 0);
+			} catch (err) {
+				fail(err as Error);
+			}
+		});
+
+		it('Check mixed list(joined, not joined)', async function () {
+			stubFindGroupAccountBookList.resolves(mixedGroupList);
+
+			const injectedFunc = getGroupAccountBookList({ ...common, repository });
+
+			try {
+				const result = await injectedFunc({ userEmail: 'test@naver.com' });
+
+				equal(result.length, 3);
+			} catch (err) {
+				fail(err as Error);
+			}
+		});
+
+		it('If DB join is ignored', async function () {
+			stubFindGroupAccountBookList.resolves(groupList);
+
+			const injectedFunc = getGroupAccountBookList({ ...common, repository });
+
+			try {
+				const result = await injectedFunc({ userEmail: 'test@naver.com' });
+
+				deepStrictEqual(result.length, 0);
+			} catch (err) {
+				fail(err as Error);
+			}
+		});
+
+		it('If findGroupUserList error', async function () {
+			stubFindGroupAccountBookList.rejects(new Error('findGroupUserList error'));
+
+			const injectedFunc = getGroupAccountBookList({ ...common, repository });
+
+			try {
+				await injectedFunc({ userEmail: 'test@naver.com' });
+
+				fail('Expected to error');
+			} catch (err) {
+				if (err instanceof AssertionError) {
+					fail(err);
+				}
+				sinon.assert.calledOnce(stubFindGroupAccountBookList);
 			}
 		});
 	});
@@ -529,6 +684,144 @@ describe('Group Service Test', function () {
 			stubFindGroup.resolves(new GroupModel({ userEmail: '', userType: 'owner' }));
 			stubCreateGroup.resolves(new GroupModel({ ...invitedUserInfo, id: 2 }));
 			stubFindUserInfoWithPrivacy.rejects(new Error('findUserInfoWithPrivacy error'));
+
+			const injectedFunc = addGroup({
+				errorUtil: { ...common.errorUtil, CustomError: errorUtil.CustomError },
+				repository,
+				validationUtil: { isAdminUser: validationUtil.isAdminUserTrue },
+			});
+
+			try {
+				await injectedFunc({
+					accountBookId: 1,
+					myEmail: 'test@naver.com',
+					...invitedUserInfo,
+				});
+
+				fail('Expected to error');
+			} catch (err) {
+				if (err instanceof AssertionError) {
+					fail(err);
+				}
+				sinon.assert.calledOnce(stubFindGroup);
+				sinon.assert.notCalled(stubCreateGroup);
+				sinon.assert.calledOnce(stubFindUserInfoWithPrivacy);
+			}
+		});
+
+		it('If userprivacy join error', async function () {
+			stubFindGroup.resolves(new GroupModel({ userEmail: '', userType: 'owner' }));
+			stubCreateGroup.resolves(new GroupModel({ ...invitedUserInfo, id: 2 }));
+			const user = new UserModel(admin);
+			stubFindUserInfoWithPrivacy.resolves(user);
+
+			const injectedFunc = addGroup({
+				errorUtil: { ...common.errorUtil, CustomError: errorUtil.CustomError },
+				repository,
+				validationUtil: { isAdminUser: validationUtil.isAdminUserTrue },
+			});
+
+			try {
+				await injectedFunc({
+					accountBookId: 1,
+					myEmail: 'test@naver.com',
+					...invitedUserInfo,
+				});
+
+				fail('Expected to error');
+			} catch (err) {
+				if (err instanceof AssertionError) {
+					fail(err);
+				}
+				sinon.assert.calledOnce(stubFindGroup);
+				sinon.assert.notCalled(stubCreateGroup);
+				sinon.assert.calledOnce(stubFindUserInfoWithPrivacy);
+			}
+		});
+
+		it('If isAuthenticated privacy is false', async function () {
+			stubFindGroup.resolves(new GroupModel({ userEmail: '', userType: 'owner' }));
+			stubCreateGroup.resolves(new GroupModel({ ...invitedUserInfo, id: 2 }));
+			const user = new UserModel(admin);
+			const userPrivacy = new UserPrivacyModel({
+				userEmail: admin.email,
+				...userPrivacyInfo.authGroupPublic,
+				isAuthenticated: false,
+			});
+			user.userprivacy = userPrivacy;
+			stubFindUserInfoWithPrivacy.resolves(user);
+
+			const injectedFunc = addGroup({
+				errorUtil: { ...common.errorUtil, CustomError: errorUtil.CustomError },
+				repository,
+				validationUtil: { isAdminUser: validationUtil.isAdminUserTrue },
+			});
+
+			try {
+				await injectedFunc({
+					accountBookId: 1,
+					myEmail: 'test@naver.com',
+					...invitedUserInfo,
+				});
+
+				fail('Expected to error');
+			} catch (err) {
+				if (err instanceof AssertionError) {
+					fail(err);
+				}
+				sinon.assert.calledOnce(stubFindGroup);
+				sinon.assert.notCalled(stubCreateGroup);
+				sinon.assert.calledOnce(stubFindUserInfoWithPrivacy);
+			}
+		});
+
+		it('If isPublicUser privacy is false', async function () {
+			stubFindGroup.resolves(new GroupModel({ userEmail: '', userType: 'owner' }));
+			stubCreateGroup.resolves(new GroupModel({ ...invitedUserInfo, id: 2 }));
+			const user = new UserModel(admin);
+			const userPrivacy = new UserPrivacyModel({
+				userEmail: admin.email,
+				...userPrivacyInfo.authGroupPublic,
+				isPublicUser: false,
+			});
+			user.userprivacy = userPrivacy;
+			stubFindUserInfoWithPrivacy.resolves(user);
+
+			const injectedFunc = addGroup({
+				errorUtil: { ...common.errorUtil, CustomError: errorUtil.CustomError },
+				repository,
+				validationUtil: { isAdminUser: validationUtil.isAdminUserTrue },
+			});
+
+			try {
+				await injectedFunc({
+					accountBookId: 1,
+					myEmail: 'test@naver.com',
+					...invitedUserInfo,
+				});
+
+				fail('Expected to error');
+			} catch (err) {
+				if (err instanceof AssertionError) {
+					fail(err);
+				}
+				sinon.assert.calledOnce(stubFindGroup);
+				sinon.assert.notCalled(stubCreateGroup);
+				sinon.assert.calledOnce(stubFindUserInfoWithPrivacy);
+			}
+		});
+
+		it('If isGroupInvitationOn privacy is false', async function () {
+			stubFindGroup.resolves(new GroupModel({ userEmail: '', userType: 'owner' }));
+			stubCreateGroup.resolves(new GroupModel({ ...invitedUserInfo, id: 2 }));
+			const user = new UserModel(admin);
+			const userPrivacy = new UserPrivacyModel({
+				userEmail: admin.email,
+				...userPrivacyInfo.authGroupPublic,
+				isGroupInvitationOn: false,
+			});
+			user.userprivacy = userPrivacy;
+			stubFindUserInfoWithPrivacy.resolves(user);
 
 			const injectedFunc = addGroup({
 				errorUtil: { ...common.errorUtil, CustomError: errorUtil.CustomError },

@@ -13,7 +13,9 @@ import {
 	getSocialLoginLocation,
 	isValidatedState,
 	refreshToken,
+	resendVerificationEmail,
 	socialLogin,
+	verifyEmail,
 } from '@/service/authService';
 
 /** Dependency */
@@ -23,8 +25,13 @@ import {
 	findOneSocialUserInfo,
 	findOneUser,
 } from '@/repository/authRepository/dependency';
+import {
+	findUserPrivacy,
+	updateUserPrivacy,
+} from '@/repository/userPrivacyRepository/dependency';
 import { errorUtil, cacheUtil, jwtUtil } from '../commonDependency';
 import { SOCIAL_URL_MANAGER } from '@/service/authService/socialManager';
+import { sendVerificationEmail } from '@/service/common/user/dependency';
 import {
 	createAccessToken,
 	createRefreshToken,
@@ -44,6 +51,8 @@ import OAuthUserModel from '@/model/oauthUser';
 /** Interface */
 import { TUserInfo } from '@/interface/user';
 import { TAuthEvent } from '@/interface/pubsub/auth';
+import UserPrivacyModel from '@/model/userPrivacy';
+import { getEmailVerificationStateCache } from '@/util/cache/v2';
 
 describe('Group Service Test', function () {
 	const common = {
@@ -1395,6 +1404,351 @@ describe('Group Service Test', function () {
 				sinon.assert.calledOnce(stubDecodeToken);
 				sinon.assert.calledOnce(stubGetCache);
 				sinon.assert.calledOnce(stubDeleteCache);
+			}
+		});
+	});
+
+	describe('#resendVerificationEmail', function () {
+		const service = { sendVerificationEmail };
+		const repository = { findUserPrivacy };
+		let stubSendVerificationEmail = sinon.stub(service, 'sendVerificationEmail');
+		let stubFindUserPrivacy = sinon.stub(repository, 'findUserPrivacy');
+		const defaultInfo = {
+			userEmail: 'test@naver.com',
+			userNickname: 'test',
+		};
+
+		beforeEach(function () {
+			stubSendVerificationEmail = sinon.stub(service, 'sendVerificationEmail');
+			stubFindUserPrivacy = sinon.stub(repository, 'findUserPrivacy');
+		});
+
+		it('Check function parameters', async function () {
+			const privacy = new UserPrivacyModel({
+				isAuthenticated: false,
+				isGroupInvitationOn: true,
+				isPublicUser: true,
+				userEmail: defaultInfo.userEmail,
+			});
+
+			stubFindUserPrivacy.resolves(privacy);
+			stubSendVerificationEmail.resolves(true);
+
+			const injectedFunc = resendVerificationEmail({
+				...common,
+				repository,
+				service,
+			});
+
+			try {
+				await injectedFunc(defaultInfo);
+
+				sinon.assert.calledWith(stubFindUserPrivacy, {
+					userEmail: defaultInfo.userEmail,
+				});
+				sinon.assert.calledWith(stubSendVerificationEmail, defaultInfo);
+			} catch (err) {
+				fail(err as Error);
+			}
+		});
+
+		it('Check correct result', async function () {
+			const privacy = new UserPrivacyModel({
+				isAuthenticated: false,
+				isGroupInvitationOn: true,
+				isPublicUser: true,
+				userEmail: defaultInfo.userEmail,
+			});
+
+			stubFindUserPrivacy.resolves(privacy);
+			stubSendVerificationEmail.resolves(true);
+
+			const injectedFunc = resendVerificationEmail({
+				...common,
+				repository,
+				service,
+			});
+
+			try {
+				const result = await injectedFunc(defaultInfo);
+
+				equal(result.code, 1);
+			} catch (err) {
+				fail(err as Error);
+			}
+		});
+
+		it('If sendVerificationEmail return false', async function () {
+			const privacy = new UserPrivacyModel({
+				isAuthenticated: false,
+				isGroupInvitationOn: true,
+				isPublicUser: true,
+				userEmail: defaultInfo.userEmail,
+			});
+
+			stubFindUserPrivacy.resolves(privacy);
+			stubSendVerificationEmail.resolves(false);
+
+			const injectedFunc = resendVerificationEmail({
+				...common,
+				repository,
+				service,
+			});
+
+			try {
+				const result = await injectedFunc(defaultInfo);
+
+				equal(result.code, 0);
+			} catch (err) {
+				fail(err as Error);
+			}
+		});
+
+		it('If isAuthenticated privacy is true', async function () {
+			const privacy = new UserPrivacyModel({
+				isAuthenticated: true,
+				isGroupInvitationOn: true,
+				isPublicUser: true,
+				userEmail: defaultInfo.userEmail,
+			});
+
+			stubFindUserPrivacy.resolves(privacy);
+			stubSendVerificationEmail.resolves(true);
+
+			const injectedFunc = resendVerificationEmail({
+				...common,
+				repository,
+				service,
+			});
+
+			try {
+				await injectedFunc(defaultInfo);
+
+				fail('Expected to error');
+			} catch (err) {
+				if (err instanceof AssertionError) {
+					fail(err);
+				}
+				sinon.assert.calledOnce(stubFindUserPrivacy);
+				sinon.assert.notCalled(stubSendVerificationEmail);
+			}
+		});
+
+		it('If findUserPrivacy return null', async function () {
+			stubFindUserPrivacy.resolves(null);
+			stubSendVerificationEmail.resolves(true);
+
+			const injectedFunc = resendVerificationEmail({
+				...common,
+				repository,
+				service,
+			});
+
+			try {
+				await injectedFunc(defaultInfo);
+
+				fail('Expected to error');
+			} catch (err) {
+				if (err instanceof AssertionError) {
+					fail(err);
+				}
+				sinon.assert.calledOnce(stubFindUserPrivacy);
+				sinon.assert.notCalled(stubSendVerificationEmail);
+			}
+		});
+
+		it('If findUserPrivacy error', async function () {
+			stubFindUserPrivacy.rejects(new Error('findUserPrivacy error'));
+			stubSendVerificationEmail.resolves(true);
+
+			const injectedFunc = resendVerificationEmail({
+				...common,
+				repository,
+				service,
+			});
+
+			try {
+				await injectedFunc(defaultInfo);
+
+				fail('Expected to error');
+			} catch (err) {
+				if (err instanceof AssertionError) {
+					fail(err);
+				}
+				sinon.assert.calledOnce(stubFindUserPrivacy);
+				sinon.assert.notCalled(stubSendVerificationEmail);
+			}
+		});
+
+		it('If sendVerificationEmail error', async function () {
+			const privacy = new UserPrivacyModel({
+				isAuthenticated: false,
+				isGroupInvitationOn: true,
+				isPublicUser: true,
+				userEmail: defaultInfo.userEmail,
+			});
+
+			stubFindUserPrivacy.resolves(privacy);
+			stubSendVerificationEmail.rejects(new Error('sendVerificationEmail error'));
+
+			const injectedFunc = resendVerificationEmail({
+				...common,
+				repository,
+				service,
+			});
+
+			try {
+				await injectedFunc(defaultInfo);
+
+				fail('Expected to error');
+			} catch (err) {
+				if (err instanceof AssertionError) {
+					fail(err);
+				}
+				sinon.assert.calledOnce(stubFindUserPrivacy);
+				sinon.assert.calledOnce(stubSendVerificationEmail);
+			}
+		});
+	});
+
+	describe('#verifyEmail', function () {
+		const repository = { updateUserPrivacy };
+		const customCacheUtil = {
+			getCache: getEmailVerificationStateCache,
+			deleteCache: cacheUtil.deleteCache,
+		};
+		let stubUpdateUserPrivacy = sinon.stub(repository, 'updateUserPrivacy');
+		let stubGetCache = sinon.stub(customCacheUtil, 'getCache');
+		const defaultInfo = { userEmail: 'test@naver.com', emailState: 'randomState1' };
+
+		beforeEach(function () {
+			stubUpdateUserPrivacy = sinon.stub(repository, 'updateUserPrivacy');
+			stubGetCache = sinon.stub(customCacheUtil, 'getCache');
+		});
+
+		it('Check function parameters', async function () {
+			stubUpdateUserPrivacy.resolves();
+			stubGetCache.resolves(defaultInfo.emailState);
+
+			const injectedFunc = verifyEmail({
+				...common,
+				repository,
+				cacheUtil: customCacheUtil,
+			});
+
+			try {
+				await injectedFunc(defaultInfo);
+
+				sinon.assert.calledWith(stubGetCache, defaultInfo.userEmail);
+				sinon.assert.calledWith(stubUpdateUserPrivacy, {
+					userEmail: defaultInfo.userEmail,
+					isAuthenticated: true,
+				});
+			} catch (err) {
+				fail(err as Error);
+			}
+		});
+
+		it('Check correct result', async function () {
+			stubUpdateUserPrivacy.resolves();
+			stubGetCache.resolves(defaultInfo.emailState);
+
+			const injectedFunc = verifyEmail({
+				...common,
+				repository,
+				cacheUtil: customCacheUtil,
+			});
+
+			try {
+				const result = await injectedFunc(defaultInfo);
+
+				equal(result.code, 1);
+			} catch (err) {
+				fail(err as Error);
+			}
+		});
+
+		it('If getCache return null', async function () {
+			stubUpdateUserPrivacy.resolves();
+			stubGetCache.resolves(null);
+
+			const injectedFunc = verifyEmail({
+				...common,
+				repository,
+				cacheUtil: customCacheUtil,
+			});
+
+			try {
+				const result = await injectedFunc(defaultInfo);
+
+				deepStrictEqual(result, { code: 2 });
+			} catch (err) {
+				fail(err as Error);
+			}
+		});
+
+		it('If decoded data !== emailState', async function () {
+			stubUpdateUserPrivacy.resolves();
+			stubGetCache.resolves('notSameData');
+
+			const injectedFunc = verifyEmail({
+				...common,
+				repository,
+				cacheUtil: customCacheUtil,
+			});
+
+			try {
+				const result = await injectedFunc(defaultInfo);
+
+				deepStrictEqual(result, { code: 3 });
+			} catch (err) {
+				fail(err as Error);
+			}
+		});
+
+		it('If getCache error', async function () {
+			stubUpdateUserPrivacy.resolves();
+			stubGetCache.rejects(new Error('getCache error'));
+
+			const injectedFunc = verifyEmail({
+				...common,
+				repository,
+				cacheUtil: customCacheUtil,
+			});
+
+			try {
+				await injectedFunc(defaultInfo);
+
+				fail('Expected to error');
+			} catch (err) {
+				if (err instanceof AssertionError) {
+					fail(err);
+				}
+				sinon.assert.calledOnce(stubGetCache);
+				sinon.assert.notCalled(stubUpdateUserPrivacy);
+			}
+		});
+
+		it('If updateUserPrivacy error', async function () {
+			stubUpdateUserPrivacy.rejects(new Error('updateUserPrivacy error'));
+			stubGetCache.resolves(defaultInfo.emailState);
+
+			const injectedFunc = verifyEmail({
+				...common,
+				repository,
+				cacheUtil: customCacheUtil,
+			});
+
+			try {
+				await injectedFunc(defaultInfo);
+
+				fail('Expected to error');
+			} catch (err) {
+				if (err instanceof AssertionError) {
+					fail(err);
+				}
+				sinon.assert.calledOnce(stubGetCache);
+				sinon.assert.calledOnce(stubUpdateUserPrivacy);
 			}
 		});
 	});
