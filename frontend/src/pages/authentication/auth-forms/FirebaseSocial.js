@@ -4,7 +4,8 @@ import { useMediaQuery, Button, Stack, Grid, Typography } from '@mui/material';
 
 // assets
 import Google from 'assets/images/icons/google.svg';
-import Kakao from 'assets/images/icons/kakao.png';
+// import Kakao from 'assets/images/icons/kakao.png';
+import Naver from 'assets/images/icons/naver.png';
 import { useGetSocialLocationMutate } from 'queries/auth/authMutation';
 
 // ==============================|| FIREBASE - SOCIAL BUTTON ||============================== //
@@ -18,7 +19,11 @@ const FirebaseSocial = () => {
 		mutate('Google');
 	};
 
-	const kakaoHandler = async () => {
+	// const kakaoHandler = async () => {
+	// 	mutate('Kakao');
+	// };
+
+	const naverHandler = async () => {
 		mutate('Naver');
 	};
 
@@ -45,11 +50,20 @@ const FirebaseSocial = () => {
 					variant="outlined"
 					color="secondary"
 					fullWidth={!matchDownSM}
+					startIcon={<img src={Naver} alt="Naver" />}
+					onClick={naverHandler}
+				>
+					{!matchDownSM && 'Naver'}
+				</Button>
+				{/* <Button
+					variant="outlined"
+					color="secondary"
+					fullWidth={!matchDownSM}
 					startIcon={<img src={Kakao} alt="Kakao" />}
 					onClick={kakaoHandler}
 				>
 					{!matchDownSM && 'Kakao'}
-				</Button>
+				</Button> */}
 			</Stack>
 			{isError && (
 				<Grid item xs={12}>
