@@ -146,7 +146,8 @@ const AuthLogin = () => {
 									</Button>
 								</AnimateButton>
 							</Grid>
-							<Grid item xs={12} sx={{ mt: -1 }}>
+							{/** FIXME 소셜로그인 허가나면 수정할것 */}
+							{/* <Grid item xs={12} sx={{ mt: -1 }}>
 								<Stack direction="row" justifyContent="space-evenly" alignItems="center" spacing={2}>
 									<Link variant="h6" component={RouterLink} to="" color="text.primary">
 										아이디 찾기
@@ -155,15 +156,15 @@ const AuthLogin = () => {
 										비밀번호 찾기
 									</Link>
 								</Stack>
-							</Grid>
-							<Grid item xs={12}>
+							</Grid> */}
+							{/* <Grid item xs={12}>
 								<Divider>
 									<Typography variant="caption"> Login with</Typography>
 								</Divider>
 							</Grid>
 							<Grid item xs={12}>
 								<FirebaseSocial />
-							</Grid>
+							</Grid> */}
 						</Grid>
 					</form>
 				)}
