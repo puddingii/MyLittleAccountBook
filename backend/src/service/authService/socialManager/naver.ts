@@ -76,18 +76,23 @@ export const getUserInfo = async (code: string) => {
 
 		const headers = new Headers({
 			Authorization: `Bearer ${code}`,
-			'X-Naver-Client-Id': client.id,
-			'X-Naver-Client-Secret': client.secret,
 		});
 		const response = await fetch(tokenBaseUrl, {
 			headers,
 			method: 'GET',
 		});
 
-		const userInfo = (await response.json()) as INaverSocialInfo['UserInfo'];
 		if (!response.ok) {
 			throw new CustomError(response.statusText, { code: response.status });
 		}
+		const decodedData = await response.json();
+
+		if (decodedData.resultcode !== '00') {
+			throw new CustomError(`code[${decodedData.resultcode}]: ${decodedData.message}`, {
+				code: 500,
+			});
+		}
+		const userInfo = decodedData.response as INaverSocialInfo['UserInfo'];
 
 		return userInfo;
 	} catch (error) {
