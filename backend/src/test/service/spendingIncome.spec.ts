@@ -1073,7 +1073,7 @@ describe('SpendingIncome Service Test', function () {
 				await injectedFunc({ id: 1, userEmail: requestUserInfo.userEmail });
 
 				sinon.assert.calledWith(stubFindFixedGAB, { id: 1 }, { isIncludeGroup: true });
-				sinon.assert.calledWith(stubDeleteFColumn, cgabJoinGroup);
+				sinon.assert.calledWith(stubDeleteFColumn, { id: 1 });
 				sinon.assert.calledWith(stubCheckAdminGroupUser, {
 					userEmail: requestUserInfo.userEmail,
 					accountBookId: cgabJoinGroup.groups.accountBookId,
@@ -1309,7 +1309,7 @@ describe('SpendingIncome Service Test', function () {
 				});
 
 				sinon.assert.calledWith(stubFindNotFixedGAB, { id: 1 }, { isIncludeGroup: true });
-				sinon.assert.calledWith(stubDeleteNFColumn, gabJoinGroup);
+				sinon.assert.calledWith(stubDeleteNFColumn, { id: 1 });
 				sinon.assert.calledWith(stubCheckAdminGroupUser, {
 					userEmail: requestUserInfo.userEmail,
 					accountBookId: gabJoinGroup.groups.accountBookId,
