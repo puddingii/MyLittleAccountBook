@@ -8,6 +8,7 @@ module.exports = [
 			NODE_ENV: 'production',
 			EXPRESS_PORT: '7501',
 			SOCKET_PORT: '7202',
+			IS_MASTER_SERVER: 'Y',
 		},
 		env_development: {
 			NODE_ENV: 'development',
