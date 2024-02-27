@@ -51,6 +51,7 @@ export type TUpdateColumn = {
 export type TDeleteColumn = {
 	dependency: {
 		errorUtil: Pick<TErrorUtil, 'convertErrorToCustomError'>;
+		GroupAccountBookModel: typeof GroupAccountBookModel;
 	};
-	param: GroupAccountBookModel;
+	param: Partial<TColumnInfo>;
 };

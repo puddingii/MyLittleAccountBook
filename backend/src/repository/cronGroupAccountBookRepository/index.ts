@@ -173,10 +173,13 @@ export const deleteColumn =
 	async (column: TDeleteColumn['param']) => {
 		const {
 			errorUtil: { convertErrorToCustomError },
+			CronGroupAccountBookModel,
 		} = dependencies;
 
 		try {
-			await column.destroy();
+			const result = await CronGroupAccountBookModel.destroy({ where: column });
+
+			return result;
 		} catch (error) {
 			const customError = convertErrorToCustomError(error, {
 				trace: 'Repository',

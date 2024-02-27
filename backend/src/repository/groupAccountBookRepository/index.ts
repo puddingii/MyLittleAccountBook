@@ -13,7 +13,7 @@ export const findGAB =
 	async (
 		gabInfo: TFindGAB['param'][0],
 		options?: TFindGAB['param'][1],
-	): Promise<InstanceType<typeof GroupAccountBookModel> | undefined> => {
+	): Promise<InstanceType<typeof GroupAccountBookModel> | null> => {
 		const {
 			GroupAccountBookModel,
 			GroupModel,
@@ -21,23 +21,21 @@ export const findGAB =
 		} = dependencies;
 
 		try {
-			const includeOption = options?.isIncludeGroup
-				? {
-						include: {
-							model: GroupModel,
-							as: 'groups',
-							required: true,
-						},
-				  }
-				: {};
-			const gab = await GroupAccountBookModel.findAll({
+			const includeList = [];
+			if (options?.isIncludeGroup) {
+				includeList.push({
+					model: GroupModel,
+					as: 'groups',
+					required: true,
+				});
+			}
+			const gab = await GroupAccountBookModel.findOne({
 				where: gabInfo,
-				...includeOption,
-				limit: 1,
+				include: includeList,
 				subQuery: false,
 			});
 
-			return gab[0];
+			return gab;
 		} catch (error) {
 			const customError = convertErrorToCustomError(error, {
 				trace: 'Repository',
@@ -134,10 +132,13 @@ export const deleteColumn =
 	async (column: TDeleteColumn['param']) => {
 		const {
 			errorUtil: { convertErrorToCustomError },
+			GroupAccountBookModel,
 		} = dependencies;
 
 		try {
-			await column.destroy();
+			const result = await GroupAccountBookModel.destroy({ where: column });
+
+			return result;
 		} catch (error) {
 			const customError = convertErrorToCustomError(error, {
 				trace: 'Repository',
