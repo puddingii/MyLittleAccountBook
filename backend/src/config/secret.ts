@@ -27,6 +27,7 @@ export default {
 		jwtSecureKey: process.env.JWT_SECURE_KEY ?? '',
 		jwtRefreshTokenTime: parseInt(process.env.JWT_REFRESH_TOKEN_TIME ?? '', 10),
 		jwtAccessTokenTime: parseInt(process.env.JWT_ACCESS_TOKEN_TIME ?? '', 10),
+		isMaster: process.env.IS_MASTER_SERVER === 'Y',
 	},
 
 	/** Socket key */
