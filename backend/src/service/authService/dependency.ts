@@ -34,6 +34,7 @@ import {
 	setSocialLoginStateCache,
 } from '@/util/cache/v2';
 import authEmitter from '@/pubsub/authPubsub';
+import { getRedirectUrl, getSocialManager, getUserInfo } from './socialManager';
 
 export const emailJoin = Logic.emailJoin({
 	errorUtil: { convertErrorToCustomError },
@@ -51,6 +52,7 @@ export const emailLogin = Logic.emailLogin({
 export const getSocialLoginLocation = Logic.getSocialLoginLocation({
 	errorUtil: { convertErrorToCustomError },
 	cacheUtil: { setCache: setSocialLoginStateCache },
+	oauth: { getRedirectUrl, getSocialManager },
 });
 
 export const googleLogin = Logic.googleLogin({
@@ -62,6 +64,9 @@ export const googleLogin = Logic.googleLogin({
 	},
 	jwtUtil: { createAccessToken, createRefreshToken },
 	repository: { createSocialUser, findOneSocialUserInfo },
+	oauth: {
+		getUserInfo: getUserInfo(getSocialManager('Google')),
+	},
 });
 
 export const naverLogin = Logic.naverLogin({
@@ -73,6 +78,9 @@ export const naverLogin = Logic.naverLogin({
 	},
 	jwtUtil: { createAccessToken, createRefreshToken },
 	repository: { createSocialUser, findOneSocialUserInfo },
+	oauth: {
+		getUserInfo: getUserInfo(getSocialManager('Naver')),
+	},
 });
 
 export const refreshToken = Logic.refreshToken({

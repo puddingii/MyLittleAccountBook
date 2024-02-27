@@ -15,8 +15,13 @@ import {
 
 /** Util */
 import { TErrorUtil, TCacheUtil, TJwtUtil } from '../util';
-import { TSocialType } from '../auth';
+import { ISocialManager, TSocialType } from '../auth';
 import { TAuthEventEmitter } from '../pubsub/auth';
+import {
+	getRedirectUrl,
+	getSocialManager,
+	getUserInfo,
+} from '@/service/authService/socialManager';
 
 export type TEmailJoin = {
 	dependency: {
@@ -49,6 +54,10 @@ export type TGetSocialLoginLocation = {
 	dependency: {
 		errorUtil: Pick<TErrorUtil, 'convertErrorToCustomError'>;
 		cacheUtil: Pick<TCacheUtil, 'setCache'>;
+		oauth: {
+			getRedirectUrl: typeof getRedirectUrl;
+			getSocialManager: typeof getSocialManager;
+		};
 	};
 	param: TSocialType;
 };
@@ -61,6 +70,9 @@ export type TSocialLogin = {
 		repository: {
 			findOneSocialUserInfo: typeof findOneSocialUserInfo;
 			createSocialUser: typeof createSocialUser;
+		};
+		oauth: {
+			getUserInfo: ReturnType<typeof getUserInfo>;
 		};
 	};
 	param: { code: string; state: string };
