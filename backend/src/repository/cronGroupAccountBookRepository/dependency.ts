@@ -37,4 +37,5 @@ export const updateColumn = Logic.updateColumn({
 
 export const deleteColumn = Logic.deleteColumn({
 	errorUtil: { convertErrorToCustomError },
+	CronGroupAccountBookModel,
 });

@@ -66,6 +66,7 @@ export type TUpdateColumn = {
 export type TDeleteColumn = {
 	dependency: {
 		errorUtil: Pick<TErrorUtil, 'convertErrorToCustomError'>;
+		CronGroupAccountBookModel: typeof CronGroupAccountBookModel;
 	};
-	param: CronGroupAccountBookModel;
+	param: Partial<TColumnInfo>;
 };

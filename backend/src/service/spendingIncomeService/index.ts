@@ -224,7 +224,7 @@ export const deleteFixedColumn =
 				});
 			}
 
-			await deleteFColumn(cgab);
+			await deleteFColumn({ id });
 
 			eventEmitter.emit('delete:fgab', {
 				accountBookId: cgab.groups.accountBookId,
@@ -264,7 +264,7 @@ export const deleteNotFixedColumn =
 				await checkAdminGroupUser({ userEmail, accountBookId: gab.groups.accountBookId });
 			}
 
-			await deleteNFColumn(gab);
+			await deleteNFColumn({ id });
 
 			eventEmitter.emit('delete:nfgab', {
 				accountBookId: gab.groups.accountBookId,
