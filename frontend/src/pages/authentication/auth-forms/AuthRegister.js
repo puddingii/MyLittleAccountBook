@@ -1,15 +1,15 @@
 import { useEffect, useState } from 'react';
-import { Link as RouterLink } from 'react-router-dom';
+// import { Link as RouterLink } from 'react-router-dom';
 
 // material-ui
 import {
 	Box,
 	Button,
-	Divider,
+	// Divider,
 	FormControl,
 	FormHelperText,
 	Grid,
-	Link,
+	// Link,
 	IconButton,
 	InputAdornment,
 	InputLabel,
@@ -23,7 +23,7 @@ import { Formik } from 'formik';
 import { joinSchema } from 'validation/user';
 
 // project import
-import FirebaseSocial from './FirebaseSocial';
+// import FirebaseSocial from './FirebaseSocial';
 import AnimateButton from 'components/@extended/AnimateButton';
 import { strengthColor, strengthIndicator } from 'utils/password-strength';
 

@@ -1,19 +1,19 @@
 import React from 'react';
-import { Link as RouterLink } from 'react-router-dom';
+// import { Link as RouterLink } from 'react-router-dom';
 
 // material-ui
 import {
 	Button,
-	Divider,
+	// Divider,
 	FormHelperText,
 	Grid,
-	Link,
+	// Link,
 	IconButton,
 	InputAdornment,
 	InputLabel,
 	OutlinedInput,
 	Stack,
-	Typography,
+	// Typography,
 } from '@mui/material';
 
 // third party
@@ -21,7 +21,7 @@ import { loginSchema } from 'validation/user';
 import { Formik } from 'formik';
 
 // project import
-import FirebaseSocial from './FirebaseSocial';
+// import FirebaseSocial from './FirebaseSocial';
 import AnimateButton from 'components/@extended/AnimateButton';
 
 // assets
