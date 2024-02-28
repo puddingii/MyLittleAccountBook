@@ -1,15 +1,15 @@
 import { useEffect, useState } from 'react';
-import { Link as RouterLink } from 'react-router-dom';
+// import { Link as RouterLink } from 'react-router-dom';
 
 // material-ui
 import {
 	Box,
 	Button,
-	Divider,
+	// Divider,
 	FormControl,
 	FormHelperText,
 	Grid,
-	Link,
+	// Link,
 	IconButton,
 	InputAdornment,
 	InputLabel,
@@ -23,7 +23,7 @@ import { Formik } from 'formik';
 import { joinSchema } from 'validation/user';
 
 // project import
-import FirebaseSocial from './FirebaseSocial';
+// import FirebaseSocial from './FirebaseSocial';
 import AnimateButton from 'components/@extended/AnimateButton';
 import { strengthColor, strengthIndicator } from 'utils/password-strength';
 
@@ -184,7 +184,8 @@ const AuthRegister = () => {
 									</Grid>
 								</FormControl>
 							</Grid>
-							<Grid item xs={12}>
+							{/** FIXME 추가필요 */}
+							{/* <Grid item xs={12}>
 								<Typography variant="body2">
 									회원가입시,{' '}
 									<Link variant="subtitle2" component={RouterLink} to="#">
@@ -192,7 +193,7 @@ const AuthRegister = () => {
 									</Link>
 									에 동의하는 것으로 간주됩니다.
 								</Typography>
-							</Grid>
+							</Grid> */}
 							{errors.submit && (
 								<Grid item xs={12}>
 									<FormHelperText error>{errors.submit}</FormHelperText>
@@ -213,14 +214,15 @@ const AuthRegister = () => {
 									</Button>
 								</AnimateButton>
 							</Grid>
-							<Grid item xs={12}>
+							{/** FIXME 소셜로그인 허가나면 수정할것 */}
+							{/* <Grid item xs={12}>
 								<Divider>
 									<Typography variant="caption">간편 회원가입</Typography>
 								</Divider>
 							</Grid>
 							<Grid item xs={12}>
 								<FirebaseSocial />
-							</Grid>
+							</Grid> */}
 						</Grid>
 					</form>
 				)}

@@ -1,13 +1,5 @@
-import { google } from 'googleapis';
 import { nanoid } from 'nanoid/async';
 import bcrypt from 'bcrypt';
-
-import { getClient as getGoogleClient } from './socialManager/google';
-import {
-	getTokenInfo as getNaverTokenInfo,
-	getUserInfo as getNaverUserInfo,
-} from './socialManager/naver';
-import { SOCIAL_URL_MANAGER } from './socialManager';
 
 /** Util */
 import secret from '@/config/secret';
@@ -121,6 +113,7 @@ export const getSocialLoginLocation =
 		const {
 			cacheUtil: { setCache },
 			errorUtil: { convertErrorToCustomError },
+			oauth: { getRedirectUrl, getSocialManager },
 		} = dependencies;
 
 		try {
@@ -128,8 +121,9 @@ export const getSocialLoginLocation =
 
 			/** Social 로그인 시 검증하기 위한 State 발급 및 캐싱처리 */
 			await setCache(randomState, 1, 600);
+			const getRedirectSocialUrl = getRedirectUrl(getSocialManager(type));
 
-			return SOCIAL_URL_MANAGER[type](randomState);
+			return getRedirectSocialUrl(randomState);
 		} catch (error) {
 			const customError = convertErrorToCustomError(error, {
 				trace: 'Service',
@@ -197,6 +191,7 @@ export const googleLogin =
 		const {
 			errorUtil: { convertErrorToCustomError },
 			cacheUtil: { deleteCache, getCache, setCache },
+			oauth: { getUserInfo },
 			...commonDependencies
 		} = dependencies;
 
@@ -207,21 +202,7 @@ export const googleLogin =
 				throw new Error('State 불일치. 재 로그인이 필요합니다.');
 			}
 
-			const client = getGoogleClient();
-			const { tokens } = await client.getToken(code);
-			client.setCredentials(tokens);
-
-			const {
-				data: { email, verified_email: verfiedEmail },
-			} = await google.oauth2('v2').userinfo.get({
-				auth: client,
-			});
-
-			if (!email || !verfiedEmail) {
-				throw new Error('안전한 계정이 아닙니다. 다른 계정으로 이용해주세요.');
-			}
-
-			const data = { email, nickname: email.split('@')[0] };
+			const data = await getUserInfo({ code, state });
 			const tokenInfo = await socialLogin(
 				{ ...commonDependencies, cacheUtil: { setCache } },
 				{
@@ -247,6 +228,7 @@ export const naverLogin =
 		const {
 			errorUtil: { convertErrorToCustomError },
 			cacheUtil: { deleteCache, getCache, setCache },
+			oauth: { getUserInfo },
 			...commonDependencies
 		} = dependencies;
 
@@ -256,10 +238,8 @@ export const naverLogin =
 			if (!isValidState) {
 				throw new Error('State 불일치. 재 로그인이 필요합니다.');
 			}
-			const naverTokenInfo = await getNaverTokenInfo(code, state);
-			const { email, nickname } = await getNaverUserInfo(naverTokenInfo.access_token);
 
-			const data = { email, nickname };
+			const data = await getUserInfo({ code, state });
 			const tokenInfo = await socialLogin(
 				{ ...commonDependencies, cacheUtil: { setCache } },
 				{

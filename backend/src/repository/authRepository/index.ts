@@ -95,7 +95,7 @@ export const createSocialUser =
 				await newUser.createOauthuser({ type: socialType }, { transaction });
 				await newUser.createUserprivacy(
 					{
-						isAuthenticated: false,
+						isAuthenticated: true,
 						isGroupInvitationOn: false,
 						isPublicUser: false,
 						userEmail: newUser.email,

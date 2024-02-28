@@ -31,7 +31,7 @@ export const useRefreshAccessTokenQuery = ({ onSuccess, onError } = {}) => {
 			const decodedData = newAccessToken ? jwtDecode(newAccessToken) : null;
 			if (newAccessToken && decodedData) {
 				setToken({ accessToken: newAccessToken });
-				setUserState(beforeInfo => ({ ...beforeInfo, ...decodedData }));
+				setUserState(beforeInfo => ({ ...beforeInfo, ...decodedData, isLogin: true }));
 			} else {
 				deleteToken('Authorization');
 				deleteToken('refresh');

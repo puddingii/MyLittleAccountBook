@@ -17,6 +17,9 @@ import {
 	socialLogin,
 	verifyEmail,
 } from '@/service/authService';
+import { getRedirectUrl, getSocialManager } from '@/service/authService/socialManager';
+import GoogleManager from '@/service/authService/socialManager/google';
+import NaverManager from '@/service/authService/socialManager/naver';
 
 /** Dependency */
 import {
@@ -30,7 +33,6 @@ import {
 	updateUserPrivacy,
 } from '@/repository/userPrivacyRepository/dependency';
 import { errorUtil, cacheUtil, jwtUtil } from '../commonDependency';
-import { SOCIAL_URL_MANAGER } from '@/service/authService/socialManager';
 import { sendVerificationEmail } from '@/service/common/user/dependency';
 import {
 	createAccessToken,
@@ -39,6 +41,7 @@ import {
 	isExpiredToken,
 } from '@/util/jwt';
 import { deleteCache, getCache } from '@/util/cache';
+import { getEmailVerificationStateCache } from '@/util/cache/v2';
 import secret from '@/config/secret';
 import authEvent from '@/pubsub/authPubsub';
 import TypeEmitter from '@/pubsub/class';
@@ -47,12 +50,12 @@ import TypeEmitter from '@/pubsub/class';
 import UserModel from '@/model/user';
 import GroupModel from '@/model/group';
 import OAuthUserModel from '@/model/oauthUser';
+import UserPrivacyModel from '@/model/userPrivacy';
 
 /** Interface */
 import { TUserInfo } from '@/interface/user';
 import { TAuthEvent } from '@/interface/pubsub/auth';
-import UserPrivacyModel from '@/model/userPrivacy';
-import { getEmailVerificationStateCache } from '@/util/cache/v2';
+import { ISocialManager } from '@/interface/auth';
 
 describe('Group Service Test', function () {
 	const common = {
@@ -370,23 +373,34 @@ describe('Group Service Test', function () {
 	});
 
 	describe('#getSocialLoginLocation', function () {
-		let stubGoogleManager: sinon.SinonStub<[state: string], string>;
-		let stubNaverManager: sinon.SinonStub<[state: string], string>;
+		const oauth = {
+			getRedirectUrl,
+			getSocialManager,
+		};
+		let stubGetRedirectUrl: sinon.SinonStub<
+			[manager: ISocialManager],
+			(state: string) => string
+		>;
+		let spyGetSocialManager: sinon.SinonSpy<
+			[type: 'Google' | 'Naver'],
+			GoogleManager | NaverManager
+		>;
 		let spyNanoid: sinon.SinonSpy<[size?: number | undefined], Promise<string>>;
 
 		beforeEach(function () {
-			stubGoogleManager = sinon.stub(SOCIAL_URL_MANAGER, 'Google');
-			stubNaverManager = sinon.stub(SOCIAL_URL_MANAGER, 'Naver');
+			stubGetRedirectUrl = sinon.stub(oauth, 'getRedirectUrl');
+			spyGetSocialManager = sinon.spy(oauth, 'getSocialManager');
 			spyNanoid = sinon.spy(nanoid);
 		});
 
 		it('Check function parameters', async function () {
 			const url = 'google url';
-			stubGoogleManager.returns(url);
+			stubGetRedirectUrl.returns(() => url);
 
 			const injectedFunc = getSocialLoginLocation({
 				...common,
 				cacheUtil: { setCache: cacheUtil.setCache },
+				oauth,
 			});
 
 			try {
@@ -394,7 +408,10 @@ describe('Group Service Test', function () {
 
 				/** Nanoid의 경우 랜덤한 String값을 리턴하기 때문에 값 비교 불가 */
 				spyNanoid.alwaysReturned(15);
-				sinon.assert.calledOnce(stubGoogleManager);
+				sinon.assert.calledOnce(stubGetRedirectUrl);
+				if (spyGetSocialManager.returnValues instanceof NaverManager) {
+					fail('Expected to GoogleManager... Return class is NaverManager');
+				}
 			} catch (err) {
 				fail(err as Error);
 			}
@@ -402,11 +419,12 @@ describe('Group Service Test', function () {
 
 		it("Check google's correct result", async function () {
 			const url = 'google url';
-			stubGoogleManager.returns(url);
+			stubGetRedirectUrl.returns(() => url);
 
 			const injectedFunc = getSocialLoginLocation({
 				...common,
 				cacheUtil: { setCache: cacheUtil.setCache },
+				oauth,
 			});
 
 			try {
@@ -419,11 +437,12 @@ describe('Group Service Test', function () {
 		});
 
 		it('If google manager error', async function () {
-			stubGoogleManager.throws(new Error('google manager error'));
+			stubGetRedirectUrl.throws(new Error('google manager error'));
 
 			const injectedFunc = getSocialLoginLocation({
 				...common,
 				cacheUtil: { setCache: cacheUtil.setCache },
+				oauth,
 			});
 
 			try {
@@ -434,17 +453,18 @@ describe('Group Service Test', function () {
 				if (err instanceof AssertionError) {
 					fail(err);
 				}
-				sinon.assert.calledOnce(stubGoogleManager);
+				sinon.assert.calledOnce(stubGetRedirectUrl);
 			}
 		});
 
 		it("Check naver's correct result", async function () {
 			const url = 'naver url';
-			stubNaverManager.returns(url);
+			stubGetRedirectUrl.returns(() => url);
 
 			const injectedFunc = getSocialLoginLocation({
 				...common,
 				cacheUtil: { setCache: cacheUtil.setCache },
+				oauth,
 			});
 
 			try {
@@ -457,11 +477,12 @@ describe('Group Service Test', function () {
 		});
 
 		it('If naver manager error', async function () {
-			stubNaverManager.throws(new Error('naver manager error'));
+			stubGetRedirectUrl.throws(new Error('naver manager error'));
 
 			const injectedFunc = getSocialLoginLocation({
 				...common,
 				cacheUtil: { setCache: cacheUtil.setCache },
+				oauth,
 			});
 
 			try {
@@ -472,7 +493,7 @@ describe('Group Service Test', function () {
 				if (err instanceof AssertionError) {
 					fail(err);
 				}
-				sinon.assert.calledOnce(stubNaverManager);
+				sinon.assert.calledOnce(stubGetRedirectUrl);
 			}
 		});
 	});
