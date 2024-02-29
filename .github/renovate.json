@@ -1,5 +1,5 @@
 {
-	"dependentDashboard": true,
+	"dependencyDashboard": true,
 	"platformAutomerge": true,
 	"lockFileMaintenance": {
 		"enabled": true
