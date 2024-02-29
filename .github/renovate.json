@@ -1,0 +1,33 @@
+{
+	"dependentDashboard": true,
+	"platformAutomerge": true,
+	"lockFileMaintenance": {
+		"enabled": true
+	},
+	"packageRules": [
+		{
+			"packagePatterns": [
+				"^@types/"
+			],
+			"automerge": true,
+			"matchUpdateTypes": [
+				"minor",
+				"patch"
+			],
+			"labels": [
+				"types"
+			]
+		},
+		{
+			"groupName": "lints",
+			"matchPackagePatterns": [
+				"^eslint",
+				"^prettier",
+				"^markdownlint"
+			],
+			"labels": [
+				"lint"
+			]
+		}
+	]
+}
