@@ -10,7 +10,8 @@ on:
 
 # 환경설정
 env:
-  DOCKER_IMAGE: ghcr.io/${{ github.actor }}/mlab-backimg
+  ACTOR: puddingii
+  DOCKER_IMAGE: ghcr.io/puddingii/mlab-backimg
   VERSION: ${{ github.sha }}
   BACKEND_LOG_VOLUME: backend_log
   BACKEND_DUMPSQL_VOLUME: backend_dump_sql
@@ -44,7 +45,7 @@ jobs:
         uses: docker/login-action@v2
         with:
           registry: ghcr.io
-          username: ${{ github.actor }}
+          username: ${{ env.ACTOR }}
           password: ${{ secrets.GHCR_TOKEN }}
 
       # Docker 빌드 및 푸쉬
@@ -67,7 +68,7 @@ jobs:
         uses: docker/login-action@v2
         with:
           registry: ghcr.io
-          username: ${{ github.actor }}
+          username: ${{ env.ACTOR }}
           password: ${{ secrets.GHCR_TOKEN }}
 
       # 기존 Container 확인
