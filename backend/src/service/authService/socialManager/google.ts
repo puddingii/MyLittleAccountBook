@@ -1,6 +1,6 @@
 import { google } from 'googleapis';
 
-import { ISocialManager } from '@/interface/auth';
+import SocialManager from '.';
 
 import secret from '@/config/secret';
 import { convertErrorToCustomError } from '@/util/error';
@@ -11,43 +11,47 @@ const {
 	frontUrl,
 } = secret;
 
-export default class GoogleManager implements ISocialManager {
-	private client = {
-		id: googleKey.clientId,
-		secret: googleKey.secret,
-		redirectUri: `${frontUrl}/auth/social?type=google`,
-	};
+type TClient = {
+	id: string;
+	secret: string;
+	redirectUri: string;
+};
+type TConfig = {
+	access_type: 'online' | 'offline';
+	scope: Array<string>;
+	include_granted_scopes: boolean;
+};
 
-	private config = {
-		access_type: 'offline',
-		scope: [
-			'https://www.googleapis.com/auth/userinfo.profile',
-			'https://www.googleapis.com/auth/userinfo.email',
-		],
-		include_granted_scopes: true,
-	};
-	private oAuth2Client: ReturnType<typeof this.setOAuth2Client>;
+export default class GoogleManager extends SocialManager<TClient, TConfig> {
+	private oAuth2Client: ReturnType<typeof this.getOAuth2Client>;
 
 	constructor(
 		init?: Partial<{
-			client: { id: string; secret: string; redirectUri: string };
-			config: {
-				access_type: 'online' | 'offline';
-				scope: Array<string>;
-				include_granted_scopes: boolean;
-			};
+			client: TClient;
+			config: TConfig;
 		}>,
 	) {
-		this.client = { ...this.client, ...init?.client };
-		this.config = { ...this.config, ...init?.config };
-		this.oAuth2Client = new google.auth.OAuth2(
-			this.client.id,
-			this.client.secret,
-			this.client.redirectUri,
-		);
+		super({
+			client: {
+				id: googleKey.clientId,
+				secret: googleKey.secret,
+				redirectUri: `${frontUrl}/auth/social?type=google`,
+				...init?.client,
+			},
+			config: {
+				access_type: 'offline',
+				scope: [
+					'https://www.googleapis.com/auth/userinfo.profile',
+					'https://www.googleapis.com/auth/userinfo.email',
+				],
+				include_granted_scopes: true,
+				...init?.config,
+			},
+		});
+		this.oAuth2Client = this.getOAuth2Client();
 	}
 
-	private setOAuth2Client() {
+	private getOAuth2Client() {
 		return new google.auth.OAuth2(
 			this.client.id,
 			this.client.secret,

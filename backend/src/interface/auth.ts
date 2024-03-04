@@ -1,5 +1,3 @@
-import { oauth2_v2 as googleOAuth } from 'googleapis';
-
 export type TSocialType = 'Google' | 'Naver';
 
 export type TDecodedAccessTokenInfo = { nickname: string; email: string };
@@ -50,9 +48,6 @@ export type TNaverSocialInfo = {
 		| TNaverSocialInfo['FailTokenResponse'];
 	UserInfo: { id: string; nickname: string; email: string };
 };
-export type TSocialUserInfo =
-	| TGoogleSocialInfo['UserInfo']
-	| TNaverSocialInfo['UserInfo'];
 
 export type TSocialTokenInfo =
 	| TNaverSocialInfo['SuccessTokenResponse']
@@ -62,6 +57,6 @@ export interface ISocialManager {
 	getRedirectUrl(state: string): string;
 	getUserInfo(
 		token: Awaited<ReturnType<ISocialManager['getToken']>>,
-	): Promise<TSocialUserInfo>;
+	): Promise<{ nickname: string; email: string }>;
 	getToken(code: string, state?: string): Promise<TSocialTokenInfo>;
 }

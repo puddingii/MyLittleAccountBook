@@ -1,9 +1,10 @@
 import fetch, { Headers } from 'node-fetch';
 
 /** Interfaces */
-import { TNaverSocialInfo, ISocialManager } from '@/interface/auth';
+import { TNaverSocialInfo } from '@/interface/auth';
 
 /** ETC.. */
+import SocialManager from '.';
 import secret from '@/config/secret';
 import { convertErrorToCustomError } from '@/util/error';
 import { CustomError } from '@/util/error/class';
@@ -13,25 +14,28 @@ const {
 	frontUrl,
 } = secret;
 
-export default class NaverManager implements ISocialManager {
-	private client = {
-		id: naverKey.clientId,
-		secret: naverKey.secret,
-		redirectUri: `${frontUrl}/auth/social?type=naver`,
-	};
+type TClient = { id: string; secret: string; redirectUri: string };
+type TConfig = { response_type: string };
 
-	private config = {
-		response_type: 'code',
-	};
-
+export default class NaverManager extends SocialManager<TClient, TConfig> {
 	constructor(
 		init?: Partial<{
-			client: { id: string; secret: string; redirectUri: string };
-			config: { response_type: string };
+			client: TClient;
+			config: TConfig;
 		}>,
 	) {
-		this.client = { ...this.client, ...init?.client };
-		this.config = { ...this.config, ...init?.config };
+		super({
+			client: {
+				id: naverKey.clientId,
+				secret: naverKey.secret,
+				redirectUri: `${frontUrl}/auth/social?type=naver`,
+				...init?.client,
+			},
+			config: {
+				response_type: 'code',
+				...init?.config,
+			},
+		});
 	}
 
 	private isSuccessToken(
