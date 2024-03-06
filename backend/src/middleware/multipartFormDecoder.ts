@@ -1,6 +1,8 @@
 import busboy from 'busboy';
 import { NextFunction, Request, Response } from 'express';
 
+import appendField from '@/util/append-field';
+
 export const decodeMultipartFormdata = (
 	req: Request,
 	res: Response,
@@ -17,16 +19,12 @@ export const decodeMultipartFormdata = (
 	});
 
 	// handle text field data (code taken from multer.js)
-	bb.on('field', function (fieldname, val) {
-		if (Object.hasOwn(req.body, fieldname)) {
-			if (Array.isArray(req.body[fieldname])) {
-				req.body[fieldname].push(val);
-			} else {
-				req.body[fieldname] = [req.body[fieldname], val];
-			}
-		} else {
-			req.body[fieldname] = val;
+	bb.on('field', function (fieldname, val, info) {
+		if (info.nameTruncated || info.valueTruncated) {
+			return;
 		}
+
+		appendField(req.body, fieldname, val);
 	});
 
 	bb.on('file', function (...fileInfo) {
