@@ -1,6 +1,8 @@
 import * as zod from 'zod';
+import internal from 'stream';
 
 import { getCurrentDate, isGreater } from '@/util/date';
+import { FileMaximumSize } from '@/enum';
 
 const getCategory = zod.object({
 	query: zod.object({
@@ -175,6 +177,31 @@ const getSummary = zod.object({
 	}),
 });
 
+const ACCEPTED_IMAGE_TYPES = ['image/jpeg', 'image/png'];
+
+const postImage = zod.object({
+	file: zod
+		.object({
+			name: zod.string(),
+			stream: zod.custom<internal.Readable>(),
+			encoding: zod.string(),
+			filename: zod.string(),
+			mimeType: zod.string(),
+			size: zod.number(),
+		})
+		.refine(
+			file => file?.size <= FileMaximumSize.AccountBookImage,
+			`Max file size is 5MB.`,
+		)
+		.refine(
+			files => ACCEPTED_IMAGE_TYPES.includes(files?.mimeType),
+			'.jpg, .jpeg, .png files are accepted.',
+		),
+	body: zod.object({
+		accountBookId: zod.string(),
+	}),
+});
+
 export type TGetCategoryQuery = zod.infer<typeof getCategory>;
 export type TPostFixedColumnQuery = zod.infer<typeof postFixedColumn>;
 export type TPostNotFixedColumnQuery = zod.infer<typeof postNotFixedColumn>;
@@ -185,6 +212,7 @@ export type TPatchColumnQuery = zod.infer<typeof patchColumn>;
 export type TGetColumnListQuery = zod.infer<typeof getColumnList>;
 export type TDeleteColumnQuery = zod.infer<typeof deleteColumn>;
 export type TGetSummaryQuery = zod.infer<typeof getSummary>;
+export type TPostImageQuery = zod.infer<typeof postImage>;
 
 export default {
 	getCategory,
@@ -193,4 +221,5 @@ export default {
 	getColumnList,
 	deleteColumn,
 	getSummary,
+	postImage,
 };

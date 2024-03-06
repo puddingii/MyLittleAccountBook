@@ -20,6 +20,7 @@ import {
 	TPatchAccountBook,
 	TPostAccountBook,
 } from '@/interface/api/response/headerResponse';
+import { decodeMultipartFormdata } from '@/middleware/multipartFormDecoder';
 
 const router = express.Router();
 
@@ -89,6 +90,28 @@ router.patch('/', verifyToken, async (req, res) => {
 			...info,
 			myEmail: (req.user as Exclude<Request['user'], undefined>).email,
 		});
+
+		return res.status(200).json({
+			data: {},
+			message: '',
+			status: 'success',
+		} satisfies TPatchAccountBook);
+	} catch (error) {
+		const { message, traceList, code } = convertErrorToCustomError(error, {
+			trace: 'Router',
+			code: 400,
+		});
+		logger.error(message, traceList);
+
+		return res.status(code).json({ data: {}, message, status: 'fail' });
+	}
+});
+
+router.post('/image', verifyToken, decodeMultipartFormdata, async (req, res) => {
+	try {
+		const { body: info, file } = await zParser(zodSchema.accountBook.postImage, req);
+
+		console.log(info, file);
 
 		return res.status(200).json({
 			data: {},
