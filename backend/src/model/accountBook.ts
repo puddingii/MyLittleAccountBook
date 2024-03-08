@@ -131,7 +131,7 @@ export const associate = (model: TModelInfo) => {
 		foreignKey: { allowNull: false, name: 'accountBookId' },
 		sourceKey: 'id',
 	});
-	AccountBookModel.hasMany(model.accountbookmedias, {
+	AccountBookModel.hasOne(model.accountbookmedias, {
 		onDelete: 'cascade',
 		hooks: true,
 		as: 'accountbookmedias',

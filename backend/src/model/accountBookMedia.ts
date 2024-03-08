@@ -79,6 +79,12 @@ export const associate = (model: TModelInfo) => {
 		hooks: true,
 		onDelete: 'cascade',
 	});
+	AccountBookMediaModel.hasMany(model.groups, {
+		constraints: false,
+		as: 'groups',
+		foreignKey: { allowNull: false, name: 'accountBookId' },
+		sourceKey: 'accountBookId',
+	});
 };
 
 export default AccountBookMediaModel;
