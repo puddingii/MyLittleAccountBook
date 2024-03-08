@@ -3,7 +3,7 @@ import { InferAttributes, Transaction } from 'sequelize';
 import AccountBookMediaModel from '@/model/accountBookMedia';
 
 import { TErrorUtil } from '../util';
-import { RequiredPartial } from '..';
+import { PartialRequired, RequiredPartial } from '..';
 
 type TAccountBookMedia = InferAttributes<AccountBookMediaModel>;
 
@@ -20,7 +20,10 @@ export type TCreateAccountBookMedia = {
 		errorUtil: Pick<TErrorUtil, 'convertErrorToCustomError'>;
 		AccountBookMediaModel: typeof AccountBookMediaModel;
 	};
-	param: [info: TAccountBookMedia, transaction: Transaction];
+	param: [
+		info: Omit<PartialRequired<TAccountBookMedia, 'updatedAt' | 'createdAt'>, 'id'>,
+		transaction: Transaction,
+	];
 };
 
 export type TUpdateAccountBookMedia = {

@@ -45,8 +45,12 @@ export const findGroupWithAccountBookMedia =
 		try {
 			const groupInfo = await GroupModel.findOne({
 				where: groupParams,
-				include: [{ model: AccountBookMediaModel, as: 'accountbookmedias' }],
-				subQuery: false,
+				include: {
+					as: 'accountbookmedias',
+					model: AccountBookMediaModel,
+					where: { accountBookId: groupParams.accountBookId },
+					required: false,
+				},
 			});
 
 			return groupInfo;

@@ -79,7 +79,7 @@ export const updateAccountBookMedia =
 				transaction,
 			});
 
-			return updatedCount;
+			return updatedCount[0];
 		} catch (error) {
 			const customError = convertErrorToCustomError(error, {
 				trace: 'Repository',
