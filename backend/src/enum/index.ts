@@ -10,3 +10,11 @@ export const enum FileMaximumSize {
 	AccountBookImage = FileSize.MB * 2,
 	UserImage = FileSize.MB * 2,
 }
+
+const ROOT_PATH = 'R6rWab14FTA7PouFWe9K';
+
+export const enum FilePath {
+	Image = `${ROOT_PATH}/image`,
+	Video = `${ROOT_PATH}/vidoe`,
+}
+export const FILE_NAME_LENGTH = 32;

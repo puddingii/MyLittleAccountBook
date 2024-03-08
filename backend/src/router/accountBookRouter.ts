@@ -11,6 +11,7 @@ import { verifyToken } from '@/middleware/authentication';
 import { createAccountBookAndInviteUser } from '@/service/headerService/dependency';
 import {
 	getAccountBookInfo,
+	updateAccountBookImageInfo,
 	updateAccountBookInfo,
 } from '@/service/manageAccountBook/dependency';
 
@@ -109,9 +110,17 @@ router.patch('/', verifyToken, async (req, res) => {
 
 router.post('/image', verifyToken, decodeMultipartFormdata, async (req, res) => {
 	try {
-		const { body: info, file } = await zParser(zodSchema.accountBook.postImage, req);
+		const {
+			body: { accountBookId },
+			file,
+		} = await zParser(zodSchema.accountBook.postImage, req);
 
-		console.log(info, file);
+		await updateAccountBookImageInfo({
+			accountBookId: parseInt(accountBookId, 10),
+			header: req.headers,
+			myEmail: (req.user as Exclude<Request['user'], undefined>).email,
+			file,
+		});
 
 		return res.status(200).json({
 			data: {},
