@@ -9,11 +9,27 @@ import GroupAccountBookModel from '@/model/groupAccountBook';
 
 /** Util */
 import { TErrorUtil } from '../util';
+import AccountBookMediaModel from '@/model/accountBookMedia';
 
 export type TFindGroup = {
 	dependency: {
 		errorUtil: Pick<TErrorUtil, 'convertErrorToCustomError'>;
 		GroupModel: typeof GroupModel;
+	};
+	param: Partial<{
+		userEmail: string;
+		accountBookId: number;
+		id: number;
+		userType: string;
+		accessHistory: Date;
+	}>;
+};
+
+export type TFindGroupWithAccountBookMedia = {
+	dependency: {
+		errorUtil: Pick<TErrorUtil, 'convertErrorToCustomError'>;
+		GroupModel: typeof GroupModel;
+		AccountBookMediaModel: typeof AccountBookMediaModel;
 	};
 	param: Partial<{
 		userEmail: string;

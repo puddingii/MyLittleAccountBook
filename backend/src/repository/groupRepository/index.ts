@@ -8,6 +8,7 @@ import {
 	TFindGroup,
 	TFindGroupAccountBookList,
 	TFindGroupUserList,
+	TFindGroupWithAccountBookMedia,
 	TUpdateGroup,
 } from '@/interface/repository/groupRepository';
 
@@ -21,6 +22,32 @@ export const findGroup =
 
 		try {
 			const groupInfo = await GroupModel.findOne({ where: groupParams });
+
+			return groupInfo;
+		} catch (error) {
+			const customError = convertErrorToCustomError(error, {
+				trace: 'Repository',
+				code: 500,
+			});
+			throw customError;
+		}
+	};
+
+export const findGroupWithAccountBookMedia =
+	(dependencies: TFindGroupWithAccountBookMedia['dependency']) =>
+	async (groupParams: TFindGroupWithAccountBookMedia['param']) => {
+		const {
+			AccountBookMediaModel,
+			GroupModel,
+			errorUtil: { convertErrorToCustomError },
+		} = dependencies;
+
+		try {
+			const groupInfo = await GroupModel.findOne({
+				where: groupParams,
+				include: [{ model: AccountBookMediaModel, as: 'accountbookmedias' }],
+				subQuery: false,
+			});
 
 			return groupInfo;
 		} catch (error) {
