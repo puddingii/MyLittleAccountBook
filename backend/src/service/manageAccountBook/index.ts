@@ -126,10 +126,11 @@ export const updateAccountBookImageInfo =
 			},
 			validationUtil: { isAdminUser },
 			fileInfo: { path, nameLength },
+			eventEmitter,
 		} = dependencies;
 
 		try {
-			const { myEmail, accountBookId, header, file } = info;
+			const { myEmail, accountBookId, file } = info;
 			const myGroupInfo = await findGroupWithAccountBookMedia({
 				userEmail: myEmail,
 				accountBookId,
@@ -152,12 +153,12 @@ export const updateAccountBookImageInfo =
 				{ createAccountBookMedia, getRandomString, updateAccountBookMedia },
 			);
 
-			// pubsub.send('upd/image', {
-			// 	name: abm.name,
-			// 	path,
-			// 	id: abm.id,
-			// 	header
-			// });
+			eventEmitter.emit('upload', {
+				name: abm.name,
+				path,
+				id: abm.id,
+				stream: file.stream,
+			});
 
 			return { code };
 		} catch (error) {

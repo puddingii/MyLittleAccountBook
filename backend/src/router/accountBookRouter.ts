@@ -117,7 +117,6 @@ router.post('/image', verifyToken, decodeMultipartFormdata, async (req, res) => 
 
 		await updateAccountBookImageInfo({
 			accountBookId: parseInt(accountBookId, 10),
-			header: req.headers,
 			myEmail: (req.user as Exclude<Request['user'], undefined>).email,
 			file,
 		});

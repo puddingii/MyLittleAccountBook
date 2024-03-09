@@ -17,6 +17,7 @@ export default {
 	passwordHashRound: parseInt(process.env.PASSWORD_HASH_ROUND ?? '', 10),
 	baseUrl: process.env.BASE_URL ?? '',
 	frontUrl: process.env.FRONT_URL ?? '',
+	imageUrl: process.env.IMAGE_URL ?? '',
 	superUser: process.env.SUPER_ACCOUNT ?? '',
 
 	/** express key */

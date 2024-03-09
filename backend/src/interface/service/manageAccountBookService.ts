@@ -17,7 +17,9 @@ import {
 /** ETC */
 import { TErrorUtil, TStringUtil, TValidationUtil } from '../util';
 import { TPostImageQuery } from '@/util/parser/schema/accountBookSchema';
-import AccountBookMediaModel from '@/model/accountBookMedia';
+import type AccountBookMediaModel from '@/model/accountBookMedia';
+
+import { TImageEventEmitter } from '@/interface/pubsub/image';
 
 export type TGetAccountBookInfo = {
 	dependency: {
@@ -56,6 +58,7 @@ export type TUpdateAccountBookMediaInfo = {
 		errorUtil: Pick<TErrorUtil, 'convertErrorToCustomError' | 'CustomError'>;
 		stringUtil: Pick<TStringUtil, 'getRandomString'>;
 		validationUtil: Pick<TValidationUtil, 'isAdminUser'>;
+		eventEmitter: TImageEventEmitter;
 		repository: {
 			findGroupWithAccountBookMedia: typeof findGroupWithAccountBookMedia;
 			updateAccountBookMedia: typeof updateAccountBookMedia;
@@ -67,7 +70,6 @@ export type TUpdateAccountBookMediaInfo = {
 		};
 	};
 	param: {
-		header: Request['headers'];
 		myEmail: string;
 		accountBookId: number;
 		file: TPostImageQuery['file'];
