@@ -1,4 +1,5 @@
 /** Library */
+import { extension } from 'mime-types';
 
 /** Interface */
 import {
@@ -87,11 +88,21 @@ const saveImageInfo = async (
 		abm,
 	} = info;
 
+	const ext = extension(fileInfo.mimeType);
+	if (!ext) {
+		throw new Error(
+			'알 수 없는 확장자 입니다. 파일 변조가 의심되어 업로드가 취소됩니다.',
+		);
+	}
+	const randomName = await getRandomString(nameLength, `.${ext}`);
+
 	if (abm) {
+		const beforeName = abm.name;
 		const cnt = await updateAccountBookMedia({
 			...fileInfo,
 			isSaved: false,
 			accountBookId,
+			name: randomName,
 			id: abm.id,
 		});
 
@@ -99,10 +110,9 @@ const saveImageInfo = async (
 			throw new Error('이미지 변경 실패. 계속 실패한다면 운영자에게 문의주세요.');
 		}
 
-		return { code: 2, abm };
+		return { code: 2, abm, beforeName };
 	}
 
-	const randomName = await getRandomString(nameLength);
 	const newMedia = await createAccountBookMedia({
 		...fileInfo,
 		isSaved: false,
@@ -144,7 +154,7 @@ export const updateAccountBookImageInfo =
 				throw new CustomError('관리 가능한 유저가 아닙니다.', { code: 400 });
 			}
 
-			const { code, abm } = await saveImageInfo(
+			const { abm, code, beforeName } = await saveImageInfo(
 				{
 					accountBookId,
 					file: { mimeType: file.mimeType, nameLength, path, size: file.size },
@@ -157,7 +167,8 @@ export const updateAccountBookImageInfo =
 				name: abm.name,
 				path,
 				id: abm.id,
-				stream: file.stream,
+				buffer: file.buffer,
+				beforeName,
 			});
 
 			return { code };

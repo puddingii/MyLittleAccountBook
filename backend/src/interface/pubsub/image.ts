@@ -1,12 +1,12 @@
-import type { Readable } from 'stream';
 import { IEmitter } from '.';
 
 export type TImageEvent = {
 	upload: {
-		stream: Readable;
+		buffer: Buffer;
 		path: string;
 		id: number;
 		name: string;
+		beforeName?: string;
 	};
 };
 
