@@ -32,7 +32,16 @@ export const decodeMultipartFormdata = (
 		const stream = fileInfo[1];
 		const { encoding, filename, mimeType } = fileInfo[2];
 
-		req.file = { name, stream, encoding, filename, mimeType, size: 0 };
+		const chunkList = [] as Uint8Array[];
+		req.file = {
+			name,
+			stream,
+			encoding,
+			filename,
+			mimeType,
+			size: 0,
+			buffer: Buffer.concat(chunkList),
+		};
 
 		/**
 		 * chunk.length === n bytes
@@ -41,6 +50,13 @@ export const decodeMultipartFormdata = (
 		stream.on('data', function (chunk) {
 			if (req.file && chunk.length) {
 				req.file.size += chunk.length;
+				chunkList.push(chunk as Uint8Array);
+			}
+		});
+
+		stream.on('end', function () {
+			if (req.file) {
+				req.file.buffer = Buffer.concat(chunkList);
 			}
 		});
 	});

@@ -188,15 +188,17 @@ const postImage = zod.object({
 			filename: zod.string(),
 			mimeType: zod.string(),
 			size: zod.number(),
+			buffer: zod.custom<Buffer>(),
 		})
 		.refine(
-			file => file?.size <= FileMaximumSize.AccountBookImage,
+			file => file.size <= FileMaximumSize.AccountBookImage,
 			`Max file size is 5MB.`,
 		)
 		.refine(
-			files => ACCEPTED_IMAGE_TYPES.includes(files?.mimeType),
+			files => ACCEPTED_IMAGE_TYPES.includes(files.mimeType),
 			'.jpg, .jpeg, .png files are accepted.',
-		),
+		)
+		.refine(files => Buffer.isBuffer(files.buffer), 'stream to buffer error...'),
 	body: zod.object({
 		accountBookId: zod.string(),
 	}),
