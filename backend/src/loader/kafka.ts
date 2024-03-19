@@ -1,9 +1,11 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { Admin, Consumer, Kafka, LogEntry, logLevel, type Producer } from 'kafkajs';
 import { readFile } from 'fs/promises';
 import path from 'path';
 
 import secret from '@/config/secret';
 import { IMAGE_TOPIC } from '@/enum';
+import { eachMessageHandler } from '@/MQ/consumer';
 import { logger } from '@/util';
 import { convertErrorToCustomError } from '@/util/error';
 
@@ -92,13 +94,7 @@ export const setConsumer = async (consumer: Consumer) => {
 
 		await consumer.run({
 			// eslint-disable-next-line require-await
-			eachMessage: async ({ topic, partition, message }) => {
-				console.log('consumer run: ', {
-					topic,
-					partition,
-					value: message?.value?.toString(),
-				});
-			},
+			eachMessage: eachMessageHandler,
 		});
 	} catch (error) {
 		const customError = convertErrorToCustomError(error, { trace: 'Kafka' });
