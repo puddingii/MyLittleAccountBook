@@ -110,7 +110,7 @@ const saveImageInfo = async (
 			throw new Error('이미지 변경 실패. 계속 실패한다면 운영자에게 문의주세요.');
 		}
 
-		return { code: 2, abm, beforeName };
+		return { code: 2, name: randomName, id: abm.id, beforeName };
 	}
 
 	const newMedia = await createAccountBookMedia({
@@ -120,7 +120,7 @@ const saveImageInfo = async (
 		name: randomName,
 	});
 
-	return { code: 1, abm: newMedia };
+	return { code: 1, name: newMedia.name, id: newMedia.id };
 };
 
 export const updateAccountBookImageInfo =
@@ -154,7 +154,7 @@ export const updateAccountBookImageInfo =
 				throw new CustomError('관리 가능한 유저가 아닙니다.', { code: 400 });
 			}
 
-			const { abm, code, beforeName } = await saveImageInfo(
+			const { id, name, code, beforeName } = await saveImageInfo(
 				{
 					accountBookId,
 					file: { mimeType: file.mimeType, nameLength, path, size: file.size },
@@ -164,9 +164,9 @@ export const updateAccountBookImageInfo =
 			);
 
 			eventEmitter.emit('upload', {
-				name: abm.name,
+				name,
 				path,
-				id: abm.id,
+				id,
 				buffer: file.buffer,
 				beforeName,
 			});
