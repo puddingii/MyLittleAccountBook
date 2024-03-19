@@ -7,8 +7,8 @@ export const uploadResultMessage = async (consumerInfo: TConsumerFunctionParamet
 	const { value } = consumerInfo;
 	const { format, id, size } = zod
 		.object({
-			id: zod.string().transform(str => parseInt(str, 10)),
-			size: zod.string().transform(str => parseInt(str, 10)),
+			id: zod.number(),
+			size: zod.number(),
 			format: zod.string(),
 		})
 		.parse(value);

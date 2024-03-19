@@ -90,12 +90,12 @@ export const setConsumer = async (consumer: Consumer) => {
 		await consumer.connect();
 		await consumer.subscribe({ topic: IMAGE_TOPIC, fromBeginning: true });
 
-		logger.info('Consumer connection has been established successfully.', ['Kafka']);
-
 		await consumer.run({
 			// eslint-disable-next-line require-await
 			eachMessage: eachMessageHandler,
 		});
+
+		logger.info('Consumer connection has been established successfully.', ['Kafka']);
 	} catch (error) {
 		const customError = convertErrorToCustomError(error, { trace: 'Kafka' });
 		throw customError;
