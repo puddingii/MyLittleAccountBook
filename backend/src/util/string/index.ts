@@ -5,3 +5,5 @@ export const getRandomString = async (length: number, additionalStr?: string) =>
 
 	return `${randomString}${additionalStr ?? ''}`;
 };
+
+export const isString = (str: unknown): str is string => typeof str === 'string';
