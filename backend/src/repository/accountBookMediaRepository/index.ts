@@ -74,8 +74,9 @@ export const updateAccountBookMedia =
 
 		try {
 			const { accountBookId, id, ...updatedInfo } = info;
+			const where = accountBookId ? { id, accountBookId } : { id };
 			const updatedCount = await AccountBookMediaModel.update(updatedInfo, {
-				where: { id, accountBookId },
+				where,
 				transaction,
 			});
 

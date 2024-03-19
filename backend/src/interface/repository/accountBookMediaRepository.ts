@@ -31,10 +31,7 @@ export type TUpdateAccountBookMedia = {
 		errorUtil: Pick<TErrorUtil, 'convertErrorToCustomError'>;
 		AccountBookMediaModel: typeof AccountBookMediaModel;
 	};
-	param: [
-		info: RequiredPartial<TAccountBookMedia, 'accountBookId' | 'id'>,
-		transaction: Transaction,
-	];
+	param: [info: RequiredPartial<TAccountBookMedia, 'id'>, transaction: Transaction];
 };
 export type TDeleteAccountBookMedia = {
 	dependency: {
