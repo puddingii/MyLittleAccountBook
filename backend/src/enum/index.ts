@@ -18,3 +18,5 @@ export const enum FilePath {
 	Video = `${ROOT_PATH}/vidoe`,
 }
 export const FILE_NAME_LENGTH = 32;
+
+export const IMAGE_TOPIC = 'image-topic';
