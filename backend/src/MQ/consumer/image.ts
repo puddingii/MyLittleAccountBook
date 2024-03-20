@@ -5,15 +5,14 @@ import { TConsumerFunctionParameter, TConsumerMapper } from '@/interface/MQ';
 
 export const uploadResultMessage = async (consumerInfo: TConsumerFunctionParameter) => {
 	const { value } = consumerInfo;
-	const { format, id, size } = zod
+	const { id, size } = zod
 		.object({
 			id: zod.number(),
 			size: zod.number(),
-			format: zod.string(),
 		})
 		.parse(value);
 
-	await updateAccountBookMedia({ id, mimeType: format, size });
+	await updateAccountBookMedia({ id, size, isSaved: true });
 };
 
 export default {
