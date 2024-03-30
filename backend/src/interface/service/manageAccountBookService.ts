@@ -1,9 +1,7 @@
-import { Request } from 'express';
-
 /** Repository */
 import {
-	findOneAccountBook,
 	updateAccountBook,
+	findOneAccountBookWithImage,
 } from '@/repository/accountBookRepository/dependency';
 import {
 	findGroup,
@@ -26,7 +24,7 @@ export type TGetAccountBookInfo = {
 		errorUtil: Pick<TErrorUtil, 'convertErrorToCustomError'>;
 		repository: {
 			findGroup: typeof findGroup;
-			findOneAccountBook: typeof findOneAccountBook;
+			findOneAccountBookWithImage: typeof findOneAccountBookWithImage;
 		};
 	};
 	param: {

@@ -1,6 +1,6 @@
 /* eslint-disable import/no-extraneous-dependencies */
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import { AssertionError, equal, fail } from 'assert';
+import { AssertionError, deepEqual, fail } from 'assert';
 import sinon from 'sinon';
 
 /** Service */
@@ -8,7 +8,7 @@ import { getAccountBookInfo, updateAccountBookInfo } from '@/service/manageAccou
 
 /** Dependency */
 import {
-	findOneAccountBook,
+	findOneAccountBookWithImage,
 	updateAccountBook,
 } from '@/repository/accountBookRepository/dependency';
 import { findGroup } from '@/repository/groupRepository/dependency';
@@ -17,6 +17,7 @@ import { errorUtil, validationUtil } from '../commonDependency';
 /** Model */
 import AccountBookModel from '@/model/accountBook';
 import GroupModel from '@/model/group';
+import AccountBookMediaModel from '@/model/accountBookMedia';
 
 describe('ManageAccountBook Service Test', function () {
 	const common = {
@@ -26,13 +27,19 @@ describe('ManageAccountBook Service Test', function () {
 	};
 
 	describe('#getAccountBookInfo', function () {
-		const repository = { findGroup, findOneAccountBook };
+		const repository = { findGroup, findOneAccountBookWithImage };
 		let stubFindGroup = sinon.stub(repository, 'findGroup');
-		let stubFindOneAccountBook = sinon.stub(repository, 'findOneAccountBook');
+		let stubFindOneAccountBookWithImage = sinon.stub(
+			repository,
+			'findOneAccountBookWithImage',
+		);
 
 		beforeEach(function () {
 			stubFindGroup = sinon.stub(repository, 'findGroup');
-			stubFindOneAccountBook = sinon.stub(repository, 'findOneAccountBook');
+			stubFindOneAccountBookWithImage = sinon.stub(
+				repository,
+				'findOneAccountBookWithImage',
+			);
 		});
 
 		it('Check function parameters', async function () {
@@ -40,8 +47,23 @@ describe('ManageAccountBook Service Test', function () {
 				title: '가계부 이름',
 				content: '가계부 설명',
 			};
+			const medaiInfo = {
+				isSaved: true,
+				mimeType: 'image/jpeg',
+				name: 'testimage',
+				path: 'testpath/image',
+				size: 10010,
+				id: 1,
+			};
 			stubFindGroup.resolves(new GroupModel());
-			stubFindOneAccountBook.resolves(new AccountBookModel(accountBookInfo));
+			const abm = new AccountBookModel(accountBookInfo);
+			const image = new AccountBookMediaModel({
+				...medaiInfo,
+				accountBookId: abm.id,
+				id: 1,
+			});
+			abm.accountbookmedias = image;
+			stubFindOneAccountBookWithImage.resolves(abm);
 
 			const injectedFunc = getAccountBookInfo({ ...common, repository });
 
@@ -52,7 +74,10 @@ describe('ManageAccountBook Service Test', function () {
 					userEmail: 'test@naver.com',
 					accountBookId: 1,
 				});
-				sinon.assert.calledWith(stubFindOneAccountBook, { id: 1, title: '가계부 이름' });
+				sinon.assert.calledWith(stubFindOneAccountBookWithImage, {
+					id: 1,
+					title: '가계부 이름',
+				});
 			} catch (err) {
 				fail(err as Error);
 			}
@@ -64,17 +89,36 @@ describe('ManageAccountBook Service Test', function () {
 				content: '가계부 설명',
 			};
 			stubFindGroup.resolves(new GroupModel());
-			stubFindOneAccountBook.resolves(new AccountBookModel(accountBookInfo));
+			const path = 'testpath';
+			const medaiInfo = {
+				isSaved: true,
+				mimeType: 'image/jpeg',
+				name: 'testimage',
+				path: `${path}/image`,
+				size: 10010,
+				id: 1,
+			};
+			const abm = new AccountBookModel(accountBookInfo);
+			const image = new AccountBookMediaModel({
+				...medaiInfo,
+				accountBookId: abm.id,
+				id: 1,
+			});
+			abm.accountbookmedias = image;
+			stubFindOneAccountBookWithImage.resolves(abm);
 
 			const injectedFunc = getAccountBookInfo({ ...common, repository });
 
 			try {
 				const result = await injectedFunc({ myEmail: 'test@naver.com' });
 
-				equal(result.title, accountBookInfo.title);
-				equal(result.content, accountBookInfo.content);
+				deepEqual(result, {
+					title: accountBookInfo.title,
+					content: accountBookInfo.content,
+					imagePath: `image/${path}/${medaiInfo.name}`,
+				});
 				sinon.assert.calledOnce(stubFindGroup);
-				sinon.assert.calledOnce(stubFindOneAccountBook);
+				sinon.assert.calledOnce(stubFindOneAccountBookWithImage);
 			} catch (err) {
 				fail(err as Error);
 			}
@@ -86,7 +130,22 @@ describe('ManageAccountBook Service Test', function () {
 				content: '가계부 설명',
 			};
 			stubFindGroup.resolves(null);
-			stubFindOneAccountBook.resolves(new AccountBookModel(accountBookInfo));
+			const medaiInfo = {
+				isSaved: true,
+				mimeType: 'image/jpeg',
+				name: 'testimage',
+				path: 'testpath/image',
+				size: 10010,
+				id: 1,
+			};
+			const abm = new AccountBookModel(accountBookInfo);
+			const image = new AccountBookMediaModel({
+				...medaiInfo,
+				accountBookId: abm.id,
+				id: 1,
+			});
+			abm.accountbookmedias = image;
+			stubFindOneAccountBookWithImage.resolves(abm);
 
 			const injectedFunc = getAccountBookInfo({ ...common, repository });
 
@@ -99,13 +158,13 @@ describe('ManageAccountBook Service Test', function () {
 					fail(err);
 				}
 				sinon.assert.calledOnce(stubFindGroup);
-				sinon.assert.notCalled(stubFindOneAccountBook);
+				sinon.assert.notCalled(stubFindOneAccountBookWithImage);
 			}
 		});
 
 		it('If findOneAccountBook is null', async function () {
 			stubFindGroup.resolves(new GroupModel());
-			stubFindOneAccountBook.resolves(null);
+			stubFindOneAccountBookWithImage.resolves(null);
 
 			const injectedFunc = getAccountBookInfo({ ...common, repository });
 
@@ -118,7 +177,7 @@ describe('ManageAccountBook Service Test', function () {
 					fail(err);
 				}
 				sinon.assert.calledOnce(stubFindGroup);
-				sinon.assert.calledOnce(stubFindOneAccountBook);
+				sinon.assert.calledOnce(stubFindOneAccountBookWithImage);
 			}
 		});
 	});

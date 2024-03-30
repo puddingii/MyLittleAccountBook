@@ -14,7 +14,7 @@ export const getAccountBookInfo =
 	async (info: TGetAccountBookInfo['param']) => {
 		const {
 			errorUtil: { convertErrorToCustomError },
-			repository: { findGroup, findOneAccountBook },
+			repository: { findGroup, findOneAccountBookWithImage },
 		} = dependencies;
 
 		try {
@@ -26,12 +26,18 @@ export const getAccountBookInfo =
 				);
 			}
 
-			const accountBook = await findOneAccountBook(accountBookInfo);
+			const accountBook = await findOneAccountBookWithImage(accountBookInfo);
 			if (!accountBook) {
 				throw new Error('가계부 정보를 찾을 수 없습니다.');
 			}
 
-			return { title: accountBook.title, content: accountBook.content };
+			let imagePath = '';
+			if (accountBook.accountbookmedias) {
+				const { path, name } = accountBook.accountbookmedias;
+				imagePath = `image/${path.split('/').at(0)}/${name}`;
+			}
+
+			return { title: accountBook.title, content: accountBook.content, imagePath };
 		} catch (error) {
 			const customError = convertErrorToCustomError(error, {
 				trace: 'Service',

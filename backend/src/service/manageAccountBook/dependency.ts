@@ -2,7 +2,7 @@ import * as Logic from '.';
 
 /** Repository */
 import {
-	findOneAccountBook,
+	findOneAccountBookWithImage,
 	updateAccountBook,
 } from '@/repository/accountBookRepository/dependency';
 import {
@@ -25,7 +25,7 @@ import { FILE_NAME_LENGTH, FilePath } from '@/enum';
 
 export const getAccountBookInfo = Logic.getAccountBookInfo({
 	errorUtil: { convertErrorToCustomError },
-	repository: { findGroup, findOneAccountBook },
+	repository: { findGroup, findOneAccountBookWithImage },
 });
 
 export const updateAccountBookInfo = Logic.updateAccountBookInfo({
