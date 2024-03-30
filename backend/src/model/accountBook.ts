@@ -32,7 +32,7 @@ class AccountBookModel extends Model<
 	InferAttributes<AccountBookModel>,
 	InferCreationAttributes<AccountBookModel>
 > {
-	declare accountbookmedias?: NonAttribute<AccountBookMediaModel[]>;
+	declare accountbookmedias?: NonAttribute<AccountBookMediaModel>;
 	declare addAccountbookmedia: HasManyAddAssociationMixin<AccountBookMediaModel, number>;
 	declare addAccountbookmedias: HasManyAddAssociationsMixin<
 		AccountBookMediaModel,
