@@ -6,9 +6,11 @@ import GroupModel from '@/model/group';
 import UserModel from '@/model/user';
 import CronGroupAccountBookModel from '@/model/cronGroupAccountBook';
 import GroupAccountBookModel from '@/model/groupAccountBook';
+import AccountBookMediaModel from '@/model/accountBookMedia';
 
 /** Util */
 import { TErrorUtil } from '../util';
+import { RequiredPartial } from '..';
 
 export type TFindGroup = {
 	dependency: {
@@ -22,6 +24,24 @@ export type TFindGroup = {
 		userType: string;
 		accessHistory: Date;
 	}>;
+};
+
+export type TFindGroupWithAccountBookMedia = {
+	dependency: {
+		errorUtil: Pick<TErrorUtil, 'convertErrorToCustomError'>;
+		GroupModel: typeof GroupModel;
+		AccountBookMediaModel: typeof AccountBookMediaModel;
+	};
+	param: RequiredPartial<
+		{
+			userEmail: string;
+			accountBookId: number;
+			id: number;
+			userType: string;
+			accessHistory: Date;
+		},
+		'accountBookId'
+	>;
 };
 
 export type TFindGroupAccountBookList = {

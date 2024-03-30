@@ -163,3 +163,23 @@ export const useDeleteCategoryMutation = () => {
 		},
 	});
 };
+
+/**
+ * @param {{ file: File; accountBookId: number; }} info
+ */
+const updateAccountBookImageFetcher = info =>
+	axios
+		.postForm(QUERY_KEY.updateAccountBookImage, info, {
+			withCredentials: true,
+		})
+		.then(({ data }) => data);
+
+export const useUpdateAccountBookImageMutation = () => {
+	const queryClient = useQueryClient();
+
+	return useMutation(updateAccountBookImageFetcher, {
+		onSuccess: () => {
+			queryClient.invalidateQueries(`${QUERY_KEY.updateAccountBookImage}updateimage`);
+		},
+	});
+};

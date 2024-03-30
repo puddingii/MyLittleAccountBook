@@ -22,6 +22,11 @@ class Logger implements ILogger {
 		this.logger.info(`${depthStr} ${message}`);
 	}
 
+	log(info: { message: string; level: 'string' }, depthList: Array<string>) {
+		const depthStr = this.combineDepth(depthList);
+		this.logger.log(info.level, `${depthStr} ${info.message}`);
+	}
+
 	warn(message: string, depthList: Array<string>) {
 		const depthStr = this.combineDepth(depthList);
 		this.logger.warn(`${depthStr} ${message}`);

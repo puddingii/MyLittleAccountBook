@@ -1,6 +1,7 @@
 import {
 	TCreateAccountBook,
 	TFindOneAccountBook,
+	TFindOneAccountBookWithImage,
 	TUpdateAccountBook,
 } from '@/interface/repository/accountBookRepository';
 
@@ -15,6 +16,42 @@ export const findOneAccountBook =
 		try {
 			const accountBook = await AccountBookModel.findOne({
 				where: info,
+			});
+
+			return accountBook;
+		} catch (error) {
+			const customError = convertErrorToCustomError(error, {
+				trace: 'Repository',
+				code: 400,
+			});
+			throw customError;
+		}
+	};
+
+export const findOneAccountBookWithImage =
+	(dependencies: TFindOneAccountBookWithImage['dependency']) =>
+	async (info: Partial<{ id: number; title: string }>) => {
+		const {
+			AccountBookModel,
+			AccountBookMediaModel,
+			errorUtil: { convertErrorToCustomError },
+		} = dependencies;
+
+		try {
+			const accountBook = await AccountBookModel.findOne({
+				where: info,
+				include: [
+					{
+						model: AccountBookMediaModel,
+						as: 'accountbookmedias',
+						required: false,
+						where: {
+							isSaved: true,
+						},
+						attributes: ['path', 'name'],
+					},
+				],
+				subQuery: false,
 			});
 
 			return accountBook;
