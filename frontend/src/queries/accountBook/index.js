@@ -11,4 +11,5 @@ export const QUERY_KEY = {
 	getAccountBook: `${process.env.REACT_APP_BACKEND_API}/accountbook`,
 	postAccountBook: `${process.env.REACT_APP_BACKEND_API}/accountbook`,
 	updateAccountBook: `${process.env.REACT_APP_BACKEND_API}/accountbook`,
+	updateAccountBookImage: `${process.env.REACT_APP_BACKEND_API}/accountbook/image`,
 };

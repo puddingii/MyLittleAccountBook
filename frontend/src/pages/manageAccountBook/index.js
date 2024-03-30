@@ -15,7 +15,13 @@ const ManageAccountBook = () => {
 		{
 			enabled: false,
 			onSuccess: response => {
-				setAccountBookInfo({ title: response?.data?.title ?? '', content: response?.data?.content ?? '' });
+				const imageRoot = response?.data?.imagePath ? process.env.REACT_APP_IMAGE_GET_SERVER : '';
+				const imagePath = `${imageRoot}/${response?.data?.imagePath ?? ''}`;
+				setAccountBookInfo({
+					title: response?.data?.title ?? '',
+					content: response?.data?.content ?? '',
+					imagePath,
+				});
 			},
 		},
 	);

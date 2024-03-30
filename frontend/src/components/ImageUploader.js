@@ -30,6 +30,7 @@ CustomImage.propTypes = {
 const BYTE_PER_MB = 1024 * 1024;
 
 const ImageUploader = ({
+	imageRef,
 	imageInfo,
 	imageSize,
 	setImageInfo,
@@ -46,7 +47,6 @@ const ImageUploader = ({
 		if (!file) {
 			return;
 		}
-		reader.readAsDataURL(file);
 
 		reader.onloadstart = e => {
 			setImageInfo({ state: 'doing', path: defaultPreview });
@@ -58,8 +58,13 @@ const ImageUploader = ({
 				onExceedImageSize(e);
 				return;
 			}
+			if (!e.target.result) {
+				setImageInfo({ state: 'error', path: defaultPreview });
+				onImageError && onImageError(new Error('onload result is undefined'));
+				return;
+			}
 			setImageInfo({ state: 'done', path: e.target.result });
-			onImageLoad && onImageLoad(e);
+			onImageLoad && onImageLoad(e, file);
 		};
 		reader.onerror = error => {
 			setImageInfo({ state: 'error', path: defaultPreview });
@@ -69,20 +74,24 @@ const ImageUploader = ({
 			setImageInfo({ state: 'error', path: defaultPreview });
 			onImageAbort && onImageAbort(error);
 		};
+		reader.readAsDataURL(file);
 	};
 
 	return (
-		<Grid sx={{ width: '100%', display: 'flex', justifyContent: 'center', alignItems: 'flex-end' }} container>
+		<Grid
+			sx={{ width: '100%', display: 'flex', justifyContent: 'center', alignItems: 'center', flexDirection: 'column' }}
+			container
+		>
 			<Grid item>
 				<CustomImage state={imageInfo.state} path={imageInfo.path} imageSize={imageSize} />
 				<CircularProgress style={{ display: imageInfo.state === 'doing' ? '' : 'none' }} color="secondary" size={100} />
 			</Grid>
 			<label htmlFor="contained-button-file">
-				<Button disabled style={{ marginTop: '10px' }} variant="outlined" color="success" component="span">
-					업데이트 예정
+				<Button style={{ marginTop: '10px' }} variant="outlined" color="success" component="span" type="submit">
+					변경하기
 					<Input
+						ref={imageRef}
 						sx={{ display: 'none' }}
-						disabled
 						type="file"
 						inputProps={{ accept: 'image/png, image/jpg, image/jpeg' }}
 						id="contained-button-file"
@@ -95,6 +104,7 @@ const ImageUploader = ({
 };
 
 ImageUploader.propTypes = {
+	imageRef: PropTypes.any,
 	imageInfo: PropTypes.shape({
 		path: PropTypes.string.isRequired,
 		state: PropTypes.oneOf(['done', 'doing', 'init', 'error']).isRequired,
