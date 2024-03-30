@@ -4,6 +4,7 @@ import { fail } from 'assert';
 import sinon from 'sinon';
 import { ParseParams } from 'zod';
 import { pipe } from '@fxts/core';
+import { Readable } from 'stream';
 
 import schema from '@/util/parser/schema';
 import dateUtil from '@/util/date';
@@ -18,6 +19,7 @@ import {
 	TPatchNotFixedColumnQuery,
 	TPostColumnQuery,
 	TPostFixedColumnQuery,
+	TPostImageQuery,
 	TPostNotFixedColumnQuery,
 } from '@/util/parser/schema/accountBookSchema';
 
@@ -908,6 +910,91 @@ describe('AccountBook Zod Schema Test', function () {
 				requestList.forEach(request =>
 					zParser(accountBookSchema.getSummary, { query: request }),
 				);
+				const resultList = await Promise.allSettled(
+					spyZParser.getCalls().map(call => call.returnValue),
+				);
+
+				const fulfilledIdx = resultList.findIndex(
+					result => result.status === 'fulfilled',
+				);
+				if (fulfilledIdx > -1) {
+					throw new Error(`index: ${fulfilledIdx} is error`);
+				}
+			} catch (err) {
+				fail(err as Error);
+			}
+		});
+	});
+
+	describe('#postImage', function () {
+		let spyZParser: sinon.SinonSpy<
+			[data: unknown, params?: Partial<ParseParams> | undefined],
+			Promise<TPostImageQuery>
+		>;
+		const testfile = {
+			mimeType: 'image/jpeg',
+			name: 'testname',
+			size: 1024,
+			stream: new Readable(),
+			encoding: 'jpeg',
+			filename: 'testfilename',
+			buffer: Buffer.from('656565'),
+		};
+
+		beforeEach(function () {
+			spyZParser = sinon.spy(accountBookSchema.postImage, 'parseAsync');
+		});
+
+		it('Check correct', async function () {
+			try {
+				const requestList = [
+					{ file: { ...testfile }, body: { accountBookId: '1' } },
+					{ file: { ...testfile, size: 2097152 }, body: { accountBookId: '1' } },
+					{ file: { ...testfile, mimeType: 'image/jpeg' }, body: { accountBookId: '1' } },
+					{ file: { ...testfile, mimeType: 'image/png' }, body: { accountBookId: '1' } },
+					{
+						file: { ...testfile, buffer: Buffer.alloc(10) },
+						body: { accountBookId: '1' },
+					},
+				];
+
+				requestList.forEach(request => zParser(accountBookSchema.postImage, request));
+				const resultList = await Promise.allSettled(
+					spyZParser.getCalls().map(call => call.returnValue),
+				);
+
+				const rejectedIdx = resultList.findIndex(result => result.status === 'rejected');
+				if (rejectedIdx > -1) {
+					throw new Error(
+						`index: ${rejectedIdx} - ${
+							(resultList[rejectedIdx] as PromiseRejectedResult).reason
+						}`,
+					);
+				}
+			} catch (err) {
+				fail(err as Error);
+			}
+		});
+
+		it('Check wrong', async function () {
+			try {
+				const requestList = [
+					{ file: { ...testfile }, body: { accountBookId: 1 } },
+					{ file: { ...testfile, size: 2097153 }, body: { accountBookId: '1' } },
+					{ file: { ...testfile, mimeType: 'mp4' }, body: { accountBookId: '1' } },
+					{
+						file: { ...testfile, mimeType: 'image/jpegjpeg' },
+						body: { accountBookId: '1' },
+					},
+					{ file: { ...testfile, mimeType: 'image/pngg' }, body: { accountBookId: '1' } },
+					{ file: { ...testfile, mimeType: 'image/jpg' }, body: { accountBookId: '1' } },
+					{
+						file: { ...testfile, buffer: [] },
+						body: { accountBookId: '1' },
+					},
+				];
+
+				requestList.forEach(request => zParser(accountBookSchema.postImage, request));
 				const resultList = await Promise.allSettled(
 					spyZParser.getCalls().map(call => call.returnValue),
 				);
