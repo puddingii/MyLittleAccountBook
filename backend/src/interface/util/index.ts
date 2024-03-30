@@ -1,28 +1,14 @@
-import { convertErrorToCustomError, filterPromiseSettledResultList } from '@/util/error';
-import { CustomError } from '@/util/error/class';
-import DateUtil from '@/util/date';
+import type * as ErrorUtil from '@/util/error';
+import type * as ErrorClass from '@/util/error/class';
+import type DateUtil from '@/util/date';
+import type * as JwtUtil from '@/util/jwt';
+import type * as ValidationUtil from '@/util/validation/user';
+import type * as MailerClass from '@/util/mail';
+import type * as MailerUtil from '@/util/mail/html';
+import type * as StringUtil from '@/util/string';
 
-import {
-	createAccessToken,
-	createRefreshToken,
-	verifyAll,
-	decodeToken,
-	isExpiredToken,
-} from '@/util/jwt';
-
-import { isAdminUser, canUserWrite } from '@/util/validation/user';
-
-import { getBuilder } from '@/util/mail';
-import { getVerifyMailHTML, getFindPWHTML } from '@/util/mail/html';
-
-export type TErrorUtil = {
-	convertErrorToCustomError: typeof convertErrorToCustomError;
-	filterPromiseSettledResultList: typeof filterPromiseSettledResultList;
-	CustomError: typeof CustomError;
-};
-
+export type TErrorUtil = typeof ErrorUtil & typeof ErrorClass;
 export type TDateUtil = typeof DateUtil;
-
 export type TCacheUtil = {
 	/** time 기본값은 600 */
 	setCache: (
@@ -35,22 +21,7 @@ export type TCacheUtil = {
 	/** 캐싱된 Key를 기준으로 Value 리턴 */
 	getCache: (key: string) => Promise<string | null>;
 };
-
-export type TJwtUtil = {
-	createAccessToken: typeof createAccessToken;
-	createRefreshToken: typeof createRefreshToken;
-	decodeToken: typeof decodeToken;
-	isExpiredToken: typeof isExpiredToken;
-	verifyAll: typeof verifyAll;
-};
-
-export type TValidationUtil = {
-	isAdminUser: typeof isAdminUser;
-	canUserWrite: typeof canUserWrite;
-};
-
-export type TMailUtil = {
-	getBuilder: typeof getBuilder;
-	getVerifyMailHTML: typeof getVerifyMailHTML;
-	getFindPWHTML: typeof getFindPWHTML;
-};
+export type TJwtUtil = typeof JwtUtil;
+export type TValidationUtil = typeof ValidationUtil;
+export type TMailUtil = typeof MailerUtil & typeof MailerClass;
+export type TStringUtil = typeof StringUtil;

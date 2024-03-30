@@ -11,6 +11,7 @@ import { verifyToken } from '@/middleware/authentication';
 import { createAccountBookAndInviteUser } from '@/service/headerService/dependency';
 import {
 	getAccountBookInfo,
+	updateAccountBookImageInfo,
 	updateAccountBookInfo,
 } from '@/service/manageAccountBook/dependency';
 
@@ -20,6 +21,7 @@ import {
 	TPatchAccountBook,
 	TPostAccountBook,
 } from '@/interface/api/response/headerResponse';
+import { decodeMultipartFormdata } from '@/middleware/multipartFormDecoder';
 
 const router = express.Router();
 
@@ -88,6 +90,35 @@ router.patch('/', verifyToken, async (req, res) => {
 		await updateAccountBookInfo({
 			...info,
 			myEmail: (req.user as Exclude<Request['user'], undefined>).email,
+		});
+
+		return res.status(200).json({
+			data: {},
+			message: '',
+			status: 'success',
+		} satisfies TPatchAccountBook);
+	} catch (error) {
+		const { message, traceList, code } = convertErrorToCustomError(error, {
+			trace: 'Router',
+			code: 400,
+		});
+		logger.error(message, traceList);
+
+		return res.status(code).json({ data: {}, message, status: 'fail' });
+	}
+});
+
+router.post('/image', verifyToken, decodeMultipartFormdata, async (req, res) => {
+	try {
+		const {
+			body: { accountBookId },
+			file,
+		} = await zParser(zodSchema.accountBook.postImage, req);
+
+		await updateAccountBookImageInfo({
+			accountBookId: parseInt(accountBookId, 10),
+			myEmail: (req.user as Exclude<Request['user'], undefined>).email,
+			file,
 		});
 
 		return res.status(200).json({

@@ -2,6 +2,7 @@ import WinstonDaily from 'winston-daily-rotate-file';
 import winston from 'winston';
 import path from 'path';
 
+import secret from '@/config/secret';
 import LoggerBuilder from './class/builder';
 import { TLoggerInfo } from './interface';
 
@@ -35,7 +36,7 @@ const getProdModeLogger = () => {
 			timestamp({
 				format: 'YYYY-MM-DD HH:mm:ss',
 			}),
-			label({ label: 'LocalServer', message: true }),
+			label({ label: `API-${secret.express.port}`, message: true }),
 			prettyPrint(),
 		])
 		.build();
@@ -83,7 +84,7 @@ const getFullModeLogger = () => {
 			timestamp({
 				format: 'YYYY-MM-DD HH:mm:ss',
 			}),
-			label({ label: 'LocalServer', message: true }),
+			label({ label: `API-${secret.express.port}`, message: true }),
 			prettyPrint(),
 		])
 		.build();

@@ -17,7 +17,12 @@ export default {
 	passwordHashRound: parseInt(process.env.PASSWORD_HASH_ROUND ?? '', 10),
 	baseUrl: process.env.BASE_URL ?? '',
 	frontUrl: process.env.FRONT_URL ?? '',
+	imageUrl: process.env.IMAGE_URL ?? '',
 	superUser: process.env.SUPER_ACCOUNT ?? '',
+	isCronActivate: process.env.IS_CRON_ACTIVATE === 'Y',
+	isKafkaAdminActivate: process.env.IS_KAFKA_ADMIN_ACTIVATE === 'Y',
+	isKafkaProducerActivate: process.env.IS_KAFKA_PRODUCER_ACTIVATE === 'Y',
+	isKafkaConsumerActivate: process.env.IS_KAFKA_CONSUMER_ACTIVATE === 'Y',
 
 	/** express key */
 	express: {

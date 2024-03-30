@@ -9,7 +9,7 @@ import {
 	Divider,
 	Button,
 } from '@mui/material';
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { Formik } from 'formik';
 import PropTypes from 'prop-types';
 
@@ -18,7 +18,10 @@ import uploadPhotoPreview from 'assets/images/uploadPhotoPreviewKR.png';
 
 import MainCard from 'components/MainCard';
 import ImageUploader from 'components/ImageUploader';
-import { useUpdateAccountBookMutation } from 'queries/accountBook/accountBookMutation';
+import {
+	useUpdateAccountBookImageMutation,
+	useUpdateAccountBookMutation,
+} from 'queries/accountBook/accountBookMutation';
 
 const initialValue = {
 	title: '',
@@ -30,14 +33,16 @@ const initialValue = {
 const EditAccountBook = ({ accountBookInfo, setAccountBookInfo, setSnackbarInfo, accountBookId }) => {
 	const [imageInfo, setImageInfo] = useState({
 		state: 'init',
-		path: initialValue.imagePath,
+		path: accountBookInfo.imagePath ?? initialValue.imagePath,
 	});
+	const imageRef = useRef(null);
 	const formInitialValue = useMemo(() => {
 		return { ...initialValue, title: accountBookInfo.title, content: accountBookInfo.content ?? '' };
 	}, [accountBookInfo.title, accountBookInfo.content]);
 	const { mutate: updateAccountBookMutate } = useUpdateAccountBookMutation();
+	const { mutate: updateAccountBookImageMutate } = useUpdateAccountBookImageMutation();
 
-	const handleSubmit = async (values, { setErrors, setStatus, setSubmitting }) => {
+	const handleSubmit = (values, { setErrors, setStatus, setSubmitting }) => {
 		updateAccountBookMutate(
 			{ ...values, accountBookId },
 			{
@@ -57,6 +62,33 @@ const EditAccountBook = ({ accountBookInfo, setAccountBookInfo, setSnackbarInfo,
 		);
 	};
 
+	/**
+	 * @param {FileReader} fileReader
+	 * @param {File} file
+	 */
+	const handleImage = async (fileReader, file) => {
+		updateAccountBookImageMutate(
+			{ accountBookId, file },
+			{
+				onSuccess: () => {
+					setSnackbarInfo({ isOpen: true, message: '가계부 이미지가 수정되었습니다.', severity: 'success' });
+					setAccountBookInfo(beforeInfo => ({ ...beforeInfo, imagePath: fileReader.target.result }));
+				},
+				onError: error => {
+					setSnackbarInfo({
+						isOpen: true,
+						message: error?.response?.data?.message ?? '이미지 변경 실패',
+						severity: 'error',
+					});
+				},
+			},
+		);
+	};
+
+	useEffect(() => {
+		setImageInfo(beforeInfo => ({ ...beforeInfo, path: accountBookInfo.imagePath ?? initialValue.imagePath }));
+	}, [accountBookInfo.imagePath]);
+
 	return (
 		<MainCard sx={{ mt: 2 }} content={false}>
 			<Box sx={{ p: { xs: 2, sm: 3, md: 4, xl: 5 } }}>
@@ -71,9 +103,17 @@ const EditAccountBook = ({ accountBookInfo, setAccountBookInfo, setSnackbarInfo,
 							<Grid container flexDirection="row" spacing={3}>
 								<Grid item xs={3}>
 									<ImageUploader
+										imageRef={imageRef}
 										imageInfo={imageInfo}
 										setImageInfo={setImageInfo}
 										maxImageSize={2}
+										onImageError={e => {
+											setSnackbarInfo({
+												isOpen: true,
+												message: e.message || '이미지 로드 에러.',
+												severity: 'error',
+											});
+										}}
 										onExceedImageSize={() => {
 											setSnackbarInfo({
 												isOpen: true,
@@ -81,9 +121,7 @@ const EditAccountBook = ({ accountBookInfo, setAccountBookInfo, setSnackbarInfo,
 												severity: 'error',
 											});
 										}}
-										onLoad={e => {
-											setAccountBookInfo(beforeInfo => ({ ...beforeInfo, image: e.target.result }));
-										}}
+										onImageLoad={handleImage}
 									/>
 								</Grid>
 								<Grid item xs={9}>
@@ -163,6 +201,7 @@ EditAccountBook.propTypes = {
 	accountBookInfo: PropTypes.shape({
 		title: PropTypes.string.isRequired,
 		content: PropTypes.string,
+		imagePath: PropTypes.string,
 	}),
 };
 

@@ -12,3 +12,8 @@ export type RequiredPartial<
 	O extends { [key: string]: unknown },
 	T extends keyof O,
 > = Required<Pick<O, T>> & Omit<Partial<O>, T>;
+
+export type PartialRequired<
+	O extends { [key: string]: unknown },
+	T extends keyof O,
+> = Partial<Pick<O, T>> & Omit<Required<O>, T>;

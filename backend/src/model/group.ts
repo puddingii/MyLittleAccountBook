@@ -26,6 +26,7 @@ import UserModel from './user';
 import { TModelInfo } from '@/interface/model';
 import GroupAccountBookModel from './groupAccountBook';
 import CronGroupAccountBookModel from './cronGroupAccountBook';
+import AccountBookMediaModel from './accountBookMedia';
 
 export class GroupModel extends Model<
 	InferAttributes<GroupModel>,
@@ -33,6 +34,7 @@ export class GroupModel extends Model<
 > {
 	declare accessHistory?: Date;
 	declare accountBookId: ForeignKey<AccountBookModel['id']>;
+	declare accountbookmedias?: NonAttribute<AccountBookMediaModel>;
 	declare accountbooks?: NonAttribute<AccountBookModel>;
 	declare addCrongroupaccountbook: HasManyAddAssociationMixin<
 		CronGroupAccountBookModel,
@@ -146,6 +148,12 @@ export const associate = (model: TModelInfo) => {
 		as: 'accountbooks',
 		hooks: true,
 		onDelete: 'cascade',
+	});
+	GroupModel.belongsTo(model.accountbookmedias, {
+		targetKey: 'id',
+		foreignKey: 'accountBookId',
+		as: 'accountbookmedias',
+		constraints: false,
 	});
 	GroupModel.hasMany(model.groupaccountbooks, {
 		onDelete: 'cascade',

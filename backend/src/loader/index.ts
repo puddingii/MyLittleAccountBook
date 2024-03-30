@@ -8,6 +8,7 @@ import expressLoader from './express';
 import sequelize, { sync as syncMySQL } from './mysql';
 import { connect as connectRedis } from './redis';
 import { connect as connectSocket } from './socket';
+import { consumer, producer, setConsumer, setProducer, setAdmin, admin } from './kafka';
 
 /** ETC.. */
 import { convertErrorToCustomError } from '@/util/error';
@@ -24,6 +25,9 @@ export default async ({ app }: { app: Express }): Promise<void> => {
 		expressLoader(app);
 		await connectSocket();
 		await loadCron();
+		await setAdmin(admin);
+		await setProducer(producer);
+		await setConsumer(consumer);
 
 		logger.info('All loaders are loaded', ['Loader']);
 	} catch (error) {

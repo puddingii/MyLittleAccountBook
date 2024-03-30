@@ -1,4 +1,5 @@
 import AccountBookModel from '@/model/accountBook';
+import AccountBookMediaModel from '@/model/accountBookMedia';
 import CategoryModel from '@/model/category';
 import CronGroupAccountBookModel from '@/model/cronGroupAccountBook';
 import GroupModel from '@/model/group';
@@ -18,4 +19,5 @@ export type TModelInfo = {
 	crongroupaccountbooks: typeof CronGroupAccountBookModel;
 	notices: typeof NoticeModel;
 	userprivacys: typeof UserPrivacyModel;
+	accountbookmedias: typeof AccountBookMediaModel;
 };
