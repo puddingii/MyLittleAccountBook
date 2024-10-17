@@ -41,21 +41,26 @@ const WinstonLogCreator = (logLevel: number) => {
 };
 
 export const kafka = new Kafka({
-	clientId: 'my-app',
-	brokers: ['localhost:9094'],
+	clientId: secret.kafka.clientId,
+	brokers: secret.kafka.brokerList,
 	logCreator: WinstonLogCreator,
 });
 
 export const admin = kafka.admin();
 export const producer = kafka.producer();
 export const consumer = kafka.consumer({
-	groupId: 'my-little-accountbook',
+	groupId: secret.kafka.consumerGroupId,
 	allowAutoTopicCreation: true,
 });
 
 export const setAdmin = async (admin: Admin) => {
 	try {
 		if (!secret.isKafkaAdminActivate) {
+			return;
+		}
+		const topicList = await admin.listTopics();
+		if (topicList.includes(IMAGE_TOPIC)) {
+			logger.warn('Topic is already created.', ['Kafka']);
 			return;
 		}
 		await admin.createTopics({ topics: [{ topic: IMAGE_TOPIC }] });

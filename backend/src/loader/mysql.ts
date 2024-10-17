@@ -75,6 +75,7 @@ export const sync = async (sequelize: Sequelize) => {
 		const syncType = {
 			test: { force: true },
 			development: { alter: true },
+			developmentDocker: { alter: true },
 			production: {},
 		};
 		await sequelize.sync(syncType[secret.nodeEnv] ?? {});

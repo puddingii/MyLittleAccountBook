@@ -27,6 +27,7 @@ services:
       GENERATE_SOURCEMAP: false
       REACT_APP_BACKEND_API: http://localhost:3044
       REACT_APP_SOCKET_SERVER: http://localhost:3332
+      REACT_APP_IMAGE_GET_SERVER: http://localhost:3030
     ports:
       - '3000:3000'
     depends_on:

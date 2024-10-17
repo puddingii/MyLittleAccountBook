@@ -1,18 +1,27 @@
 import dotenv from 'dotenv';
 import path from 'path';
 
-const isDevMode =
-	process.env.NODE_ENV === 'development' || process.env.NODE_ENV === 'test';
-const envPath = isDevMode ? '../../.env.local' : '../../.env';
-dotenv.config({ path: path.resolve(__dirname, envPath) });
+const envPathMapper = {
+	development: path.resolve(__dirname, '../../.env.local'),
+	test: path.resolve(__dirname, '../../.env.local'),
+	production: path.resolve(__dirname, '../../.env'),
+	developmentDocker: path.resolve(__dirname, '../../.env.development'),
+};
 
-const dbNameInfo = { production: '', development: '_dev', test: '_test' };
+type TEnv = keyof typeof envPathMapper;
+
+const envPath = envPathMapper[process.env.NODE_ENV as TEnv];
+dotenv.config({ path: envPath });
+
+const dbNameInfo = {
+	production: '',
+	development: '_dev',
+	test: '_test',
+	developmentDocker: '_dev',
+} satisfies Record<TEnv, string>;
 
 export default {
-	nodeEnv: (process.env.NODE_ENV ?? 'development') as
-		| 'production'
-		| 'development'
-		| 'test',
+	nodeEnv: (process.env.NODE_ENV ?? 'development') as TEnv,
 	loggerMode: process.env.LOGGER_MODE ?? 'prod',
 	passwordHashRound: parseInt(process.env.PASSWORD_HASH_ROUND ?? '', 10),
 	baseUrl: process.env.BASE_URL ?? '',
@@ -67,9 +76,7 @@ export default {
 		cmdPw: process.env.MYSQL_COMMAND_PW ?? '',
 		databaseName:
 			`${process.env.MYSQL_DATABASENAME}${
-				dbNameInfo[
-					(process.env.NODE_ENV ?? 'development') as 'development' | 'production' | 'test'
-				]
+				dbNameInfo[(process.env.NODE_ENV ?? 'development') as TEnv]
 			}` ?? '',
 	},
 	redis: {
@@ -95,5 +102,12 @@ export default {
 		host: process.env.MAILER_HOST,
 		user: process.env.MAILER_USER,
 		pw: process.env.MAILER_PW,
+	},
+
+	/** Kafka */
+	kafka: {
+		clientId: process.env.KAFKA_CLIENT_ID ?? '',
+		brokerList: process.env.KAFKA_BROKER_LIST?.split(',') ?? [],
+		consumerGroupId: process.env.KAFKA_CONSUMER_GROUP_ID ?? '',
 	},
 };

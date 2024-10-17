@@ -15,7 +15,7 @@ module.exports = [
 			IS_KAFKA_CONSUMER_ACTIVATE: 'N',
 		},
 		env_development: {
-			NODE_ENV: 'development',
+			NODE_ENV: 'developmentDocker',
 			EXPRESS_PORT: '3044',
 			SOCKET_PORT: '3332',
 			IS_MASTER_SERVER: 'Y',
@@ -41,7 +41,7 @@ module.exports = [
 			IS_KAFKA_CONSUMER_ACTIVATE: 'Y',
 		},
 		env_development: {
-			NODE_ENV: 'development',
+			NODE_ENV: 'developmentDocker',
 			EXPRESS_PORT: '3045',
 			SOCKET_PORT: '3333',
 			IS_MASTER_SERVER: 'N',
