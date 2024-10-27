@@ -74,10 +74,9 @@ export default {
 			port: 3306,
 		},
 		cmdPw: process.env.MYSQL_COMMAND_PW ?? '',
-		databaseName:
-			`${process.env.MYSQL_DATABASENAME}${
-				dbNameInfo[(process.env.NODE_ENV ?? 'development') as TEnv]
-			}` ?? '',
+		databaseName: `${process.env.MYSQL_DATABASENAME}${
+			dbNameInfo[(process.env.NODE_ENV ?? 'development') as TEnv]
+		}`,
 	},
 	redis: {
 		host: process.env.REDIS_HOST ?? '',
