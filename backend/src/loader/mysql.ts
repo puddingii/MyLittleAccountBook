@@ -9,11 +9,37 @@ import secret from '@/config/secret';
 
 import { TModelInfo } from '@/interface/model';
 
-const { databaseName, master, local } = secret.mysql;
+const { databaseName, master, local, slave1 } = secret.mysql;
 
-const isTestEnvironment = secret.nodeEnv === 'test';
-const sequelizeOptions = isTestEnvironment ? local : master;
-const logging = isTestEnvironment
+const isTestEnv = secret.nodeEnv === 'test';
+const isProdEnv = secret.nodeEnv === 'production';
+const sequelizeOptions = isTestEnv ? local : master;
+
+const prodOption = {
+	replication: {
+		read: [
+			{
+				host: slave1.host,
+				username: slave1.username,
+				password: slave1.pw,
+				port: slave1.port,
+			},
+		],
+		write: {
+			host: master.host,
+			username: master.username,
+			password: master.pw,
+			port: master.port,
+		},
+	},
+};
+const devOption = {
+	host: sequelizeOptions.host,
+	port: sequelizeOptions.port,
+};
+const option = isProdEnv ? prodOption : devOption;
+
+const logging = isTestEnv
 	? false
 	: (msg: string) => {
 			logger.info(msg, ['Mysql']);
@@ -24,10 +50,9 @@ const sequelize = new Sequelize(
 	sequelizeOptions.username,
 	sequelizeOptions.pw,
 	{
-		host: sequelizeOptions.host,
-		port: sequelizeOptions.port,
 		dialect: 'mysql',
 		logging,
+		...option,
 	},
 );
 
@@ -75,6 +100,7 @@ export const sync = async (sequelize: Sequelize) => {
 		const syncType = {
 			test: { force: true },
 			development: { alter: true },
+			developmentDocker: { alter: true },
 			production: {},
 		};
 		await sequelize.sync(syncType[secret.nodeEnv] ?? {});

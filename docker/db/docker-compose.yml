@@ -4,18 +4,18 @@ services:
   redis_master:
     image: redis:7.2.3
     ports:
-      - {PORT}:6379
+      - ${REDIS_MASTER_PORT}:6379
     volumes:
       - cache_data:/data
-      - {REDIS_CONF_PATH}:/etc/redis/redis.conf
-    command: ["redis-server", "/etc/redis/redis.conf"]
+      - ${REDIS_MASTER_CONF_PATH}:/etc/redis/redis.conf
+    command: ['redis-server', '/etc/redis/redis.conf']
     networks:
       dock_net:
         ipv4_address: 172.33.0.9
     container_name: redis_master
     restart: always
     healthcheck:
-      test: ["CMD", "redis-cli -a {PW} ping | grep PONG"]
+      test: ['CMD-SHELL', 'redis-cli -a ${REDIS_MASTER_PW} ping | grep PONG']
       timeout: 5s
       retries: 10
 
@@ -24,22 +24,23 @@ services:
     user: root
     platform: linux/x86_64
     environment:
-      - MYSQL_ROOT_PASSWORD={PW}
-      - MYSQL_USER={USER_NAME}
-      - MYSQL_DATABASE={DATABASE_NAME}
-      - MYSQL_PASSWORD={PW}
+      - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PW}
+      - MYSQL_USER=${MYSQL_MASTER_USER}
+      - MYSQL_DATABASE=${MYSQL_MASTER_DATABASE}
+      - MYSQL_PASSWORD=${MYSQL_MASTER_PW}
     ports:
-      - {MYSQL_MASTER_PORT}:3306
+      - ${MYSQL_MASTER_PORT}:3306
     volumes:
       - master_data:/var/lib/mysql
-      - {MYSQL_CONF_PATH}:/etc/mysql/conf.d
+      - ${MYSQL_MASTER_CONF_PATH}:/etc/mysql/conf.d
     networks:
       dock_net:
         ipv4_address: 172.33.0.10
     container_name: mysql_master
     restart: always
     healthcheck:
-      test: ["CMD", "mysqladmin" ,"ping", "-h", "localhost", "-u", "{USER_NAME}", "-p{PW}"]
+      test:
+        ['CMD-SHELL', 'mysqladmin ping -h localhost -u ${MYSQL_MASTER_USER} -p${MYSQL_MASTER_PW}']
       timeout: 20s
       retries: 10
 
@@ -48,15 +49,15 @@ services:
     platform: linux/x86_64
     user: root
     ports:
-      - {MYSQL_SLAVE_PORT}:3306
+      - ${MYSQL_SLAVE1_PORT}:3306
     environment:
-      - MYSQL_ROOT_PASSWORD={PW}
-      - MYSQL_USER={USER_NAME}
-      - MYSQL_DATABASE={DATABASE_NAME}
-      - MYSQL_PASSWORD={PW}
+      - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PW}
+      - MYSQL_USER=${MYSQL_SLAVE1_USER}
+      - MYSQL_DATABASE=${MYSQL_SLAVE1_DATABASE}
+      - MYSQL_PASSWORD=${MYSQL_SLAVE1_PW}
     volumes:
       - slave_data:/var/lib/mysql
-      - {MYSQL_CONF_PATH}:/etc/mysql/conf.d
+      - ${MYSQL_SLAVE1_CONF_PATH}:/etc/mysql/conf.d
     networks:
       dock_net:
         ipv4_address: 172.33.0.11
@@ -65,7 +66,8 @@ services:
         condition: service_healthy
     container_name: mysql_slave_1
     healthcheck:
-      test: ["CMD", "mysqladmin" ,"ping", "-h", "localhost", "-u", "{USER_NAME}", "-p{PW}"]
+      test:
+        ['CMD-SHELL', 'mysqladmin ping -h localhost -u ${MYSQL_SLAVE1_USER} -p${MYSQL_SLAVE1_PW}']
       timeout: 20s
       retries: 10
 
@@ -74,8 +76,6 @@ volumes:
   slave_data:
   cache_data:
 
-networks:
-  dock_net:
 networks:
   dock_net:
     driver: bridge
