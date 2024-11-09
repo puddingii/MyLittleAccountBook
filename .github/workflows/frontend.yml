@@ -5,6 +5,7 @@ on:
     paths:
       - 'frontend/**'
       - '!frontend/**.md'
+      - '.github/workflows/frontend.yml'
     branches: [main]
 
 # 환경설정

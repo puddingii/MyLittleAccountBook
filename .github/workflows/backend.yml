@@ -6,6 +6,7 @@ on:
       - 'backend/**'
       - '!backend/k6/**'
       - '!backend/**.md'
+      - '.github/workflows/backend.yml'
     branches: [main]
 
 # 환경설정
