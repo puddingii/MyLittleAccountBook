@@ -101,7 +101,6 @@ jobs:
         run: |
           docker run -d \
           --env-file ${{ secrets.BACK_ENV_PATH }} \
-          --net host \
           -v ${{ env.BACKEND_LOG_VOLUME }}:/usr/index/logs \
           -v ${{ env.BACKEND_DUMPSQL_VOLUME }}:/usr/index/src/cron/dump \
           -p ${{ secrets.API_PORT_1 }}:${{ secrets.LOCAL_API_PORT_1 }} \
@@ -112,3 +111,8 @@ jobs:
           -p ${{ secrets.SOCKET_PORT_3 }}:${{ secrets.LOCAL_SOCKET_PORT_3 }} \
           --name ${{ env.BACK_CONTAINER_NAME }} \
           --restart always ${{ env.DOCKER_IMAGE }}:latest
+
+      - name: Docker network connection
+        run: |
+          docker network connect ${{ secrets.DB_NET }} ${{ env.BACK_CONTAINER_NAME }}
+          docker network connect ${{ secrets.KAFKA_NET }} ${{ env.BACK_CONTAINER_NAME }}

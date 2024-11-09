@@ -61,6 +61,7 @@ jobs:
             REACT_APP_BACKEND_API=${{ secrets.FRONT_API }}
             REACT_APP_SOCKET_SERVER=${{ secrets.FRONT_SOCKET }}
             REACT_APP_MANAGE_NOTICE=${{ secrets.FRONT_MANAGE_NOTICE_LOCATION }}
+            REACT_APP_IMAGE_GET_SERVER=${{ secrets.FRONT_IMAGE_STORAGE_SERVER }}
 
   # 배포 Job
   deploy:

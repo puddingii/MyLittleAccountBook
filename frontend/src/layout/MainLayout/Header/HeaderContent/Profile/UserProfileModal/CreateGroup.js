@@ -69,7 +69,7 @@ const CreateGroup = ({ setSnackbarInfo }) => {
 	});
 	const [hasResendValidationMail, setHasResendValidationMail] = useState(false);
 
-	const { data: response } = useGetUserQuery(
+	const { data: response, refetch: getUserRefetch } = useGetUserQuery(
 		{ email },
 		{
 			enabled: true,
@@ -171,11 +171,12 @@ const CreateGroup = ({ setSnackbarInfo }) => {
 
 	useEffect(() => {
 		if (seconds <= 0) {
+			getUserRefetch();
 			clearInterval(timer.current);
 			setSeconds(600);
 			setHasResendValidationMail(false);
 		}
-	}, [seconds]);
+	}, [seconds, getUserRefetch]);
 
 	return (
 		<Fragment>
