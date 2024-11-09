@@ -7,12 +7,10 @@ import secret from '@/config/secret';
 const CLIENT_NAME = 'CACHE_CLIENT';
 
 const client = createClient({
-	password: secret.redis.pw,
-	socket: {
-		host: secret.redis.host,
-		port: secret.redis.port,
-	},
+	url: `redis://${secret.redis.host}:${secret.redis.port}`,
 	name: CLIENT_NAME,
+	password: secret.redis.pw,
+	legacyMode: true,
 });
 
 export const connect = async () => {
