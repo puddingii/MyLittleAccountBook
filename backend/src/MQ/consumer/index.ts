@@ -11,6 +11,7 @@ import { isString } from '@/util/string';
 
 /** Interface */
 import { TTopicMapper } from '@/interface/MQ';
+import { CustomError } from '@/util/error/class';
 
 const topicMapper: TTopicMapper = {
 	[IMAGE_TOPIC]: imageMapper,
@@ -28,6 +29,13 @@ export const eachMessageHandler: EachMessageHandler = async ({
 	const { key, value, ...rest } = message;
 	const stringKey = key?.toString();
 	const stringValue = value?.toString();
+
+	logger.info(
+		`Get message: key - ${JSON.stringify(stringKey)} value - ${JSON.stringify(
+			stringValue,
+		)}`,
+		getDepthList(topic),
+	);
 	if (!isString(stringKey) || !isString(stringValue)) {
 		return;
 	}
@@ -39,7 +47,10 @@ export const eachMessageHandler: EachMessageHandler = async ({
 
 	/** Topic에 해당하는 Mapper는 있지만 Key값에 매칭되는 함수가 없을 시 리턴 */
 	if (!topicMapper[topic][stringKey]) {
-		return;
+		throw new CustomError('Callback function is undefined', {
+			code: 500,
+			traceList: getDepthList(topic, stringKey),
+		});
 	}
 
 	try {
