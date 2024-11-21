@@ -17,7 +17,6 @@ const ManageAccountBook = () => {
 			onSuccess: response => {
 				const imageRoot = response?.data?.imagePath ? process.env.REACT_APP_IMAGE_GET_SERVER : '';
 				const imagePath = `${imageRoot}/${response?.data?.imagePath ?? ''}`;
-				console.log('image_server', process.env.REACT_APP_IMAGE_GET_SERVER, imagePath);
 				setAccountBookInfo({
 					title: response?.data?.title ?? '',
 					content: response?.data?.content ?? '',
