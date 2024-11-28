@@ -16,22 +16,24 @@ const isProdEnv = secret.nodeEnv === 'production';
 const sequelizeOptions = isTestEnv ? local : master;
 
 const prodOption = {
-	replication: {
-		read: [
-			{
-				host: slave1.host,
-				username: slave1.username,
-				password: slave1.pw,
-				port: slave1.port,
-			},
-		],
-		write: {
-			host: master.host,
-			username: master.username,
-			password: master.pw,
-			port: master.port,
-		},
-	},
+	// replication: {
+	// 	read: [
+	// 		{
+	// 			host: slave1.host,
+	// 			username: slave1.username,
+	// 			password: slave1.pw,
+	// 			port: slave1.port,
+	// 		},
+	// 	],
+	// 	write: {
+	// 		host: master.host,
+	// 		username: master.username,
+	// 		password: master.pw,
+	// 		port: master.port,
+	// 	},
+	// },
+	host: master.host,
+	port: master.port,
 };
 const devOption = {
 	host: sequelizeOptions.host,
