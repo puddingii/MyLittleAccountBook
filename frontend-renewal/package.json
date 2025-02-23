@@ -1,0 +1,46 @@
+{
+	"name": "frontend",
+	"private": true,
+	"version": "0.0.0",
+	"scripts": {
+		"dev": "vite",
+		"build": "tsc -b && vite build",
+		"lint": "eslint .",
+		"preview": "vite preview"
+	},
+	"dependencies": {
+		"@emotion/react": "^11.14.0",
+		"@emotion/styled": "^11.14.0",
+		"@mui/icons-material": "^6.4.5",
+		"@mui/material": "^6.4.5",
+		"@tanstack/react-query": "^5.66.9",
+		"react": "^19.0.0",
+		"react-dom": "^19.0.0",
+		"react-router-dom": "^7.2.0"
+	},
+	"devDependencies": {
+		"@stylistic/eslint-plugin-ts": "^2.13.0",
+		"@tanstack/eslint-plugin-query": "^5.66.1",
+		"@types/node": "^22.13.5",
+		"@types/react": "^19.0.10",
+		"@types/react-dom": "^19.0.4",
+		"@typescript-eslint/eslint-plugin": "^8.24.1",
+		"@typescript-eslint/parser": "^8.24.1",
+		"@vitejs/plugin-react": "^4.3.4",
+		"eslint": "^8.57.1",
+		"eslint-config-prettier": "^9.1.0",
+		"eslint-plugin-import": "^2.31.0",
+		"eslint-plugin-prettier": "^5.2.3",
+		"eslint-plugin-react": "^7.37.4",
+		"eslint-plugin-react-hooks": "^5.1.0",
+		"eslint-plugin-sort-class-members": "^1.21.0",
+		"globals": "^16.0.0",
+		"prettier": "^3.5.2",
+		"typescript": "~5.7.3",
+		"typescript-eslint": "^8.24.1",
+		"unplugin-auto-import": "^19.1.0",
+		"vite": "^6.1.1",
+		"vite-plugin-checker": "^0.9.0",
+		"vite-plugin-eslint": "^1.8.1"
+	}
+}
