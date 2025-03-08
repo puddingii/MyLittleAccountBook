@@ -15,6 +15,9 @@ git clone https://github.com/puddingii/MyLittleAccountBook.git
 cd backend
 
 # Install dependencies
+
+Nanoid 버전의 경우 3버전으로 고정할 것
+
 yarn
 
 # Development start

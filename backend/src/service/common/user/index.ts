@@ -1,5 +1,5 @@
 /** Library */
-import { nanoid } from 'nanoid';
+import { nanoid } from 'nanoid/async';
 
 /** Interface */
 import {
@@ -43,8 +43,8 @@ const canSendEmail = (requestCount: number) => {
 	return requestCount < 5;
 };
 
-const getRandomState = (requestCount: number) => {
-	const randomState = nanoid(15);
+const getRandomState = async (requestCount: number) => {
+	const randomState = await nanoid(15);
 	const state = `${randomState}${requestCount + 1}`;
 
 	return state;
