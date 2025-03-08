@@ -1,10 +1,10 @@
-FROM node:16.13.1 as module_installer
+FROM node:16.20.2 as module_installer
 WORKDIR /usr/index
 COPY package*.json jsconfig*.json yarn.lock ./
 RUN yarn install --pure-lockfile
 COPY . ./
 
-FROM node:16.13.1
+FROM node:16.20.2
 WORKDIR /usr/index
 COPY --from=module_installer /usr/index ./
 RUN chmod -R 777 /usr/index

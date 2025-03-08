@@ -1,4 +1,4 @@
-FROM node:16.13.1 as react-builder
+FROM node:16.20.2 as react-builder
 WORKDIR /usr/index
 ARG REACT_APP_VERSION
 ARG GENERATE_SOURCEMAP
@@ -18,7 +18,7 @@ RUN yarn install --pure-lockfile
 COPY ./frontend ./
 RUN yarn build
 
-FROM node:16.13.1
+FROM node:16.20.2
 ARG FRONT_PORT
 ENV FRONT_PORT ${FRONT_PORT}
 WORKDIR /usr/index
