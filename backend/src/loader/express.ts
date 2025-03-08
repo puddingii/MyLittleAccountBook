@@ -25,6 +25,8 @@ export default async (app: Express) => {
 	app.use(json());
 	if (secret.nodeEnv === 'development') {
 		const docs = await import('@/json/swagger.json');
+		// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+		// @ts-expect-error
 		app.use('/dev/api/docs', swagger.serve, swagger.setup(docs));
 	}
 

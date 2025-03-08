@@ -1,5 +1,3 @@
-import fetch, { Headers } from 'node-fetch';
-
 /** Interfaces */
 import { TNaverSocialInfo, ISocialManager } from '@/interface/auth';
 
@@ -102,7 +100,11 @@ export default class NaverManager implements ISocialManager {
 			if (!response.ok) {
 				throw new CustomError(response.statusText, { code: response.status });
 			}
-			const decodedData = await response.json();
+			const decodedData = (await response.json()) as {
+				resultcode: string;
+				message: string;
+				response: unknown;
+			};
 
 			if (decodedData.resultcode !== '00') {
 				throw new CustomError(`code[${decodedData.resultcode}]: ${decodedData.message}`, {

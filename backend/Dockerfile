@@ -1,17 +1,17 @@
-FROM node:18-alpine as ts-compiler
+FROM node:22-alpine as ts-compiler
 WORKDIR /usr/index
 COPY ./backend/package*.json ./backend/tsconfig*.json ./backend/yarn.lock ./
 RUN yarn install --pure-lockfile
 COPY ./backend ./
 RUN yarn build
 
-FROM node:18-alpine as ts-remover
+FROM node:22-alpine as ts-remover
 WORKDIR /usr/index
 COPY --from=ts-compiler /usr/index/package*.json /usr/index/yarn.lock /usr/index/ecosystem.config.js ./
 COPY --from=ts-compiler /usr/index/build ./build
 RUN yarn install --only=production --pure-lockfile
 
-FROM keymetrics/pm2:18-alpine
+FROM keymetrics/pm2:22-alpine
 WORKDIR /usr/index
 ENV TZ=Asia/Seoul
 ENV NODE_ENV=production

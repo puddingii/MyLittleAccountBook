@@ -20,10 +20,10 @@ const initProductionMySQL = async () => {
 };
 
 const initDevelopmentMySQL = async () => {
+	await sync(sequelize);
+
 	const down = await execsync('npx sequelize-cli db:seed:undo:all --env test');
 	console.log(down.stdout);
-
-	await sync(sequelize);
 
 	const up = await execsync('npx sequelize-cli db:seed:all --env test');
 	console.log(up.stdout);
