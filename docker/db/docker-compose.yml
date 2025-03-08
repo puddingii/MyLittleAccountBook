@@ -20,7 +20,7 @@ services:
       retries: 10
 
   mysql_master:
-    image: mysql:8.0.20
+    image: mysql:8.4.4
     user: root
     platform: linux/x86_64
     environment:
@@ -45,7 +45,7 @@ services:
       retries: 10
 
   mysql_slave1:
-    image: mysql:8.0.20
+    image: mysql:8.4.4
     platform: linux/x86_64
     user: root
     ports:
