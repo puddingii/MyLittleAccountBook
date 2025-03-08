@@ -1,4 +1,4 @@
-import { nanoid } from 'nanoid/async';
+import { nanoid } from 'nanoid';
 import bcrypt from 'bcrypt';
 
 /** Util */
@@ -117,7 +117,7 @@ export const getSocialLoginLocation =
 		} = dependencies;
 
 		try {
-			const randomState = await nanoid(15);
+			const randomState = nanoid(15);
 
 			/** Social 로그인 시 검증하기 위한 State 발급 및 캐싱처리 */
 			await setCache(randomState, 1, 600);

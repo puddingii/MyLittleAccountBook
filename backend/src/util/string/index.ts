@@ -1,7 +1,7 @@
-import { nanoid } from 'nanoid/async';
+import { nanoid } from 'nanoid';
 
-export const getRandomString = async (length: number, additionalStr?: string) => {
-	const randomString = await nanoid(length);
+export const getRandomString = (length: number, additionalStr?: string) => {
+	const randomString = nanoid(length);
 
 	return `${randomString}${additionalStr ?? ''}`;
 };

@@ -71,7 +71,7 @@ export default {
 			host: process.env.MYSQL_HOST ?? '',
 			username: process.env.MYSQL_USERNAME ?? '',
 			pw: process.env.MYSQL_PW ?? '',
-			port: 3306,
+			port: 13306,
 		},
 		cmdPw: process.env.MYSQL_COMMAND_PW ?? '',
 		databaseName: `${process.env.MYSQL_DATABASENAME}${

@@ -1,5 +1,4 @@
 import FormData from 'form-data';
-import fetch from 'node-fetch';
 
 /** Service */
 
@@ -59,7 +58,7 @@ eventEmitter.on('upload', info => {
 		fetch(`${secret.imageUrl}/image`, {
 			method: 'POST',
 			body: formData,
-			timeout: 10000,
+			signal: AbortSignal.timeout(10000),
 			headers: {
 				...formData.getHeaders(),
 			},

@@ -3,7 +3,7 @@
 import { AssertionError, deepStrictEqual, equal, fail } from 'assert';
 import sinon from 'sinon';
 import bcrypt from 'bcrypt';
-import { nanoid } from 'nanoid/async';
+import { nanoid } from 'nanoid';
 
 /** Service */
 import {
@@ -385,7 +385,7 @@ describe('Group Service Test', function () {
 			[type: 'Google' | 'Naver'],
 			GoogleManager | NaverManager
 		>;
-		let spyNanoid: sinon.SinonSpy<[size?: number | undefined], Promise<string>>;
+		let spyNanoid: sinon.SinonSpy<[size?: number | undefined], string>;
 
 		beforeEach(function () {
 			stubGetRedirectUrl = sinon.stub(oauth, 'getRedirectUrl');
