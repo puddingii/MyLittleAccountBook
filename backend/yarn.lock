@@ -1752,9 +1752,9 @@
     form-data "^4.0.0"
 
 "@types/node-schedule@^2.1.2":
-  version "2.1.6"
-  resolved "https://registry.yarnpkg.com/@types/node-schedule/-/node-schedule-2.1.6.tgz#9bf790a929735080521ef893cba7e4dce9ea14e9"
-  integrity sha512-6AlZSUiNTdaVmH5jXYxX9YgmF1zfOlbjUqw0EllTBmZCnN1R5RR/m/u3No1OiWR05bnQ4jM4/+w4FcGvkAtnKQ==
+  version "2.1.7"
+  resolved "https://registry.yarnpkg.com/@types/node-schedule/-/node-schedule-2.1.7.tgz#79a1e61adc7bbf8d8eaabcef307e07d76cb40d82"
+  integrity sha512-G7Z3R9H7r3TowoH6D2pkzUHPhcJrDF4Jz1JOQ80AX0K2DWTHoN9VC94XzFAPNMdbW9TBzMZ3LjpFi7RYdbxtXA==
   dependencies:
     "@types/node" "*"
 
