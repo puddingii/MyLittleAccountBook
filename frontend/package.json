@@ -4,7 +4,7 @@
 	"private": true,
 	"dependencies": {
 		"@ant-design/colors": "^6.0.0",
-		"@ant-design/icons": "^4.8.3",
+		"@ant-design/icons": "^5.0.0",
 		"@emotion/cache": "^11.14.0",
 		"@emotion/react": "^11.14.0",
 		"@emotion/styled": "^11.14.0",
