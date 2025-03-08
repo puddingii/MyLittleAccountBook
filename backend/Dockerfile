@@ -11,7 +11,7 @@ COPY --from=ts-compiler /usr/index/package*.json /usr/index/yarn.lock /usr/index
 COPY --from=ts-compiler /usr/index/build ./build
 RUN yarn install --only=production --pure-lockfile
 
-FROM keymetrics/pm2:22-alpine
+FROM keymetrics/pm2:18-alpine
 WORKDIR /usr/index
 ENV TZ=Asia/Seoul
 ENV NODE_ENV=production
