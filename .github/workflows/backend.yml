@@ -25,7 +25,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       # github repository에서 checkout
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
 
       # docker setup
       - name: Set up docker buildx
