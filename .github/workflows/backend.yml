@@ -34,7 +34,7 @@ jobs:
 
       # 캐싱된 내용 가져오기
       - name: Cache docker layers
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         with:
           path: /tmp/.buildx-cache
           key: ${{ runner.os }}-buildx-${{ env.VERSION }}
