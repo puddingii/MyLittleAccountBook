@@ -174,6 +174,7 @@ export const updateAccountBookImageInfo =
 				path,
 				id,
 				buffer: file.buffer,
+				mimeType: file.mimeType,
 				beforeName,
 			});
 

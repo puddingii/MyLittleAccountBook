@@ -1,5 +1,3 @@
-import FormData from 'form-data';
-
 /** Service */
 
 /** Utils */
@@ -25,7 +23,7 @@ const loggingEventResult = (
 
 eventEmitter.on('upload', info => {
 	const traceList = [...baseErrorTraceList, 'Upload'];
-	const { buffer, id, name, path, beforeName } = info;
+	const { buffer, id, name, path, beforeName, mimeType } = info;
 	const statusManager = {
 		1: {
 			message: 'Get 1xx status response.',
@@ -48,7 +46,7 @@ eventEmitter.on('upload', info => {
 
 	try {
 		const formData = new FormData();
-		formData.append('file', buffer, name);
+		formData.append('file', new File([buffer], name, { type: mimeType }));
 		formData.append('id', id);
 		formData.append('path', path);
 		if (beforeName) {
@@ -59,9 +57,6 @@ eventEmitter.on('upload', info => {
 			method: 'POST',
 			body: formData,
 			signal: AbortSignal.timeout(10000),
-			headers: {
-				...formData.getHeaders(),
-			},
 		})
 			.then(res => {
 				const flag = Math.floor(res.status / 100) as 1 | 2 | 3 | 4 | 5;
