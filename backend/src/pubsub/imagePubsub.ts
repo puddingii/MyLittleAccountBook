@@ -46,7 +46,8 @@ eventEmitter.on('upload', info => {
 
 	try {
 		const formData = new FormData();
-		formData.append('file', new File([buffer], name, { type: mimeType }));
+		const blob = new Blob([buffer], { type: mimeType });
+		formData.append('file', blob, name);
 		formData.append('id', id);
 		formData.append('path', path);
 		if (beforeName) {
