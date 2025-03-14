@@ -59,16 +59,22 @@ eventEmitter.on('upload', info => {
 			body: formData,
 			signal: AbortSignal.timeout(10000),
 		})
-			.then(res => {
+			.then(async res => {
 				const flag = Math.floor(res.status / 100) as 1 | 2 | 3 | 4 | 5;
 
+				let reason = '';
 				if (flag === 4 || flag === 5) {
-					res.json().then(console.log);
+					const msgBody = (await res.json()) as {
+						message: string;
+						error: string;
+						statusCode: number;
+					};
+					reason = msgBody?.message;
 				}
 				if (statusManager[flag]) {
 					loggingEventResult(
 						{ ...statusManager[flag], traceList },
-						`${res.statusText}|${JSON.stringify({ id, name, path })}`,
+						`${res.statusText}|${JSON.stringify({ id, name, path, reason })}`,
 					);
 				}
 			})
