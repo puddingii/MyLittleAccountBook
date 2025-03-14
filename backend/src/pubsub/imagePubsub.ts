@@ -62,6 +62,9 @@ eventEmitter.on('upload', info => {
 			.then(res => {
 				const flag = Math.floor(res.status / 100) as 1 | 2 | 3 | 4 | 5;
 
+				if (flag === 4 || flag === 5) {
+					res.json().then(console.log);
+				}
 				if (statusManager[flag]) {
 					loggingEventResult(
 						{ ...statusManager[flag], traceList },
