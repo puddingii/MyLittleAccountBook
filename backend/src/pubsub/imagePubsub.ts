@@ -81,6 +81,14 @@ eventEmitter.on('upload', info => {
 			.catch(reason => {
 				loggingEventResult(
 					{
+						message: JSON.stringify(reason),
+						level: 'error',
+						traceList: ['?????????'],
+					},
+					JSON.stringify({ id, name, path }),
+				);
+				loggingEventResult(
+					{
 						message: reason?.message ?? 'Image upload request error',
 						level: 'error',
 						traceList,
@@ -89,14 +97,6 @@ eventEmitter.on('upload', info => {
 				);
 			});
 	} catch (error) {
-		loggingEventResult(
-			{
-				message: JSON.stringify(error),
-				level: 'error',
-				traceList: ['?????????'],
-			},
-			JSON.stringify({ id, name, path }),
-		);
 		const { message, traceList } = convertErrorToCustomError(error, {
 			trace: 'PubSub',
 			code: 400,
