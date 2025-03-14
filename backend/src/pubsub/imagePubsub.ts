@@ -89,6 +89,14 @@ eventEmitter.on('upload', info => {
 				);
 			});
 	} catch (error) {
+		loggingEventResult(
+			{
+				message: JSON.stringify(error),
+				level: 'error',
+				traceList: ['?????????'],
+			},
+			JSON.stringify({ id, name, path }),
+		);
 		const { message, traceList } = convertErrorToCustomError(error, {
 			trace: 'PubSub',
 			code: 400,
