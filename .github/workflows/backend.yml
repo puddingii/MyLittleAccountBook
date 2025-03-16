@@ -117,3 +117,4 @@ jobs:
         run: |
           docker network connect ${{ secrets.DB_NET }} ${{ env.BACK_CONTAINER_NAME }}
           docker network connect ${{ secrets.KAFKA_NET }} ${{ env.BACK_CONTAINER_NAME }}
+          docker network connect ${{ secrets.IMAGE_NET }} ${{ env.BACK_CONTAINER_NAME }}
